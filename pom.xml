@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>nl.salp.warcraft4j</groupId>
+    <artifactId>warcraft4j</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <!-- Project information. -->
+    <name>Warcraft4J</name>
+    <description>General parent module for all Warcraft4J modules.</description>
+
+    <scm>
+        <connection>scm:git:https://git@bitbucket.org/barredijkstra/warcraft4j.git</connection>
+        <developerConnection>scm:git:https://git@github.com/barredijkstra/warcraft4j.git</developerConnection>
+        <url>https://github.com/barredijkstra/warcraft4j.git</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>bdijkstra</id>
+            <name>Barre Dijkstra</name>
+            <email>barre (at) salp (dot) nl</email>
+            <timezone>CET</timezone>
+            <roles>
+                <role>project lead</role>
+                <role>developer</role>
+            </roles>
+            <url>https://github.com/barredijkstra/</url>
+        </developer>
+    </developers>
+
+    <!-- Project modules -->
+    <modules>
+        <module>warcraft4j-core</module>
+        <module>warcraft4j-battlenet</module>
+        <module>warcraft4j-combatlog</module>
+        <module>warcraft4j-wowhead</module>
+        <module>warcraft4j-addon</module>
+    </modules>
+
+    <!-- Project properties -->
+    <properties>
+        <source.encoding>UTF-8</source.encoding>
+        <source.version>1.7</source.version>
+        <dependency.guice.version>3.0</dependency.guice.version>
+        <dependency.junit.version>4.11</dependency.junit.version>
+        <dependency.mockito.version>1.9.5</dependency.mockito.version>
+        <dependency.logback.version>1.0.13</dependency.logback.version>
+        <dependency.slf4j.version>1.7.5</dependency.slf4j.version>
+        <dependency.commons-lang.version>3.3.2</dependency.commons-lang.version>
+    </properties>
+
+    <!-- Managed build plugins -->
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <source>${source.version}</source>
+                        <target>${source.version}</target>
+                        <encoding>${source.encoding}</encoding>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <!-- Managed dependencies -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- Project modules -->
+            <dependency>
+                <groupId>nl.salp.warcraft4j</groupId>
+                <artifactId>warcraft4j-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.salp.warcraft4j</groupId>
+                <artifactId>warcraft4j-battlenet</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.salp.warcraft4j</groupId>
+                <artifactId>warcraft4j-wowhead</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.salp.warcraft4j</groupId>
+                <artifactId>warcraft4j-combatlog</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Dependency injection dependencies -->
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>${dependency.guice.version}</version>
+            </dependency>
+            <!-- Utility dependencies -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${dependency.commons-lang.version}</version>
+            </dependency>
+            <!-- Logging dependencies -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${dependency.slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${dependency.logback.version}</version>
+            </dependency>
+            <!-- Testing dependencies -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${dependency.junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>${dependency.mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

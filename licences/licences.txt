@@ -1,0 +1,12 @@
+Licenses for runtime dependencies
+==================================================================================================
+Apache Commons Lang3 - Apache License v2.0 - apache-commons-lang3.license.txt
+Google Guice         - Apache License v2.0 - google-guice.license.txt
+SLF4J                - MIT License - slf4j.license.txt
+Logback              - Dual licensed (LGPL/EPL) with the choice for LGPL - logback.license.txt
+
+
+Licenses for compile-time dependencies
+==================================================================================================
+JUnit                - Eclipse Public License v1.0  - junit.license.txt
+Mockito              - MIT License - mockito.license.txt
