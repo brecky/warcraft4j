@@ -17,19 +17,28 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.dbc;
+package nl.salp.warcraft4j.wowclient.databaseclient;
+
+import nl.salp.warcraft4j.wowclient.databaseclient.datatype.DbcDataTypes;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public enum DbcDataType {
-    INT32,
-    UINT32,
-    FLOAT,
-    STRING,
-    STRING_REFERENCE,
-    BOOLEAN,
-    BYTE;
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.METHOD})
+public @interface DbcField {
+    String name() default "";
+
+    DbcDataTypes dataType();
+
+    int column();
+
+    int length() default 1;
 }

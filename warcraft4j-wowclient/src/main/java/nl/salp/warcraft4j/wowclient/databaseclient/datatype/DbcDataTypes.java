@@ -17,26 +17,19 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.dbc;
+package nl.salp.warcraft4j.wowclient.databaseclient.datatype;
 
 /**
  * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public class DbcParserException extends RuntimeException {
-    public DbcParserException() {
-    }
-
-    public DbcParserException(String message) {
-        super(message);
-    }
-
-    public DbcParserException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public DbcParserException(Throwable cause) {
-        super(cause);
-    }
+public enum DbcDataTypes {
+    INT32,
+    UINT32,
+    FLOAT,
+    STRING,
+    STRING_REFERENCE,
+    BOOLEAN,
+    BYTE;
 }

@@ -17,11 +17,11 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.model;
+package nl.salp.warcraft4j.wowclient.model;
 
-import nl.salp.warcraft4j.dbc.Dbc;
-import nl.salp.warcraft4j.dbc.DbcDataType;
-import nl.salp.warcraft4j.dbc.DbcField;
+import nl.salp.warcraft4j.wowclient.databaseclient.Dbc;
+import nl.salp.warcraft4j.wowclient.databaseclient.datatype.DbcDataTypes;
+import nl.salp.warcraft4j.wowclient.databaseclient.DbcField;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
@@ -31,31 +31,31 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @Dbc("ItemSubClass.dbc")
 public class ItemSubClass {
-    @DbcField(column = 1, dataType = DbcDataType.INT32)
+    @DbcField(column = 1, dataType = DbcDataTypes.INT32)
     private int id;
-    @DbcField(column = 2, dataType = DbcDataType.INT32)
+    @DbcField(column = 2, dataType = DbcDataTypes.INT32)
     private int classId;
-    @DbcField(column = 3, dataType = DbcDataType.INT32)
+    @DbcField(column = 3, dataType = DbcDataTypes.INT32)
     private int subClassId;
-    @DbcField(column = 4, dataType = DbcDataType.INT32)
+    @DbcField(column = 4, dataType = DbcDataTypes.INT32)
     private int prerequisiteProficiency;
-    @DbcField(column = 5, dataType = DbcDataType.INT32)
+    @DbcField(column = 5, dataType = DbcDataTypes.INT32)
     private int postrequisiteProficiency;
-    @DbcField(column = 6, dataType = DbcDataType.INT32)
+    @DbcField(column = 6, dataType = DbcDataTypes.INT32)
     private int flags;
-    @DbcField(column = 7, dataType = DbcDataType.INT32)
+    @DbcField(column = 7, dataType = DbcDataTypes.INT32)
     private int displayFlags;
-    @DbcField(column = 8, dataType = DbcDataType.INT32)
+    @DbcField(column = 8, dataType = DbcDataTypes.INT32)
     private int weaponParrySeq;
-    @DbcField(column = 9, dataType = DbcDataType.INT32)
+    @DbcField(column = 9, dataType = DbcDataTypes.INT32)
     private int weaponReadySeq;
-    @DbcField(column = 10, dataType = DbcDataType.INT32)
+    @DbcField(column = 10, dataType = DbcDataTypes.INT32)
     private int weaponAttackSeq;
-    @DbcField(column = 11, dataType = DbcDataType.INT32)
+    @DbcField(column = 11, dataType = DbcDataTypes.INT32)
     private int weaponSwingSize;
-    @DbcField(column = 12, dataType = DbcDataType.STRING_REFERENCE)
+    @DbcField(column = 12, dataType = DbcDataTypes.STRING_REFERENCE)
     private String displayName;
-    @DbcField(column = 13, dataType = DbcDataType.STRING_REFERENCE)
+    @DbcField(column = 13, dataType = DbcDataTypes.STRING_REFERENCE)
     private String verboseName;
 
     public ItemSubClass() {

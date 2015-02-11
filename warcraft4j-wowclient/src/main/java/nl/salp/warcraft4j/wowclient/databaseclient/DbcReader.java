@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.dbc;
+package nl.salp.warcraft4j.wowclient.databaseclient;
 
 import java.io.*;
 import java.nio.ByteBuffer;

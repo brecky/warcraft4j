@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.dbc;
+package nl.salp.warcraft4j.wowclient.databaseclient;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -30,13 +30,8 @@ import java.lang.annotation.Target;
  * @author Barre Dijkstra
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface DbcField {
-    String name() default "";
-
-    DbcDataType dataType();
-
-    int column();
-
-    int length() default 1;
+@Target(ElementType.TYPE)
+public @interface Dbc {
+    /** The name of the DBC file that it's mapped from. */
+    String value();
 }

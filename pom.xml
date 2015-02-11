@@ -40,6 +40,7 @@
         <module>warcraft4j-combatlog</module>
         <module>warcraft4j-wowhead</module>
         <module>warcraft4j-addon</module>
+        <module>warcraft4j-wowclient</module>
     </modules>
 
     <!-- Project properties -->
@@ -93,6 +94,11 @@
             <dependency>
                 <groupId>nl.salp.warcraft4j</groupId>
                 <artifactId>warcraft4j-combatlog</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.salp.warcraft4j</groupId>
+                <artifactId>warcraft4j-wowclient</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- Dependency injection dependencies -->
