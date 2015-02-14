@@ -19,9 +19,9 @@
 
 package nl.salp.warcraft4j.wowclient.model;
 
-import nl.salp.warcraft4j.wowclient.databaseclient.Dbc;
-import nl.salp.warcraft4j.wowclient.databaseclient.datatype.DbcDataTypes;
-import nl.salp.warcraft4j.wowclient.databaseclient.DbcField;
+import nl.salp.warcraft4j.wowclient.dbc.Dbc;
+import nl.salp.warcraft4j.wowclient.dbc.DbcDataType;
+import nl.salp.warcraft4j.wowclient.dbc.DbcField;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
@@ -31,14 +31,13 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @Dbc("Resistances.dbc")
 public class Resistance {
-    @DbcField(name = "id", column = 1, dataType = DbcDataTypes.INT32)
+    @DbcField(name = "id", column = 1, dataType = DbcDataType.INT32)
     private int id;
-    @DbcField(name = "flags", column = 2, dataType = DbcDataTypes.INT32)
+    @DbcField(name = "flags", column = 2, dataType = DbcDataType.INT32)
     private int flags;
-    @DbcField(name = "fizzleSoundId", column = 3, dataType = DbcDataTypes.INT32)
+    @DbcField(name = "fizzleSoundId", column = 3, dataType = DbcDataType.INT32)
     private int fizzleSoundId;
-    //@DbcField(name = "sRefName", column = 4, length = 16, dataType = DbcDataTypes.STRING)
-    @DbcField(name = "sRefName", column = 4, dataType = DbcDataTypes.STRING_REFERENCE)
+    @DbcField(name = "sRefName", column = 4, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String name;
 
     public Resistance() {

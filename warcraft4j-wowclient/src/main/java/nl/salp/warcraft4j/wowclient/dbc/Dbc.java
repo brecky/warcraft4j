@@ -17,26 +17,21 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.wowclient.databaseclient;
+package nl.salp.warcraft4j.wowclient.dbc;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * TODO Add description.
+ * Annotation marking a class mappable to a DBC file.
  *
  * @author Barre Dijkstra
  */
-public class DbcParserException extends RuntimeException {
-    public DbcParserException() {
-    }
-
-    public DbcParserException(String message) {
-        super(message);
-    }
-
-    public DbcParserException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public DbcParserException(Throwable cause) {
-        super(cause);
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Dbc {
+    /** The name of the DBC file that it's mapped from. */
+    String value();
 }

@@ -19,9 +19,9 @@
 
 package nl.salp.warcraft4j.wowclient.model;
 
-import nl.salp.warcraft4j.wowclient.databaseclient.Dbc;
-import nl.salp.warcraft4j.wowclient.databaseclient.datatype.DbcDataTypes;
-import nl.salp.warcraft4j.wowclient.databaseclient.DbcField;
+import nl.salp.warcraft4j.wowclient.dbc.Dbc;
+import nl.salp.warcraft4j.wowclient.dbc.DbcDataType;
+import nl.salp.warcraft4j.wowclient.dbc.DbcField;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
@@ -31,26 +31,26 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @Dbc("ItemClass.dbc")
 public class ItemClass {
-    @DbcField(name = "classId", column = 1, dataType = DbcDataTypes.INT32)
-    private int id;
-    @DbcField(name = "flags", column = 2, dataType = DbcDataTypes.INT32)
+    @DbcField(name = "classId", column = 1, dataType = DbcDataType.INT32)
+    private Integer id;
+    @DbcField(name = "flags", column = 2, dataType = DbcDataType.INT32)
     private int flags;
-    @DbcField(name = "priceModifier", column = 3, dataType = DbcDataTypes.FLOAT)
+    @DbcField(name = "priceModifier", column = 3, dataType = DbcDataType.FLOAT)
     private float priceModifier;
-    @DbcField(name = "name", column = 4, length = 4, dataType = DbcDataTypes.STRING_REFERENCE)
+    @DbcField(name = "name", column = 4, length = 4, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String name;
 
     public ItemClass() {
     }
 
-    public ItemClass(int id, int flags, float priceModifier, String name) {
+    public ItemClass(Integer id, int flags, float priceModifier, String name) {
         this.id = id;
         this.flags = flags;
         this.priceModifier = priceModifier;
         this.name = name;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

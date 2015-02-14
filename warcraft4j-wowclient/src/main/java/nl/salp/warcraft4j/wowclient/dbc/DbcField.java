@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.wowclient.databaseclient;
+package nl.salp.warcraft4j.wowclient.dbc;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,13 +25,25 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * TODO Add description.
+ * Annotation to wire a field or setter-method to a DBC field.
  *
  * @author Barre Dijkstra
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Dbc {
-    /** The name of the DBC file that it's mapped from. */
-    String value();
+@Target({ElementType.FIELD, ElementType.METHOD})
+public @interface DbcField {
+    /** The (optional) name of the field, {@code default ""}. */
+    String name() default "";
+
+    /** The column of the field in the DBC file. */
+    int column();
+
+    /** Number of times the field occurs concurrently ({@code &gt; 1 implies an array of the field}), {@code default 1}. */
+    int numberOfEntries() default 1;
+
+    /** The length of the field in bytes, {@code default: 1}. */
+    int length() default 1;
+
+    /** The DBC data type of the field. */
+    DbcDataType dataType();
 }
