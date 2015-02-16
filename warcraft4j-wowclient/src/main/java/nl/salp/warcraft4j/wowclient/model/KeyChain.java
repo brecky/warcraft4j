@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * TODO Document class.
  */
+@Deprecated
 @Dbc("KeyChain.db2")
 public class KeyChain {
     @DbcField(column = 1, dataType = DbcDataType.INT32)

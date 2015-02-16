@@ -89,7 +89,6 @@ public class DbcParser<T> {
         Header header = new HeaderParser().parse(reader);
         byte[] entryData = reader.readNextBytes(header.getRecordBlockSize());
         byte[] stringBlockData = reader.readNextBytes(header.getStringBlockSize());
-
         StringBlock stringBlock = new StringBlockParser().parse(stringBlockData);
         return parseEntries(entryData, header, stringBlock);
     }

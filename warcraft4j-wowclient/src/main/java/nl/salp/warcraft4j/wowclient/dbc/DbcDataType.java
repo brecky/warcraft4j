@@ -21,7 +21,8 @@ public enum DbcDataType {
     /** Boolean. */
     BOOLEAN("boolean", DataType.getBoolean()),
     /** Byte. */
-    BYTE("byte", DataType.getByte());
+    BYTE("byte", DataType.getByte()),
+    INT32ARRAY_2("int32[2]", DataType.getInt32Array(2));
 
     /** The DataType associated with the type. */
     private final DataType<?> dataType;

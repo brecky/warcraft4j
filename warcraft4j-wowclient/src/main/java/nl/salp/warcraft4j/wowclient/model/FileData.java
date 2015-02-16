@@ -10,11 +10,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @Dbc("FileData.dbc")
 public class FileData {
-    @DbcField(name = "id", column = 0, length = 4, dataType = DbcDataType.INT32)
+    @DbcField(column = 0, dataType = DbcDataType.INT32)
     private int id;
-    @DbcField(name = "fileName", column = 1, length = 4, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcField(column = 1, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String fileName;
-    @DbcField(name = "filePath", column = 2, length = 4, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcField(column = 2, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String filePath;
 
     public FileData() {
