@@ -19,9 +19,9 @@
 
 package nl.salp.warcraft4j.wowclient.model;
 
-import nl.salp.warcraft4j.wowclient.dbc.Dbc;
-import nl.salp.warcraft4j.wowclient.dbc.DbcDataType;
-import nl.salp.warcraft4j.wowclient.dbc.DbcField;
+import nl.salp.warcraft4j.wowclient.dbc.mapping.Dbc;
+import nl.salp.warcraft4j.wowclient.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.wowclient.dbc.mapping.DbcField;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.wowclient.dbc;
+package nl.salp.warcraft4j.wowclient.dbc.mapping;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -21,12 +21,13 @@ package nl.salp.warcraft4j.wowclient.dbc;
 
 import nl.salp.warcraft4j.wowclient.dbc.header.Header;
 import nl.salp.warcraft4j.wowclient.dbc.header.HeaderParser;
+import nl.salp.warcraft4j.wowclient.dbc.mapping.Dbc;
+import nl.salp.warcraft4j.wowclient.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.wowclient.dbc.mapping.DbcDataType;
 import nl.salp.warcraft4j.wowclient.io.DataType;
 import nl.salp.warcraft4j.wowclient.io.WowByteArrayReader;
 import nl.salp.warcraft4j.wowclient.io.WowFileReader;
 import nl.salp.warcraft4j.wowclient.io.WowReader;
-import nl.salp.warcraft4j.wowclient.model.GameTables;
-import nl.salp.warcraft4j.wowclient.model.Spell;
 
 import java.io.File;
 import java.io.IOException;
@@ -110,10 +111,7 @@ public class DbcParser<T> {
         for (int fieldIndex : fields.keySet()) {
             Field field = fields.get(fieldIndex);
             DbcField fieldInfo = field.getAnnotation(DbcField.class);
-            DataType<?> dataType = fieldInfo.dataType().getDataType();
-            if (DbcDataType.STRING == fieldInfo.dataType() && fieldInfo.length() > 0) {
-                dataType = DataType.getFixedLengthString(fieldInfo.length());
-            }
+            DataType<?> dataType = fieldInfo.dataType().getDataType(fieldInfo);
             Object value = reader.readNext(dataType);
 
             if (DbcDataType.STRINGTABLE_REFERENCE == fieldInfo.dataType()) {

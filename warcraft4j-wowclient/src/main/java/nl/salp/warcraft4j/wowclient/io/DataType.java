@@ -6,6 +6,8 @@ import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+import static nl.salp.warcraft4j.wowclient.io.DataTypeUtil.getAverageBytesPerCharacter;
+
 /**
  * Data type for reading various types of data types (with different byte ordering) via a {@link WowReader}.
  *
@@ -14,8 +16,8 @@ import java.nio.charset.StandardCharsets;
 public abstract class DataType<T> {
     /** The default character set. */
     private static final Charset DEFAULT_CHARACTERSET = StandardCharsets.UTF_8;
-    /** Single int32 instance. */
-    private static final DataType<Integer> INT32 = new Int32DataType();
+    /** Single integer instance. */
+    private static final DataType<Integer> INTEGER = new IntegerDataType();
     /** Single terminated string instance. */
     private static final DataType<String> TERMINATED_STRING = new TerminatedStringDataType();
     /** Single float instance. */
@@ -26,23 +28,38 @@ public abstract class DataType<T> {
     private static final DataType<Byte> BYTE = new ByteDataType();
     /** Single short instance. */
     private static final DataType<Short> SHORT = new ShortDataType();
+    /** Single long instance. */
+    private static final DataType<Long> LONG = new LongDataType();
+    /** Single double instance. */
+    private static final DataType<Double> DOUBLE = new DoubleDataType();
 
     /**
-     * Get a {@link DataType} implementation for 32-bit signed integers.
+     * Get a {@link DataType} implementation for integers.
      *
      * @return The data type.
      */
-    public static DataType<Integer> getInt32() {
-        return INT32;
+    public static DataType<Integer> getInteger() {
+        return INTEGER;
     }
 
     /**
-     * Get a {@link DataType} implementation for terminated strings (zero-terminated or end of data).
+     * Get a {@link DataType} implementation for terminated strings (zero-terminated or end of data) using the default character set ({@link DataType#DEFAULT_CHARACTERSET}).
      *
      * @return The data type.
      */
     public static DataType<String> getTerminatedString() {
         return TERMINATED_STRING;
+    }
+
+    /**
+     * Get a {@link DataType} implementation for terminated strings (zero-terminated or end of data) using the specified character set.
+     *
+     * @param charset The character set to use.
+     *
+     * @return The data type.
+     */
+    public static DataType<String> getTerminatedString(Charset charset) {
+        return new TerminatedStringDataType(charset);
     }
 
     /**
@@ -73,7 +90,9 @@ public abstract class DataType<T> {
     }
 
     /**
-     * Get a {@link DataType} implementation for a byte-arrays.
+     * Get a {@link DataType} implementation for a native byte[].
+     *
+     * @param length The length of the array in bytes.
      *
      * @return The data type.
      */
@@ -82,7 +101,7 @@ public abstract class DataType<T> {
     }
 
     /**
-     * Get a {@link DataType} implementation for fixed length strings.
+     * Get a {@link DataType} implementation for fixed length strings using the default character set ({@link DataType#DEFAULT_CHARACTERSET}).
      *
      * @param length The length of the string.
      *
@@ -93,7 +112,19 @@ public abstract class DataType<T> {
     }
 
     /**
-     * Get a {@link DataType} implementation for a 16-bit short.
+     * Get a {@link DataType} implementation for fixed length strings using a specified character set.
+     *
+     * @param length  The length of the string.
+     * @param charset The character set to use.
+     *
+     * @return The data type.
+     */
+    public static DataType<String> getFixedLengthString(int length, Charset charset) {
+        return new FixedLengthStringDataType(length, charset);
+    }
+
+    /**
+     * Get a {@link DataType} implementation for a short.
      *
      * @return The data type.
      */
@@ -102,25 +133,45 @@ public abstract class DataType<T> {
     }
 
     /**
-     * Get a {@link DataType} implementation for an 32-bit signed int array.
-     *
-     * @param entries The number of array entries.
+     * Get a {@link DataType} implementation for a long.
      *
      * @return The data type.
      */
-    public static DataType<int[]> getInt32Array(int entries) {
-        return new IntArrayDataType(entries);
+    public static DataType<Long> getLong() {
+        return LONG;
     }
 
     /**
-     * Get a {@link DataType} implementation for an 16-bit signed short array.
-     *
-     * @param entries The number of array entries.
+     * Get a {@link DataType} implementation for a double.
      *
      * @return The data type.
      */
-    public static DataType<short[]> getShortArray(int entries) {
-        return new ShortArrayDataType(entries);
+    public static DataType<Double> getDouble() {
+        return DOUBLE;
+    }
+
+    /**
+     * Create a new native array for the type with the given number of entries.
+     *
+     * @param entries The number of entries.
+     *
+     * @return The new array.
+     *
+     * @throws UnsupportedOperationException When the creation of an array is not supported (e.g. for array wrappers).
+     */
+    protected abstract T[] newArray(int entries) throws UnsupportedOperationException;
+
+    /**
+     * Get a native array type for the data type.
+     *
+     * @param entries the number of entries.
+     *
+     * @return The DataType that supports parsing to a native array of the type.
+     *
+     * @throws UnsupportedOperationException When the creation of a native array type is not supported (e.g. for array types).
+     */
+    public DataType<T[]> asArrayType(int entries) throws UnsupportedOperationException {
+        return new ArrayWrapper<>(this, entries);
     }
 
     /**
@@ -147,12 +198,93 @@ public abstract class DataType<T> {
     public abstract T readNext(ByteBuffer buffer);
 
     /**
+     * {@link DataType} implementation that wraps a {@link DataType} as a native array.
+     *
+     * @param <K> The type of the data type to wrap.
+     */
+    private static class ArrayWrapper<K> extends DataType<K[]> {
+        /** The wrapped data type. */
+        private final DataType<K> wrappedType;
+        /** The number of entries for the array. */
+        private final int arrayLength;
+
+        /**
+         * Create a new ArrayWrapper.
+         *
+         * @param wrappedType The data type to wrap as an array.
+         * @param arrayLength The number of elements in the array.
+         */
+        public ArrayWrapper(DataType<K> wrappedType, int arrayLength) {
+            this.wrappedType = wrappedType;
+            this.arrayLength = arrayLength;
+        }
+
+        @Override
+        protected K[][] newArray(int entries) {
+            throw new UnsupportedOperationException("Creation of arrays from arrays is not supported.");
+        }
+
+        @Override
+        public DataType<K[][]> asArrayType(int entries) throws UnsupportedOperationException {
+            throw new UnsupportedOperationException("Creation of array an array data type from array and array data type is not supported.");
+        }
+
+        @Override
+        public int getLength() {
+            return wrappedType.getLength() * arrayLength;
+        }
+
+        @Override
+        public ByteOrder getDefaultByteOrder() {
+            return wrappedType.getDefaultByteOrder();
+        }
+
+        @Override
+        public K[] readNext(ByteBuffer buffer) {
+            K[] entries = wrappedType.newArray(arrayLength);
+            for (int i = 0; i < arrayLength; i++) {
+                entries[i] = wrappedType.readNext(buffer);
+            }
+            return entries;
+        }
+    }
+
+    /**
      * {@link DataType} implementation for a zero-terminated string or a string till the end of the buffer.
      */
     private static class TerminatedStringDataType extends DataType<String> {
+        /** The length of the terminated String in bytes, set to -1 to indicate a variable length. */
+        private static final int LENGTH_BYTES = -1;
+        /** The character to decode the String with. */
+        private final Charset charset;
+        /** The number of bytes per character. */
+        private final int bytesPerChar;
+
+        /**
+         * Create a new TerminatedStringDataType with the default character set ({@link DataType#DEFAULT_CHARACTERSET}).
+         */
+        public TerminatedStringDataType() {
+            this(DEFAULT_CHARACTERSET);
+        }
+
+        /**
+         * Create a new TerminatedStringDataType.
+         *
+         * @param charset The character set to use for decoding the characters.
+         */
+        public TerminatedStringDataType(Charset charset) {
+            this.charset = charset;
+            this.bytesPerChar = getAverageBytesPerCharacter(charset);
+        }
+
+        @Override
+        protected String[] newArray(int entries) throws UnsupportedOperationException {
+            return new String[entries];
+        }
+
         @Override
         public int getLength() {
-            return -1;
+            return LENGTH_BYTES;
         }
 
         @Override
@@ -167,17 +299,25 @@ public abstract class DataType<T> {
             while ((c = buffer.get()) != 0) {
                 byteStream.write(c);
             }
-            return new String(byteStream.toByteArray(), DEFAULT_CHARACTERSET);
+            return new String(byteStream.toByteArray(), charset);
         }
     }
 
     /**
      * {@link DataType} implementation for a 32-bit signed integer.
      */
-    private static class Int32DataType extends DataType<Integer> {
+    private static class IntegerDataType extends DataType<Integer> {
+        /** Size of the data type in bytes (Integer.SIZE is in bits). */
+        private static final int BYTES = Integer.SIZE / 8;
+
+        @Override
+        protected Integer[] newArray(int entries) throws UnsupportedOperationException {
+            return new Integer[entries];
+        }
+
         @Override
         public int getLength() {
-            return 4;
+            return BYTES;
         }
 
         @Override
@@ -197,19 +337,40 @@ public abstract class DataType<T> {
     private static class FixedLengthStringDataType extends DataType<String> {
         /** The length of the string. */
         private final int length;
+        /** The character set to decode the String with. */
+        private final Charset charset;
+        /** The number of bytes per character for the character set. */
+        private final int bytesPerCharacter;
 
         /**
-         * Create a new FixedLengthString data type instance.
+         * Create a new FixedLengthString data type instance using the default character set ({@link DataType#DEFAULT_CHARACTERSET}).
          *
-         * @param length The length of the string.
+         * @param length The length of the string (in characters).
          */
         public FixedLengthStringDataType(int length) {
+            this(length, DEFAULT_CHARACTERSET);
+        }
+
+        /**
+         * Create a new FixedLengthString data type instance with a specific character set.
+         *
+         * @param length  The length of the string (in characters).
+         * @param charset The character set to decode the String with.
+         */
+        public FixedLengthStringDataType(int length, Charset charset) {
             this.length = length;
+            this.charset = charset;
+            this.bytesPerCharacter = getAverageBytesPerCharacter(charset);
+        }
+
+        @Override
+        protected String[] newArray(int entries) throws UnsupportedOperationException {
+            return new String[entries];
         }
 
         @Override
         public int getLength() {
-            return length;
+            return length * bytesPerCharacter;
         }
 
         @Override
@@ -221,7 +382,7 @@ public abstract class DataType<T> {
         public String readNext(ByteBuffer buffer) {
             byte[] data = new byte[length];
             buffer.get(data);
-            return new String(data, DEFAULT_CHARACTERSET);
+            return new String(data, charset);
         }
     }
 
@@ -229,6 +390,11 @@ public abstract class DataType<T> {
      * {@link DataType} implementation for a boolean.
      */
     private static class BooleanDataType extends DataType<Boolean> {
+
+        @Override
+        protected Boolean[] newArray(int entries) throws UnsupportedOperationException {
+            return new Boolean[entries];
+        }
 
         @Override
         public int getLength() {
@@ -261,10 +427,17 @@ public abstract class DataType<T> {
      * {@link DataType} implementation for a 32-bit signed float.
      */
     private static class FloatDataType extends DataType<Float> {
+        /** Size of the data type in bytes (Float.SIZE is in bits). */
+        private static final int BYTES = Float.SIZE / 8;
+
+        @Override
+        protected Float[] newArray(int entries) throws UnsupportedOperationException {
+            return new Float[entries];
+        }
 
         @Override
         public int getLength() {
-            return 4;
+            return BYTES;
         }
 
         @Override
@@ -282,6 +455,11 @@ public abstract class DataType<T> {
      * {@link DataType} implementation for a byte.
      */
     private static class ByteDataType extends DataType<Byte> {
+
+        @Override
+        protected Byte[] newArray(int entries) throws UnsupportedOperationException {
+            return new Byte[entries];
+        }
 
         @Override
         public int getLength() {
@@ -317,6 +495,17 @@ public abstract class DataType<T> {
         }
 
         @Override
+        protected byte[][] newArray(int entries) throws UnsupportedOperationException {
+            throw new UnsupportedOperationException("Creation of arrays from arrays is not supported.");
+        }
+
+        @Override
+        public DataType<byte[][]> asArrayType(int entries) throws UnsupportedOperationException {
+            throw new UnsupportedOperationException("Creation of an array data types from array data types is not supported.");
+        }
+
+
+        @Override
         public int getLength() {
             return length;
         }
@@ -335,49 +524,20 @@ public abstract class DataType<T> {
     }
 
     /**
-     * {@link DataType} implementation for an int[].
-     */
-    private static class IntArrayDataType extends DataType<int[]> {
-        /** The number of entries in the array. */
-        private final int entries;
-
-        /**
-         * Create a new IntArrayDataType with a specific number of array entries.
-         *
-         * @param entries The number of entries.
-         */
-        public IntArrayDataType(int entries) {
-            this.entries = entries;
-        }
-
-        @Override
-        public int getLength() {
-            return entries * 4;
-        }
-
-        @Override
-        public ByteOrder getDefaultByteOrder() {
-            return ByteOrder.LITTLE_ENDIAN;
-        }
-
-        @Override
-        public int[] readNext(ByteBuffer buffer) {
-            int[] entries = new int[this.entries];
-            for (int i = 0; i < this.entries; i++) {
-                entries[i] = buffer.getInt();
-            }
-            return entries;
-        }
-    }
-
-    /**
      * {@link DataType} implementation for a short.
      */
     private static class ShortDataType extends DataType<Short> {
+        /** Size of the data type in bytes (Short.SIZE is in bits). */
+        private static final int BYTES = Short.SIZE / 8;
+
+        @Override
+        protected Short[] newArray(int entries) throws UnsupportedOperationException {
+            return new Short[entries];
+        }
 
         @Override
         public int getLength() {
-            return 2;
+            return BYTES;
         }
 
         @Override
@@ -392,38 +552,58 @@ public abstract class DataType<T> {
     }
 
     /**
-     * {@link DataType} implementation for a short[].
+     * {@link DataType} implementation for a long.
      */
-    private static class ShortArrayDataType extends DataType<short[]> {
-        /** The number of array entries. */
-        private final int entries;
+    private static class LongDataType extends DataType<Long> {
+        /** Size of the data type in bytes (Short.SIZE is in bits). */
+        private static final int BYTES = Long.SIZE / 8;
 
-        /**
-         * Create a new ShortArrayDataType with a specific number of array entries.
-         *
-         * @param entries The number of array entries.
-         */
-        public ShortArrayDataType(int entries) {
-            this.entries = entries;
+        @Override
+        protected Long[] newArray(int entries) throws UnsupportedOperationException {
+            return new Long[entries];
         }
 
         @Override
         public int getLength() {
-            return entries * 2;
+            return BYTES;
         }
 
         @Override
         public ByteOrder getDefaultByteOrder() {
-            return null;
+            return ByteOrder.LITTLE_ENDIAN;
         }
 
         @Override
-        public short[] readNext(ByteBuffer buffer) {
-            short[] entries = new short[this.entries];
-            for (int i = 0; i < this.entries; i++) {
-                entries[i] = buffer.getShort();
-            }
-            return entries;
+        public Long readNext(ByteBuffer buffer) {
+            return buffer.getLong();
+        }
+    }
+
+    /**
+     * {@link DataType} implementation for a double.
+     */
+    private static class DoubleDataType extends DataType<Double> {
+        /** Size of the data type in bytes (Short.SIZE is in bits). */
+        private static final int BYTES = Double.SIZE / 8;
+
+        @Override
+        protected Double[] newArray(int entries) throws UnsupportedOperationException {
+            return new Double[entries];
+        }
+
+        @Override
+        public int getLength() {
+            return BYTES;
+        }
+
+        @Override
+        public ByteOrder getDefaultByteOrder() {
+            return ByteOrder.LITTLE_ENDIAN;
+        }
+
+        @Override
+        public Double readNext(ByteBuffer buffer) {
+            return buffer.getDouble();
         }
     }
 }

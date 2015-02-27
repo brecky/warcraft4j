@@ -4,6 +4,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteOrder;
 
+import static org.apache.commons.lang3.ArrayUtils.toPrimitive;
+
 /**
  * Reader for reading WoW data files.
  * <p>
@@ -90,10 +92,10 @@ public abstract class WowReader implements Closeable {
      *
      * @throws IOException When reading failed.
      * @see WowReader#readNext(DataType)
-     * @see DataType#getInt32()
+     * @see DataType#getInteger()
      */
     public final int readNextInt32() throws IOException {
-        return readNext(DataType.getInt32());
+        return readNext(DataType.getInteger());
     }
 
     /**
@@ -105,10 +107,10 @@ public abstract class WowReader implements Closeable {
      *
      * @throws IOException When reading failed.
      * @see WowReader#readNext(DataType)
-     * @see DataType#getInt32Array(int)
+     * @see DataType#getInteger()
      */
     public final int[] readNextInt32Array(int entries) throws IOException {
-        return readNext(DataType.getInt32Array(entries));
+        return toPrimitive(readNext(DataType.getInteger().asArrayType(entries)));
     }
 
     /**
@@ -120,7 +122,7 @@ public abstract class WowReader implements Closeable {
      * @see WowReader#readNext(DataType)
      * @see DataType#getShort()
      */
-    public final int readNextShort() throws IOException {
+    public final short readNextShort() throws IOException {
         return readNext(DataType.getShort());
     }
 
@@ -133,10 +135,10 @@ public abstract class WowReader implements Closeable {
      *
      * @throws IOException When reading failed.
      * @see WowReader#readNext(DataType)
-     * @see DataType#getShortArray(int)
+     * @see DataType#getShort()
      */
     public final short[] readNextShortArray(int entries) throws IOException {
-        return readNext(DataType.getShortArray(entries));
+        return toPrimitive(readNext(DataType.getShort().asArrayType(entries)));
     }
 
     /**
