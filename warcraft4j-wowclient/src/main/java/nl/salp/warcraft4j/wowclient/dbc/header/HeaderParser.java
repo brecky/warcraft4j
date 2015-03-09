@@ -20,9 +20,9 @@ public class HeaderParser {
     public Header parse(WowReader reader) throws IOException {
         String magicString = reader.readNextFixedLengthString(4);
         Header header;
-        if (DbcHeader.MAGICSTRING.equals(magicString)) {
+        if (DbcHeader.isHeaderFor(magicString)) {
             header = new DbcHeaderParser().read(magicString, reader);
-        } else if (Db2Header.MAGICSTRING.equals(magicString)) {
+        } else if (Db2Header.isHeaderFor(magicString)) {
             header = new Db2HeaderParser().read(magicString, reader);
         } else {
             throw new IllegalArgumentException(format("Cannot parse the header for unknown DBC file type %s", magicString));

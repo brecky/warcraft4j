@@ -57,4 +57,15 @@ class Db2Header extends DbcHeader {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
+    /**
+     * Check if the header is applicable for the given magic string.
+     *
+     * @param magicString The magic string.
+     *
+     * @return {@code true} if the header is applicable for a header with the given magic string.
+     */
+    public static boolean isHeaderFor(String magicString) {
+        return MAGICSTRING.equals(magicString);
+    }
 }

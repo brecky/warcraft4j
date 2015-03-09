@@ -11,7 +11,7 @@ import static java.lang.String.format;
  */
 class DbcHeaderParser {
     public DbcHeader read(String magicString, WowReader reader) throws IOException {
-        if (!DbcHeader.MAGICSTRING.equals(magicString)) {
+        if (!DbcHeader.isHeaderFor(magicString)) {
             throw new IllegalArgumentException(format("Unknown DBC magic String encountered: %s", magicString));
         }
         return parseDbcHeader(reader);
