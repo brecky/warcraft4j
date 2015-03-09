@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.wowclient.model;
+package nl.salp.warcraft4j.wowclient.data;
 
 import nl.salp.warcraft4j.wowclient.dbc.mapping.Dbc;
 import nl.salp.warcraft4j.wowclient.dbc.mapping.DbcDataType;
@@ -29,28 +29,28 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-@Dbc("ItemClass.dbc")
-public class ItemClass {
-    @DbcField(name = "classId", column = 1, dataType = DbcDataType.INT32)
-    private Integer id;
+@Dbc("Resistances.dbc")
+public class Resistance {
+    @DbcField(name = "id", column = 1, dataType = DbcDataType.INT32)
+    private int id;
     @DbcField(name = "flags", column = 2, dataType = DbcDataType.INT32)
     private int flags;
-    @DbcField(name = "priceModifier", column = 3, dataType = DbcDataType.FLOAT)
-    private float priceModifier;
-    @DbcField(name = "name", column = 4, length = 4, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcField(name = "fizzleSoundId", column = 3, dataType = DbcDataType.INT32)
+    private int fizzleSoundId;
+    @DbcField(name = "sRefName", column = 4, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String name;
 
-    public ItemClass() {
+    public Resistance() {
     }
 
-    public ItemClass(Integer id, int flags, float priceModifier, String name) {
+    public Resistance(int id, int flags, int fizzleSoundId, String name) {
         this.id = id;
         this.flags = flags;
-        this.priceModifier = priceModifier;
+        this.fizzleSoundId = fizzleSoundId;
         this.name = name;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
@@ -58,8 +58,8 @@ public class ItemClass {
         return flags;
     }
 
-    public float getPriceModifier() {
-        return priceModifier;
+    public int getFizzleSoundId() {
+        return fizzleSoundId;
     }
 
     public String getName() {
