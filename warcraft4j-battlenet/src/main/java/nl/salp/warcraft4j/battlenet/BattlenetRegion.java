@@ -1,4 +1,27 @@
+/*
+ *
+ *  * Licensed to the Warcraft4J Project under one
+ *  * or more contributor license agreements.  See the NOTICE file
+ *  * distributed with this work for additional information
+ *  * regarding copyright ownership.  The Warcraft4J Project licenses
+ *  * this file to you under the Apache License, Version 2.0 (the
+ *  * "License"); you may not use this file except in compliance
+ *  * with the License.  You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing,
+ *  * software distributed under the License is distributed on an
+ *  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  * KIND, either express or implied.  See the License for the
+ *  * specific language governing permissions and limitations
+ *  * under the License.
+ *
+ */
+
 package nl.salp.warcraft4j.battlenet;
+
+import nl.salp.warcraft4j.Region;
 
 /**
  * TODO Document class.
@@ -6,17 +29,23 @@ package nl.salp.warcraft4j.battlenet;
  * @author Barre Dijkstra
  */
 public enum BattlenetRegion {
-    AMERICAS("us"),
-    EUROPE("eu"),
-    KOREA("kr"),
-    TAIWAN("tw"),
-    CHINA("cn"),
-    SEA("us");
+    AMERICAS(Region.UNITED_STATES, "us"),
+    EUROPE(Region.EUROPE, "eu"),
+    KOREA(Region.KOREA, "kr"),
+    TAIWAN(Region.TAIWAN, "tw"),
+    CHINA(Region.CHINA, "cn"),
+    SEA(Region.SOUTH_EAST_ASIA, "us");
 
     private final String apiUri;
+    private final Region region;
 
-    private BattlenetRegion(String apiUri) {
+    private BattlenetRegion(Region region, String apiUri) {
+        this.region = region;
         this.apiUri = apiUri;
+    }
+
+    public Region getRegion() {
+        return region;
     }
 
     public String getApiUri() {
