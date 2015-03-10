@@ -1,0 +1,365 @@
+ ---------------------------------------------------------------------
+|     The CASC (Content Addressable Storage Container) Filesystem     |
+|           Warlords of Draenor Alpha, Build 6.0.1.18125              |
+|                 Written April 14th, 2014 by Caali                   |
+|                           Version 1.2                               |
+ ---------------------------------------------------------------------
+
+Distribution and reproduction of this specification are allowed without
+limitation, as long as it is not altered. Quotation in other works is
+freely allowed, as long as the source and author of the quote are stated.
+
+
+0) Introduction
+	CASC is the new file format currently used by Blizzard for the
+	Heroes of the Storm and WoW: Warlords of Draenor Alphas.
+	It is - according to them - more versatile and less bloated than
+	the previously used MPQ format. Also, as of now, it entirely
+	lacks encryption features and supports only one file compression
+	algorithm. File integrity of important files that must not be
+	modified (such as map files) is guaranteed by a file in the root
+	folder called 'signaturefile'. It seems that there is no longer
+	a way to determine the name of all files contained - unlike MPQs,
+	CASC files do not seem to contain a '(listfile)' containing all
+	file names in plain text.
+
+	There are still several unknown values in my analysis. Using what
+	I've found, one should be able to locate and extract any fully
+	downloaded file from the archives.
+	My research does not cover on-demand downloading or partially
+	downloaded files in any way - these might bring sense into some of
+	the unknowns.
+	Also, only files in 'data/data/' are covered. I have not yet figured
+	out what the files in 'data/config/' and 'data/indices/' are used
+	for - extracting game files is totally possible without them.
+
+	I appreciate any feedback on my analysis and hope that the remaining
+	unknowns can be figured out by someone based on what I have found.
+
+0.1) Terms used
+	- [LE]: Given data is stored using little endianess
+	- [BE]: Given data is stored using big endianess
+
+0.2) BlizzHash
+	Besides MD5, a version of Bob Jenkins' hash (from now on called BlizzHash)
+	is used (confer http://burtleburtle.net/bob/c/lookup3.c).
+	The hash value consists of two 4 byte parts A and B;
+	sometimes both, sometimes only one of them is used. Data is hashed
+	in 12 byte long blocks - but remaining bytes are considered as well.
+	The actual implementation can be seen in 'BlizzHash.cpp'.
+
+	!! Please note that HashA and HashB need to be initialized to 0 !!
+	!!             for each hash you want to generate               !!
+
+
+----------------------------------------------------------------------
+1) data.XXX Files
+1.1) Summary
+	All data.XXX files (from now on called 'data files')
+	are simple file containers. They contain bare files
+	only, no indexing information. All contained files are
+	stored as a whole sequential binary block with a short
+	header (30 bytes). Due to technical limitations (confer
+	the IDX file addressing scheme), no data file can be larger
+	than 2^30 = 1,073,741,824 bytes. However, there can be
+	up to 2^10 = 1,024 data files resulting in a total addressable
+	amount of 1TiB of compressed data (including overhead).
+
+1.2) File format
+1.2.1) Global format
+	[Block] [Block] [Block] .... [Block]
+
+1.2.2) [Block] format
+	16 Byte - MD5 Checksum (not sure of what, probably the header?)
+	4  Byte - Size of entire block (including above checksum) in bytes [LE]
+	10 Byte - Unknown
+	[Data]  -  Length: Size of entire block minus 30 bytes
+
+
+----------------------------------------------------------------------
+2) BLTE files
+2.1) Summary
+	BLTE files are (as of now) the only files contained within data files.
+	They contain the actual game files - optionally split to chunks, each
+	of which can be compressed (and probably downloaded) individually.
+
+2.2) File format
+2.2.1) Global format
+	4  Byte - 'BLTE' magic
+	4  Byte - CompressedDataOffset in bytes [BE]
+	if(CompressedDataOffset > 0)
+	{
+		2  Byte - Unknown, [BE] probably
+		2  Byte - Number of chunks [BE]
+		for(Number of chunks)
+		{
+			4  Byte - Compressed chunk size in bytes [BE]
+			4  Byte - Decompressed chunk size in bytes [BE]
+			16 Byte - Chunk MD5 Checksum (of compressed chunk data I think)
+		}
+
+		for(Number of chunks)
+		{
+			[CompressedDataBlock]
+		}
+	}
+	else
+	{
+		[CompressedDataBlock]
+	}
+
+2.2.2) [CompressedDataBlock] format
+	1  Byte - Compression type of [Data] (Currently using - 'N': No compression, 'Z': Deflate (ZLib))
+	[Data]  - Length: Compressed size minus 1 byte
+
+
+----------------------------------------------------------------------
+3) *.idx Files
+3.1) Summary
+	IDX files associate the first 9 bytes of a MD5 'File Key' (more on that later)
+	with the respective data file number (data.XXX) and the offset in
+	bytes within said data file pointing to the beginning of the [Block]
+	containing the file. The filename appears to consist of the hexadecimal
+	representation of a byte and 4 bytes [LE] glued together:
+		1  Byte - File number (there are always files 0x00 .. 0x0F)
+		4  Byte - Version number
+	It appears that old versions are kept during an update to be able to
+	recover data in case of data corruption. It is sufficient to load only
+	the IDX file with the highest version number of a given file number,
+	however one version of all file numbers must be loaded.
+
+3.2) File format
+3.2.1) Global format
+	Header 1:
+		4  Byte   - Header2 Length (in bytes) [LE]
+		4  Byte   - Header2 BlizzHash checksum (only A) [LE]
+
+		[PADDING] - 0x00 up to position (8 + Header2 Length + 0x0F) & 0xFFFFFFF0
+
+	Header 2:
+		4  Byte	  - Data Length (in bytes) [LE]
+		4  Byte   - Data BlizzHash checksum (only A) [LE]
+		            (Data is hashed in 18 byte blocks!)
+
+	Data:
+		for(Data Length / 18)
+		{
+			18 Byte   - [Block]
+		}
+
+		[PADDING] - 0x00 up to position (Data Length + 0x0FFF) & 0xFFFFF000
+		[Unknown]
+
+3.2.2) [Block] format
+	9  Byte - First 9 bytes of File Key
+	1  Byte - high byte of indexing information
+	4  Byte - low bytes of indexing information [BE]
+	4  Byte - File size in bytes [LE]
+
+	The indexing information is calculated as follows:
+		Data file number = (high byte << 2) | ((low bytes & 0xC0000000) >> 30)
+		Data file offset = (low bytes & 0x3FFFFFFF)
+
+
+----------------------------------------------------------------------
+4) Special Files contained in the data files
+4.1) Summary
+	Within the data files, there are 4 special files that are used for filesystem
+	administration and are no game files. Subsequently, they are not referenced
+	by the IDX files, but instead (through their data file MD5 checksum) by the
+	build config files (more on that later).
+
+4.2) The "encoding" file
+4.2.1) Summary
+	Given the MD5 hash of the _content_ (hence the name CASC) of a file, it is
+	used to determine the File Key, which can then be used to find the actual
+	file in the data files using the IDX files. While the File Key seems to be
+	a MD5 hash as well, I have not yet found out of what data. For the sole
+	purpose of extracting data, this is irrelevant, though.
+	Once extracted from the data file and the BLTE container, its format
+	is as follows:
+
+4.2.2) File format
+	Header:
+		2  Byte - Locale (?) 'EN'
+		1  Byte - Unknown
+		1  Byte - Unknown
+		1  Byte - Unknown
+		2  Byte - Unknown, [BE] probably
+		2  Byte - Unknown, [BE] probably
+		4  Byte - Hash Table Size [BE]
+		4  Byte - Unknown, [BE] probably
+		1  Byte - Unknown
+		4  Byte - Hash Table Offset in bytes [BE]
+
+	Unknown:
+		Set of plain text, zero-terminated ASCII strings up until
+		[Hash Table Offset] bytes from end of header
+
+	Hash Table Checksum Block:
+		for(Hash Table Size)
+		{
+			16  Byte - File content MD5 of the first entry in the hash block below
+			16  Byte - MD5 Checksum (probably of the hash block below?)
+		}
+
+	Hash Table Blocks:
+		for(Hash Table Size)
+		{
+			while( 2 Byte != 0 )
+			{
+				4  Byte - File size in bytes [BE]
+				16 Byte - File content MD5
+				16 Byte - File key
+			}
+
+			28  Byte - 0x00 Padding after last entry
+		}
+
+
+
+4.3) The "root" file
+4.3.1) Summary
+	It associates a BlizzHash of a game file's full name with the MD5 checksum
+	of its content - which can then be used to obtain the file key using the
+	encoding file, and so on. It solely consists of multiple Data Blocks until
+	its end. Once extracted from the data file and the BLTE container, its format
+	is as follows:
+
+4.3.2) File format
+4.3.2.1) Global format
+	[Data Block] [Data Block] [Data Block] .... [Data Block]
+
+4.3.2.2) [Data Block] format
+	Header:
+		4  Byte - Number of Root Entries [LE]
+		4  Byte - Unknown, [LE] probably
+		4  Byte - Unknown, [LE] probably
+	Unknown:
+		for(Number of Root Entries)
+		{
+			4  Byte - Unknown, [LE] probably
+		}
+	Data:
+		for(Number of Root Entries)
+		{
+			16 Byte - File content MD5
+			4  Byte - File full name's BlizzHash (B) [LE]
+			4  Byte - File full name's BlizzHash (A) [LE]
+		}
+
+
+
+4.4) The "download" file
+4.4.1) Summary
+	This is one of the four special files in the data files.
+
+
+
+4.5) The "install" file
+4.5.1) Summary
+	This is one of the four special files in the data files.
+
+
+----------------------------------------------------------------------
+5) The build configuration files
+5.1) Summary
+	Those files reside in 'data/config/'. Their filename is just a MD5
+	Hash, though I don't know yet of what data.
+	They are managed a folder structure following the first 2 bytes of
+	their MD5 Hash, for example a build configuration file called
+	'806f4fd265de05a9b328310fcc42eed0' can be found in:
+
+	data/config/
+	|	80/
+	|	|	6f/
+	|	|	|	806f4fd265de05a9b328310fcc42eed0
+
+	Those files are plain-text files with a format similar to ini files
+	containing information about a client build. They follow a scheme
+	like 'varname = varvalue'; '#' is used for comments. Currently,
+	the following variables are specified:
+
+5.2) Specified variables
+	    Name			    Information				       Example
+	build-name			The build's name			'WOW-18125patch6.0.1'
+	build-playbuild-installer	The installer to use			'ngdptool_casc2'
+	build-product			The product name			'WoW'
+	build-uid			The build's UID				'wow_beta'
+	download			The MD5 hash of the 'download' file
+	encoding			The MD5 hash of the 'encoding' file
+	install				The MD5 hash of the 'install' file
+	root				The MD5 hash of the 'root' file
+
+	Please note that there can be more than one MD5 hash given for the 4
+	special files. In that case, the last one seems to specify the one to use.
+
+
+----------------------------------------------------------------------
+6) The CDN (Content Distribution Network) configuration file
+6.1) Summary
+	This file resides in 'data/config/' and follows the same filename and
+	folder structure scheme of build configuration files described in 5).
+	They also share the same file format. It contains references to all
+	available build configuration files, archive groups, archives and patch
+	archives located in 'data/indices/'.
+
+6.2) Specified variables
+	    Name				      Information
+	archive-group		The archive group file in 'data/indices/'
+	archives		All archive files in 'data/indices/', separated by a space
+	builds			All build configuration files in 'data/config/', separated by a space
+	patch-archives		All patch archive files in 'data/indices/', separated by a space
+
+
+----------------------------------------------------------------------
+7) Procedure when reading from the CASC filesystem
+7.1) Initialization
+	- Load CDN configuration file and find build configuration file to use
+	- Load build configuration file
+
+	- Load IDX files and store the data in an associative container:
+		(First 9 bytes of File Key -> Indexing information)
+
+	- Locate and extract encoding file from the data files using the MD5 found in build configuration file
+	- Load encoding file and store the data in an associative container:
+		(File content MD5 -> File Key)
+
+	- Locate and extract root file from the data files using the MD5 found in build configuration file
+	- Load root file and store the data in an associative container:
+		(BlizzHash of full file name -> File content MD5)
+	    !!   Note that there can be multiple root entries   !!
+	    !!   for a given BlizzHash, but only one is valid   !!
+	    !!      (not sure how to determine this yet)        !!
+
+7.2) Locating and reading a file
+	- Make filename all-uppercase and convert '/' to '\'
+	- Generate BlizzHash of filename
+	- Find correct (or just try all you've found..) root entry for BlizzHash
+	- Using the file content's MD5 from the root entry, find File Key from encoding file
+	- Using the File Key, find Indexing information from IDX files
+	- Using the Indexing information, locate and extract the BLTE container of the file
+	- Extract file from above mentioned BLTE container
+
+
+----------------------------------------------------------------------
+8) Acknowledgements
+	- TOM_RUS and justMaku for their research on the data.XXX and BLTE file formats
+	  (https://github.com/tomrus88/BLTEExtractor)
+	  (https://github.com/justMaku/blte)
+
+
+----------------------------------------------------------------------
+9) Changelog
+	v1.0
+		- Initial release
+
+	v1.1
+		(thanks to TOM_RUS for his feedback)
+		- FileTable renamed to "encoding" file
+		- Manifest File renamed to "root" file
+		- Noted that BlizzHash is actually Bob Jenkins' hash
+		- Added information about the "download" and "install" files
+
+	v1.2
+		- Analysis of the 'data/config/' folder
