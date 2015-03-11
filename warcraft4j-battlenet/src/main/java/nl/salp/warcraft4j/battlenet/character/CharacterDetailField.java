@@ -24,23 +24,32 @@ package nl.salp.warcraft4j.battlenet.character;
  *
  * @author Barre Dijkstra
  */
-public class PlayerCharacterAppearance {
-    /*
-   "appearance": {
-        "faceVariation": int,
-        "skinColor": int,
-        "hairVariation": int,
-        "hairColor": int,
-        "featureVariation": int,
-        "showHelm": boolean,
-        "showCloak": boolean
+enum CharacterDetailField {
+    ACHIEVEMENTS("achievements"),
+    APPEARANCE("appearance"),
+    FEED("feed"),
+    GUILD("guild"),
+    HUNTER_PETS("hunterPets"),
+    ITEMS("items"),
+    MOUNTS("mounts"),
+    PETS("pets"),
+    PET_SLOTS("petSlots"),
+    PROGRESSION("progession"),
+    PVP("pvp"),
+    QUESTS("quest"),
+    REPUTATION("reputation"),
+    STATS("stats"),
+    TALENTS("talents"),
+    TITLES("titles"),
+    AUDIT("audit");
+
+    private final String fieldName;
+
+    private CharacterDetailField(String fieldName) {
+        this.fieldName = fieldName;
     }
-    */
-    private int faceVariation;
-    private int skinColor;
-    private int hairVariation;
-    private int hairColor;
-    private int featureVariation;
-    private boolean showHelm;
-    private boolean showCloak;
+
+    public String getFieldName() {
+        return fieldName;
+    }
 }

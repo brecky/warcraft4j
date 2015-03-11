@@ -1,0 +1,159 @@
+{
+  "lastModified": 1425965461000,
+  "name": "Bob",
+  "realm": "awesome-realm",
+  "battlegroup": "Happiness",
+  "class": 8,
+  "race": 7,
+  "gender": 0,
+  "level": 100,
+  "achievementPoints": 14905,
+  "thumbnail": "cerchio-del-sangue/89/109758553-avatar.jpg",
+  "calcClass": "e",
+  "titles": [{
+    "id": 63,
+    "name": "%s of the Shattered Sun"
+  }, {
+    "id": 81,
+    "name": "%s the Seeker"
+  }, {
+    "id": 74,
+    "name": "Elder %s"
+  }, {
+    "id": 75,
+    "name": "Flame Warden %s"
+  }, {
+    "id": 77,
+    "name": "%s the Exalted"
+  }, {
+    "id": 78,
+    "name": "%s the Explorer"
+  }, {
+    "id": 79,
+    "name": "%s the Diplomat"
+  }, {
+    "id": 84,
+    "name": "Chef %s"
+  }, {
+    "id": 113,
+    "name": "%s of Gnomeregan"
+  }, {
+    "id": 121,
+    "name": "Twilight Vanquisher %s"
+  }, {
+    "id": 124,
+    "name": "%s the Hallowed"
+  }, {
+    "id": 129,
+    "name": "%s, Champion of the Frozen Wastes"
+  }, {
+    "id": 130,
+    "name": "Ambassador %s"
+  }, {
+    "id": 131,
+    "name": "%s the Argent Champion"
+  }, {
+    "id": 132,
+    "name": "%s, Guardian of Cenarius"
+  }, {
+    "id": 133,
+    "name": "Brewmaster %s"
+  }, {
+    "id": 134,
+    "name": "Merrymaker %s"
+  }, {
+    "id": 135,
+    "name": "%s the Love Fool"
+  }, {
+    "id": 138,
+    "name": "Patron %s"
+  }, {
+    "id": 140,
+    "name": "%s of the Nightfall"
+  }, {
+    "id": 143,
+    "name": "%s Jenkins"
+  }, {
+    "id": 144,
+    "name": "Bloodsail Admiral %s"
+  }, {
+    "id": 146,
+    "name": "%s of the Exodar"
+  }, {
+    "id": 147,
+    "name": "%s of Darnassus"
+  }, {
+    "id": 148,
+    "name": "%s of Ironforge"
+  }, {
+    "id": 149,
+    "name": "%s of Stormwind"
+  }, {
+    "id": 155,
+    "name": "%s the Noble"
+  }, {
+    "id": 156,
+    "name": "Crusader %s"
+  }, {
+    "id": 164,
+    "name": "Starcaller %s"
+  }, {
+    "id": 165,
+    "name": "%s the Astral Walker"
+  }, {
+    "id": 168,
+    "name": "%s the Pilgrim"
+  }, {
+    "id": 172,
+    "name": "%s the Patient"
+  }, {
+    "id": 173,
+    "name": "%s the Light of Dawn"
+  }, {
+    "id": 174,
+    "name": "%s, Bane of the Fallen King"
+  }, {
+    "id": 175,
+    "name": "%s the Kingslayer"
+  }, {
+    "id": 176,
+    "name": "%s of the Ashen Verdict"
+  }, {
+    "id": 189,
+    "name": "Assistant Professor %s"
+  }, {
+    "id": 190,
+    "name": "Associate Professor %s"
+  }, {
+    "id": 227,
+    "name": "%s, Defender of a Shattered World"
+  }, {
+    "id": 228,
+    "name": "Dragonslayer %s"
+  }, {
+    "id": 229,
+    "name": "%s, Blackwing's Bane"
+  }, {
+    "id": 278,
+    "name": "Firelord %s"
+  }, {
+    "id": 285,
+    "name": "%s, Savior of Azeroth"
+  }, {
+    "id": 303,
+    "name": "Farmer %s"
+  }, {
+    "id": 287,
+    "name": "%s, Destroyer's End"
+  }, {
+    "id": 382,
+    "name": "%s, Conqueror of Orgrimmar"
+  }, {
+    "id": 338,
+    "name": "%s the Wakener"
+  }, {
+    "id": 351,
+    "name": "%s the Hordebreaker"
+  }],
+  "totalHonorableKills": 23712
+}
