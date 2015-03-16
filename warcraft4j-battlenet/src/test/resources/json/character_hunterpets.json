@@ -1,0 +1,215 @@
+{
+  "lastModified": 1426024203000,
+  "name": "Bob",
+  "realm": "awesome-realm",
+  "battlegroup": "Happiness",
+  "class": 3,
+  "race": 3,
+  "gender": 0,
+  "level": 100,
+  "achievementPoints": 14905,
+  "thumbnail": "cerchio-del-sangue/215/115358935-avatar.jpg",
+  "calcClass": "Y",
+  "hunterPets": [{
+    "name": "Porcupine",
+    "creature": 65839,
+    "selected": true,
+    "slot": 1,
+    "spec": {
+      "name": "Tenacity",
+      "role": "TANK",
+      "backgroundImage": "bg-deathknight-blood",
+      "icon": "ability_druid_demoralizingroar",
+      "description": "Stalwart and veteran defenders who unquestionably place their thick hides and protective exteriors in harm's way for their allies.",
+      "order": 1
+    },
+    "calcSpec": "Z",
+    "familyId": 127,
+    "familyName": "Porcupine"
+  }, {
+    "name": "Kitteh",
+    "creature": 50815,
+    "slot": 2,
+    "spec": {
+      "name": "Ferocity",
+      "role": "DPS",
+      "backgroundImage": "bg-deathknight-blood",
+      "icon": "ability_druid_kingofthejungle",
+      "description": "Driven by a frenzied persistence to pursue prey, these beasts stop at nothing to achieve victory; even death is temporary for these predators.",
+      "order": 0
+    },
+    "calcSpec": "a",
+    "familyId": 2,
+    "familyName": "Cat"
+  }, {
+    "name": "Carrion Bird",
+    "creature": 79746,
+    "slot": 18,
+    "spec": {
+      "name": "Ferocity",
+      "role": "DPS",
+      "backgroundImage": "bg-deathknight-blood",
+      "icon": "ability_druid_kingofthejungle",
+      "description": "Driven by a frenzied persistence to pursue prey, these beasts stop at nothing to achieve victory; even death is temporary for these predators.",
+      "order": 0
+    },
+    "calcSpec": "a",
+    "familyId": 7,
+    "familyName": "Carrion Bird"
+  }, {
+    "name": "Riverbeast",
+    "creature": 79577,
+    "slot": 19,
+    "spec": {
+      "name": "Tenacity",
+      "role": "TANK",
+      "backgroundImage": "bg-deathknight-blood",
+      "icon": "ability_druid_demoralizingroar",
+      "description": "Stalwart and veteran defenders who unquestionably place their thick hides and protective exteriors in harm's way for their allies.",
+      "order": 1
+    },
+    "calcSpec": "Z",
+    "familyId": 150,
+    "familyName": "Riverbeast"
+  }, {
+    "name": "Atuin",
+    "creature": 50058,
+    "slot": 16,
+    "spec": {
+      "name": "Tenacity",
+      "role": "TANK",
+      "backgroundImage": "bg-deathknight-blood",
+      "icon": "ability_druid_demoralizingroar",
+      "description": "Stalwart and veteran defenders who unquestionably place their thick hides and protective exteriors in harm's way for their allies.",
+      "order": 1
+    },
+    "calcSpec": "Z",
+    "familyId": 21,
+    "familyName": "Turtle"
+  }, {
+    "name": "Fox",
+    "creature": 58548,
+    "slot": 15,
+    "spec": {
+      "name": "Ferocity",
+      "role": "DPS",
+      "backgroundImage": "bg-deathknight-blood",
+      "icon": "ability_druid_kingofthejungle",
+      "description": "Driven by a frenzied persistence to pursue prey, these beasts stop at nothing to achieve victory; even death is temporary for these predators.",
+      "order": 0
+    },
+    "calcSpec": "a",
+    "familyId": 50,
+    "familyName": "Fox"
+  }, {
+    "name": "Goat",
+    "creature": 58892,
+    "slot": 14,
+    "spec": {
+      "name": "Ferocity",
+      "role": "DPS",
+      "backgroundImage": "bg-deathknight-blood",
+      "icon": "ability_druid_kingofthejungle",
+      "description": "Driven by a frenzied persistence to pursue prey, these beasts stop at nothing to achieve victory; even death is temporary for these predators.",
+      "order": 0
+    },
+    "calcSpec": "a",
+    "familyId": 129,
+    "familyName": "Goat"
+  }, {
+    "name": "Lovesbananas",
+    "creature": 43417,
+    "slot": 17,
+    "spec": {
+      "name": "Cunning",
+      "role": "DPS",
+      "backgroundImage": "bg-deathknight-blood",
+      "icon": "ability_eyeoftheowl",
+      "description": "Guileful creatures capable of skillfully mitigating lethal blows dealt to themselves and their allies.",
+      "order": 2
+    },
+    "calcSpec": "b",
+    "familyId": 51,
+    "familyName": "Monkey"
+  }, {
+    "name": "Rrakk",
+    "creature": 50329,
+    "slot": 13,
+    "spec": {
+      "name": "Cunning",
+      "role": "DPS",
+      "backgroundImage": "bg-deathknight-blood",
+      "icon": "ability_eyeoftheowl",
+      "description": "Guileful creatures capable of skillfully mitigating lethal blows dealt to themselves and their allies.",
+      "order": 2
+    },
+    "calcSpec": "b",
+    "familyId": 24,
+    "familyName": "Bat"
+  }, {
+    "name": "Skitters",
+    "creature": 23958,
+    "slot": 12,
+    "spec": {
+      "name": "Cunning",
+      "role": "DPS",
+      "backgroundImage": "bg-deathknight-blood",
+      "icon": "ability_eyeoftheowl",
+      "description": "Guileful creatures capable of skillfully mitigating lethal blows dealt to themselves and their allies.",
+      "order": 2
+    },
+    "calcSpec": "b",
+    "familyId": 3,
+    "familyName": "Spider"
+  }, {
+    "name": "Cat",
+    "creature": 28404,
+    "slot": 5,
+    "calcSpec": "",
+    "familyId": 2,
+    "familyName": "Cat"
+  }, {
+    "name": "Crab",
+    "creature": 50959,
+    "slot": 10,
+    "calcSpec": "",
+    "familyId": 8,
+    "familyName": "Crab"
+  }, {
+    "name": "Dog",
+    "creature": 29452,
+    "slot": 11,
+    "calcSpec": "",
+    "familyId": 52,
+    "familyName": "Dog"
+  }, {
+    "name": "Kitteh",
+    "creature": 50159,
+    "slot": 6,
+    "calcSpec": "",
+    "familyId": 2,
+    "familyName": "Cat"
+  }, {
+    "name": "Scorpid",
+    "creature": 53240,
+    "slot": 9,
+    "calcSpec": "",
+    "familyId": 20,
+    "familyName": "Scorpid"
+  }, {
+    "name": "Spider",
+    "creature": 54323,
+    "slot": 7,
+    "calcSpec": "",
+    "familyId": 3,
+    "familyName": "Spider"
+  }, {
+    "name": "Spider",
+    "creature": 54338,
+    "slot": 8,
+    "calcSpec": "",
+    "familyId": 3,
+    "familyName": "Spider"
+  }],
+  "totalHonorableKills": 4517
+}

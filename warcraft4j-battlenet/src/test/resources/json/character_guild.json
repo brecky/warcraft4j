@@ -1,0 +1,28 @@
+{
+  "lastModified": 1425965461000,
+  "name": "Bob",
+  "realm": "awesome-realm",
+  "battlegroup": "Happiness",
+  "class": 8,
+  "race": 7,
+  "gender": 0,
+  "level": 100,
+  "achievementPoints": 14905,
+  "thumbnail": "cerchio-del-sangue/89/109758553-avatar.jpg",
+  "calcClass": "e",
+  "guild": {
+    "name": "Hydra",
+    "realm": "awesome-realm",
+    "battlegroup": "Happiness",
+    "members": 459,
+    "achievementPoints": 2540,
+    "emblem": {
+      "icon": 110,
+      "iconColor": "ffb1b8b1",
+      "border": 1,
+      "borderColor": "ffffffff",
+      "backgroundColor": "ffb4bba8"
+    }
+  },
+  "totalHonorableKills": 23712
+}
