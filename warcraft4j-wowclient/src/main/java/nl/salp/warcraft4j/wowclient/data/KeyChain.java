@@ -1,4 +1,4 @@
-package nl.salp.warcraft4j.wowclient.model;
+package nl.salp.warcraft4j.wowclient.data;
 
 import nl.salp.warcraft4j.wowclient.dbc.mapping.Dbc;
 import nl.salp.warcraft4j.wowclient.dbc.mapping.DbcDataType;
@@ -8,27 +8,28 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * TODO Document class.
  */
-@Dbc("StringLookups.dbc")
-public class StringLookups {
-    @DbcField(column = 0, dataType = DbcDataType.INT32)
+@Deprecated
+@Dbc("KeyChain.db2")
+public class KeyChain {
+    @DbcField(column = 1, dataType = DbcDataType.INT32)
     private int id;
-    @DbcField(column = 1, dataType = DbcDataType.STRINGTABLE_REFERENCE)
-    private String string;
+    @DbcField(column = 2, length=32, dataType = DbcDataType.STRING)
+    private String key;
 
-    public StringLookups() {
+    public KeyChain() {
     }
 
-    public StringLookups(int id, String string) {
+    public KeyChain(int id, String key) {
         this.id = id;
-        this.string = string;
+        this.key = key;
     }
 
     public int getId() {
         return id;
     }
 
-    public String getString() {
-        return string;
+    public String getKey() {
+        return key;
     }
 
     @Override

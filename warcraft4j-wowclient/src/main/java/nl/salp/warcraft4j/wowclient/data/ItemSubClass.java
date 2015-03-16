@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.wowclient.model;
+package nl.salp.warcraft4j.wowclient.data;
 
 import nl.salp.warcraft4j.wowclient.dbc.mapping.Dbc;
 import nl.salp.warcraft4j.wowclient.dbc.mapping.DbcDataType;
