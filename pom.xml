@@ -62,6 +62,7 @@
         <module>warcraft4j-wowhead</module>
         <module>warcraft4j-addon</module>
         <module>warcraft4j-wowclient</module>
+        <module>warcraft4j-webapp</module>
     </modules>
 
     <!-- Project properties -->
@@ -109,12 +110,12 @@
             </dependency>
             <dependency>
                 <groupId>nl.salp.warcraft4j</groupId>
-                <artifactId>warcraft4j-wowhead</artifactId>
+                <artifactId>warcraft4j-combatlog</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>nl.salp.warcraft4j</groupId>
-                <artifactId>warcraft4j-combatlog</artifactId>
+                <artifactId>warcraft4j-wowhead</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
