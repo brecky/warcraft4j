@@ -1,0 +1,435 @@
+{
+  "lastModified": 1426014364000,
+  "name": "Bob",
+  "realm": "awesome-realm",
+  "battlegroup": "Happiness",
+  "class": 2,
+  "race": 1,
+  "gender": 0,
+  "level": 100,
+  "achievementPoints": 14905,
+  "thumbnail": "cerchio-del-sangue/32/109620256-avatar.jpg",
+  "calcClass": "b",
+  "items": {
+    "averageItemLevel": 654,
+    "averageItemLevelEquipped": 649,
+    "head": {
+      "id": 118896,
+      "name": "Helmet of Vile Indignation",
+      "icon": "inv_helm_plate_draenorquest95_b_01",
+      "quality": 4,
+      "itemLevel": 665,
+      "tooltipParams": {
+        "transmogItem": 71514
+      },
+      "stats": [{
+        "stat": 59,
+        "amount": 141
+      }, {
+        "stat": 49,
+        "amount": 153
+      }, {
+        "stat": 74,
+        "amount": 219
+      }, {
+        "stat": 7,
+        "amount": 347
+      }],
+      "armor": 282,
+      "context": "",
+      "bonusLists": []
+    },
+    "neck": {
+      "id": 118848,
+      "name": "Battle Hardened Gorget",
+      "icon": "inv_misc_necklace_6_0_034",
+      "quality": 4,
+      "itemLevel": 665,
+      "tooltipParams": {},
+      "stats": [{
+        "stat": 50,
+        "amount": 85
+      }, {
+        "stat": 72,
+        "amount": 130
+      }, {
+        "stat": 36,
+        "amount": 88
+      }, {
+        "stat": 7,
+        "amount": 196
+      }],
+      "armor": 0,
+      "context": "",
+      "bonusLists": []
+    },
+    "shoulder": {
+      "id": 114520,
+      "name": "Crazed Bomber's Shoulderguard of the Feverflare",
+      "icon": "inv_plate_draenorlfr_c_01shoulders",
+      "quality": 4,
+      "itemLevel": 645,
+      "tooltipParams": {},
+      "stats": [{
+        "stat": 49,
+        "amount": 87
+      }, {
+        "stat": 74,
+        "amount": 144
+      }, {
+        "stat": 36,
+        "amount": 102
+      }, {
+        "stat": 7,
+        "amount": 216
+      }],
+      "armor": 246,
+      "context": "dungeon-normal",
+      "bonusLists": [122]
+    },
+    "back": {
+      "id": 116298,
+      "name": "Flamescarred Drape",
+      "icon": "inv_cape_draenorraid_d_01leather_druid",
+      "quality": 4,
+      "itemLevel": 640,
+      "tooltipParams": {
+        "gem0": 115805,
+        "enchant": 5312,
+        "transmogItem": 34241
+      },
+      "stats": [{
+        "stat": 50,
+        "amount": 62
+      }, {
+        "stat": 32,
+        "amount": 73
+      }, {
+        "stat": 72,
+        "amount": 103
+      }, {
+        "stat": 7,
+        "amount": 155
+      }],
+      "armor": 47,
+      "context": "raid-finder",
+      "bonusLists": [563]
+    },
+    "chest": {
+      "id": 114499,
+      "name": "Crazed Bomber's Breastplate of the Adaptable",
+      "icon": "inv_plate_draenorlfr_c_01chest",
+      "quality": 4,
+      "itemLevel": 651,
+      "tooltipParams": {
+        "transmogItem": 71512
+      },
+      "stats": [{
+        "stat": 40,
+        "amount": 271
+      }, {
+        "stat": 74,
+        "amount": 203
+      }, {
+        "stat": 7,
+        "amount": 305
+      }],
+      "armor": 333,
+      "context": "dungeon-normal",
+      "bonusLists": [490, 560]
+    },
+    "shirt": {
+      "id": 52019,
+      "name": "Precious' Ribbon",
+      "icon": "inv_misc_ribbon_01",
+      "quality": 2,
+      "itemLevel": 1,
+      "tooltipParams": {},
+      "stats": [],
+      "armor": 0,
+      "context": "",
+      "bonusLists": []
+    },
+    "wrist": {
+      "id": 114496,
+      "name": "Crazed Bomber's Bracers of the Harmonious",
+      "icon": "inv_plate_draenorlfr_c_01wrist",
+      "quality": 4,
+      "itemLevel": 645,
+      "tooltipParams": {},
+      "stats": [{
+        "stat": 49,
+        "amount": 78
+      }, {
+        "stat": 40,
+        "amount": 61
+      }, {
+        "stat": 74,
+        "amount": 108
+      }, {
+        "stat": 7,
+        "amount": 162
+      }],
+      "armor": 143,
+      "context": "dungeon-normal",
+      "bonusLists": [212]
+    },
+    "hands": {
+      "id": 116233,
+      "name": "Grips of Burning Infusion",
+      "icon": "inv_plate_draenorlfr_c_01glove",
+      "quality": 4,
+      "itemLevel": 640,
+      "tooltipParams": {
+        "transmogItem": 71513
+      },
+      "stats": [{
+        "stat": 49,
+        "amount": 105
+      }, {
+        "stat": 32,
+        "amount": 70
+      }, {
+        "stat": 74,
+        "amount": 138
+      }, {
+        "stat": 7,
+        "amount": 207
+      }],
+      "armor": 202,
+      "context": "raid-finder",
+      "bonusLists": []
+    },
+    "waist": {
+      "id": 115432,
+      "name": "Waistplate of Bladed Force",
+      "icon": "inv_belt_17",
+      "quality": 4,
+      "itemLevel": 650,
+      "tooltipParams": {
+        "transmogItem": 34485
+      },
+      "stats": [{
+        "stat": 59,
+        "amount": 112
+      }, {
+        "stat": 49,
+        "amount": 81
+      }, {
+        "stat": 74,
+        "amount": 151
+      }, {
+        "stat": 7,
+        "amount": 226
+      }],
+      "armor": 187,
+      "context": "",
+      "bonusLists": []
+    },
+    "legs": {
+      "id": 109819,
+      "name": "Verdant Plate Legguards",
+      "icon": "inv_pant_plate_draenordungeon_c_01",
+      "quality": 3,
+      "itemLevel": 630,
+      "tooltipParams": {
+        "transmogItem": 71515
+      },
+      "stats": [{
+        "stat": 49,
+        "amount": 121
+      }, {
+        "stat": 32,
+        "amount": 95
+      }, {
+        "stat": 74,
+        "amount": 167
+      }, {
+        "stat": 7,
+        "amount": 251
+      }],
+      "armor": 275,
+      "context": "dungeon-heroic",
+      "bonusLists": [524]
+    },
+    "feet": {
+      "id": 114504,
+      "name": "Crazed Bomber's Greaves of the Peerless",
+      "icon": "inv_plate_draenorlfr_c_01boots",
+      "quality": 4,
+      "itemLevel": 645,
+      "tooltipParams": {
+        "transmogItem": 45166
+      },
+      "stats": [{
+        "stat": 49,
+        "amount": 110
+      }, {
+        "stat": 32,
+        "amount": 73
+      }, {
+        "stat": 62,
+        "amount": 82
+      }, {
+        "stat": 74,
+        "amount": 144
+      }, {
+        "stat": 7,
+        "amount": 216
+      }],
+      "armor": 225,
+      "context": "dungeon-normal",
+      "bonusLists": [41, 45]
+    },
+    "finger1": {
+      "id": 109777,
+      "name": "Unsullied Signet",
+      "icon": "inv_60dungeon_ring6a",
+      "quality": 3,
+      "itemLevel": 630,
+      "tooltipParams": {
+        "enchant": 5326
+      },
+      "stats": [{
+        "stat": 50,
+        "amount": 63
+      }, {
+        "stat": 49,
+        "amount": 63
+      }, {
+        "stat": 72,
+        "amount": 94
+      }, {
+        "stat": 7,
+        "amount": 141
+      }],
+      "armor": 0,
+      "context": "dungeon-heroic",
+      "bonusLists": [524]
+    },
+    "finger2": {
+      "id": 118298,
+      "name": "Timeless Solium Band of the Bulwark",
+      "icon": "inv_misc_6oring_silverlv2",
+      "quality": 4,
+      "itemLevel": 680,
+      "tooltipParams": {
+        "enchant": 5326
+      },
+      "stats": [{
+        "stat": 50,
+        "amount": 106
+      }, {
+        "stat": 40,
+        "amount": 90
+      }, {
+        "stat": 72,
+        "amount": 150
+      }, {
+        "stat": 7,
+        "amount": 225
+      }],
+      "armor": 0,
+      "context": "quest-reward",
+      "bonusLists": []
+    },
+    "trinket1": {
+      "id": 114553,
+      "name": "Grandiose Resistance",
+      "icon": "inv_misc_trinket6oog_handeye2",
+      "quality": 4,
+      "itemLevel": 645,
+      "tooltipParams": {},
+      "stats": [{
+        "stat": 50,
+        "amount": 183
+      }, {
+        "stat": 32,
+        "amount": 183
+      }],
+      "armor": 0,
+      "context": "dungeon-normal",
+      "bonusLists": []
+    },
+    "trinket2": {
+      "id": 113861,
+      "name": "Evergaze Arcane Eidolon",
+      "icon": "inv_misc_trinket6oog_handeye",
+      "quality": 4,
+      "itemLevel": 655,
+      "tooltipParams": {},
+      "stats": [{
+        "stat": 49,
+        "amount": 285
+      }],
+      "armor": 0,
+      "context": "raid-normal",
+      "bonusLists": []
+    },
+    "mainHand": {
+      "id": 115327,
+      "name": "Grandiose Axe of the Harmonious",
+      "icon": "inv_axe_1h_draenorquest_b_01",
+      "quality": 4,
+      "itemLevel": 645,
+      "tooltipParams": {
+        "gem0": 115805,
+        "enchant": 5336,
+        "transmogItem": 45142
+      },
+      "stats": [{
+        "stat": 49,
+        "amount": 45
+      }, {
+        "stat": 40,
+        "amount": 60
+      }, {
+        "stat": 4,
+        "amount": 82
+      }, {
+        "stat": 7,
+        "amount": 123
+      }],
+      "armor": 0,
+      "weaponInfo": {
+        "damage": {
+          "min": 487,
+          "max": 906,
+          "exactMin": 487.0,
+          "exactMax": 906.0
+        },
+        "weaponSpeed": 2.6,
+        "dps": 267.8846
+      },
+      "context": "dungeon-normal",
+      "bonusLists": [199, 563]
+    },
+    "offHand": {
+      "id": 113666,
+      "name": "Absalom's Bloody Bulwark",
+      "icon": "inv_shield_draenorraid_d_02",
+      "quality": 4,
+      "itemLevel": 655,
+      "tooltipParams": {
+        "transmogItem": 32375
+      },
+      "stats": [{
+        "stat": 49,
+        "amount": 66
+      }, {
+        "stat": 4,
+        "amount": 119
+      }, {
+        "stat": 36,
+        "amount": 87
+      }, {
+        "stat": 7,
+        "amount": 178
+      }],
+      "armor": 759,
+      "context": "raid-normal",
+      "bonusLists": []
+    }
+  },
+  "totalHonorableKills": 14512
+}

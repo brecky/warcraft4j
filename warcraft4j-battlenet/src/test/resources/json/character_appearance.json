@@ -1,0 +1,23 @@
+{
+  "lastModified": 1425965461000,
+  "name": "Bob",
+  "realm": "awesome-realm",
+  "battlegroup": "Happiness",
+  "class": 8,
+  "race": 7,
+  "gender": 0,
+  "level": 100,
+  "achievementPoints": 14905,
+  "thumbnail": "cerchio-del-sangue/89/109758553-avatar.jpg",
+  "calcClass": "e",
+  "appearance": {
+    "faceVariation": 6,
+    "skinColor": 1,
+    "hairVariation": 0,
+    "hairColor": 6,
+    "featureVariation": 7,
+    "showHelm": true,
+    "showCloak": true
+  },
+  "totalHonorableKills": 23712
+}
