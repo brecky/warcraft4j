@@ -1,10 +1,26 @@
 #####
+# Generic files
+#####
+*.so
+*.log
+*.out
+*~
+*.swp
+*.DS_Store
+*.lock
+*.bak
+.tmp/
+
+#####
 # Build files and folders
 #####
 target/
 classes/
 out/
 bin/
+build/
+dist/
+coverage/
 .checkstyle
 .pmd
 
@@ -15,6 +31,16 @@ bin/
 .settings/
 .classpath
 .project
+
+#####
+# NetBeans specific files
+#####
+nbproject/
+nbbuild/
+nbdist/
+nbactions.xml
+nb-build.xml
+nb-configuration.xml
 
 #####
 # IntelliJ IDEA files and folders
