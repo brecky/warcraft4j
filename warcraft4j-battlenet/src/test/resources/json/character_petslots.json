@@ -1,0 +1,33 @@
+{
+  "lastModified": 1425965461000,
+  "name": "Bob",
+  "realm": "awesome-realm",
+  "battlegroup": "Happiness",
+  "class": 8,
+  "race": 7,
+  "gender": 0,
+  "level": 100,
+  "achievementPoints": 14905,
+  "thumbnail": "cerchio-del-sangue/89/109758553-avatar.jpg",
+  "calcClass": "e",
+  "petSlots": [{
+    "slot": 1,
+    "battlePetGuid": "00000000042919C4",
+    "isEmpty": false,
+    "isLocked": false,
+    "abilities": [826, 298, 828]
+  }, {
+    "slot": 2,
+    "battlePetGuid": "00000000049AC386",
+    "isEmpty": false,
+    "isLocked": false,
+    "abilities": [1359, 1357, 1354]
+  }, {
+    "slot": 3,
+    "battlePetGuid": "0000000004291986",
+    "isEmpty": false,
+    "isLocked": false,
+    "abilities": [116, 279, 387]
+  }],
+  "totalHonorableKills": 23712
+}
