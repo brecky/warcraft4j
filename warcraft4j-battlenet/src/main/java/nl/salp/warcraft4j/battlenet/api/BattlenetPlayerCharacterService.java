@@ -19,10 +19,21 @@
 
 package nl.salp.warcraft4j.battlenet.api;
 
+import nl.salp.warcraft4j.Region;
+import nl.salp.warcraft4j.model.character.PlayerCharacter;
+import nl.salp.warcraft4j.model.data.Realm;
+import nl.salp.warcraft4j.service.NotFoundException;
+import nl.salp.warcraft4j.service.PlayerCharacterService;
+import nl.salp.warcraft4j.service.ServiceException;
+
 /**
  * TODO Document.
  *
  * @author Barre Dijkstra
  */
-public class PlayerCharacterService {
+public class BattlenetPlayerCharacterService implements PlayerCharacterService {
+    @Override
+    public PlayerCharacter find(Region region, Realm realm, String name) throws NotFoundException, ServiceException {
+        return null;
+    }
 }
