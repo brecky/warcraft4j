@@ -37,7 +37,7 @@
     <description>Battle.NET API implementation for Warcraft4J</description>
 
     <properties>
-        <dependency.google-oauth.version>1.19.0</dependency.google-oauth.version>
+        <dependency.genson.version>1.2</dependency.genson.version>
     </properties>
 
     <dependencies>
@@ -46,28 +46,9 @@
             <artifactId>warcraft4j-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.oauth-client</groupId>
-            <artifactId>google-oauth-client</artifactId>
-            <version>${dependency.google-oauth.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.oltu.oauth2</groupId>
-            <artifactId>org.apache.oltu.oauth2.client</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.owlike</groupId>
             <artifactId>genson</artifactId>
-            <version>1.2</version>
+            <version>${dependency.genson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
