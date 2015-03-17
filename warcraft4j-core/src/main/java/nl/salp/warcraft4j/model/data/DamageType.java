@@ -17,15 +17,21 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.model;
+package nl.salp.warcraft4j.model.data;
 
 /**
- * TODO Add description.
+ * Damage type.
  *
  * @author Barre Dijkstra
  */
-public class CreatureType {
-    private int id;
-    private String name;
-    // TODO Translate flags to fields.
+public class DamageType extends StaticDataEntity {
+    /**
+     * Create a new damage type.
+     *
+     * @param wowId The ID of the damage type as used in World of Warcraft.
+     * @param name  The name of the damage type.
+     */
+    public DamageType(long wowId, String name) {
+        super(wowId, name);
+    }
 }

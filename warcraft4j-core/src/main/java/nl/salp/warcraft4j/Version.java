@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.model;
+package nl.salp.warcraft4j;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;

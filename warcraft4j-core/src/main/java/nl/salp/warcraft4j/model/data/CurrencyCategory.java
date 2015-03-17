@@ -17,16 +17,15 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.model;
+package nl.salp.warcraft4j.model.data;
 
 /**
  * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public class Resistance {
+public class CurrencyCategory {
     private int id;
+    // TODO Determine the meaning of the parsed flags.
     private String name;
-    private DamageType damageType;
-    // TODO Translate flags to fields.
 }

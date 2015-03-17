@@ -17,15 +17,35 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.model;
+package nl.salp.warcraft4j.model.data;
 
 /**
- * TODO Add description.
+ * Item class.
  *
  * @author Barre Dijkstra
  */
-public class CurrencyCategory {
-    private int id;
-    // TODO Determine the meaning of the parsed flags.
-    private String name;
+public class ItemClass extends StaticDataEntity {
+    /** The sub classes of the item class. */
+    private final ItemClass[] subClasses;
+
+    /**
+     * Create a new item class.
+     *
+     * @param wowId      The ID of the item class as used in World of Warcraft.
+     * @param name       The name of the item class.
+     * @param subClasses The item sub classes for the item class.
+     */
+    public ItemClass(long wowId, String name, ItemClass... subClasses) {
+        super(wowId, name);
+        this.subClasses = subClasses;
+    }
+
+    /**
+     * Get the sub classes of the item.
+     *
+     * @return The sub classes.
+     */
+    public ItemClass[] getSubClasses() {
+        return subClasses;
+    }
 }

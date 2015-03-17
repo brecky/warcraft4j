@@ -17,14 +17,21 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.model;
+package nl.salp.warcraft4j.model.data;
 
 /**
- * TODO Add description.
+ * Realm battlegroup.
  *
  * @author Barre Dijkstra
  */
-public class DamageType {
-    private int id;
-    private String name;
+public class Battlegroup extends StaticDataEntity {
+    /**
+     * Create a new StaticDataEntity.
+     *
+     * @param wowId The ID of the entity as used in World of Warcraft.
+     * @param name  The name of the entity.
+     */
+    public Battlegroup(long wowId, String name) {
+        super(wowId, name);
+    }
 }

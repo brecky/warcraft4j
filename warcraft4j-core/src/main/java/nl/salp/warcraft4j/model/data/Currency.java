@@ -17,16 +17,15 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.model;
+package nl.salp.warcraft4j.model.data;
 
 /**
  * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public class ItemClass {
-    /** The game id of the item class. */
+public class Currency {
     private int id;
-    /** The name of the item class. */
     private String name;
+    private CurrencyCategory category;
 }

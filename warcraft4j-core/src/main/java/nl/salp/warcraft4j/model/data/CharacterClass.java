@@ -17,15 +17,35 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.model;
+package nl.salp.warcraft4j.model.data;
 
 /**
- * TODO Add description.
+ * Character class.
  *
  * @author Barre Dijkstra
  */
-public class Currency {
-    private int id;
-    private String name;
-    private CurrencyCategory category;
+public class CharacterClass extends StaticDataEntity {
+    /** The primary power type the character class uses. */
+    private final PowerType powerType;
+
+    /**
+     * Create a new StaticDataEntity.
+     *
+     * @param wowId     The ID of the character class as used in World of Warcraft.
+     * @param name      The name of the character class.
+     * @param powerType The primary power type the character class uses.
+     */
+    public CharacterClass(long wowId, String name, PowerType powerType) {
+        super(wowId, name);
+        this.powerType = powerType;
+    }
+
+    /**
+     * Get the primary power type the character class uses.
+     *
+     * @return The power type.
+     */
+    public PowerType getPowerType() {
+        return powerType;
+    }
 }
