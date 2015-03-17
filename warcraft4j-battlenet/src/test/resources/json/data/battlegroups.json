@@ -1,0 +1,30 @@
+{
+  "battlegroups": [{
+    "name": "Cruelty / Crueldad",
+    "slug": "cruelty-crueldad"
+  }, {
+    "name": "EU Arena Pass",
+    "slug": "eu-arena-pass"
+  }, {
+    "name": "Embuscade / Hinterhalt",
+    "slug": "embuscade-hinterhalt"
+  }, {
+    "name": "Glutsturm / Emberstorm",
+    "slug": "glutsturm-emberstorm"
+  }, {
+    "name": "Misery",
+    "slug": "misery"
+  }, {
+    "name": "Reckoning / Abrechnung",
+    "slug": "reckoning-abrechnung"
+  }, {
+    "name": "Sturmangriff / Charge",
+    "slug": "sturmangriff-charge"
+  }, {
+    "name": "Vengeance / Rache",
+    "slug": "vengeance-rache"
+  }, {
+    "name": "Vindication",
+    "slug": "vindication"
+  }]
+}
