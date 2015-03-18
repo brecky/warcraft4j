@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.battlenet.api.dto;
+package nl.salp.warcraft4j.battlenet.api.wow.dto;
 
 import com.owlike.genson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -29,24 +29,76 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-public class WeaponInfoDTO {
-    @JsonProperty("damage")
-    private DamageDTO damage;
-    @JsonProperty("weaponSpeed")
-    private double weaponSpeed;
-    @JsonProperty("dps")
-    private double dps;
+public class PetStatsDTO {
+    @JsonProperty("speciesId")
+    private int speciesId;
+    @JsonProperty("breedId")
+    private int breedId;
+    @JsonProperty("petQualityId")
+    private int petQualityId;
+    @JsonProperty("level")
+    private int level;
+    @JsonProperty("health")
+    private int health;
+    @JsonProperty("power")
+    private int power;
+    @JsonProperty("speed")
+    private int speed;
 
-    public DamageDTO getDamage() {
-        return damage;
+    public int getSpeciesId() {
+        return speciesId;
     }
 
-    public double getWeaponSpeed() {
-        return weaponSpeed;
+    public void setSpeciesId(int speciesId) {
+        this.speciesId = speciesId;
     }
 
-    public double getDps() {
-        return dps;
+    public int getBreedId() {
+        return breedId;
+    }
+
+    public void setBreedId(int breedId) {
+        this.breedId = breedId;
+    }
+
+    public int getPetQualityId() {
+        return petQualityId;
+    }
+
+    public void setPetQualityId(int petQualityId) {
+        this.petQualityId = petQualityId;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public int getPower() {
+        return power;
+    }
+
+    public void setPower(int power) {
+        this.power = power;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 
     @Override

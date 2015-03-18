@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.battlenet.api.dto;
+package nl.salp.warcraft4j.battlenet.api.wow.dto;
 
 import com.owlike.genson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -29,66 +29,46 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-public class HunterPetSpecDTO {
-    @JsonProperty("name")
-    private String name;
-    @JsonProperty("role")
-    private String role;
-    @JsonProperty("backgroundImage")
-    private String backgroundImage;
-    @JsonProperty("icon")
-    private String icon;
-    @JsonProperty("description")
-    private String description;
-    @JsonProperty("order")
-    private int order;
+public class DamageDTO {
+    @JsonProperty("min")
+    private int min;
+    @JsonProperty("max")
+    private int max;
+    @JsonProperty("exactMin")
+    private double exactMin;
+    @JsonProperty("exactMax")
+    private double exactMax;
 
-    public String getName() {
-        return name;
+    public int getMin() {
+        return min;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMin(int min) {
+        this.min = min;
     }
 
-    public String getRole() {
-        return role;
+    public int getMax() {
+        return max;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setMax(int max) {
+        this.max = max;
     }
 
-    public String getBackgroundImage() {
-        return backgroundImage;
+    public double getExactMin() {
+        return exactMin;
     }
 
-    public void setBackgroundImage(String backgroundImage) {
-        this.backgroundImage = backgroundImage;
+    public void setExactMin(double exactMin) {
+        this.exactMin = exactMin;
     }
 
-    public String getIcon() {
-        return icon;
+    public double getExactMax() {
+        return exactMax;
     }
 
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(int order) {
-        this.order = order;
+    public void setExactMax(double exactMax) {
+        this.exactMax = exactMax;
     }
 
     @Override
@@ -105,4 +85,5 @@ public class HunterPetSpecDTO {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
 }

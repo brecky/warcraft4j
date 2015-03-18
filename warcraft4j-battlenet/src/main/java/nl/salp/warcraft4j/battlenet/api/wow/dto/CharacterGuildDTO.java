@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.battlenet.api.dto;
+package nl.salp.warcraft4j.battlenet.api.wow.dto;
 
 import com.owlike.genson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -30,22 +30,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author Barre Dijkstra
  */
 public class CharacterGuildDTO {
-    /*
-    "guild": {
-        "name": string,
-        "realm": string,
-        "battlegroup": string,
-        "members": int,
-        "achievementPoints": int,
-        "emblem": {
-            "icon": int,
-            "iconColor": string,
-            "border": int,
-            "borderColor": string,
-            "backgroundColor": string
-        }
-    }
-     */
     @JsonProperty("name")
     private String name;
     @JsonProperty("realm")

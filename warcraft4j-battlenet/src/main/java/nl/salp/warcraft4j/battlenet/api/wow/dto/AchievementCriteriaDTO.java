@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.battlenet.api.dto;
+package nl.salp.warcraft4j.battlenet.api.wow.dto;
 
 import com.owlike.genson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -26,68 +26,49 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * TODO Document.
- * <pre>
- * "emblem": {
- *     "icon": int,
- *     "iconColor": string,
- *     "border": int,
- *     "borderColor": string,
- *     "backgroundColor": string
- * }
- * </pre>
  *
  * @author Barre Dijkstra
  */
-public class GuildEmblemDTO {
-    @JsonProperty("icon")
-    private int icon;
-    @JsonProperty("iconColor")
-    private String iconColor;
-    @JsonProperty("border")
-    private int border;
-    @JsonProperty("borderColor")
-    private String borderColor;
-    @JsonProperty("backgroundColor")
-    private String backgroundColor;
+public class AchievementCriteriaDTO {
+    @JsonProperty("id")
+    private long id;
+    @JsonProperty("description")
+    private String description;
+    @JsonProperty("orderIndex")
+    private int orderIndex;
+    @JsonProperty("max")
+    private int maxCount;
 
-    public int getIcon() {
-        return icon;
+    public long getId() {
+        return id;
     }
 
-    public void setIcon(int icon) {
-        this.icon = icon;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public String getIconColor() {
-        return iconColor;
+    public String getDescription() {
+        return description;
     }
 
-    public void setIconColor(String iconColor) {
-        this.iconColor = iconColor;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public int getBorder() {
-        return border;
+    public int getOrderIndex() {
+        return orderIndex;
     }
 
-    public void setBorder(int border) {
-        this.border = border;
+    public void setOrderIndex(int orderIndex) {
+        this.orderIndex = orderIndex;
     }
 
-    public String getBorderColor() {
-        return borderColor;
+    public int getMaxCount() {
+        return maxCount;
     }
 
-    public void setBorderColor(String borderColor) {
-        this.borderColor = borderColor;
-    }
-
-    public String getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public void setBackgroundColor(String backgroundColor) {
-        this.backgroundColor = backgroundColor;
+    public void setMaxCount(int maxCount) {
+        this.maxCount = maxCount;
     }
 
     @Override

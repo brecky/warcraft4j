@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.battlenet.api.dto;
+package nl.salp.warcraft4j.battlenet.api.wow.dto;
 
 import com.owlike.genson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -26,29 +26,68 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * TODO Document.
+ * <pre>
+ * "emblem": {
+ *     "icon": int,
+ *     "iconColor": string,
+ *     "border": int,
+ *     "borderColor": string,
+ *     "backgroundColor": string
+ * }
+ * </pre>
  *
  * @author Barre Dijkstra
  */
-public class StatAmountDTO {
-    @JsonProperty("stat")
-    private int stat;
-    @JsonProperty("amount")
-    private int amount;
+public class GuildEmblemDTO {
+    @JsonProperty("icon")
+    private int icon;
+    @JsonProperty("iconColor")
+    private String iconColor;
+    @JsonProperty("border")
+    private int border;
+    @JsonProperty("borderColor")
+    private String borderColor;
+    @JsonProperty("backgroundColor")
+    private String backgroundColor;
 
-    public int getStat() {
-        return stat;
+    public int getIcon() {
+        return icon;
     }
 
-    public void setStat(int stat) {
-        this.stat = stat;
+    public void setIcon(int icon) {
+        this.icon = icon;
     }
 
-    public int getAmount() {
-        return amount;
+    public String getIconColor() {
+        return iconColor;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setIconColor(String iconColor) {
+        this.iconColor = iconColor;
+    }
+
+    public int getBorder() {
+        return border;
+    }
+
+    public void setBorder(int border) {
+        this.border = border;
+    }
+
+    public String getBorderColor() {
+        return borderColor;
+    }
+
+    public void setBorderColor(String borderColor) {
+        this.borderColor = borderColor;
+    }
+
+    public String getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 
     @Override

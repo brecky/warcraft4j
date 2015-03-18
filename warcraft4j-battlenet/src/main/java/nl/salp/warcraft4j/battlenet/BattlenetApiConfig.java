@@ -49,19 +49,19 @@ public class BattlenetApiConfig {
     /** The default configuration file name. */
     public static final String CONFIG_FILENAME_DEFAULT = "w4j_bnet.config";
     /** Configuration file key for the application name. */
-    private static final String CONFIG_KEY_APPLICATION_NAME = "w4j.bnet.application";
+    private static final String CONFIG_KEY_APPLICATION_NAME = "w4j.bnet.api.application";
     /** Configuration file key for the API key. */
-    private static final String CONFIG_KEY_API_KEY = "w4j.bnet.auth.key";
+    private static final String CONFIG_KEY_API_KEY = "w4j.bnet.api.auth.auth.key";
     /** Configuration file key for the API secret key. */
-    private static final String CONFIG_KEY_API_SECRET = "w4j.bnet.auth.secret";
+    private static final String CONFIG_KEY_API_SECRET = "w4j.bnet.api.auth.auth.secret";
     /** Configuration file key for the maximum number of API requests per second. */
-    private static final String CONFIG_KEY_MAX_REQUESTS_SECOND = "w4j.bnet.maxrequests.second";
+    private static final String CONFIG_KEY_MAX_REQUESTS_SECOND = "w4j.bnet.api.maxrequests.second";
     /** Configuration file key for the maximum number of API requests per hour. */
-    private static final String CONFIG_KEY_MAX_REQUESTS_HOUR = "w4j.bnet.maxrequests.hour";
+    private static final String CONFIG_KEY_MAX_REQUESTS_HOUR = "w4j.bnet.api.maxrequests.hour";
     /** Configuration file key for the default locale for the API. */
-    private static final String CONFIG_DEFAULT_LOCALE = "w4j.bnet.locale.default";
+    private static final String CONFIG_DEFAULT_LOCALE = "w4j.bnet.api.default.locale";
     /** Configuration file key for the default region for the API. */
-    private static final String CONFIG_DEFAULT_REGION = "w4j.bnet.region.default";
+    private static final String CONFIG_DEFAULT_REGION = "w4j.bnet.api.default.region";
 
     /** The name of the application, as registered with the Battle.NET API. */
     private final String applicationName;

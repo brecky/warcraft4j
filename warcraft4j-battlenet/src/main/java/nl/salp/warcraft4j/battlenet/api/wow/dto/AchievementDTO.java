@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.battlenet.api.dto;
+package nl.salp.warcraft4j.battlenet.api.wow.dto;
 
 import com.owlike.genson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -25,19 +25,31 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * TODO Document.
+ * Achievement data DTO.
  *
  * @author Barre Dijkstra
  */
-public class AchievementCriteriaDTO {
+public class AchievementDTO {
     @JsonProperty("id")
     private long id;
+    @JsonProperty("title")
+    private String title;
+    @JsonProperty("points")
+    private int points;
     @JsonProperty("description")
     private String description;
-    @JsonProperty("orderIndex")
-    private int orderIndex;
-    @JsonProperty("max")
-    private int maxCount;
+    @JsonProperty("reward")
+    private String reward;
+    @JsonProperty("rewardItems")
+    private ItemDTO[] rewardItems;
+    @JsonProperty("icon")
+    private String icon;
+    @JsonProperty("criteria")
+    private AchievementCriteriaDTO[] criteria;
+    @JsonProperty("accountWide")
+    private boolean accountWide;
+    @JsonProperty("factionId")
+    private int factionId;
 
     public long getId() {
         return id;
@@ -45,6 +57,22 @@ public class AchievementCriteriaDTO {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 
     public String getDescription() {
@@ -55,20 +83,52 @@ public class AchievementCriteriaDTO {
         this.description = description;
     }
 
-    public int getOrderIndex() {
-        return orderIndex;
+    public String getReward() {
+        return reward;
     }
 
-    public void setOrderIndex(int orderIndex) {
-        this.orderIndex = orderIndex;
+    public void setReward(String reward) {
+        this.reward = reward;
     }
 
-    public int getMaxCount() {
-        return maxCount;
+    public ItemDTO[] getRewardItems() {
+        return rewardItems;
     }
 
-    public void setMaxCount(int maxCount) {
-        this.maxCount = maxCount;
+    public void setRewardItems(ItemDTO[] rewardItems) {
+        this.rewardItems = rewardItems;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public AchievementCriteriaDTO[] getCriteria() {
+        return criteria;
+    }
+
+    public void setCriteria(AchievementCriteriaDTO[] criteria) {
+        this.criteria = criteria;
+    }
+
+    public boolean isAccountWide() {
+        return accountWide;
+    }
+
+    public void setAccountWide(boolean accountWide) {
+        this.accountWide = accountWide;
+    }
+
+    public int getFactionId() {
+        return factionId;
+    }
+
+    public void setFactionId(int factionId) {
+        this.factionId = factionId;
     }
 
     @Override

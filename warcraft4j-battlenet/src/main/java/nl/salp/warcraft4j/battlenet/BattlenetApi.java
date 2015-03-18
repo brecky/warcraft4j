@@ -17,9 +17,41 @@
  * under the License.
  */
 
+package nl.salp.warcraft4j.battlenet;
+
 /**
- * TODO Document.
+ * Battle.NET API.
  *
  * @author Barre Dijkstra
  */
-package nl.salp.warcraft4j.battlenet.api.dto;
+public enum BattlenetApi {
+    /** Account API. */
+    ACCOUNT("account"),
+    /** Diablo 3 API. */
+    DIABLO_3("d3"),
+    /** Starcraft 2 API. */
+    STARCRAFT_2("sc2"),
+    /** World of Warcraft API. */
+    WORLD_OF_WARCRAFT("wow");
+
+    /** The URI of the API. */
+    private final String apiUri;
+
+    /**
+     * Create a new BattlenetApi instance.
+     *
+     * @param apiUri The URI of the API.
+     */
+    private BattlenetApi(String apiUri) {
+        this.apiUri = apiUri;
+    }
+
+    /**
+     * Get the URI of the API.
+     *
+     * @return The URI of the API.
+     */
+    public String getApiUri() {
+        return apiUri;
+    }
+}

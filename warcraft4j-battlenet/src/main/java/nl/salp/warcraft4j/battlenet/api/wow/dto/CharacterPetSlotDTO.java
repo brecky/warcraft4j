@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.battlenet.api.dto;
+package nl.salp.warcraft4j.battlenet.api.wow.dto;
 
 import com.owlike.genson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -29,43 +29,65 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-public class CharacterMountsDTO {
+public class CharacterPetSlotDTO {
     /*
-    "mounts": {
-        "numCollected": int,
-        "numNotCollected": int,
-        "collected": MountDTO...
+    {
+        "slot": int,
+        "battlePetGuid": String,
+        "isEmpty": boolean,
+        "isLocked": boolean,
+        "abilities": [int...]
     }
      */
-    @JsonProperty("numCollected")
-    private int numCollected;
-    @JsonProperty("numNotCollected")
-    private int numNotCollected;
-    @JsonProperty("collected")
-    private MountDTO[] collected;
+    @JsonProperty("slot")
+    private int slot;
+    @JsonProperty("battlePetGuid")
+    private String battlePetGuid;
+    @JsonProperty("isEmpty")
+    private boolean isEmpty;
+    @JsonProperty("isLocked")
+    private boolean isLocked;
+    @JsonProperty("abilities")
+    private int[] abilities;
 
-    public int getNumCollected() {
-        return numCollected;
+    public int getSlot() {
+        return slot;
     }
 
-    public void setNumCollected(int numCollected) {
-        this.numCollected = numCollected;
+    public void setSlot(int slot) {
+        this.slot = slot;
     }
 
-    public int getNumNotCollected() {
-        return numNotCollected;
+    public String getBattlePetGuid() {
+        return battlePetGuid;
     }
 
-    public void setNumNotCollected(int numNotCollected) {
-        this.numNotCollected = numNotCollected;
+    public void setBattlePetGuid(String battlePetGuid) {
+        this.battlePetGuid = battlePetGuid;
     }
 
-    public MountDTO[] getCollected() {
-        return collected;
+    public boolean isEmpty() {
+        return isEmpty;
     }
 
-    public void setCollected(MountDTO[] collected) {
-        this.collected = collected;
+    public void setEmpty(boolean isEmpty) {
+        this.isEmpty = isEmpty;
+    }
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean isLocked) {
+        this.isLocked = isLocked;
+    }
+
+    public int[] getAbilities() {
+        return abilities;
+    }
+
+    public void setAbilities(int[] abilities) {
+        this.abilities = abilities;
     }
 
     @Override

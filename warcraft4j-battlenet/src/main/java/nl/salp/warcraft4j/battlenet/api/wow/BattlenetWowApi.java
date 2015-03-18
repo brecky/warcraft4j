@@ -17,39 +17,15 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.battlenet.api;
+package nl.salp.warcraft4j.battlenet.api.wow;
+
+import nl.salp.warcraft4j.battlenet.api.wow.dto.AchievementDTO;
 
 /**
  * TODO Document.
  *
  * @author Barre Dijkstra
  */
-enum CharacterDetailField {
-    ACHIEVEMENTS("achievements"),
-    APPEARANCE("appearance"),
-    FEED("feed"),
-    GUILD("guild"),
-    HUNTER_PETS("hunterPets"),
-    ITEMS("items"),
-    MOUNTS("mounts"),
-    PETS("pets"),
-    PET_SLOTS("petSlots"),
-    PROGRESSION("progession"),
-    PVP("pvp"),
-    QUESTS("quest"),
-    REPUTATION("reputation"),
-    STATS("stats"),
-    TALENTS("talents"),
-    TITLES("titles"),
-    AUDIT("audit");
-
-    private final String fieldName;
-
-    private CharacterDetailField(String fieldName) {
-        this.fieldName = fieldName;
-    }
-
-    public String getFieldName() {
-        return fieldName;
-    }
+public interface BattlenetWowApi {
+    AchievementDTO getAchievement(int achievementId);
 }

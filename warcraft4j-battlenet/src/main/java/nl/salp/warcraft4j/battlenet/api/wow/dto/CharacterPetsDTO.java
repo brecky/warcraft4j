@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.battlenet.api.dto;
+package nl.salp.warcraft4j.battlenet.api.wow.dto;
 
 import com.owlike.genson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -29,65 +29,43 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-public class CharacterPetSlotDTO {
+public class CharacterPetsDTO {
     /*
-    {
-        "slot": int,
-        "battlePetGuid": String,
-        "isEmpty": boolean,
-        "isLocked": boolean,
-        "abilities": [int...]
+    "pets": {
+        "numCollected": int,
+        "numNotCollected": int,
+        "collected": [ PetDTO... ]
     }
      */
-    @JsonProperty("slot")
-    private int slot;
-    @JsonProperty("battlePetGuid")
-    private String battlePetGuid;
-    @JsonProperty("isEmpty")
-    private boolean isEmpty;
-    @JsonProperty("isLocked")
-    private boolean isLocked;
-    @JsonProperty("abilities")
-    private int[] abilities;
+    @JsonProperty("numCollected")
+    private int numCollected;
+    @JsonProperty("numNotCollected")
+    private int numNoTCollected;
+    @JsonProperty("collected")
+    private PetDTO[] collected;
 
-    public int getSlot() {
-        return slot;
+    public int getNumCollected() {
+        return numCollected;
     }
 
-    public void setSlot(int slot) {
-        this.slot = slot;
+    public void setNumCollected(int numCollected) {
+        this.numCollected = numCollected;
     }
 
-    public String getBattlePetGuid() {
-        return battlePetGuid;
+    public int getNumNoTCollected() {
+        return numNoTCollected;
     }
 
-    public void setBattlePetGuid(String battlePetGuid) {
-        this.battlePetGuid = battlePetGuid;
+    public void setNumNoTCollected(int numNoTCollected) {
+        this.numNoTCollected = numNoTCollected;
     }
 
-    public boolean isEmpty() {
-        return isEmpty;
+    public PetDTO[] getCollected() {
+        return collected;
     }
 
-    public void setEmpty(boolean isEmpty) {
-        this.isEmpty = isEmpty;
-    }
-
-    public boolean isLocked() {
-        return isLocked;
-    }
-
-    public void setLocked(boolean isLocked) {
-        this.isLocked = isLocked;
-    }
-
-    public int[] getAbilities() {
-        return abilities;
-    }
-
-    public void setAbilities(int[] abilities) {
-        this.abilities = abilities;
+    public void setCollected(PetDTO[] collected) {
+        this.collected = collected;
     }
 
     @Override

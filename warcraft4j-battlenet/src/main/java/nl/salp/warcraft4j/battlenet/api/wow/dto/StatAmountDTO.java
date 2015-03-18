@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.battlenet.api.dto;
+package nl.salp.warcraft4j.battlenet.api.wow.dto;
 
 import com.owlike.genson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -29,43 +29,26 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-public class CharacterPetsDTO {
-    /*
-    "pets": {
-        "numCollected": int,
-        "numNotCollected": int,
-        "collected": [ PetDTO... ]
-    }
-     */
-    @JsonProperty("numCollected")
-    private int numCollected;
-    @JsonProperty("numNotCollected")
-    private int numNoTCollected;
-    @JsonProperty("collected")
-    private PetDTO[] collected;
+public class StatAmountDTO {
+    @JsonProperty("stat")
+    private int stat;
+    @JsonProperty("amount")
+    private int amount;
 
-    public int getNumCollected() {
-        return numCollected;
+    public int getStat() {
+        return stat;
     }
 
-    public void setNumCollected(int numCollected) {
-        this.numCollected = numCollected;
+    public void setStat(int stat) {
+        this.stat = stat;
     }
 
-    public int getNumNoTCollected() {
-        return numNoTCollected;
+    public int getAmount() {
+        return amount;
     }
 
-    public void setNumNoTCollected(int numNoTCollected) {
-        this.numNoTCollected = numNoTCollected;
-    }
-
-    public PetDTO[] getCollected() {
-        return collected;
-    }
-
-    public void setCollected(PetDTO[] collected) {
-        this.collected = collected;
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 
     @Override
