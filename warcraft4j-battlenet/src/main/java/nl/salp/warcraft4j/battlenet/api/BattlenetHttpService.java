@@ -21,30 +21,180 @@ package nl.salp.warcraft4j.battlenet.api;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import nl.salp.warcraft4j.Language;
+import nl.salp.warcraft4j.Region;
 import nl.salp.warcraft4j.battlenet.BattlenetApiConfig;
+import nl.salp.warcraft4j.battlenet.BattlenetLocale;
+import nl.salp.warcraft4j.battlenet.BattlenetRegion;
+import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Queue;
-import java.util.function.Predicate;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
+
+import static java.lang.String.format;
 
 /**
- * TODO Document.
+ * {@link BattlenetService} basic HTTP implementation
  *
  * @author Barre Dijkstra
  */
 @Singleton
 public class BattlenetHttpService implements BattlenetService {
-    private static final long SECOND = 1000;
-    private static final long HOUR = SECOND * 60 * 60;
-
+    /** The logger. */
+    private static Logger LOGGER = LoggerFactory.getLogger(BattlenetHttpService.class);
+    /** The scheme. */
+    private static final String BATTLENETAPI_SCHEME = "https";
+    /** The base URI. */
+    private static final String BATTLENETAPI_SERVER_MASK = "%s.api.battle.net";
+    /** The parameter name for the locale parameter. */
+    private static final String PARAMETER_LOCALE = "locale";
+    /** The parameter name for the API key parameter. */
+    private static final String PARAMETER_API_KEY = "apikey";
+    /** The configuration. */
     @Inject
     private BattlenetApiConfig config;
+    /** The region to get the data from. */
+    private BattlenetRegion region;
+    /** The locale to get the data in. */
+    private BattlenetLocale locale;
 
-
-    public <T> T call(BattlenetServiceMethod<T> method) throws IOException, BattlenetApiParsingException {
-        method.call(this);
-
-        return null;
+    /**
+     * Create a new BattlenetHttpService with the default region and locale.
+     */
+    public BattlenetHttpService() {
     }
 
+    /**
+     * Create a new BattlenetHttpService.
+     *
+     * @param region   The region to retrieve the data from.
+     * @param language The language to get the data in.
+     */
+    public BattlenetHttpService(Region region, Language language) {
+        this.region = BattlenetRegion.getRegionForKey(region);
+        this.locale = BattlenetLocale.getLocale(language);
+    }
+
+    /**
+     * Get the default Battle.NET region to use.
+     *
+     * @return The region.
+     */
+    private BattlenetRegion getRegion() {
+        BattlenetRegion r;
+        if (region == null) {
+            r = config.getDefaultRegion();
+        } else {
+            r = region;
+        }
+        return r;
+    }
+
+    /**
+     * Get the default Battle.NET locale to use.
+     *
+     * @return The locale.
+     */
+    private BattlenetLocale getLocale() {
+        BattlenetLocale l;
+        if (locale == null) {
+            l = config.getDefaultLocale();
+        } else {
+            l = locale;
+        }
+        return l;
+    }
+
+    @Override
+    public <T> T call(BattlenetServiceMethod<T> method) throws IOException, BattlenetApiParsingException {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            URI methodUri = createUri(method);
+            LOGGER.debug(format("Calling Battle.NET method %s with URI %s", method.getClass().getName(), methodUri.toASCIIString()));
+            HttpUriRequest request = new HttpGet(methodUri);
+            String json = execute(request, httpClient);
+            return method.parse(json);
+        }
+    }
+
+    /**
+     * Execute the request and return the result body.
+     *
+     * @param request The request to execute.
+     * @param client  The client to use for executing the request.
+     *
+     * @return The result body.
+     *
+     * @throws IOException When the call couldn't be executed or the server returned an error.
+     */
+    private String execute(HttpUriRequest request, CloseableHttpClient client) throws IOException {
+        try (CloseableHttpResponse response = client.execute(request)) {
+            StatusLine statusLine = response.getStatusLine();
+            if (statusLine.getStatusCode() > 300) {
+                LOGGER.error(format("Request to '%s' returned code %d with message '%s'", request.getURI().toASCIIString(), statusLine.getStatusCode(), statusLine.getReasonPhrase()));
+                throw new IOException(format("Error %d: %s", statusLine.getStatusCode(), statusLine.getReasonPhrase()));
+            }
+            HttpEntity entity = response.getEntity();
+            String result = EntityUtils.toString(entity);
+            EntityUtils.consume(entity);
+            LOGGER.debug(format("Request to '%s' successfully completed with code %d", request.getURI().toASCIIString(), statusLine.getStatusCode()));
+            return result;
+        }
+    }
+
+    /**
+     * Create the request URI to call on the default region and receiving responses in the default locale.
+     *
+     * @param method The method to create the URI for.
+     * @param <T>    The return type of the method.
+     *
+     * @return The URI.
+     *
+     * @throws IOException When the URI could not be created.
+     */
+    protected <T> URI createUri(BattlenetServiceMethod<T> method) throws IOException {
+        return createUri(method, getRegion(), getLocale());
+    }
+
+    /**
+     * Create the request URI to call.
+     *
+     * @param method The method to create the URI for.
+     * @param region The Battle.NET API region to call.
+     * @param locale The locale to receive the responses in.
+     * @param <T>    The return type of the method.
+     *
+     * @return The URI to call for execution.
+     *
+     * @throws IOException When the URI could not be created.
+     */
+    protected <T> URI createUri(BattlenetServiceMethod<T> method, BattlenetRegion region, BattlenetLocale locale) throws IOException {
+        URIBuilder builder = new URIBuilder()
+                .setScheme(BATTLENETAPI_SCHEME)
+                .setHost(format(BATTLENETAPI_SERVER_MASK, region.getApiUri()))
+                .setPath(method.getRequestUri())
+                .addParameter(PARAMETER_API_KEY, config.getBnetApiKey())
+                .addParameter(PARAMETER_LOCALE, locale.getLocale());
+
+        for (Map.Entry<String, String> param : method.getRequestParameters().entrySet()) {
+            builder.addParameter(param.getKey(), param.getValue());
+        }
+
+        try {
+            return builder.build();
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        }
+    }
 }

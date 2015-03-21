@@ -25,6 +25,8 @@ import nl.salp.warcraft4j.Region;
 
 /**
  * Battle.NET API region.
+ * <p/>
+ * Note: there is no API region for China.
  *
  * @author Barre Dijkstra
  */
@@ -37,8 +39,6 @@ public enum BattlenetRegion {
     KOREA(Region.KOREA, "kr", "kr"),
     /** Taiwan. */
     TAIWAN(Region.TAIWAN, "tw", "tw"),
-    /** China. */
-    CHINA(Region.CHINA, "cn", "cn"),
     /** South-East asia. */
     SEA(Region.SOUTH_EAST_ASIA, "us", "us");
 

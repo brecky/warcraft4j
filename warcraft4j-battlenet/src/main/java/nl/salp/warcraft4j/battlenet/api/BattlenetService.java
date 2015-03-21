@@ -19,9 +19,6 @@
 
 package nl.salp.warcraft4j.battlenet.api;
 
-import com.google.inject.Inject;
-import nl.salp.warcraft4j.battlenet.BattlenetApiConfig;
-
 import java.io.IOException;
 
 /**
@@ -31,7 +28,16 @@ import java.io.IOException;
  */
 public interface BattlenetService {
 
-
+    /**
+     * Call a Battle.NET API service method.
+     *
+     * @param method The method to call.
+     * @param <T>    The type of the method result.
+     *
+     * @return The result.
+     *
+     * @throws IOException                  When there was a problem in the communication with the Battle.NET API.
+     * @throws BattlenetApiParsingException When the data returned by the Battle.NET API could not be parsed.
+     */
     <T> T call(BattlenetServiceMethod<T> method) throws IOException, BattlenetApiParsingException;
-
 }

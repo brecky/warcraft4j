@@ -26,15 +26,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * TODO Document.
- * <pre>
- * "emblem": {
- *     "icon": int,
- *     "iconColor": string,
- *     "border": int,
- *     "borderColor": string,
- *     "backgroundColor": string
- * }
- * </pre>
  *
  * @author Barre Dijkstra
  */

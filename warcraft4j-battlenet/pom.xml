@@ -38,6 +38,7 @@
 
     <properties>
         <dependency.genson.version>1.2</dependency.genson.version>
+        <dependency.httpclient.verison>4.3.6</dependency.httpclient.verison>
     </properties>
 
     <dependencies>
@@ -53,6 +54,11 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${dependency.httpclient.verison}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

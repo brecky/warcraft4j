@@ -21,26 +21,45 @@ package nl.salp.warcraft4j.battlenet.api;
 
 import nl.salp.warcraft4j.battlenet.BattlenetApi;
 
-import java.io.IOException;
+import java.util.Map;
 
 /**
- * TODO Document.
+ * Battle.NET API service method.
  *
  * @param <T> The result type.
  *
  * @author Barre Dijkstra
  */
 public interface BattlenetServiceMethod<T> {
-    BattlenetApi getApi();
-
-    String getMethod();
+    /**
+     * Check if authentication is required for the method.
+     *
+     * @return {@code true} if authentication is required.
+     */
+    boolean isAuthenticationRequired();
 
     /**
-     * Execute the call.
+     * Parse the result data.
+     *
+     * @param data The data to parse.
      *
      * @return The parsed result.
      *
-     * @throws IOException
+     * @throws BattlenetApiParsingException When parsing failed.
      */
-    T call(BattlenetService battlenetService) throws IOException;
+    T parse(String data) throws BattlenetApiParsingException;
+
+    /**
+     * Get the request URI for the call.
+     *
+     * @return The request URI.
+     */
+    public String getRequestUri();
+
+    /**
+     * Get the parameters for the request.
+     *
+     * @return The parameters.
+     */
+    public Map<String, String> getRequestParameters();
 }

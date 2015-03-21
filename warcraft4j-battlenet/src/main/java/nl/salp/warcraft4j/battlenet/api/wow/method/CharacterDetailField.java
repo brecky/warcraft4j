@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.battlenet.api.wow;
+package nl.salp.warcraft4j.battlenet.api.wow.method;
 
 /**
  * TODO Document.
