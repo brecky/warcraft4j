@@ -24,8 +24,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.Map;
-
 /**
  * TODO Document.
  *
@@ -47,7 +45,7 @@ public class ItemDTO {
     @JsonProperty("itemLevel")
     private int itemLevel;
     @JsonProperty("tooltipParams")
-    private Map<String, Integer> tooltipParams;
+    private ItemTooltipParamsDTO tooltipParams;
     @JsonProperty("stats")
     private StatAmountDTO[] stats;
     @JsonProperty("weaponInfo")
@@ -178,11 +176,11 @@ public class ItemDTO {
         this.itemLevel = itemLevel;
     }
 
-    public Map<String, Integer> getTooltipParams() {
+    public ItemTooltipParamsDTO getTooltipParams() {
         return tooltipParams;
     }
 
-    public void setTooltipParams(Map<String, Integer> tooltipParams) {
+    public void setTooltipParams(ItemTooltipParamsDTO tooltipParams) {
         this.tooltipParams = tooltipParams;
     }
 

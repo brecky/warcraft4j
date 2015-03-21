@@ -26,22 +26,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Battle.NET general character response DTO.
- * <pre>
- * {
- * "lastModified": long,
- * "name": String,
- * "realm": String,
- * "battlegroup": String,
- * "class": int,
- * "race": int,
- * "gender": int,
- * "level": int,
- * "achievementPoints": int,
- * "thumbnail": String,
- * "calcClass": String,
- * "totalHonorableKills": int
- * }
- * </pre>
  *
  * @author Barre Dijkstra
  */
@@ -60,6 +44,8 @@ public class CharacterDTO {
     private int race;
     @JsonProperty("level")
     private int level;
+    @JsonProperty("gender")
+    private int gender;
     @JsonProperty("achievementPoints")
     private int achievementPoints;
     @JsonProperty("thumbnail")
@@ -80,17 +66,8 @@ public class CharacterDTO {
     private CharacterPetsDTO pets;
     @JsonProperty("petSlots")
     private CharacterPetSlotDTO[] petSlots;
-    // feed
-    // stats
-    // reputation
-    // titles
-    // achievements
-    // talents
-    // hunterPets
-    // progression
-    // pvp
-    // quests
-    // audit
+    @JsonProperty("stats")
+    private CharacterStatsDTO stats;
 
     public long getLastModified() {
         return lastModified;
@@ -226,6 +203,22 @@ public class CharacterDTO {
 
     public void setPetSlots(CharacterPetSlotDTO[] petSlots) {
         this.petSlots = petSlots;
+    }
+
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
+    }
+
+    public CharacterStatsDTO getStats() {
+        return stats;
+    }
+
+    public void setStats(CharacterStatsDTO stats) {
+        this.stats = stats;
     }
 
     @Override

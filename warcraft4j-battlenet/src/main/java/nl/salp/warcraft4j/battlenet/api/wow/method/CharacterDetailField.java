@@ -24,7 +24,7 @@ package nl.salp.warcraft4j.battlenet.api.wow.method;
  *
  * @author Barre Dijkstra
  */
-enum CharacterDetailField {
+public enum CharacterDetailField {
     ACHIEVEMENTS("achievements"),
     APPEARANCE("appearance"),
     FEED("feed"),
