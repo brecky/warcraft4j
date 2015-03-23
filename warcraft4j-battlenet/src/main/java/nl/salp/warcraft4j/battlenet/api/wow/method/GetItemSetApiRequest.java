@@ -1,27 +1,27 @@
 package nl.salp.warcraft4j.battlenet.api.wow.method;
 
-import nl.salp.warcraft4j.battlenet.BattlenetApi;
-import nl.salp.warcraft4j.battlenet.api.JsonServiceMethod;
+import nl.salp.warcraft4j.battlenet.api.BattlenetApiGroup;
+import nl.salp.warcraft4j.battlenet.api.JsonApiRequest;
 import nl.salp.warcraft4j.battlenet.api.wow.dto.ItemSetDTO;
 
 import java.util.Collections;
 import java.util.Map;
 
 import static java.lang.String.format;
-import static nl.salp.warcraft4j.battlenet.BattlenetApi.WORLD_OF_WARCRAFT;
+import static nl.salp.warcraft4j.battlenet.api.BattlenetApiGroup.WORLD_OF_WARCRAFT;
 
 /**
  * Battle.NET API method for retrieving the information for a World of Warcarft item set.
  *
  * @author Barre Dijkstra
  */
-public class GetItemSetMethod extends JsonServiceMethod<ItemSetDTO> {
+public class GetItemSetApiRequest extends JsonApiRequest<ItemSetDTO> {
     /** The DTO class. */
     private static final Class<ItemSetDTO> DTO_CLASS = ItemSetDTO.class;
     /** The API method. */
     private static final String API_METHOD = "/%s/item/set/%d";
     /** The API to use. */
-    private static final BattlenetApi API = WORLD_OF_WARCRAFT;
+    private static final BattlenetApiGroup API = WORLD_OF_WARCRAFT;
     /** Flag indicating if the method requires authentication. */
     private static final boolean API_REQUIRES_AUTH = false;
     /** The ID of the item set to retrieve the information for. */
@@ -32,7 +32,7 @@ public class GetItemSetMethod extends JsonServiceMethod<ItemSetDTO> {
      *
      * @param itemSetId The ID of the item set to retrieve the data for.
      */
-    public GetItemSetMethod(long itemSetId) {
+    public GetItemSetApiRequest(long itemSetId) {
         super(DTO_CLASS);
         this.itemSetId = itemSetId;
     }

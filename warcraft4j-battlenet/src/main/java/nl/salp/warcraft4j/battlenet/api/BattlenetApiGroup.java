@@ -17,14 +17,14 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.battlenet;
+package nl.salp.warcraft4j.battlenet.api;
 
 /**
  * Battle.NET API.
  *
  * @author Barre Dijkstra
  */
-public enum BattlenetApi {
+public enum BattlenetApiGroup {
     /** Account API. */
     ACCOUNT("account"),
     /** Diablo 3 API. */
@@ -42,7 +42,7 @@ public enum BattlenetApi {
      *
      * @param apiUri The URI of the API.
      */
-    private BattlenetApi(String apiUri) {
+    private BattlenetApiGroup(String apiUri) {
         this.apiUri = apiUri;
     }
 

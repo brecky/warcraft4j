@@ -2,8 +2,8 @@ package nl.salp.warcraft4j.battlenet.guice;
 
 import com.google.inject.AbstractModule;
 import nl.salp.warcraft4j.battlenet.BattlenetApiConfig;
-import nl.salp.warcraft4j.battlenet.api.BattlenetHttpService;
-import nl.salp.warcraft4j.battlenet.api.BattlenetService;
+import nl.salp.warcraft4j.battlenet.api.BattlenetHttpApi;
+import nl.salp.warcraft4j.battlenet.api.BattlenetApi;
 import nl.salp.warcraft4j.battlenet.service.BattlenetPlayerCharacterService;
 import nl.salp.warcraft4j.service.PlayerCharacterService;
 
@@ -44,7 +44,7 @@ public class BattlenetApiModule extends AbstractModule {
         } else {
             bind(BattlenetApiConfig.class).toProvider(new BattlenetApiConfigFileProvider(configFile));
         }
-        bind(BattlenetService.class).to(BattlenetHttpService.class);
+        bind(BattlenetApi.class).to(BattlenetHttpApi.class);
 
         bind(PlayerCharacterService.class).annotatedWith(Battlenet.class).to(BattlenetPlayerCharacterService.class);
     }

@@ -20,12 +20,13 @@
 package nl.salp.warcraft4j.battlenet.service;
 
 import com.google.inject.Inject;
+import nl.salp.warcraft4j.Language;
 import nl.salp.warcraft4j.Region;
+import nl.salp.warcraft4j.battlenet.BattlenetLocale;
 import nl.salp.warcraft4j.battlenet.BattlenetRegion;
-import nl.salp.warcraft4j.battlenet.api.BattlenetService;
+import nl.salp.warcraft4j.battlenet.api.wow.WowBattlenetApi;
 import nl.salp.warcraft4j.battlenet.api.wow.dto.CharacterDTO;
 import nl.salp.warcraft4j.battlenet.api.wow.method.CharacterDetailField;
-import nl.salp.warcraft4j.battlenet.api.wow.method.GetCharacterMethod;
 import nl.salp.warcraft4j.model.character.PlayerCharacter;
 import nl.salp.warcraft4j.model.data.Realm;
 import nl.salp.warcraft4j.service.NotFoundException;
@@ -44,20 +45,23 @@ import static java.lang.String.format;
 public class BattlenetPlayerCharacterService implements PlayerCharacterService {
     /** The Battle.NET service for execution of methods. */
     @Inject
-    private BattlenetService battlenetService;
+    private WowBattlenetApi wowBattlenetApi;
+
 
     @Override
-    public PlayerCharacter find(Region region, Realm realm, String name) throws NotFoundException, ServiceException {
-        BattlenetRegion bnRegion = BattlenetRegion.getRegionForKey(region);
+    public PlayerCharacter find(Region region, Realm realm, String name, Language language) throws NotFoundException, ServiceException {
+        final String realmSlug = realm.getSlug();
+        final BattlenetRegion bnetRegion = BattlenetRegion.getRegionForKey(region);
+        final BattlenetLocale bnetLocale = BattlenetLocale.getLocale(language);
 
         try {
-            CharacterDTO character = battlenetService.call(new GetCharacterMethod(realm.getSlug(), name, CharacterDetailField.values()));
+            CharacterDTO character = wowBattlenetApi.getCharacter(bnetRegion, bnetLocale, realmSlug, name, CharacterDetailField.values());
             if (character == null) {
-                throw new NotFoundException(format("No character named %s found on realm %s-%s", name, realm.getSlug(), bnRegion.getKey()));
+                throw new NotFoundException(format("No character named %s found on realm %s", name, realmSlug));
             }
             System.out.println(character);
         } catch (IOException e) {
-            throw new ServiceException(format("Error getting the character information for %s-%s %s", realm.getSlug(), bnRegion.getKey(), name), e);
+            throw new ServiceException(format("Error getting the character information for %s %s", realmSlug, name), e);
         }
         return null;
     }

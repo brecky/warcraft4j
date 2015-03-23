@@ -1,27 +1,27 @@
 package nl.salp.warcraft4j.battlenet.api.wow.method;
 
-import nl.salp.warcraft4j.battlenet.BattlenetApi;
-import nl.salp.warcraft4j.battlenet.api.JsonServiceMethod;
+import nl.salp.warcraft4j.battlenet.api.BattlenetApiGroup;
+import nl.salp.warcraft4j.battlenet.api.JsonApiRequest;
 import nl.salp.warcraft4j.battlenet.api.wow.dto.CharacterDTO;
 
 import java.util.Collections;
 import java.util.Map;
 
 import static java.lang.String.format;
-import static nl.salp.warcraft4j.battlenet.BattlenetApi.WORLD_OF_WARCRAFT;
+import static nl.salp.warcraft4j.battlenet.api.BattlenetApiGroup.WORLD_OF_WARCRAFT;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public class GetCharacterMethod extends JsonServiceMethod<CharacterDTO> {
+public class GetCharacterApiRequest extends JsonApiRequest<CharacterDTO> {
     /** The DTO class. */
     private static final Class<CharacterDTO> DTO_CLASS = CharacterDTO.class;
     /** The API method. */
     private static final String API_METHOD = "/%s/character/%s/%s";
     /** The API to use. */
-    private static final BattlenetApi API = WORLD_OF_WARCRAFT;
+    private static final BattlenetApiGroup API = WORLD_OF_WARCRAFT;
     /** Flag indicating if the method requires authentication. */
     private static final boolean API_REQUIRES_AUTH = false;
     /** The name of the parameter of the detail fields to retrieve. */
@@ -40,7 +40,7 @@ public class GetCharacterMethod extends JsonServiceMethod<CharacterDTO> {
      * @param characterName         The character name.
      * @param characterDetailFields The character details to retrieve.
      */
-    public GetCharacterMethod(String realm, String characterName, CharacterDetailField... characterDetailFields) {
+    public GetCharacterApiRequest(String realm, String characterName, CharacterDetailField... characterDetailFields) {
         super(DTO_CLASS);
         this.realm = realm;
         this.characterName = characterName;

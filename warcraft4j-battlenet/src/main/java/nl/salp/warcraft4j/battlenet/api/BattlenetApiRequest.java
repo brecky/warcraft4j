@@ -19,8 +19,6 @@
 
 package nl.salp.warcraft4j.battlenet.api;
 
-import nl.salp.warcraft4j.battlenet.BattlenetApi;
-
 import java.util.Map;
 
 /**
@@ -30,7 +28,7 @@ import java.util.Map;
  *
  * @author Barre Dijkstra
  */
-public interface BattlenetServiceMethod<T> {
+public interface BattlenetApiRequest<T> {
     /**
      * Check if authentication is required for the method.
      *

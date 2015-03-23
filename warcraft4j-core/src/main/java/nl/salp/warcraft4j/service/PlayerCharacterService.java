@@ -19,12 +19,13 @@
 
 package nl.salp.warcraft4j.service;
 
+import nl.salp.warcraft4j.Language;
 import nl.salp.warcraft4j.Region;
 import nl.salp.warcraft4j.model.character.PlayerCharacter;
 import nl.salp.warcraft4j.model.data.Realm;
 
 /**
- * TODO Document.
+ * Service for character information.
  *
  * @author Barre Dijkstra
  */
@@ -32,14 +33,15 @@ public interface PlayerCharacterService {
     /**
      * Find a player character.
      *
-     * @param region The region the character is on.
-     * @param realm  The realm of the character.
-     * @param name   the name of the character.
+     * @param region   The region the character is on.
+     * @param realm    The realm of the character.
+     * @param name     The name of the character.
+     * @param language The language to get the result texts in.
      *
      * @return The character.
      *
      * @throws NotFoundException When no character matching the given information could be found.
      * @throws ServiceException  When there was a problem finding the character.
      */
-    PlayerCharacter find(Region region, Realm realm, String name) throws NotFoundException, ServiceException;
+    PlayerCharacter find(Region region, Realm realm, String name, Language language) throws NotFoundException, ServiceException;
 }
