@@ -22,7 +22,7 @@ public class Record implements Comparable<Record> {
     public Record(int row, List<Value> fieldValues) {
         this.row = row;
         if (fieldValues == null || fieldValues.isEmpty()) {
-            this.id = new Value(-1);
+            this.id = Value.EMPTY;
             this.fieldValues = Collections.emptyList();
         } else {
             id = fieldValues.get(0);
@@ -52,6 +52,17 @@ public class Record implements Comparable<Record> {
 
     public boolean isValueAvailable(int col) {
         return col < fieldValues.size();
+    }
+
+    public boolean isEmptyRecord() {
+        boolean empty = true;
+        for (Value v : fieldValues) {
+            if (!v.isEmpty()) {
+                empty = false;
+                break;
+            }
+        }
+        return empty;
     }
 
 

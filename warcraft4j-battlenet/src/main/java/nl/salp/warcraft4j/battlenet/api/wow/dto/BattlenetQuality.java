@@ -6,12 +6,15 @@ import nl.salp.warcraft4j.model.data.Quality;
  * TODO Document class.
  */
 public enum BattlenetQuality {
+    WOW_TOKEN(Quality.WOW_TOKEN, 8),
+    HEIRLOOM(Quality.HEIRLOOM, 7),
+    ARTIFACT(Quality.ARTIFACT, 6),
     LEGENDARY(Quality.LEGENDARY, 5),
-    EPIC(Quality.LEGENDARY, 4),
-    RARE(Quality.LEGENDARY, 3),
-    UNCOMMON(Quality.LEGENDARY, 2),
-    COMMON(Quality.LEGENDARY, 1),
-    POOR(Quality.LEGENDARY, 0);
+    EPIC(Quality.EPIC, 4),
+    RARE(Quality.RARE, 3),
+    UNCOMMON(Quality.UNCOMMON, 2),
+    COMMON(Quality.COMMON, 1),
+    POOR(Quality.POOR, 0);
 
     /** The quality. */
     private final Quality quality;

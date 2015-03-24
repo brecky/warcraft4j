@@ -35,7 +35,7 @@ public class Item {
     private int id;
     @DbcField(name = "quality", column = 2, dataType = DbcDataType.INT32)
     private int quality;
-    @DbcField(name = "flags", numberOfEntries = 2, column = 3, dataType = DbcDataType.INT32)
+    @DbcField(name = "flags", numberOfEntries = 3, column = 3, dataType = DbcDataType.INT32)
     private Integer[] flags;
     @DbcField(name = "buyPrice", column = 5, dataType = DbcDataType.INT32)
     private int buyPrice;

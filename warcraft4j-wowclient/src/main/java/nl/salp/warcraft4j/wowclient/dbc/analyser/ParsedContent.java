@@ -24,7 +24,7 @@ public class ParsedContent {
         parsedFiles.put(parsedFile.getFileName(), parsedFile);
         for (Value id : parsedFile.getRecordIds()) {
             if (!parsedFileIds.containsKey(id)) {
-                parsedFileIds.put(id, new ArrayList<ParsedFile>());
+                parsedFileIds.put(id, new ArrayList<>());
             }
             parsedFileIds.get(id).add(parsedFile);
         }

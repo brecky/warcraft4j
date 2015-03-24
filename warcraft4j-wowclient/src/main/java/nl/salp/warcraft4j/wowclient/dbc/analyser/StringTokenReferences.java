@@ -22,7 +22,7 @@ public class StringTokenReferences {
         StringBlock block = parsedFile.getStringBlock();
         for (Field field : parsedFile.getFields()) {
             for (Value value : field.getValues()) {
-                if (block.isEntryAvailableForPosition(value.get())) {
+                if (block.isEntryAvailableForPosition(value.asInt())) {
                     if (fieldReferences.containsKey(field)) {
                         int count = fieldReferences.get(field);
                         fieldReferences.put(field.getFieldIndex(), count);

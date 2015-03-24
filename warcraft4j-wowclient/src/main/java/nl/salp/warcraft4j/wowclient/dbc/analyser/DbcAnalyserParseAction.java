@@ -50,10 +50,11 @@ public class DbcAnalyserParseAction implements Runnable {
                 for (int row = 0; row < header.getRecordCount(); row++) {
                     Record.Builder recordBuilder = new Record.Builder(header).withRow(row);
                     for (int i = 0; i < header.getFieldCount(); i++) {
-                        Value value = new Value(reader.readNextInt32());
+                        Value value = new Value(reader.readNextBytes(4));
                         recordBuilder.withValue(value);
                     }
-                    fileBuilder.withRecord(recordBuilder.build());
+                    Record record = recordBuilder.build();
+                    fileBuilder.withRecord(record);
                 }
                 parsedContent.addParsed(fileBuilder.build());
             } catch (IOException e) {
