@@ -17,15 +17,13 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.files.clientdatabase;
+package nl.salp.warcraft4j.files.clientdatabase.parser;
 
 /**
  * TODO Document.
  *
  * @author Barre Dijkstra
  */
-public @interface DbcFile {
-    String file();
+public class ClientDatabasePackageParser {
 
-    DbcFileType type();
 }

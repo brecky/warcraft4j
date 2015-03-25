@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.files.clientdatabase;
+package nl.salp.warcraft4j.files.clientdatabase.parser;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -26,7 +26,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-class Db2ExtHeader extends Db2Header {
+class ClientDatabaseDb2ExtHeader extends ClientDatabaseDb2Header {
     /** The version of the last build before the extended header was introduced. */
     public static final int LAST_BUILD_PRE_EXTENDED_HEADER = 12880;
     /** The base size for the header. */
@@ -44,7 +44,7 @@ class Db2ExtHeader extends Db2Header {
     /** The row String length in bytes. */
     private short[] rowStringLength;
 
-    public Db2ExtHeader(String magicString, int recordCount, int fieldCount, int recordSize, int stringBlockSize, int stringBlockHash, int build, int timestampLastWritten, int minId, int maxId, int locale, byte[] unknown, int[] rowIndexes, short[] rowStringLength) {
+    public ClientDatabaseDb2ExtHeader(String magicString, int recordCount, int fieldCount, int recordSize, int stringBlockSize, int stringBlockHash, int build, int timestampLastWritten, int minId, int maxId, int locale, byte[] unknown, int[] rowIndexes, short[] rowStringLength) {
         super(magicString, recordCount, fieldCount, recordSize, stringBlockSize, stringBlockHash, build, timestampLastWritten);
         this.minId = minId;
         this.maxId = maxId;

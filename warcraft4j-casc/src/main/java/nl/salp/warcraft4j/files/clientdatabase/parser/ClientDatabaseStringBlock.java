@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.files.clientdatabase;
+package nl.salp.warcraft4j.files.clientdatabase.parser;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 

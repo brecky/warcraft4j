@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.files.clientdatabase;
+package nl.salp.warcraft4j.files.clientdatabase.parser;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -26,7 +26,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-class DbcHeader implements ClientDatabaseHeader {
+class ClientDatabaseDbcHeader implements ClientDatabaseHeader {
     /** The magic String for a DBC file. */
     public static final String MAGICSTRING = "WDBC";
     /** The header size of a DBC file. */
@@ -52,7 +52,7 @@ class DbcHeader implements ClientDatabaseHeader {
      * @param recordSize      The size of a single record in bytes.
      * @param stringBlockSize The size of the StringBlock in bytes.
      */
-    public DbcHeader(String magicString, int recordCount, int fieldCount, int recordSize, int stringBlockSize) {
+    public ClientDatabaseDbcHeader(String magicString, int recordCount, int fieldCount, int recordSize, int stringBlockSize) {
         this.magicString = magicString;
         this.recordCount = recordCount;
         this.fieldCount = fieldCount;

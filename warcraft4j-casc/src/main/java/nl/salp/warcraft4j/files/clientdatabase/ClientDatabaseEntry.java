@@ -20,9 +20,22 @@
 package nl.salp.warcraft4j.files.clientdatabase;
 
 /**
- * TODO Document.
+ * Parsed client database entry.
  *
  * @author Barre Dijkstra
  */
-public class ClientDatabaseFile {
+public interface ClientDatabaseEntry {
+    /**
+     * Get the entry type.
+     *
+     * @return The entry type.
+     */
+    ClientDatabaseEntryType getEntryType();
+
+    /**
+     * Get the id.
+     *
+     * @return The id.
+     */
+    int getId();
 }

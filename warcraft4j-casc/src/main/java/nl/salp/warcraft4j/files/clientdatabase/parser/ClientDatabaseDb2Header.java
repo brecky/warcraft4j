@@ -17,14 +17,14 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.files.clientdatabase;
+package nl.salp.warcraft4j.files.clientdatabase.parser;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Parsed DB2 file header.
  */
-class Db2Header extends DbcHeader {
+class ClientDatabaseDb2Header extends ClientDatabaseDbcHeader {
     /** The magic string for the file. */
     public static final String MAGICSTRING = "WDB2";
     /** The default header size in bytes. */
@@ -48,7 +48,7 @@ class Db2Header extends DbcHeader {
      * @param build                The World of Warcraft client build number
      * @param timestampLastWritten The timestamp when the DB2 file was last altered/written.
      */
-    public Db2Header(String magicString, int recordCount, int fieldCount, int recordSize, int stringBlockSize, int stringBlockHash, int build, int timestampLastWritten) {
+    public ClientDatabaseDb2Header(String magicString, int recordCount, int fieldCount, int recordSize, int stringBlockSize, int stringBlockHash, int build, int timestampLastWritten) {
         super(magicString, recordCount, fieldCount, recordSize, stringBlockSize);
         this.stringBlockHash = stringBlockHash;
         this.build = build;

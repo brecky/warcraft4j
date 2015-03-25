@@ -17,14 +17,28 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.files.clientdatabase;
+package nl.salp.warcraft4j.files.clientdatabase.parser;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * TODO Document.
  *
  * @author Barre Dijkstra
  */
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD})
 public @interface DbcField {
+    /**
+     * The order in which this field should be parsed.
+     *
+     * @return The order.
+     */
+    int order();
+
     /**
      * The number of entries (concurrent) of the field (1 for single entry, any value &gt; 1 being an array of the type).
      * <p/>

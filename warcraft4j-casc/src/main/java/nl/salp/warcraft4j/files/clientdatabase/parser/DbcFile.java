@@ -17,23 +17,22 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.files.clientdatabase;
+package nl.salp.warcraft4j.files.clientdatabase.parser;
+
+import nl.salp.warcraft4j.files.clientdatabase.ClientDatabaseEntryType;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * TODO Document.
  *
  * @author Barre Dijkstra
  */
-public class ClientDatabaseParsingException extends RuntimeException {
-    public ClientDatabaseParsingException(String message) {
-        super(message);
-    }
-
-    public ClientDatabaseParsingException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ClientDatabaseParsingException(Throwable cause) {
-        super(cause);
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+public @interface DbcFile {
+    String file();
 }

@@ -17,14 +17,23 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.files.clientdatabase;
+package nl.salp.warcraft4j.files.clientdatabase.parser;
 
 /**
  * TODO Document.
  *
  * @author Barre Dijkstra
  */
-public enum DbcFileType {
-    DBC,
-    DB2;
+public class ClientDatabaseParsingException extends RuntimeException {
+    public ClientDatabaseParsingException(String message) {
+        super(message);
+    }
+
+    public ClientDatabaseParsingException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ClientDatabaseParsingException(Throwable cause) {
+        super(cause);
+    }
 }
