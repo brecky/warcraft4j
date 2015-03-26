@@ -61,13 +61,13 @@
         <module>warcraft4j-combatlog</module>
         <module>warcraft4j-wowhead</module>
         <module>warcraft4j-addon</module>
-        <module>warcraft4j-wowclient</module>
         <module>warcraft4j-casc</module>
         <module>warcraft4j-webapp</module>
     </modules>
 
     <!-- Project properties -->
     <properties>
+        <plugin.maven.version>3.1</plugin.maven.version>
         <source.encoding>UTF-8</source.encoding>
         <source.version>1.7</source.version>
         <dependency.guice.version>3.0</dependency.guice.version>
@@ -84,10 +84,18 @@
             <plugins>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.1</version>
+                    <version>${plugin.maven.version}</version>
                     <configuration>
                         <source>${source.version}</source>
                         <target>${source.version}</target>
+                        <encoding>${source.encoding}</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${plugin.maven.version}</version>
+                    <configuration>
                         <encoding>${source.encoding}</encoding>
                     </configuration>
                 </plugin>
@@ -121,7 +129,7 @@
             </dependency>
             <dependency>
                 <groupId>nl.salp.warcraft4j</groupId>
-                <artifactId>warcraft4j-wowclient</artifactId>
+                <artifactId>warcraft4j-casc</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- Dependency injection dependencies -->
@@ -162,4 +170,36 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <!-- Global dependencies -->
+    <dependencies>
+        <!-- Dependency injection dependencies -->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+        </dependency>
+        <!-- Utility dependencies -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <!-- Logging dependencies -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <!-- Testing dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+        </dependency>
+    </dependencies>
 </project>

@@ -19,16 +19,15 @@
 
 package nl.salp.warcraft4j.files.clientdatabase;
 
-import nl.salp.warcraft4j.files.clientdatabase.parser.ClientDatabaseEntryClasspathScanner;
 import nl.salp.warcraft4j.files.clientdatabase.parser.ClientDatabaseFileParser;
 import nl.salp.warcraft4j.files.clientdatabase.parser.ClientDatabaseParsingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
+
+import static java.lang.String.format;
 
 /**
  * Client database container which holds parsed files and their relations.
@@ -36,6 +35,8 @@ import java.util.*;
  * @author Barre Dijkstra
  */
 public class ClientDatabase {
+    /** The logger instance for the class. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientDatabase.class);
     /** The mapping between the Java type and the client database entry type. */
     private Map<Class<? extends ClientDatabaseEntry>, ClientDatabaseEntryType> typeMappings;
     /** The parsed instances, indexed by their entry type. */
@@ -86,12 +87,21 @@ public class ClientDatabase {
      */
     public <T extends ClientDatabaseEntry> void add(Class<T> type, String directory) throws IOException, ClientDatabaseParsingException {
         ClientDatabaseFileParser<T> parser = new ClientDatabaseFileParser<>(type);
-        List<T> entries = parser.parse(directory);
+        Set<T> entries = parser.parse(directory);
         add(entries);
     }
 
+    /**
+     * Add all parsed ClientDatabaseEntry instances that are on the classpath.
+     *
+     * @param directory The directory the client database files are residing in.
+     *
+     * @throws IOException                    When there is a problem loading the instances from the classpath.
+     * @throws ClientDatabaseParsingException When there is a problem parsing the instances.
+     */
     public void addFromClasspath(String directory) throws IOException, ClientDatabaseParsingException {
         ClientDatabaseEntryClasspathScanner scanner = new ClientDatabaseEntryClasspathScanner(this);
+        LOGGER.debug("Scanning classpath for all client database entries.");
         for (Class<? extends ClientDatabaseEntry> c : scanner.scan()) {
             add(c, directory);
         }
@@ -192,6 +202,7 @@ public class ClientDatabase {
         if (!instances.containsKey(entryType)) {
             typeMappings.put(type, entryType);
             instances.put(entryType, new ValuesMapping<>(type, entryType));
+            LOGGER.debug(format("Added client database entry for entry type %s with type %s", entryType, type.getName()));
         }
         return (ValuesMapping<T>) instances.get(entryType);
     }

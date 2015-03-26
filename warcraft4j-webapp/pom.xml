@@ -38,7 +38,7 @@
         </dependency>
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
-            <artifactId>warcraft4j-wowclient</artifactId>
+            <artifactId>warcraft4j-casc</artifactId>
         </dependency>
         <!-- Web modules -->
         <dependency>
@@ -70,34 +70,6 @@
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-guice</artifactId>
             <version>${dependency.jersey.version}</version>
-        </dependency>
-        <!-- Dependency injection dependencies -->
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-        </dependency>
-        <!-- Utility dependencies -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <!-- Logging dependencies -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-        <!-- Testing dependencies -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
         </dependency>
     </dependencies>
 

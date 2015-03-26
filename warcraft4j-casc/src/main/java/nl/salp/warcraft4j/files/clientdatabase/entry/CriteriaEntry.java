@@ -17,16 +17,25 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.files.clientdatabase;
+package nl.salp.warcraft4j.files.clientdatabase.entry;
+
+import nl.salp.warcraft4j.files.clientdatabase.ClientDatabaseEntry;
+import nl.salp.warcraft4j.files.clientdatabase.ClientDatabaseEntryType;
 
 /**
  * TODO Document.
  *
  * @author Barre Dijkstra
  */
-public enum ClientDatabaseEntryType {
-    ITEM,
-    SPELL,
-    SPELL_CATEGORY,
-    ITEM_SPARSE, SPELL_ICON, ACHIEVEMENT_CATEGORY, ACHIEVEMENT, ARMOR_LOCATION, CRITERIA_TREE, SPELL_CATEGORIES
+public class CriteriaEntry implements ClientDatabaseEntry{
+
+    @Override
+    public ClientDatabaseEntryType getEntryType() {
+        return null;
+    }
+
+    @Override
+    public int getId() {
+        return 0;
+    }
 }

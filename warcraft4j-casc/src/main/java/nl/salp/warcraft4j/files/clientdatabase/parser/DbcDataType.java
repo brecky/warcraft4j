@@ -168,6 +168,40 @@ public enum DbcDataType {
         protected DataType<?> getDataTypeInstance(DbcField field) {
             return DataType.getShort();
         }
+    }),
+    /** 64-bit unsigned Long. */
+    ULONG(new DataTypeAdapter() {
+        @Override
+        protected Class<?> getBaseClass() {
+            return Long.class;
+        }
+
+        @Override
+        protected Class<?> getArrayClass() {
+            return Long[].class;
+        }
+
+        @Override
+        protected DataType<?> getDataTypeInstance(DbcField field) {
+            return DataType.getLong();
+        }
+    }),
+    /** 64-bit signed Long. */
+    LONG(new DataTypeAdapter() {
+        @Override
+        protected Class<?> getBaseClass() {
+            return Long.class;
+        }
+
+        @Override
+        protected Class<?> getArrayClass() {
+            return Long[].class;
+        }
+
+        @Override
+        protected DataType<?> getDataTypeInstance(DbcField field) {
+            return DataType.getLong();
+        }
     });
 
     /** The adapter to use for mapping between data types. */

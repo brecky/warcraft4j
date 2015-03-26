@@ -31,10 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 import static java.lang.String.format;
 
@@ -80,7 +77,7 @@ public class ClientDatabaseFileParser<T extends ClientDatabaseEntry> {
     }
 
 
-    public List<T> parse(String basePath) throws IOException, IllegalArgumentException {
+    public Set<T> parse(String basePath) throws IOException, IllegalArgumentException {
         LOGGER.debug(format("[parse::%s] Parsing %s from %s in %s", template.getSimpleName(), template.getName(), dbcFile.file(), basePath));
         File file = new File(basePath, dbcFile.file());
         try (DataReader reader = new FileDataReader(file)) {
@@ -88,17 +85,18 @@ public class ClientDatabaseFileParser<T extends ClientDatabaseEntry> {
         }
     }
 
-    private List<T> parse(DataReader reader) throws IOException {
+    private Set<T> parse(DataReader reader) throws IOException {
         ClientDatabaseHeader header = new ClientDatabaseHeaderParser().parse(reader);
-        LOGGER.debug(format("[parse::%s] Parsing type %s with %d records with %d fields per record. StringBlock present: %s", template.getSimpleName(), header.getMagicString(), header.getRecordCount(), header.getFieldCount(), (header.getRecordBlockSize() > 0)));
+        LOGGER.debug(format("[parse::%s] Parsing type %s with %d records with %d fields per record.", template.getSimpleName(), header.getMagicString(), header.getRecordCount(), header.getFieldCount()));
         byte[] entryData = reader.readNextBytes(header.getRecordBlockSize());
         byte[] stringBlockData = reader.readNextBytes(header.getStringBlockSize());
         ClientDatabaseStringBlock stringBlock = new ClientDatabaseStringBlockParser().parse(stringBlockData);
+        LOGGER.debug(format("[parse::%s] Parsed %d bytes of StringBlock data to %d StringBlock entries.", template.getSimpleName(), stringBlockData.length, stringBlock.getAvailablePositions().size()));
         return parseEntries(entryData, header, stringBlock);
     }
 
-    private List<T> parseEntries(byte[] data, ClientDatabaseHeader header, ClientDatabaseStringBlock stringBlock) throws IOException {
-        List<T> entries = new ArrayList<>(header.getRecordCount());
+    private Set<T> parseEntries(byte[] data, ClientDatabaseHeader header, ClientDatabaseStringBlock stringBlock) throws IOException {
+        Set<T> entries = new HashSet<>(header.getRecordCount());
 
         DataReader reader = new ByteArrayDataReader(data);
 
