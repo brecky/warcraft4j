@@ -73,7 +73,7 @@ class CallCounter {
      * @return The number of calls within the last hour.
      */
     public long getCallsLastHour() {
-        return getCallsLastPeriod(this::floorHour);
+        return getCallsLastPeriod(floorHour());
     }
 
     /**
@@ -100,7 +100,7 @@ class CallCounter {
      * @return The number of calls.
      */
     public long getCallsLastSecond() {
-        return getCallsLastPeriod(this::floorSeconds);
+        return getCallsLastPeriod(floorSeconds());
     }
 
     /**
@@ -110,8 +110,14 @@ class CallCounter {
      *
      * @return The number of calls in the period.
      */
-    private long getCallsLastPeriod(Supplier<Long> floorTime) {
-        return executionTimes.stream().filter(time -> time >= floorTime.get()).count();
+    private long getCallsLastPeriod(long floorTime) {
+        int calls = 0;
+        for (long time : executionTimes) {
+            if (time >= floorTime) {
+                calls++;
+            }
+        }
+        return calls;
     }
 
     /**

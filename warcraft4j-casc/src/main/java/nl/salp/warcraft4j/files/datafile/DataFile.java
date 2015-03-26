@@ -73,7 +73,10 @@ public class DataFile {
         if (dataBlocks == null || dataBlocks.isEmpty()) {
             throw new IllegalArgumentException(format("Unable to create a new DataFile for file %s with no data blocks.", fileName));
         }
-        int dataSize = dataBlocks.stream().mapToInt(d -> d.getBlockSize()).sum();
+        int dataSize = 0;
+        for (DataBlock dataBlock : dataBlocks) {
+            dataSize = dataSize + dataBlock.getBlockSize();
+        }
         if (dataSize != fileSize) {
             throw new IllegalArgumentException(format("The combined size of all %d data blocks is %dB, while it should be equal to the file size of %dB", dataBlocks.size(), dataSize, fileSize));
         }

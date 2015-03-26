@@ -148,7 +148,7 @@ public class ClientDatabaseEntryClasspathScanner {
         }
 
         private void scanDirectory(File directory, ClassLoader classLoader) throws IOException {
-            scanDirectory(directory, "", Collections.emptySet(), classLoader);
+            scanDirectory(directory, "", Collections.<File>emptySet(), classLoader);
         }
 
         private void scanDirectory(File directory, String directoryPrefix, Set<File> parents, ClassLoader classLoader) throws IOException {
