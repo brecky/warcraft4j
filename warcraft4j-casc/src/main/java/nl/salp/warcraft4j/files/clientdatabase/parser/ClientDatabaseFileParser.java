@@ -24,6 +24,7 @@ import nl.salp.warcraft4j.io.ByteArrayDataReader;
 import nl.salp.warcraft4j.io.DataReader;
 import nl.salp.warcraft4j.io.DataType;
 import nl.salp.warcraft4j.io.FileDataReader;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,9 +126,9 @@ public class ClientDatabaseFileParser<T extends ClientDatabaseEntry> {
                 } else {
                     stringValue = null;
                 }
-                setValue(field, stringValue, instance);
+                setValue(field, stringValue, instance, fieldInfo);
             } else {
-                setValue(field, value, instance);
+                setValue(field, value, instance, fieldInfo);
             }
 
         }
@@ -145,18 +146,40 @@ public class ClientDatabaseFileParser<T extends ClientDatabaseEntry> {
         return instance;
     }
 
-    private void setValue(Field field, Object value, T instance) {
+    private void setValue(Field field, Object value, T instance, DbcField fieldInfo) {
         boolean accessible = field.isAccessible();
         try {
             field.setAccessible(true);
             if (field.getType() == byte.class) {
                 field.setByte(instance, ((Byte) value).byteValue());
+            } else if (field.getType() == char.class) {
+                field.setChar(instance, ((Character) value).charValue());
+            } else if (field.getType() == char[].class) {
+                field.set(instance, ArrayUtils.toPrimitive((Character[]) value));
             } else if (field.getType() == boolean.class) {
                 field.setBoolean(instance, ((Boolean) value).booleanValue());
+            } else if (field.getType() == boolean[].class) {
+                field.set(instance, ArrayUtils.toPrimitive(((Boolean[]) value)));
+            } else if (field.getType() == short.class) {
+                field.setShort(instance, ((Short) value).shortValue());
+            } else if (field.getType() == short[].class) {
+                field.set(instance, ArrayUtils.toPrimitive(((Short[]) value)));
             } else if (field.getType() == int.class) {
                 field.setInt(instance, ((Integer) value).intValue());
+            } else if (field.getType() == int[].class) {
+                field.set(instance, ArrayUtils.toPrimitive(((Integer[]) value)));
+            } else if (field.getType() == long.class) {
+                field.setLong(instance, ((Long) value).longValue());
+            } else if (field.getType() == long[].class) {
+                field.set(instance, ArrayUtils.toPrimitive(((Long[]) value)));
             } else if (field.getType() == float.class) {
                 field.setFloat(instance, ((Float) value).floatValue());
+            } else if (field.getType() == float[].class) {
+                field.set(instance, ArrayUtils.toPrimitive(((Float[]) value)));
+            } else if (field.getType() == double.class) {
+                field.setDouble(instance, ((Double) value).doubleValue());
+            } else if (field.getType() == double[].class) {
+                field.set(instance, ArrayUtils.toPrimitive(((Double[]) value)));
             } else {
                 field.set(instance, value);
             }

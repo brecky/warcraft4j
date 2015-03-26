@@ -37,7 +37,7 @@ public class ClientDatabaseHeaderParser {
         if (ClientDatabaseDbcHeader.isHeaderFor(magicString)) {
             header = new ClientDatabaseDbcHeaderParser().read(magicString, reader);
         } else if (ClientDatabaseDb2Header.isHeaderFor(magicString)) {
-            header = new ClientDatabaseDbcHeaderParser().read(magicString, reader);
+            header = new ClientDatabaseDb2HeaderParser().read(magicString, reader);
         } else {
             throw new IllegalArgumentException(format("Cannot parse the header for unknown DBC file type with magic string %s", magicString));
         }

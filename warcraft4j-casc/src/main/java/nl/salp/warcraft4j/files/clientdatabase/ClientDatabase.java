@@ -19,6 +19,7 @@
 
 package nl.salp.warcraft4j.files.clientdatabase;
 
+import nl.salp.warcraft4j.files.clientdatabase.parser.ClientDatabaseEntryClasspathScanner;
 import nl.salp.warcraft4j.files.clientdatabase.parser.ClientDatabaseFileParser;
 import nl.salp.warcraft4j.files.clientdatabase.parser.ClientDatabaseParsingException;
 
@@ -90,8 +91,10 @@ public class ClientDatabase {
     }
 
     public void addFromClasspath(String directory) throws IOException, ClientDatabaseParsingException {
-
-
+        ClientDatabaseEntryClasspathScanner scanner = new ClientDatabaseEntryClasspathScanner(this);
+        for (Class<? extends ClientDatabaseEntry> c : scanner.scan()) {
+            add(c, directory);
+        }
     }
 
     /**
@@ -222,7 +225,7 @@ public class ClientDatabase {
     public ClientDatabaseEntry resolve(ClientDatabaseEntryType type, int id) {
         ClientDatabaseEntry instance = null;
         if (type != null && instances.containsKey(type)) {
-            ValuesMapping mapping = instances.get(id);
+            ValuesMapping mapping = instances.get(type);
             instance = mapping.getInstance(id);
         }
         return instance;
