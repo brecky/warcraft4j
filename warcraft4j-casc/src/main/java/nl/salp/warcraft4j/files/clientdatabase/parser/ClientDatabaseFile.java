@@ -55,10 +55,10 @@ public class ClientDatabaseFile {
             int dataLength = (data == null ? 0 : data.length);
             throw new IllegalArgumentException(format("Invalid data received for client database file %s. Expected %d bytes, received %d.", filename, dataLength, header.getRecordBlockSize()));
         }
-        if ((stringBlock == null || stringBlock.getAvailablePositions().isEmpty()) && header.getStringBlockSize() > 1) {
+        if ((stringBlock == null || stringBlock.getAvailablePositions().isEmpty()) && header.getStringBlockSize() > 2) {
             throw new IllegalArgumentException(format("No StringBlock received for client database file %s, while a StringBlock of %d bytes was expected", filename, header.getStringBlockSize()));
         }
-        if ((stringBlock != null && !stringBlock.getAvailablePositions().isEmpty()) && header.getStringBlockSize() <= 1) {
+        if ((stringBlock != null && !stringBlock.getAvailablePositions().isEmpty()) && header.getStringBlockSize() <= 2) {
             throw new IllegalArgumentException(format("StringBlock received for client database file %s, while no StringBlock was expected", filename));
         }
     }

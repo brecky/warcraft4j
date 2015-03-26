@@ -27,7 +27,7 @@ import nl.salp.warcraft4j.files.clientdatabase.ClientDatabaseEntryType;
  *
  * @author Barre Dijkstra
  */
-public class CriteriaEntry implements ClientDatabaseEntry{
+public class CriteriaEntry implements ClientDatabaseEntry {
 
     @Override
     public ClientDatabaseEntryType getEntryType() {

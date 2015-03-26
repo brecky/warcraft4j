@@ -282,8 +282,8 @@ public class AchievementEntry implements ClientDatabaseEntry {
     }
 
     /**
-     *
      * @param clientDatabase
+     *
      * @return
      */
     public CriteriaTreeEntry getCriteriaTree(ClientDatabase clientDatabase) {

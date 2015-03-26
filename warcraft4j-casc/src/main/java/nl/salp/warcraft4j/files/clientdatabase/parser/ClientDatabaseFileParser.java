@@ -31,7 +31,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static java.lang.String.format;
 
@@ -74,6 +77,20 @@ public class ClientDatabaseFileParser<T extends ClientDatabaseEntry> {
             throw new IllegalArgumentException("No fields annotated with @DbcField mapping information.");
         }
         return fields;
+    }
+
+    public ClientDatabaseFile parseFile(String basePath) throws IOException, IllegalArgumentException {
+        LOGGER.debug(format("[parse::%s] Parsing %s from %s in %s", template.getSimpleName(), template.getName(), dbcFile.file(), basePath));
+        File file = new File(basePath, dbcFile.file());
+        try (DataReader reader = new FileDataReader(file)) {
+            ClientDatabaseHeader header = new ClientDatabaseHeaderParser().parse(reader);
+            LOGGER.debug(format("[parseFile::%s] Parsing type %s with %d records with %d fields per record.", template.getSimpleName(), header.getMagicString(), header.getRecordCount(), header.getFieldCount()));
+            byte[] entryData = reader.readNextBytes(header.getRecordBlockSize());
+            byte[] stringBlockData = reader.readNextBytes(header.getStringBlockSize());
+            ClientDatabaseStringBlock stringBlock = new ClientDatabaseStringBlockParser().parse(stringBlockData);
+            LOGGER.debug(format("[parseFile::%s] Parsed %d bytes of StringBlock data to %d StringBlock entries.", template.getSimpleName(), stringBlockData.length, stringBlock.getAvailablePositions().size()));
+            return new ClientDatabaseFile(dbcFile.file(), header, entryData, stringBlock);
+        }
     }
 
 
