@@ -14,28 +14,15 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-@DbcFile(file = "ItemEffect.db2")
-public class ItemEffectEntry implements ClientDatabaseEntry {
-    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.ITEM_EFFECT;
-    // TODO Implement me!
+@DbcFile(file = "CharBaseSection.dbc")
+public class CharacterBaseSectionEntry implements ClientDatabaseEntry {
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.CHARACTER_BASE_SECTION;
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
     @DbcField(order = 2, dataType = DbcDataType.UINT32)
-    private int itemId;
+    private int fallbackId;
     @DbcField(order = 3, dataType = DbcDataType.UINT32)
-    private int orderIndex;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32)
-    private int spellId;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32)
-    private int trigger;
-    @DbcField(order = 6, dataType = DbcDataType.INT32)
-    private int charges;
-    @DbcField(order = 7, dataType = DbcDataType.INT32)
-    private int cooldown;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32)
-    private int categoryId;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32)
-    private int categoryCooldown;
+    private int layoutResType;
 
     @Override
     public ClientDatabaseEntryType getEntryType() {
@@ -47,36 +34,12 @@ public class ItemEffectEntry implements ClientDatabaseEntry {
         return id;
     }
 
-    public int getItemId() {
-        return itemId;
+    public int getFallbackId() {
+        return fallbackId;
     }
 
-    public int getOrderIndex() {
-        return orderIndex;
-    }
-
-    public int getSpellId() {
-        return spellId;
-    }
-
-    public int getTrigger() {
-        return trigger;
-    }
-
-    public int getCharges() {
-        return charges;
-    }
-
-    public int getCooldown() {
-        return cooldown;
-    }
-
-    public int getCategoryId() {
-        return categoryId;
-    }
-
-    public int getCategoryCooldown() {
-        return categoryCooldown;
+    public int getLayoutResType() {
+        return layoutResType;
     }
 
     @Override

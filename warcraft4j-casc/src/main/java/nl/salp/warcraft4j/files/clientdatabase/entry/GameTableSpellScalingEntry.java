@@ -14,13 +14,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-@DbcFile(file = "ItemToBattlePetSpecies.db2")
-public class ItemToBattlePetSpeciesEntry implements ClientDatabaseEntry {
-    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.ITEM_TO_BATTLEPET_SPECIES;
+@DbcFile(file = "gtSpellScaling.dbc")
+public class GameTableSpellScalingEntry implements ClientDatabaseEntry {
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.GAME_TABLE_SPELL_SCALING;
+    // TODO Implement me!
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
-    private int itemId;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
-    private int petSpecies;
+    private int level;
+    @DbcField(order = 2, dataType = DbcDataType.FLOAT)
+    private float spellScaling;
 
     @Override
     public ClientDatabaseEntryType getEntryType() {
@@ -29,15 +30,15 @@ public class ItemToBattlePetSpeciesEntry implements ClientDatabaseEntry {
 
     @Override
     public int getId() {
-        return itemId;
+        return level;
     }
 
-    public int getItemId() {
-        return itemId;
+    public int getLevel() {
+        return level;
     }
 
-    public int getPetSpecies() {
-        return petSpecies;
+    public float getSpellScaling() {
+        return spellScaling;
     }
 
     @Override

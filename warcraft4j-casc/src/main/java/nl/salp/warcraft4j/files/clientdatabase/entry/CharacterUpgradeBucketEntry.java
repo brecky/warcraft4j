@@ -14,13 +14,17 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-@DbcFile(file = "ItemToBattlePetSpecies.db2")
-public class ItemToBattlePetSpeciesEntry implements ClientDatabaseEntry {
-    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.ITEM_TO_BATTLEPET_SPECIES;
+@DbcFile(file = "ChrUpgradeBucket.db2")
+public class CharacterUpgradeBucketEntry implements ClientDatabaseEntry {
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.CHARACTER_UPGRADE_BUCKET;
+
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
-    private int itemId;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
-    private int petSpecies;
+    private int id;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
+    private int unknown1;
+    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    private int characterUpgradeBucketSpellId;
+
 
     @Override
     public ClientDatabaseEntryType getEntryType() {
@@ -29,15 +33,15 @@ public class ItemToBattlePetSpeciesEntry implements ClientDatabaseEntry {
 
     @Override
     public int getId() {
-        return itemId;
+        return id;
     }
 
-    public int getItemId() {
-        return itemId;
+    public int getUnknown1() {
+        return unknown1;
     }
 
-    public int getPetSpecies() {
-        return petSpecies;
+    public int getCharacterUpgradeBucketSpellId() {
+        return characterUpgradeBucketSpellId;
     }
 
     @Override

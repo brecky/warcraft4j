@@ -31,10 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 import static java.lang.String.format;
 
@@ -43,26 +40,18 @@ import static java.lang.String.format;
  *
  * @author Barre Dijkstra
  */
-public class ClientDatabaseFileParser<T extends ClientDatabaseEntry> {
+public class ClientDatabaseFileParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientDatabaseFileParser.class);
 
-    private final Class<T> template;
-    private final DbcFile dbcFile;
-    private final SortedMap<Integer, Field> fields;
-
-    public ClientDatabaseFileParser(Class<T> template) {
-        if (template == null) {
-            throw new IllegalArgumentException("Unable to parse a client database file from a null template class.");
-        }
-        this.template = template;
-        dbcFile = template.getAnnotation(DbcFile.class);
+    private <T extends ClientDatabaseEntry> DbcFile getDbcFile(Class<T> template) {
+        DbcFile dbcFile = template.getAnnotation(DbcFile.class);
         if (dbcFile == null) {
             throw new IllegalArgumentException(format("Unable to parse the template class %s with no DbcFile annotation.", template.getName()));
         }
-        this.fields = parseFields(template);
+        return dbcFile;
     }
 
-    private SortedMap<Integer, Field> parseFields(Class<T> template) {
+    private <T extends ClientDatabaseEntry> SortedMap<Integer, Field> parseFields(Class<T> template) {
         SortedMap<Integer, Field> fields = new TreeMap<>();
         for (Field f : template.getDeclaredFields()) {
             if (f.isAnnotationPresent(DbcField.class)) {
@@ -79,77 +68,92 @@ public class ClientDatabaseFileParser<T extends ClientDatabaseEntry> {
         return fields;
     }
 
-    public ClientDatabaseFile parseFile(String basePath) throws IOException, IllegalArgumentException {
-        LOGGER.debug(format("[parse::%s] Parsing %s from %s in %s", template.getSimpleName(), template.getName(), dbcFile.file(), basePath));
-        File file = new File(basePath, dbcFile.file());
+    public ClientDatabaseFile parseFile(String filename, String basePath) throws IOException, IllegalArgumentException {
+        LOGGER.debug(format("[parse::%s] Parsing %s in %s", filename, filename, basePath));
+        File file = new File(basePath, filename);
         try (DataReader reader = new FileDataReader(file)) {
             ClientDatabaseHeader header = new ClientDatabaseHeaderParser().parse(reader);
-            LOGGER.debug(format("[parseFile::%s] Parsing type %s with %d records with %d fields per record.", template.getSimpleName(), header.getMagicString(), header.getRecordCount(), header.getFieldCount()));
+            LOGGER.debug(format("[parseFile::%s] Parsing type %s with %d records with %d fields and %d bytes per record.", filename, header.getMagicString(), header.getRecordCount(), header.getFieldCount(), header.getRecordSize()));
             byte[] entryData = reader.readNextBytes(header.getRecordBlockSize());
             byte[] stringBlockData = reader.readNextBytes(header.getStringBlockSize());
             ClientDatabaseStringBlock stringBlock = new ClientDatabaseStringBlockParser().parse(stringBlockData);
-            LOGGER.debug(format("[parseFile::%s] Parsed %d bytes of StringBlock data to %d StringBlock entries.", template.getSimpleName(), stringBlockData.length, stringBlock.getAvailablePositions().size()));
-            return new ClientDatabaseFile(dbcFile.file(), header, entryData, stringBlock);
+            LOGGER.debug(format("[parseFile::%s] Parsed %d bytes of StringBlock data to %d StringBlock entries.", filename, stringBlockData.length, stringBlock.getAvailablePositions().size()));
+            return new ClientDatabaseFile(filename, header, entryData, stringBlock);
         }
     }
 
 
-    public Set<T> parse(String basePath) throws IOException, IllegalArgumentException {
-        LOGGER.debug(format("[parse::%s] Parsing %s from %s in %s", template.getSimpleName(), template.getName(), dbcFile.file(), basePath));
-        File file = new File(basePath, dbcFile.file());
+    public <T extends ClientDatabaseEntry> Set<T> parse(Class<T> template, String basePath) throws IOException, IllegalArgumentException {
+        LOGGER.debug(format("[parse::%s] Parsing %s from %s in %s", template.getSimpleName(), template.getName(), getDbcFile(template).file(), basePath));
+        File file = new File(basePath, getDbcFile(template).file());
         try (DataReader reader = new FileDataReader(file)) {
-            return parse(reader);
+            return parse(template, reader);
         }
     }
 
-    private Set<T> parse(DataReader reader) throws IOException {
+    private <T extends ClientDatabaseEntry> Set<T> parse(Class<T> template, DataReader reader) throws IOException {
         ClientDatabaseHeader header = new ClientDatabaseHeaderParser().parse(reader);
-        LOGGER.debug(format("[parse::%s] Parsing type %s with %d records with %d fields per record.", template.getSimpleName(), header.getMagicString(), header.getRecordCount(), header.getFieldCount()));
+        LOGGER.debug(format("[parse::%s] Parsing type %s with %d records with %d fields and %d bytes per record.", template.getSimpleName(), header.getMagicString(), header.getRecordCount(), header.getFieldCount(), header.getRecordSize()));
         byte[] entryData = reader.readNextBytes(header.getRecordBlockSize());
         byte[] stringBlockData = reader.readNextBytes(header.getStringBlockSize());
         ClientDatabaseStringBlock stringBlock = new ClientDatabaseStringBlockParser().parse(stringBlockData);
         LOGGER.debug(format("[parse::%s] Parsed %d bytes of StringBlock data to %d StringBlock entries.", template.getSimpleName(), stringBlockData.length, stringBlock.getAvailablePositions().size()));
-        return parseEntries(entryData, header, stringBlock);
+        return parseEntries(template, entryData, header, stringBlock);
     }
 
-    private Set<T> parseEntries(byte[] data, ClientDatabaseHeader header, ClientDatabaseStringBlock stringBlock) throws IOException {
+    private <T extends ClientDatabaseEntry> Set<T> parseEntries(Class<T> template, byte[] data, ClientDatabaseHeader header, ClientDatabaseStringBlock stringBlock) throws IOException {
         Set<T> entries = new HashSet<>(header.getRecordCount());
 
         DataReader reader = new ByteArrayDataReader(data);
 
         for (int i = 0; i < header.getRecordCount(); i++) {
-            T instance = instantiate();
-            populate(instance, reader, stringBlock);
+            T instance = instantiate(template);
+            populate(template, instance, reader, stringBlock);
             entries.add(instance);
         }
         return entries;
     }
 
-    private void populate(T instance, DataReader reader, ClientDatabaseStringBlock stringBlock) throws IOException {
+    private <T extends ClientDatabaseEntry> void populate(Class<T> template, T instance, DataReader reader, ClientDatabaseStringBlock stringBlock) throws IOException {
+        SortedMap<Integer, Field> fields = parseFields(template);
         for (int fieldIndex : fields.keySet()) {
             Field field = fields.get(fieldIndex);
             DbcField fieldInfo = field.getAnnotation(DbcField.class);
             DataType<?> dataType = fieldInfo.dataType().getDataType(fieldInfo);
             Object value = reader.readNext(dataType);
 
-            if (DbcDataType.STRINGTABLE_REFERENCE == fieldInfo.dataType()) {
-                String stringValue;
-                if (stringBlock.isEntryAvailableForPosition((int) value)) {
-                    stringValue = stringBlock.getEntry((int) value);
-                } else if ((int) value > 0) {
-                    stringValue = String.valueOf(value);
+            if (fieldInfo.padding()) {
+                LOGGER.debug(format("[parse::%s] Ignoring padded field with order %d, type %s[%d] and value '%s'.", template.getSimpleName(), fieldInfo.order(), fieldInfo.dataType(), fieldInfo.numberOfEntries(), value));
+            } else if (DbcDataType.STRINGTABLE_REFERENCE == fieldInfo.dataType()) {
+                if (fieldInfo.numberOfEntries() > 1) {
+                    List<String> entries = new ArrayList<>(fieldInfo.numberOfEntries());
+                    for (int i : (Integer[]) value) {
+                        entries.add(getStringTableReference(i, stringBlock));
+                    }
+                    setValue(template, field, entries.toArray(new String[fieldInfo.numberOfEntries()]), instance, fieldInfo);
                 } else {
-                    stringValue = null;
+                    setValue(template, field, getStringTableReference((int) value, stringBlock), instance, fieldInfo);
                 }
-                setValue(field, stringValue, instance, fieldInfo);
             } else {
-                setValue(field, value, instance, fieldInfo);
+                setValue(template, field, value, instance, fieldInfo);
             }
 
         }
     }
 
-    private T instantiate() {
+    private String getStringTableReference(int value, ClientDatabaseStringBlock stringBlock) {
+        String stringValue;
+        if (stringBlock.isEntryAvailableForPosition(value)) {
+            stringValue = stringBlock.getEntry(value);
+        } else if (value > 0) {
+            stringValue = String.valueOf(value);
+        } else {
+            stringValue = null;
+        }
+        return stringValue;
+    }
+
+    private <T extends ClientDatabaseEntry> T instantiate(Class<T> template) {
         T instance;
         try {
             instance = template.newInstance();
@@ -161,7 +165,7 @@ public class ClientDatabaseFileParser<T extends ClientDatabaseEntry> {
         return instance;
     }
 
-    private void setValue(Field field, Object value, T instance, DbcField fieldInfo) {
+    private <T extends ClientDatabaseEntry> void setValue(Class<T> template, Field field, Object value, T instance, DbcField fieldInfo) {
         boolean accessible = field.isAccessible();
         try {
             field.setAccessible(true);

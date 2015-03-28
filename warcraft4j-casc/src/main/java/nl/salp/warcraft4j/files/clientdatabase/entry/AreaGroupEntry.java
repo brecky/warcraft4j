@@ -16,8 +16,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @DbcFile(file = "AreaGroup.db2")
 public class AreaGroupEntry implements ClientDatabaseEntry {
-    private ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.AREA_GROUP;
-    // TODO Implement me!
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.AREA_GROUP;
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
 

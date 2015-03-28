@@ -17,8 +17,9 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.files.clientdatabase;
+package nl.salp.warcraft4j.files.clientdatabase.util;
 
+import nl.salp.warcraft4j.files.clientdatabase.ClientDatabaseEntry;
 import nl.salp.warcraft4j.files.clientdatabase.parser.DbcFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  *
  * @author Barre Dijkstra
  */
-class ClientDatabaseEntryClasspathScanner {
+public class ClientDatabaseEntryClasspathScanner {
     /** The logger instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientDatabaseEntryClasspathScanner.class);
 

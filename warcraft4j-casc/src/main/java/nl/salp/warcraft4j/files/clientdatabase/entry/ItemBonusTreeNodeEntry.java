@@ -16,7 +16,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @DbcFile(file = "ItemBonusTreeNode.db2")
 public class ItemBonusTreeNodeEntry implements ClientDatabaseEntry {
-    private ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.ITEM_BONUS_TREE_NODE;
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.ITEM_BONUS_TREE_NODE;
     // TODO Implement me!
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;

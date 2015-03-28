@@ -16,7 +16,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @DbcFile(file = "ItemCurrencyCost.db2")
 public class ItemCurrencyCostEntry implements ClientDatabaseEntry {
-    private ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.ITEM_CURRENCY_COST;
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.ITEM_CURRENCY_COST;
     // TODO Implement me!
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;

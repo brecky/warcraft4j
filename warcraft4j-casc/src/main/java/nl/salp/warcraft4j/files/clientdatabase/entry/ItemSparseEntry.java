@@ -43,7 +43,7 @@ public class ItemSparseEntry implements ClientDatabaseEntry {
     private int quality;
     @DbcField(order = 3, dataType = DbcDataType.UINT32, numberOfEntries = 3)
     private int[] flags;
-    @DbcField(order = 4, dataType = DbcDataType.FLOAT, numberOfEntries = 2)
+    @DbcField(order = 4, dataType = DbcDataType.FLOAT, numberOfEntries = 2, knownMeaning = false)
     private float[] unknownFlags;
     @DbcField(order = 5, dataType = DbcDataType.UINT32)
     private int buyCount;
@@ -118,7 +118,7 @@ public class ItemSparseEntry implements ClientDatabaseEntry {
     @DbcField(order = 40, dataType = DbcDataType.UINT32)
     private int startQuest;
     @DbcField(order = 41, dataType = DbcDataType.UINT32)
-    private int lockID;
+    private int lockId;
     @DbcField(order = 42, dataType = DbcDataType.INT32)
     private int material;
     @DbcField(order = 43, dataType = DbcDataType.UINT32)
@@ -327,8 +327,8 @@ public class ItemSparseEntry implements ClientDatabaseEntry {
         return startQuest;
     }
 
-    public int getLockID() {
-        return lockID;
+    public int getLockId() {
+        return lockId;
     }
 
     public int getMaterial() {

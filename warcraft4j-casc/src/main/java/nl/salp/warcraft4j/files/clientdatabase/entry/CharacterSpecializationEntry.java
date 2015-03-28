@@ -14,28 +14,38 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-@DbcFile(file = "ItemEffect.db2")
-public class ItemEffectEntry implements ClientDatabaseEntry {
-    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.ITEM_EFFECT;
-    // TODO Implement me!
+@DbcFile(file = "ChrSpecialization.dbc")
+public class CharacterSpecializationEntry implements ClientDatabaseEntry {
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.CHARACTER_SPECIALIZATION;
+
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
-    private int itemId;
+    @DbcField(order = 2, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    private String backgroundFile;
     @DbcField(order = 3, dataType = DbcDataType.UINT32)
-    private int orderIndex;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32)
-    private int spellId;
+    private int classId;
+    @DbcField(order = 4, dataType = DbcDataType.UINT32, numberOfEntries = 2)
+    private int[] masterySpellId;
     @DbcField(order = 5, dataType = DbcDataType.UINT32)
-    private int trigger;
-    @DbcField(order = 6, dataType = DbcDataType.INT32)
-    private int charges;
-    @DbcField(order = 7, dataType = DbcDataType.INT32)
-    private int cooldown;
+    private int orderIndex;
+    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    private int petTalentType;
+    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    private int role; // (0 - Tank, 1 - Healer, 2 - DPS)
     @DbcField(order = 8, dataType = DbcDataType.UINT32)
-    private int categoryId;
+    private int iconId;
     @DbcField(order = 9, dataType = DbcDataType.UINT32)
-    private int categoryCooldown;
+    private int raidBuffs;
+    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    private int flags;
+    @DbcField(order = 11, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    private String name;
+    @DbcField(order = 12, dataType = DbcDataType.STRINGTABLE_REFERENCE, knownMeaning = false)
+    private String name2;// Same as name_lang?
+    @DbcField(order = 13, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    private String description;
+    @DbcField(order = 14, dataType = DbcDataType.UINT32, numberOfEntries = 2)
+    private int[] primaryStatOrder; // 2
 
     @Override
     public ClientDatabaseEntryType getEntryType() {
@@ -45,38 +55,6 @@ public class ItemEffectEntry implements ClientDatabaseEntry {
     @Override
     public int getId() {
         return id;
-    }
-
-    public int getItemId() {
-        return itemId;
-    }
-
-    public int getOrderIndex() {
-        return orderIndex;
-    }
-
-    public int getSpellId() {
-        return spellId;
-    }
-
-    public int getTrigger() {
-        return trigger;
-    }
-
-    public int getCharges() {
-        return charges;
-    }
-
-    public int getCooldown() {
-        return cooldown;
-    }
-
-    public int getCategoryId() {
-        return categoryId;
-    }
-
-    public int getCategoryCooldown() {
-        return categoryCooldown;
     }
 
     @Override

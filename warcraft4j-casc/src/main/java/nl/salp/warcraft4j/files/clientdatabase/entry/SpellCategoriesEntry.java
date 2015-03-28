@@ -51,7 +51,7 @@ public class SpellCategoriesEntry implements ClientDatabaseEntry {
     @DbcField(order = 5, dataType = DbcDataType.UINT32)
     private int defenseType;
     @DbcField(order = 6, dataType = DbcDataType.UINT32)
-    private int dispellType;
+    private int dispelType;
     @DbcField(order = 7, dataType = DbcDataType.UINT32)
     private int mechanic;
     @DbcField(order = 8, dataType = DbcDataType.UINT32)
@@ -87,8 +87,8 @@ public class SpellCategoriesEntry implements ClientDatabaseEntry {
         return defenseType;
     }
 
-    public int getDispellType() {
-        return dispellType;
+    public int getDispelType() {
+        return dispelType;
     }
 
     public int getMechanic() {

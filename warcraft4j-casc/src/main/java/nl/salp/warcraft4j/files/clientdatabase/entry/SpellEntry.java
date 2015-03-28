@@ -83,7 +83,7 @@ public class SpellEntry implements ClientDatabaseEntry {
     private int totemsId;
     @DbcField(order = 23, dataType = DbcDataType.UINT32)
     private int requiredProjectId;
-    @DbcField(order = 24, dataType = DbcDataType.UINT32)
+    @DbcField(order = 24, dataType = DbcDataType.UINT32, knownMeaning = false)
     private int miscId;
 
     @Override

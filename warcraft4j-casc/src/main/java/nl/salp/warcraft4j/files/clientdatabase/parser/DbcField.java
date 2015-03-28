@@ -63,4 +63,22 @@ public @interface DbcField {
      * @return The data type.
      */
     DbcDataType dataType();
+
+    /**
+     * Flag indicating if the field is padding.
+     * <p/>
+     * Default: {@code false}
+     *
+     * @return {@code true} if the field is for data padding (and thus should not be parsed).
+     */
+    boolean padding() default false;
+
+    /**
+     * Flag indicating if the meaning of the field is known.
+     * <p/>
+     * Default: {@code true}
+     *
+     * @return {@code true} if the meaning of the field is known.
+     */
+    boolean knownMeaning() default true;
 }

@@ -14,28 +14,28 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-@DbcFile(file = "ItemEffect.db2")
-public class ItemEffectEntry implements ClientDatabaseEntry {
-    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.ITEM_EFFECT;
+@DbcFile(file = "BattlePetSpecies.db2")
+public class BattlePetSpeciesEntry implements ClientDatabaseEntry {
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.BATTLE_PET_SPECIES;
     // TODO Implement me!
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
     @DbcField(order = 2, dataType = DbcDataType.UINT32)
-    private int itemId;
+    private int creatureId;
     @DbcField(order = 3, dataType = DbcDataType.UINT32)
-    private int orderIndex;
+    private int iconId;
     @DbcField(order = 4, dataType = DbcDataType.UINT32)
     private int spellId;
     @DbcField(order = 5, dataType = DbcDataType.UINT32)
-    private int trigger;
-    @DbcField(order = 6, dataType = DbcDataType.INT32)
-    private int charges;
-    @DbcField(order = 7, dataType = DbcDataType.INT32)
-    private int cooldown;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32)
-    private int categoryId;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32)
-    private int categoryCooldown;
+    private int petFamilyId;
+    @DbcField(order = 6, dataType = DbcDataType.UINT32, knownMeaning = false)
+    private int unknownField1;
+    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    private int flags;
+    @DbcField(order = 8, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    private String source;
+    @DbcField(order = 9, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    private String description;
 
     @Override
     public ClientDatabaseEntryType getEntryType() {
@@ -47,36 +47,36 @@ public class ItemEffectEntry implements ClientDatabaseEntry {
         return id;
     }
 
-    public int getItemId() {
-        return itemId;
+    public int getCreatureId() {
+        return creatureId;
     }
 
-    public int getOrderIndex() {
-        return orderIndex;
+    public int getIconId() {
+        return iconId;
     }
 
     public int getSpellId() {
         return spellId;
     }
 
-    public int getTrigger() {
-        return trigger;
+    public int getPetFamilyId() {
+        return petFamilyId;
     }
 
-    public int getCharges() {
-        return charges;
+    public int getUnknownField1() {
+        return unknownField1;
     }
 
-    public int getCooldown() {
-        return cooldown;
+    public int getFlags() {
+        return flags;
     }
 
-    public int getCategoryId() {
-        return categoryId;
+    public String getSource() {
+        return source;
     }
 
-    public int getCategoryCooldown() {
-        return categoryCooldown;
+    public String getDescription() {
+        return description;
     }
 
     @Override

@@ -16,8 +16,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @DbcFile(file = "ItemUpgrade.db2")
 public class ItemUpgradeEntry implements ClientDatabaseEntry {
-    private ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.ITEM_UPGRADE;
-    // TODO Implement me!
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.ITEM_UPGRADE;
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
     @DbcField(order = 2, dataType = DbcDataType.UINT32)

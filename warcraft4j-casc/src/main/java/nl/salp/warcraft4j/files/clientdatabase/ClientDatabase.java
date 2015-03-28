@@ -21,6 +21,7 @@ package nl.salp.warcraft4j.files.clientdatabase;
 
 import nl.salp.warcraft4j.files.clientdatabase.parser.ClientDatabaseFileParser;
 import nl.salp.warcraft4j.files.clientdatabase.parser.ClientDatabaseParsingException;
+import nl.salp.warcraft4j.files.clientdatabase.util.ClientDatabaseEntryClasspathScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,8 +87,8 @@ public class ClientDatabase {
      * @throws ClientDatabaseParsingException When the file could not be parsed.
      */
     public <T extends ClientDatabaseEntry> void add(Class<T> type, String directory) throws IOException, ClientDatabaseParsingException {
-        ClientDatabaseFileParser<T> parser = new ClientDatabaseFileParser<>(type);
-        Set<T> entries = parser.parse(directory);
+        ClientDatabaseFileParser parser = new ClientDatabaseFileParser();
+        Set<T> entries = parser.parse(type, directory);
         add(entries);
     }
 
