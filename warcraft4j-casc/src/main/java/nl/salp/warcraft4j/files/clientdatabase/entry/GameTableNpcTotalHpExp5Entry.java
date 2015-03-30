@@ -14,7 +14,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-@DbcFile(file = "gtNPCTotalHpExp5.dbc")
+@DbcFile(file = "gtNpcTotalHpExp5.dbc")
 public class GameTableNpcTotalHpExp5Entry implements ClientDatabaseEntry {
     private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.GAME_TABLE_NPC_TOTAL_HP_EXP5;
     // TODO Implement me!

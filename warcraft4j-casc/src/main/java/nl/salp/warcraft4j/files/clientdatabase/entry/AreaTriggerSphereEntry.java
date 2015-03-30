@@ -1,3 +1,22 @@
+/*
+ * Licensed to the Warcraft4J Project under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The Warcraft4J Project licenses
+ * this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package nl.salp.warcraft4j.files.clientdatabase.entry;
 
 import nl.salp.warcraft4j.files.clientdatabase.ClientDatabaseEntry;
@@ -14,14 +33,13 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-@DbcFile(file = "gtNpcTotalHpExp2.dbc")
-public class GameTableNpcTotalHpExp2Entry implements ClientDatabaseEntry {
-    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.GAME_TABLE_NPC_TOTAL_HP_EXP2;
-    // TODO Implement me!
+@DbcFile(file = "AreaTriggerSphere.dbc")
+public class AreaTriggerSphereEntry implements ClientDatabaseEntry {
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.AREA_TRIGGER_SPHERE;
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
-    private int level;
+    private int id;
     @DbcField(order = 2, dataType = DbcDataType.FLOAT)
-    private float totalHp;
+    private float maximumRadius;
 
     @Override
     public ClientDatabaseEntryType getEntryType() {
@@ -30,15 +48,11 @@ public class GameTableNpcTotalHpExp2Entry implements ClientDatabaseEntry {
 
     @Override
     public int getId() {
-        return level;
+        return id;
     }
 
-    public int getLevel() {
-        return level;
-    }
-
-    public float getTotalHp() {
-        return totalHp;
+    public float getMaximumRadius() {
+        return maximumRadius;
     }
 
     @Override

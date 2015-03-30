@@ -1,3 +1,22 @@
+/*
+ * Licensed to the Warcraft4J Project under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The Warcraft4J Project licenses
+ * this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package nl.salp.warcraft4j.files.clientdatabase.entry;
 
 import nl.salp.warcraft4j.files.clientdatabase.ClientDatabaseEntry;
@@ -14,18 +33,13 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-@DbcFile(file = "AnimKit.dbc")
-public class AnimKitEntry implements ClientDatabaseEntry {
-    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.ANIM_KIT;
-    // TODO Implement me!
+@DbcFile(file = "AreaTriggerActionSet.dbc")
+public class AreaTriggerActionSetEntry implements ClientDatabaseEntry {
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.AREA_TRIGGER_ACTION_SET;
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
     @DbcField(order = 2, dataType = DbcDataType.UINT32)
-    private int oneShotDuration;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32)
-    private int oneShotStopAnimKitId;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32)
-    private int lowDefinitionAnimKitId;
+    private int flags;
 
     @Override
     public ClientDatabaseEntryType getEntryType() {
@@ -37,16 +51,8 @@ public class AnimKitEntry implements ClientDatabaseEntry {
         return id;
     }
 
-    public int getOneShotDuration() {
-        return oneShotDuration;
-    }
-
-    public int getOneShotStopAnimKitId() {
-        return oneShotStopAnimKitId;
-    }
-
-    public int getLowDefinitionAnimKitId() {
-        return lowDefinitionAnimKitId;
+    public int getFlags() {
+        return flags;
     }
 
     @Override

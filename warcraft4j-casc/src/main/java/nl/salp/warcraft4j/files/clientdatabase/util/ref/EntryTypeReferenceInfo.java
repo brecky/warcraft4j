@@ -8,33 +8,57 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 /**
- * TODO Document class.
+ * Field references and their corresponding reference scores for a type.
  *
  * @author Barre Dijkstra
  */
-public class FieldReferences {
+public class EntryTypeReferenceInfo {
+    /** The type to score the field references of. */
     private final Class<? extends ClientDatabaseEntry> sourceType;
-    private final Map<FieldInfo, Collection<FieldReference>> fields;
+    /** The field references, indexed by the fields. */
+    private final Map<FieldReferenceInfo, Collection<FieldReference>> fields;
 
 
-    public FieldReferences(Class<? extends ClientDatabaseEntry> sourceType) {
+    /**
+     * Create a new instance.
+     *
+     * @param sourceType The type to score the field references of.
+     */
+    public EntryTypeReferenceInfo(Class<? extends ClientDatabaseEntry> sourceType) {
         this.sourceType = sourceType;
         this.fields = new TreeMap<>();
     }
 
+    /**
+     * Score the field references.
+     *
+     * @param clientDatabase The client database holding all entries.
+     */
     public void scoreFieldReferences(ClientDatabase clientDatabase) {
         for (Field field : getReferenceFields()) {
-            FieldInfo f = new FieldInfo(sourceType, field);
+            FieldReferenceInfo f = new FieldReferenceInfo(sourceType, field);
             Collection<FieldReference> references = f.scoreReferences(clientDatabase);
             fields.put(f, references);
         }
     }
 
-    public Collection<FieldInfo> getFields() {
+    /**
+     * Get all fields that have scored references.
+     *
+     * @return The fields.
+     */
+    public Collection<FieldReferenceInfo> getFields() {
         return this.fields.keySet();
     }
 
-    public Collection<FieldReference> getReferences(FieldInfo field) {
+    /**
+     * Get the scored references for a field.
+     *
+     * @param field The field.
+     *
+     * @return The references.
+     */
+    public Collection<FieldReference> getReferences(FieldReferenceInfo field) {
         Collection<FieldReference> references;
         if (field != null && this.fields.containsKey(field)) {
             references = this.fields.get(field);
@@ -44,6 +68,11 @@ public class FieldReferences {
         return references;
     }
 
+    /**
+     * Get all fields of the type that are potentially reference fields.
+     *
+     * @return The fields.
+     */
     private Set<Field> getReferenceFields() {
         Set<Field> fields = new HashSet<>();
         for (Field field : this.sourceType.getDeclaredFields()) {

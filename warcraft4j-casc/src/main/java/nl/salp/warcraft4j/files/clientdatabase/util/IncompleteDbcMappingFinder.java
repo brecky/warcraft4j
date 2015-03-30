@@ -49,49 +49,27 @@ public class IncompleteDbcMappingFinder {
     }
 
     /**
-     * Find all files with no corresponding mapping.
+     * Parse the entry mapping.
      *
-     * @param dbcDirectory The directory holding the DBC and DB2 files.
+     * @param type         The type to parse to.
+     * @param dbcDirectory The directory containing the DBC/DB2 files.
      *
-     * @return The files for which no mapping is present.
+     * @return The parsed file.
      *
-     * @throws IOException When the files reading failed.
+     * @throws IOException When parsing failed.
      */
-    public Collection<ClientDatabaseFile> findAllMissingMappings(String dbcDirectory) throws IOException {
-        Set<String> dbcFiles = new HashSet<>(Arrays.asList(getAllClientDatabaseFiles(dbcDirectory)));
-        Set<String> mappedFiles = new HashSet<>();
-        for (Class<? extends ClientDatabaseEntry> type : getAllClientDatabaseEntryMappings()) {
-            DbcFile f = type.getAnnotation(DbcFile.class);
-            if (f != null) {
-                mappedFiles.add(f.file());
-            }
-        }
-        dbcFiles.removeAll(mappedFiles);
-
-        SortedSet<ClientDatabaseFile> missingMappings = new TreeSet<>(new Comparator<ClientDatabaseFile>() {
-
-            @Override
-            public int compare(ClientDatabaseFile o1, ClientDatabaseFile o2) {
-                return o1.getFilename().compareToIgnoreCase(o2.getFilename());
-            }
-        });
-        for (String mf : dbcFiles) {
-            missingMappings.add(parse(mf, dbcDirectory));
-        }
-
-        return missingMappings;
-    }
-
-    private ClientDatabaseFile parse(String filename, String dbcDirectory) throws IOException {
-        ClientDatabaseFileParser parser = new ClientDatabaseFileParser();
-        return parser.parseFile(filename, dbcDirectory);
-    }
-
     private ClientDatabaseFile parse(Class<? extends ClientDatabaseEntry> type, String dbcDirectory) throws IOException {
         ClientDatabaseFileParser parser = new ClientDatabaseFileParser();
         return parser.parseFile(type.getAnnotation(DbcFile.class).file(), dbcDirectory);
     }
 
+    /**
+     * Get the number of fields in the type that are marked as having an unknown meaning.
+     *
+     * @param type The type to parse.
+     *
+     * @return The number of fields that have an unknown meaning.
+     */
     private static int getUnknownFieldCount(Class<? extends ClientDatabaseEntry> type) {
         int fieldCount = 0;
         if (type != null && type.isAnnotationPresent(DbcFile.class)) {
@@ -171,21 +149,28 @@ public class IncompleteDbcMappingFinder {
         });
     }
 
+    /**
+     * Program entry point.
+     *
+     * @param args The command line arguments.
+     *
+     * @throws Exception When determining mappnig completeness failed.
+     */
     public static void main(String... args) throws Exception {
-        if (args.length != 2) {
-            printHelp();
-        } else if ("missing".equalsIgnoreCase(args[0])) {
+        if (args.length == 1) {
             IncompleteDbcMappingFinder finder = new IncompleteDbcMappingFinder();
-            print(finder.findAllMissingMappings(args[1]));
-        } else if ("incomplete".equalsIgnoreCase(args[0])) {
-            IncompleteDbcMappingFinder finder = new IncompleteDbcMappingFinder();
-            print(finder.findAllIncompleteMappings(args[1]));
+            print(finder.findAllIncompleteMappings(args[0]));
         } else {
             printHelp();
         }
 
     }
 
+    /**
+     * Print the details for incomplete mappings to the {@code System.out}.
+     *
+     * @param incompleteMappings The incomplete mappings.
+     */
     private static void print(Map<ClientDatabaseFile, Class<? extends ClientDatabaseEntry>> incompleteMappings) {
         if (incompleteMappings.isEmpty()) {
             System.out.println(format("All mapped files are complete"));
@@ -203,24 +188,15 @@ public class IncompleteDbcMappingFinder {
         }
     }
 
-    private static void print(Collection<ClientDatabaseFile> missingMappings) {
-        if (missingMappings.isEmpty()) {
-            System.out.println(format("All found DBC and DB2 files are mapped."));
-        } else {
-            System.out.println(format("Missing mappings for the following %d files", missingMappings.size()));
-            for (ClientDatabaseFile m : missingMappings) {
-                System.out.println(format("    - %s (fields:%d, entrySize:%d stringBlock:%s, entries:%d)", m.getFilename(), m.getHeader().getFieldCount(), m.getHeader().getRecordSize(), !m.getStringBlock().getAvailablePositions().isEmpty(), m.getHeader().getRecordCount()));
-            }
-        }
-    }
-
+    /**
+     * Print usage/help message.
+     */
     private static void printHelp() {
         System.out.println(format("Didn't receive all required parameters."));
         System.out.println(format("Usage:"));
-        System.out.println(format("    IncompleteDbcMappingFinder <method> <dbc directory>"));
+        System.out.println(format("    IncompleteDbcMappingFinder <dbc directory>"));
         System.out.println(format(""));
         System.out.println(format("Parameters:"));
-        System.out.println(format("    <method> The method to scan for, being either 'incomplete' or 'missing' which scans for either incomplete mappings or missing mappings"));
         System.out.println(format("    <dbc directory> The directory where the DBC and DB2 files are located"));
     }
 }

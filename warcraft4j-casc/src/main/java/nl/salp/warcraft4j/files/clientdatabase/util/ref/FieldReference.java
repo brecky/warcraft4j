@@ -3,6 +3,7 @@ package nl.salp.warcraft4j.files.clientdatabase.util.ref;
 import nl.salp.warcraft4j.files.clientdatabase.ClientDatabase;
 import nl.salp.warcraft4j.files.clientdatabase.ClientDatabaseEntry;
 
+import javax.management.openmbean.OpenMBeanConstructorInfo;
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,19 +11,32 @@ import java.util.Set;
 import static java.lang.String.format;
 
 /**
- * TODO Document class.
+ * Scored reference between a field and an entry type.
  *
  * @author Barre Dijkstra
  */
 public class FieldReference implements Comparable<FieldReference> {
+    /** The client database holding the instances. */
     private final WeakReference<ClientDatabase> clientDatabase;
+    /** The type of the referenced entry. */
     private final Class<? extends ClientDatabaseEntry> targetType;
+    /** The total number of instances the referenced entry has. */
     private final int targetEntries;
+    /** The values that have been referenced. */
     private Set<Integer> values;
+    /** The total number of times there was a reference hit. */
     private int targetHitsTotal;
+    /** The total number of times there was an unique reference hit. */
     private int targetHitsUnique;
+    /** The total number of times there was a reference miss. */
     private int targetMisses;
 
+    /**
+     * Create a new field reference.
+     *
+     * @param targetType     The referenced type.
+     * @param clientDatabase The client database holding the referenced instances.
+     */
     public FieldReference(Class<? extends ClientDatabaseEntry> targetType, ClientDatabase clientDatabase) {
         this.clientDatabase = new WeakReference<>(clientDatabase);
         this.targetType = targetType;
@@ -30,6 +44,11 @@ public class FieldReference implements Comparable<FieldReference> {
         this.values = new HashSet<>();
     }
 
+    /**
+     * Score the reference id.
+     *
+     * @param referenceValue The referenced id.
+     */
     public void score(int referenceValue) {
         ClientDatabaseEntry entry = resolve(referenceValue, targetType);
         if (entry == null) {
@@ -42,22 +61,63 @@ public class FieldReference implements Comparable<FieldReference> {
         }
     }
 
+    /**
+     * Get the number of entries the referenced type has.
+     *
+     * @return The number of instances.
+     */
     public int getTargetEntries() {
         return targetEntries;
     }
 
+    /**
+     * Get the total number of references.
+     *
+     * @return The number of references.
+     */
     public int getTargetHitsTotal() {
         return targetHitsTotal;
     }
 
+    /**
+     * Get the number of unique references.
+     *
+     * @return The number of unique references.
+     */
     public int getTargetHitsUnique() {
         return targetHitsUnique;
     }
 
+    /**
+     * Get the number of reference misses (e.g. there is no instance of the type with the id being equal to the referenced id).
+     *
+     * @return The number of missed references.
+     */
     public int getTargetMisses() {
         return targetMisses;
     }
 
+    public double getMissPercentage() {
+        return (double) targetMisses / (targetHitsTotal + targetMisses);
+    }
+
+    public double getHitPercentage() {
+        return (double) targetHitsTotal / (targetHitsTotal + targetMisses);
+    }
+
+    public double getReferencedEntryPercentage() {
+        return (double) targetHitsUnique / targetEntries;
+    }
+
+    /**
+     * Resolve an entry type instance by its ID.
+     *
+     * @param value      The id.
+     * @param targetType The entry type.
+     * @param <T>        The type.
+     *
+     * @return The instance or {@code null} when no instances was found with the given id.
+     */
     private <T extends ClientDatabaseEntry> T resolve(int value, Class<T> targetType) {
         return clientDatabase.get().resolve(targetType, value);
     }
@@ -88,5 +148,9 @@ public class FieldReference implements Comparable<FieldReference> {
             cmp = 0;
         }
         return cmp;
+    }
+
+    public Class<? extends ClientDatabaseEntry> getTargetType() {
+        return targetType;
     }
 }

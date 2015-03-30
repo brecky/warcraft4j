@@ -14,14 +14,18 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-@DbcFile(file = "gtNpcTotalHpExp2.dbc")
-public class GameTableNpcTotalHpExp2Entry implements ClientDatabaseEntry {
-    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.GAME_TABLE_NPC_TOTAL_HP_EXP2;
+@DbcFile(file = "AnimKit.dbc")
+public class AnimationKitEntry implements ClientDatabaseEntry {
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.ANIMATION_KIT;
     // TODO Implement me!
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
-    private int level;
-    @DbcField(order = 2, dataType = DbcDataType.FLOAT)
-    private float totalHp;
+    private int id;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    private int oneShotDuration;
+    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    private int oneShotStopAnimationKitId;
+    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    private int lowDefinitionAnimationKitId;
 
     @Override
     public ClientDatabaseEntryType getEntryType() {
@@ -30,15 +34,19 @@ public class GameTableNpcTotalHpExp2Entry implements ClientDatabaseEntry {
 
     @Override
     public int getId() {
-        return level;
+        return id;
     }
 
-    public int getLevel() {
-        return level;
+    public int getOneShotDuration() {
+        return oneShotDuration;
     }
 
-    public float getTotalHp() {
-        return totalHp;
+    public int getOneShotStopAnimationKitId() {
+        return oneShotStopAnimationKitId;
+    }
+
+    public int getLowDefinitionAnimationKitId() {
+        return lowDefinitionAnimationKitId;
     }
 
     @Override
