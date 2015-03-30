@@ -14,14 +14,19 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-@DbcFile(file = "gtRegenMPPerSpt.dbc")
-public class GameTableRegenMpPerSptEntry implements ClientDatabaseEntry {
-    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.GAME_TABLE_REGEN_MP_PER_SPIRIT;
-    // TODO Implement me!
+@DbcFile(file = "AreaAssignment.dbc")
+public class AreaAssignmentEntry implements ClientDatabaseEntry {
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.AREA_ASSIGNMENT;
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
-    private int level;
-    @DbcField(order = 2, dataType = DbcDataType.FLOAT)
-    private float regenMpPerSpirit;
+    private int id;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    private int mapId;
+    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    private int areaId;
+    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    private int chunkX;
+    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    private int chunkY;
 
     @Override
     public ClientDatabaseEntryType getEntryType() {
@@ -30,15 +35,23 @@ public class GameTableRegenMpPerSptEntry implements ClientDatabaseEntry {
 
     @Override
     public int getId() {
-        return level;
+        return id;
     }
 
-    public int getLevel() {
-        return level;
+    public int getMapId() {
+        return mapId;
     }
 
-    public float getRegenMpPerSpirit() {
-        return regenMpPerSpirit;
+    public int getAreaId() {
+        return areaId;
+    }
+
+    public int getChunkX() {
+        return chunkX;
+    }
+
+    public int getChunkY() {
+        return chunkY;
     }
 
     @Override

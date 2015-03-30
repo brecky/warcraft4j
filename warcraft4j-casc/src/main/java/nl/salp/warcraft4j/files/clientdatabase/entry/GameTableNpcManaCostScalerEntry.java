@@ -16,7 +16,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @DbcFile(file = "gtNPCManaCostScaler.dbc")
 public class GameTableNpcManaCostScalerEntry implements ClientDatabaseEntry {
-    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.GAME_TABLE_NPC_TOTAL_HP;
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.GAME_TABLE_NPC_MANA_COST_SCALER;
     // TODO Implement me!
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int level;

@@ -5,6 +5,7 @@ import nl.salp.warcraft4j.files.clientdatabase.ClientDatabaseEntryType;
 import nl.salp.warcraft4j.files.clientdatabase.parser.DbcDataType;
 import nl.salp.warcraft4j.files.clientdatabase.parser.DbcField;
 import nl.salp.warcraft4j.files.clientdatabase.parser.DbcFile;
+import nl.salp.warcraft4j.files.clientdatabase.parser.DbcReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -14,14 +15,16 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-@DbcFile(file = "gtRegenMPPerSpt.dbc")
-public class GameTableRegenMpPerSptEntry implements ClientDatabaseEntry {
-    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.GAME_TABLE_REGEN_MP_PER_SPIRIT;
-    // TODO Implement me!
+@DbcFile(file = "AreaGroupMember.db2")
+public class AreaGroupMemberEntry implements ClientDatabaseEntry {
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.AREA_GROUP_MEMBER;
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
-    private int level;
-    @DbcField(order = 2, dataType = DbcDataType.FLOAT)
-    private float regenMpPerSpirit;
+    private int id;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcReference(type = ClientDatabaseEntryType.AREA_GROUP)
+    private int areaGroupId;
+    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    private int unknown;
 
     @Override
     public ClientDatabaseEntryType getEntryType() {
@@ -30,15 +33,7 @@ public class GameTableRegenMpPerSptEntry implements ClientDatabaseEntry {
 
     @Override
     public int getId() {
-        return level;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public float getRegenMpPerSpirit() {
-        return regenMpPerSpirit;
+        return id;
     }
 
     @Override
