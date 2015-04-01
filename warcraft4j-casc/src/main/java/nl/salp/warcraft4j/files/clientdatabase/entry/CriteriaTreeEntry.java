@@ -42,6 +42,7 @@ public class CriteriaTreeEntry implements ClientDatabaseEntry {
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
     @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcReference(type = ClientDatabaseEntryType.CRITERIA)
     private int criteriaId;
     @DbcField(order = 3, dataType = DbcDataType.ULONG)
     private long amount;

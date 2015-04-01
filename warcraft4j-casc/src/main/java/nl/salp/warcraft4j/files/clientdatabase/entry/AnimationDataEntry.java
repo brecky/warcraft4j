@@ -22,6 +22,12 @@ public class AnimationDataEntry implements ClientDatabaseEntry {
     private int id;
     @DbcField(order = 2, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String name;
+    /*
+0: weapon not affected by animation,
+4: sheathe weapons automatically,
+16: sheathe weapons automatically,
+32: unsheathe weapons.
+     */
     @DbcField(order = 3, dataType = DbcDataType.UINT32)
     private int flags;
     @DbcField(order = 4, dataType = DbcDataType.UINT32)

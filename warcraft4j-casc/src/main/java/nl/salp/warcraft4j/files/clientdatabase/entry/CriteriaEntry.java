@@ -21,21 +21,112 @@ package nl.salp.warcraft4j.files.clientdatabase.entry;
 
 import nl.salp.warcraft4j.files.clientdatabase.ClientDatabaseEntry;
 import nl.salp.warcraft4j.files.clientdatabase.ClientDatabaseEntryType;
+import nl.salp.warcraft4j.files.clientdatabase.parser.DbcDataType;
+import nl.salp.warcraft4j.files.clientdatabase.parser.DbcField;
+import nl.salp.warcraft4j.files.clientdatabase.parser.DbcFile;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * TODO Document.
  *
  * @author Barre Dijkstra
  */
+@DbcFile(file = "Criteria.dbc")
 public class CriteriaEntry implements ClientDatabaseEntry {
+    private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.CRITERIA;
+    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    private int id;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    private int type;
+    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    private int criteriaLinkId; // Id of the link to various entry types, based on the criteria type
+    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    private int startEvent;                                      // 3
+    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    private int startAsset;                                      // 4
+    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    private int startTimer;                                      // 5
+    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    private int failEvent;                                       // 6
+    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    private int failAsset;                                       // 7
+    @DbcField(order = 9, dataType = DbcDataType.UINT32)
+    private int modifierTreeId;                                  // 8
+    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    private int flags;                                         // 9
+    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    private int eligibilityWorldStateId;                         // 10
+    @DbcField(order = 12, dataType = DbcDataType.UINT32)
+    private int eligibilityWorldStateValue;                      // 11
 
     @Override
     public ClientDatabaseEntryType getEntryType() {
-        return null;
+        return ENTRY_TYPE;
     }
 
     @Override
     public int getId() {
-        return 0;
+        return id;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public int getCriteriaLinkId() {
+        return criteriaLinkId;
+    }
+
+    public int getStartEvent() {
+        return startEvent;
+    }
+
+    public int getStartAsset() {
+        return startAsset;
+    }
+
+    public int getStartTimer() {
+        return startTimer;
+    }
+
+    public int getFailEvent() {
+        return failEvent;
+    }
+
+    public int getFailAsset() {
+        return failAsset;
+    }
+
+    public int getModifierTreeId() {
+        return modifierTreeId;
+    }
+
+    public int getFlags() {
+        return flags;
+    }
+
+    public int getEligibilityWorldStateId() {
+        return eligibilityWorldStateId;
+    }
+
+    public int getEligibilityWorldStateValue() {
+        return eligibilityWorldStateValue;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

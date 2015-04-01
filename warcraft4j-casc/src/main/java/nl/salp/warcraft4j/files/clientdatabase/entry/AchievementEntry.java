@@ -37,6 +37,31 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @DbcFile(file = "Achievement.dbc")
 public class AchievementEntry implements ClientDatabaseEntry {
+
+    private static final int ACHIEVEMENT_FLAG_COUNTER = 0x00000001;    // Just count statistic (never stop and complete)
+    private static final int ACHIEVEMENT_FLAG_HIDDEN = 0x00000002;    // Not sent to client - internal use only
+    private static final int ACHIEVEMENT_FLAG_PLAY_NO_VISUAL = 0x00000004;    // Client does not play achievement earned visual
+    private static final int ACHIEVEMENT_FLAG_SUMM = 0x00000008;    // Use summ criteria value from all requirements (and calculate max value)
+    private static final int ACHIEVEMENT_FLAG_MAX_USED = 0x00000010;    // Show max criteria (and calculate max value ??)
+    private static final int ACHIEVEMENT_FLAG_REQ_COUNT = 0x00000020;    // Use not zero req count (and calculate max value)
+    private static final int ACHIEVEMENT_FLAG_AVERAGE = 0x00000040;    // Show as average value (value / time_in_days) depend from other flag (by def use last criteria value)
+    private static final int ACHIEVEMENT_FLAG_BAR = 0x00000080;    // Show as progress bar (value / max vale) depend from other flag (by def use last criteria value)
+    private static final int ACHIEVEMENT_FLAG_REALM_FIRST_REACH = 0x00000100;    //
+    private static final int ACHIEVEMENT_FLAG_REALM_FIRST_KILL = 0x00000200;    //
+    private static final int ACHIEVEMENT_FLAG_UNK3 = 0x00000400;    // ACHIEVEMENT_FLAG_HIDE_NAME_IN_TIE
+    private static final int ACHIEVEMENT_FLAG_UNK4 = 0x00000800;    // first guild on realm done something
+    private static final int ACHIEVEMENT_FLAG_SHOW_IN_GUILD_NEWS = 0x00001000;    // Shows in guild news
+    private static final int ACHIEVEMENT_FLAG_SHOW_IN_GUILD_HEADER = 0x00002000;    // Shows in guild news header
+    private static final int ACHIEVEMENT_FLAG_GUILD = 0x00004000;    //
+    private static final int ACHIEVEMENT_FLAG_SHOW_GUILD_MEMBERS = 0x00008000;    //
+    private static final int ACHIEVEMENT_FLAG_SHOW_CRITERIA_MEMBERS = 0x00010000;    //
+    private static final int ACHIEVEMENT_FLAG_ACCOUNT = 0x00020000;
+
+    private static final int ACHIEVEMENT_FACTION_HORDE = 0;
+    private static final int ACHIEVEMENT_FACTION_ALLIANCE = 1;
+    private static final int ACHIEVEMENT_FACTION_ANY = -1;
+
+
     /** The entry type. */
     private static final ClientDatabaseEntryType ENTRY_TYPE = ClientDatabaseEntryType.ACHIEVEMENT;
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
