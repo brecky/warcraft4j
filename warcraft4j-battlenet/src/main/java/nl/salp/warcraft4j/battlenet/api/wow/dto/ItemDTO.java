@@ -118,7 +118,7 @@ public class ItemDTO {
     private ItemSocketDTO socketInfo;
     @JsonProperty("disenchantingSkillRank")
     private int disenchantingSkillRank;
-    private ItemBonusSummeryDTO bonusSummary;
+    private ItemBonusSummaryDTO bonusSummary;
 
     public int getId() {
         return id;
@@ -440,11 +440,11 @@ public class ItemDTO {
         this.availableContexts = availableContexts;
     }
 
-    public ItemBonusSummeryDTO getBonusSummary() {
+    public ItemBonusSummaryDTO getBonusSummary() {
         return bonusSummary;
     }
 
-    public void setBonusSummary(ItemBonusSummeryDTO bonusSummary) {
+    public void setBonusSummary(ItemBonusSummaryDTO bonusSummary) {
         this.bonusSummary = bonusSummary;
     }
 
