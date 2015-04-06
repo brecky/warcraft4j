@@ -22,25 +22,37 @@
 package nl.salp.warcraft4j.battlenet;
 
 /**
- * TODO Document class.
+ * Exception that is used for problems with the Battle.NET API configuration.
+ *
+ * @author Barre Dijkstra
+ * @see nl.salp.warcraft4j.battlenet.BattlenetApiConfig
  */
 public class ConfigurationException extends Exception {
-    public ConfigurationException() {
-    }
-
+    /**
+     * Create a new ConfigurationException with an exception message.
+     *
+     * @param message The exception message.
+     */
     public ConfigurationException(String message) {
         super(message);
     }
 
+    /**
+     * Create a new ConfigurationException with an exception message and cause exception.
+     *
+     * @param message The exception message.
+     * @param cause   The exception that caused this exception.
+     */
     public ConfigurationException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * Create a new ConfigurationException with a cause exception.
+     *
+     * @param cause The exception that caused this exception.
+     */
     public ConfigurationException(Throwable cause) {
         super(cause);
-    }
-
-    public ConfigurationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

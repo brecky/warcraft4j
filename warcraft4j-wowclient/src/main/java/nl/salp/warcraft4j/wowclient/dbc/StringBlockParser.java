@@ -44,7 +44,7 @@ public class StringBlockParser {
             while (buffer.hasRemaining() && (b = buffer.get()) != 0) {
                 byteOut.write(b);
             }
-            String value = new String(byteOut.toByteArray(), StandardCharsets.UTF_8);
+            String value = new String(byteOut.toByteArray(), StandardCharsets.US_ASCII);
             if (!value.isEmpty()) {
                 strings.put(position, value);
             }

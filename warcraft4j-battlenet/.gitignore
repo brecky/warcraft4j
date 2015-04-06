@@ -1,1 +1,5 @@
+#####
+# Local configuration and testing files.
+#####
 w4j_bnet.config
+auctions.json

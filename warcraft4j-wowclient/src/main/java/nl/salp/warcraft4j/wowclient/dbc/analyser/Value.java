@@ -1,5 +1,7 @@
 package nl.salp.warcraft4j.wowclient.dbc.analyser;
 
+import nl.salp.warcraft4j.wowclient.dbc.StringBlock;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -8,48 +10,39 @@ import java.nio.charset.StandardCharsets;
  * TODO Document class.
  */
 public class Value {
-    public static final int EMPTY_VALUE = Integer.MIN_VALUE;
+    public static final byte[] EMPTY_VALUE = new byte[]{0, 0, 0, 0};
     public static final Value EMPTY = new Value(EMPTY_VALUE);
-    private final int value;
     private final int hashCode;
     private final byte[] data;
 
-    public Value(int value) {
-        this.value = value;
-        hashCode = String.valueOf(value).hashCode();
-        data = toByteArray();
+    public Value(byte[] data) {
+        hashCode = new String(data, StandardCharsets.US_ASCII).hashCode();
+        this.data = data;
     }
 
-    private byte[] toByteArray() {
-        ByteBuffer buffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
-        buffer.putInt(value);
-        buffer.rewind();
-        byte[] data = new byte[4];
-        buffer.get(data);
-        return data;
+    private ByteBuffer dataBuffer() {
+        return ByteBuffer.wrap(data);
     }
 
-    private ByteBuffer data() {
-        return ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
+    private ByteBuffer dataBuffer(ByteOrder byteOrder) {
+        return ByteBuffer.wrap(data).order(byteOrder);
     }
 
     public String asString() {
-        return new String(data, StandardCharsets.UTF_8);
+        return new String(data, StandardCharsets.US_ASCII);
     }
 
     public float asFloat() {
-        return data().getFloat();
+        return dataBuffer().getFloat();
     }
 
     public byte[] asByteArray() {
-        byte[] data = new byte[4];
-        data().get(data);
         return data;
     }
 
     public short[] asShortArray() {
         short[] data = new short[2];
-        ByteBuffer buffer = data();
+        ByteBuffer buffer = dataBuffer(ByteOrder.LITTLE_ENDIAN);
         data[0] = buffer.getShort();
         data[1] = buffer.getShort();
         return data;
@@ -57,19 +50,43 @@ public class Value {
 
     public char[] asCharArray() {
         char[] data = new char[2];
-        ByteBuffer buffer = data();
+        ByteBuffer buffer = dataBuffer();
         data[0] = buffer.getChar();
         data[1] = buffer.getChar();
         return data;
     }
 
+    public byte[] get() {
+        return data;
+    }
 
-    public int get() {
-        return value;
+    public int asInt() {
+        return dataBuffer(ByteOrder.LITTLE_ENDIAN).getInt();
     }
 
     public boolean isEmpty() {
-        return value != EMPTY_VALUE;
+        boolean empty = true;
+        for (byte b : data) {
+            if (b != 0) {
+                empty = false;
+                break;
+            }
+        }
+        return empty;
+    }
+
+    public boolean isStringBlockValue(StringBlock stringBlock) {
+        return stringBlock.isEntryAvailableForPosition(asInt());
+    }
+
+    public String asString(StringBlock stringBlock) {
+        String value = null;
+        if (isStringBlockValue(stringBlock)) {
+            value = stringBlock.getEntry(asInt());
+        } else {
+            value = asString();
+        }
+        return value;
     }
 
     @Override
@@ -88,6 +105,6 @@ public class Value {
 
     @Override
     public String toString() {
-        return isEmpty() ? "null" : String.valueOf(value);
+        return isEmpty() ? "empty" : asString();
     }
 }

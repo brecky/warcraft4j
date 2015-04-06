@@ -21,33 +21,47 @@
 
 package nl.salp.warcraft4j.battlenet;
 
+import com.google.inject.Singleton;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * Configuration for the Battle.NET API.
  *
  * @author Barre Dijkstra
  */
+@Singleton
 public class BattlenetApiConfig {
     /** Default maximum number of requests per second allowed by the BattleNET API. */
     public static final int MAX_REQUESTS_PER_SECOND_DEFAULT = 100;
     /** Default maximum number of requests per hour allowed by the BattleNET API. */
     public static final int MAX_REQUESTS_PER_HOUR_DEFAULT = 36000;
+    /** The default region for the Battle.NET API. */
+    public static final String REGION_DEFAULT = "eu";
+    /** The default language for the Battle.NET API. */
+    private static final String LOCALE_DEFAULT = "en_GB";
     /** The default configuration file name. */
     public static final String CONFIG_FILENAME_DEFAULT = "w4j_bnet.config";
     /** Configuration file key for the application name. */
-    private static final String CONFIG_KEY_APPLICATION_NAME = "w4j.bnet.application";
+    private static final String CONFIG_KEY_APPLICATION_NAME = "w4j.bnet.api.application";
     /** Configuration file key for the API key. */
-    private static final String CONFIG_KEY_API_KEY = "w4j.bnet.auth.key";
+    private static final String CONFIG_KEY_API_KEY = "w4j.bnet.api.auth.auth.key";
     /** Configuration file key for the API secret key. */
-    private static final String CONFIG_KEY_API_SECRET = "w4j.bnet.auth.secret";
+    private static final String CONFIG_KEY_API_SECRET = "w4j.bnet.api.auth.auth.secret";
     /** Configuration file key for the maximum number of API requests per second. */
-    private static final String CONFIG_KEY_MAX_REQUESTS_SECOND = "w4j.bnet.maxrequests.second";
+    private static final String CONFIG_KEY_MAX_REQUESTS_SECOND = "w4j.bnet.api.maxrequests.second";
     /** Configuration file key for the maximum number of API requests per hour. */
-    private static final String CONFIG_KEY_MAX_REQUESTS_HOUR = "w4j.bnet.maxrequests.hour";
+    private static final String CONFIG_KEY_MAX_REQUESTS_HOUR = "w4j.bnet.api.maxrequests.hour";
+    /** Configuration file key for the default locale for the API. */
+    private static final String CONFIG_DEFAULT_LOCALE = "w4j.bnet.api.default.locale";
+    /** Configuration file key for the default region for the API. */
+    private static final String CONFIG_DEFAULT_REGION = "w4j.bnet.api.default.region";
 
     /** The name of the application, as registered with the Battle.NET API. */
     private final String applicationName;
@@ -59,9 +73,13 @@ public class BattlenetApiConfig {
     private final int maxRequestsSecond;
     /** The maximum number of requests per hour allowed by the Battle.NET API for the application. */
     private final int maxRequestsHour;
+    /** The default Battle.NET API region. */
+    private BattlenetRegion defaultRegion;
+    /** The default Battle.NET API locale. */
+    private BattlenetLocale defaultLocale;
 
     /**
-     * Create a new Battle.NET API configuration.
+     * Create a new Battle.NET API configuration with the default values.
      *
      * @param applicationName  The name of the application, as registered with the Battle.NET API.
      * @param bnetApiKey       The Battle.NET API key.
@@ -70,7 +88,7 @@ public class BattlenetApiConfig {
      * @throws ConfigurationException When invalid configuration data was provided.
      */
     public BattlenetApiConfig(String applicationName, String bnetApiKey, String bnetApiSecretKey) throws ConfigurationException {
-        this(applicationName, bnetApiKey, bnetApiSecretKey, MAX_REQUESTS_PER_SECOND_DEFAULT, MAX_REQUESTS_PER_HOUR_DEFAULT);
+        this(applicationName, bnetApiKey, bnetApiSecretKey, MAX_REQUESTS_PER_SECOND_DEFAULT, MAX_REQUESTS_PER_HOUR_DEFAULT, REGION_DEFAULT, LOCALE_DEFAULT);
     }
 
     /**
@@ -81,21 +99,23 @@ public class BattlenetApiConfig {
      * @param bnetApiSecretKey  The Battle.NET API secret key.
      * @param maxRequestsSecond The maximum number of requests per second allowed by the Battle.NET API for the application.
      * @param maxRequestsHour   The maximum number of requests per hour allowed by the Battle.NET API for the application.
+     * @param defaultRegion     The default Battle.NET region to use.
+     * @param defaultLocale     The default Battle.NET locale to use.
      *
      * @throws ConfigurationException When invalid configuration data was provided.
      */
-    public BattlenetApiConfig(String applicationName, String bnetApiKey, String bnetApiSecretKey, int maxRequestsSecond, int maxRequestsHour) throws ConfigurationException {
-        if (applicationName == null || applicationName.isEmpty()) {
+    public BattlenetApiConfig(String applicationName, String bnetApiKey, String bnetApiSecretKey, int maxRequestsSecond, int maxRequestsHour, String defaultRegion, String defaultLocale) throws ConfigurationException {
+        if (isEmpty(applicationName)) {
             throw new ConfigurationException("Null or empty application names are not allowed.");
         }
         this.applicationName = applicationName;
 
-        if (bnetApiKey == null || bnetApiKey.isEmpty()) {
+        if (isEmpty(bnetApiKey)) {
             throw new ConfigurationException("Null or empty API keys are not allowed.");
         }
         this.bnetApiKey = bnetApiKey;
 
-        if (bnetApiSecretKey == null || bnetApiSecretKey.isEmpty()) {
+        if (isEmpty(bnetApiSecretKey)) {
             throw new ConfigurationException("Null or empty API secret keys are not allowed.");
         }
         this.bnetApiSecretKey = bnetApiSecretKey;
@@ -109,6 +129,22 @@ public class BattlenetApiConfig {
             throw new ConfigurationException("The maximum allowed number of API requests per hour must be greater then 0.");
         }
         this.maxRequestsHour = maxRequestsHour;
+
+        if (isEmpty(defaultRegion)) {
+            throw new ConfigurationException("Null or empty default region setting is not allowed.");
+        }
+        this.defaultRegion = BattlenetRegion.getRegionForKey(defaultRegion);
+        if (this.defaultRegion == null) {
+            throw new ConfigurationException(format("Can't find a region with the key '%s'", defaultRegion));
+        }
+
+        if (isEmpty(defaultLocale)) {
+            throw new ConfigurationException("Null or empty default locale setting is not allowed.");
+        }
+        this.defaultLocale = BattlenetLocale.getLocale(defaultLocale);
+        if (this.defaultLocale == null) {
+            throw new ConfigurationException(format("Can't find a locale with the key '%s'", defaultLocale));
+        }
     }
 
     /**
@@ -157,6 +193,24 @@ public class BattlenetApiConfig {
     }
 
     /**
+     * Get the default locale for the Battle.NET API calls.
+     *
+     * @return The default locale.
+     */
+    public BattlenetLocale getDefaultLocale() {
+        return defaultLocale;
+    }
+
+    /**
+     * Get the default region for the Battle.NET API calls.
+     *
+     * @return The default region.
+     */
+    public BattlenetRegion getDefaultRegion() {
+        return defaultRegion;
+    }
+
+    /**
      * Create a new BnetApiConfig from the default ({@link BattlenetApiConfig#CONFIG_FILENAME_DEFAULT}) configuration file.
      *
      * @return The created config.
@@ -186,7 +240,9 @@ public class BattlenetApiConfig {
         String apiSecretKey = properties.getProperty(CONFIG_KEY_API_SECRET);
         int maxRequestsSecond = Integer.parseInt(properties.getProperty(CONFIG_KEY_MAX_REQUESTS_SECOND, String.valueOf(MAX_REQUESTS_PER_SECOND_DEFAULT)));
         int maxRequestsHour = Integer.parseInt(properties.getProperty(CONFIG_KEY_MAX_REQUESTS_HOUR, String.valueOf(MAX_REQUESTS_PER_HOUR_DEFAULT)));
+        String defaultRegion = properties.getProperty(CONFIG_DEFAULT_REGION, REGION_DEFAULT);
+        String defaultLocale = properties.getProperty(CONFIG_DEFAULT_LOCALE, LOCALE_DEFAULT);
 
-        return new BattlenetApiConfig(applicationName, apiKey, apiSecretKey, maxRequestsSecond, maxRequestsHour);
+        return new BattlenetApiConfig(applicationName, apiKey, apiSecretKey, maxRequestsSecond, maxRequestsHour, defaultRegion, defaultLocale);
     }
 }

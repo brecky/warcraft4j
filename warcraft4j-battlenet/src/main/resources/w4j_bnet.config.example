@@ -1,7 +1,7 @@
-w4j.bnet.application=your-application-name
-w4j.bnet.maxrequests.second=100
-w4j.bnet.maxrequests.hour=36000
-w4j.bnet.auth.key=your-api-key
-w4j.bnet.auth.secret=your-secret-key
-w4j.bnet.region.default=EU
-w4j.bnet.locale.default=en_GB
+w4j.bnet.api.application=your-application
+w4j.bnet.api.maxrequests.second=100
+w4j.bnet.api.maxrequests.hour=36000
+w4j.bnet.api.auth.auth.key=your-api-key
+w4j.bnet.api.auth.auth.secret=your-api-secret-key
+w4j.bnet.api.default.region=eu
+w4j.bnet.api.default.locale=en_GB

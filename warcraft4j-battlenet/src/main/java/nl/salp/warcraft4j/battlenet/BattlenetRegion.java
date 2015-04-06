@@ -24,31 +24,105 @@ package nl.salp.warcraft4j.battlenet;
 import nl.salp.warcraft4j.Region;
 
 /**
- * TODO Document class.
+ * Battle.NET API region.
+ * <p/>
+ * Note: there is no API region for China.
  *
  * @author Barre Dijkstra
  */
 public enum BattlenetRegion {
-    AMERICAS(Region.UNITED_STATES, "us"),
-    EUROPE(Region.EUROPE, "eu"),
-    KOREA(Region.KOREA, "kr"),
-    TAIWAN(Region.TAIWAN, "tw"),
-    CHINA(Region.CHINA, "cn"),
-    SEA(Region.SOUTH_EAST_ASIA, "us");
+    /** Americas. */
+    AMERICAS(Region.UNITED_STATES, "us", "us"),
+    /** Europe. */
+    EUROPE(Region.EUROPE, "eu", "eu"),
+    /** Korea. */
+    KOREA(Region.KOREA, "kr", "kr"),
+    /** Taiwan. */
+    TAIWAN(Region.TAIWAN, "tw", "tw"),
+    /** South-East asia. */
+    SEA(Region.SOUTH_EAST_ASIA, "us", "us");
 
+    /** The Battle.NET API URI prefix. */
     private final String apiUri;
+    /** The region. */
     private final Region region;
+    /** The key for the region. */
+    private final String key;
 
-    private BattlenetRegion(Region region, String apiUri) {
+    /**
+     * Create a new Battle.NET region.
+     *
+     * @param region The region.
+     * @param apiUri The Battle.NET API URI prefix.
+     * @param key    The key for the region.
+     */
+    private BattlenetRegion(Region region, String apiUri, String key) {
         this.region = region;
         this.apiUri = apiUri;
+        this.key = key;
     }
 
+    /**
+     * Get the region.
+     *
+     * @return The region.
+     */
     public Region getRegion() {
         return region;
     }
 
+    /**
+     * Get the key for the region.
+     *
+     * @return The key.
+     */
+    public String getKey() {
+        return key;
+    }
+
+    /**
+     * Get the Battle.NET API URI prefix.
+     *
+     * @return The Battle.NET API URI prefix.
+     */
     public String getApiUri() {
         return apiUri;
     }
+
+    /**
+     * Get the Battle.NET region for the given key.
+     *
+     * @param key The key.
+     *
+     * @return The region.
+     */
+    public static BattlenetRegion getRegionForKey(String key) {
+        BattlenetRegion region = null;
+        for (BattlenetRegion r : BattlenetRegion.values()) {
+            if (r.getKey().equalsIgnoreCase(key)) {
+                region = r;
+                break;
+            }
+        }
+        return region;
+    }
+
+    /**
+     * Get the Battle.NET region for the given region.
+     *
+     * @param region The region.
+     *
+     * @return The region.
+     */
+    public static BattlenetRegion getRegionForKey(Region region) {
+        BattlenetRegion bnetRegion = null;
+        for (BattlenetRegion r : BattlenetRegion.values()) {
+            if (r.getRegion() == region) {
+                bnetRegion = r;
+                break;
+            }
+        }
+        return bnetRegion;
+    }
+
 }

@@ -34,7 +34,7 @@ import static nl.salp.warcraft4j.util.DataTypeUtil.getAverageBytesPerCharacter;
  */
 public abstract class DataType<T> {
     /** The default character set. */
-    private static final Charset DEFAULT_CHARACTERSET = StandardCharsets.UTF_8;
+    private static final Charset DEFAULT_CHARACTERSET = StandardCharsets.US_ASCII;
     /** Single integer instance. */
     private static final DataType<Integer> INTEGER = new IntegerDataType();
     /** Single terminated string instance. */

@@ -1,0 +1,10 @@
+{
+  "id": 636,
+  "name": "Sticky Grenade",
+  "icon": "inv_misc_pyriumgrenade",
+  "cooldown": 0,
+  "rounds": 1,
+  "petTypeId": 9,
+  "isPassive": false,
+  "hideHints": false
+}

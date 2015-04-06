@@ -193,7 +193,5 @@ public enum DbcDataType {
             DataType dt = getDataTypeInstance(field);
             return (field.numberOfEntries() > 1) ? getArray(dt, field) : dt;
         }
-
-
     }
 }
