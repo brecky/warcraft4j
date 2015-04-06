@@ -27,11 +27,11 @@ public final class ClientDatabaseUtil {
      *
      * @return The entry type or {@code null} if it could not be determined.
      */
-    public static ClientDatabaseEntryType getEntryType(Class<? extends ClientDatabaseEntry> mappingType) {
+    public static <T extends ClientDatabaseEntry> ClientDatabaseEntryType getEntryType(Class<T> mappingType) {
         ClientDatabaseEntryType type = null;
         if (mappingType != null) {
             for (Field f : mappingType.getDeclaredFields()) {
-                if (Modifier.isStatic(f.getModifiers()) && ClientDatabaseEntryType.class.isAssignableFrom(f.getType())) {
+                if (Modifier.isStatic(f.getModifiers())) {
                     try {
                         boolean access = f.isAccessible();
                         f.setAccessible(true);
@@ -54,7 +54,7 @@ public final class ClientDatabaseUtil {
      *
      * @return The file or {@code null} when no mapped file was found.
      */
-    public static String getMappedFile(Class<? extends ClientDatabaseEntry> mapping) {
+    public static <T extends ClientDatabaseEntry> String getMappedFile(Class<T> mapping) {
         String file = null;
         if (mapping.isAnnotationPresent(DbcFile.class)) {
             file = mapping.getAnnotation(DbcFile.class).file();
