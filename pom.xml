@@ -61,7 +61,7 @@
         <module>warcraft4j-combatlog</module>
         <module>warcraft4j-wowhead</module>
         <module>warcraft4j-addon</module>
-        <module>warcraft4j-casc</module>
+        <module>warcraft4j-clientdata</module>
         <module>warcraft4j-webapp</module>
     </modules>
 
@@ -129,7 +129,7 @@
             </dependency>
             <dependency>
                 <groupId>nl.salp.warcraft4j</groupId>
-                <artifactId>warcraft4j-casc</artifactId>
+                <artifactId>warcraft4j-clientdata</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- Dependency injection dependencies -->

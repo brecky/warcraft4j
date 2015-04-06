@@ -38,7 +38,7 @@
         </dependency>
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
-            <artifactId>warcraft4j-casc</artifactId>
+            <artifactId>warcraft4j-clientdata</artifactId>
         </dependency>
         <!-- Web modules -->
         <dependency>

@@ -1,0 +1,72 @@
+package nl.salp.warcraft4j.clientdata.dbc.entry;
+
+import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
+import nl.salp.warcraft4j.clientdata.dbc.DbcType;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+/**
+ * TODO Document class.
+ *
+ * @author Barre Dijkstra
+ */
+@DbcFile(file = "BannedAddOns.dbc")
+public class BannedAddonEntry implements DbcEntry {
+    private static final DbcType ENTRY_TYPE = DbcType.BANNED_ADDON;
+
+    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    private int id;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32, numberOfEntries = 4)
+    private int[] nameMd5; // 4
+    @DbcField(order = 3, dataType = DbcDataType.UINT32, numberOfEntries = 4)
+    private int[] versionMd5; // 4
+    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    private int lastModified;
+    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    private int flags;
+
+    @Override
+    public DbcType getEntryType() {
+        return ENTRY_TYPE;
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    public int[] getNameMd5() {
+        return nameMd5;
+    }
+
+    public int[] getVersionMd5() {
+        return versionMd5;
+    }
+
+    public int getLastModified() {
+        return lastModified;
+    }
+
+    public int getFlags() {
+        return flags;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+}
