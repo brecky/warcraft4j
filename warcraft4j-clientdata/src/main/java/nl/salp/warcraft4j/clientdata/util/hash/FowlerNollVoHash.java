@@ -21,6 +21,8 @@ package nl.salp.warcraft4j.clientdata.util.hash;
 
 import java.math.BigInteger;
 
+import static nl.salp.warcraft4j.clientdata.util.io.DataTypeUtil.trim;
+
 /**
  * Fowler-Noll-Vo hash implementations (FNV-1 and FNV-1a).
  *
@@ -119,7 +121,7 @@ abstract class FowlerNollVoHash implements Hash {
                 hash = hash.multiply(prime).mod(mod);
                 hash = hash.xor(BigInteger.valueOf((int) b & 0xff));
             }
-            return hash.toByteArray();
+            return trim(hash.toByteArray());
         }
     }
 
@@ -145,7 +147,7 @@ abstract class FowlerNollVoHash implements Hash {
                 hash = hash.xor(BigInteger.valueOf((int) b & 0xff));
                 hash = hash.multiply(prime).mod(mod);
             }
-            return hash.toByteArray();
+            return trim(hash.toByteArray());
         }
     }
 

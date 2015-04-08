@@ -78,6 +78,15 @@ public class DbcStringTable {
         return Collections.unmodifiableSet(strings.keySet());
     }
 
+    /**
+     * Get the number of entries in the StringTable.
+     *
+     * @return The number of entries.
+     */
+    public int getNumberOfEntries() {
+        return strings.size();
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);

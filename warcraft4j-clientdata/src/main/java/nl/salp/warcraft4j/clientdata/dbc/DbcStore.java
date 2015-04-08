@@ -19,7 +19,7 @@
 
 package nl.salp.warcraft4j.clientdata.dbc;
 
-import nl.salp.warcraft4j.clientdata.dbc.parser.ParsedDbcFileParser;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFileParser;
 import nl.salp.warcraft4j.clientdata.dbc.parser.DbcParsingException;
 import nl.salp.warcraft4j.clientdata.dbc.util.DbcClasspathMappingScanner;
 import org.slf4j.Logger;
@@ -87,7 +87,7 @@ public class DbcStore {
      * @throws DbcParsingException When the file could not be parsed.
      */
     public <T extends DbcEntry> void add(Class<T> type, String directory) throws IOException, DbcParsingException {
-        ParsedDbcFileParser parser = new ParsedDbcFileParser();
+        DbcFileParser parser = new DbcFileParser();
         Set<T> entries = parser.parse(type, directory);
         add(entries);
     }

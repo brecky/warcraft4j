@@ -1,10 +1,10 @@
 package nl.salp.warcraft4j.clientdata.dbc.util;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.parser.ParsedDbcFile;
-import nl.salp.warcraft4j.clientdata.dbc.parser.ParsedDbcFileParser;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
 import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFileParser;
+import nl.salp.warcraft4j.clientdata.dbc.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -29,15 +29,15 @@ public class IncompleteDbcMappingFinder {
      *
      * @throws IOException When reading the files failed.
      */
-    public Map<ParsedDbcFile, Class<? extends DbcEntry>> findAllIncompleteMappings(String dbcDirectory) throws IOException {
-        final SortedMap<ParsedDbcFile, Class<? extends DbcEntry>> incompleteMappings = new TreeMap<>(new Comparator<ParsedDbcFile>() {
+    public Map<DbcFile, Class<? extends DbcEntry>> findAllIncompleteMappings(String dbcDirectory) throws IOException {
+        final SortedMap<DbcFile, Class<? extends DbcEntry>> incompleteMappings = new TreeMap<>(new Comparator<DbcFile>() {
             @Override
-            public int compare(ParsedDbcFile o1, ParsedDbcFile o2) {
+            public int compare(DbcFile o1, DbcFile o2) {
                 return o1.getFilename().compareToIgnoreCase(o2.getFilename());
             }
         });
         for (Class<? extends DbcEntry> type : getAllClientDatabaseEntryMappings()) {
-            ParsedDbcFile file = parse(type, dbcDirectory);
+            DbcFile file = parse(type, dbcDirectory);
             if (getFieldCount(file) != getFieldCount(type)) {
                 incompleteMappings.put(file, type);
             }
@@ -58,9 +58,9 @@ public class IncompleteDbcMappingFinder {
      *
      * @throws IOException When parsing failed.
      */
-    private ParsedDbcFile parse(Class<? extends DbcEntry> type, String dbcDirectory) throws IOException {
-        ParsedDbcFileParser parser = new ParsedDbcFileParser();
-        return parser.parseFile(type.getAnnotation(DbcFile.class).file(), dbcDirectory);
+    private DbcFile parse(Class<? extends DbcEntry> type, String dbcDirectory) throws IOException {
+        DbcFileParser parser = new DbcFileParser();
+        return parser.parseFile(type.getAnnotation(DbcMapping.class).file(), dbcDirectory);
     }
 
     /**
@@ -72,7 +72,7 @@ public class IncompleteDbcMappingFinder {
      */
     private static int getUnknownFieldCount(Class<? extends DbcEntry> type) {
         int fieldCount = 0;
-        if (type != null && type.isAnnotationPresent(DbcFile.class)) {
+        if (type != null && type.isAnnotationPresent(DbcMapping.class)) {
             for (Field field : type.getDeclaredFields()) {
                 DbcField f = field.getAnnotation(DbcField.class);
                 if (f != null && !f.knownMeaning()) {
@@ -90,10 +90,10 @@ public class IncompleteDbcMappingFinder {
      *
      * @return The number of fields.
      */
-    private static int getFieldCount(ParsedDbcFile file) {
+    private static int getFieldCount(DbcFile file) {
         int fieldCount = 0;
         if (file != null && file.getHeader() != null) {
-            fieldCount = file.getHeader().getFieldCount();
+            fieldCount = file.getHeader().getEntryFieldCount();
         }
         return fieldCount;
     }
@@ -107,7 +107,7 @@ public class IncompleteDbcMappingFinder {
      */
     private static int getFieldCount(Class<? extends DbcEntry> type) {
         int fieldCount = 0;
-        if (type != null && type.isAnnotationPresent(DbcFile.class)) {
+        if (type != null && type.isAnnotationPresent(DbcMapping.class)) {
             for (Field field : type.getDeclaredFields()) {
                 DbcField f = field.getAnnotation(DbcField.class);
                 if (f != null && !f.padding()) {
@@ -171,15 +171,15 @@ public class IncompleteDbcMappingFinder {
      *
      * @param incompleteMappings The incomplete mappings.
      */
-    private static void print(Map<ParsedDbcFile, Class<? extends DbcEntry>> incompleteMappings) {
+    private static void print(Map<DbcFile, Class<? extends DbcEntry>> incompleteMappings) {
         if (incompleteMappings.isEmpty()) {
             System.out.println(format("All mapped files are complete"));
         } else {
             System.out.println(format("Incomplete mappings for the following %d files", incompleteMappings.size()));
-            for (Map.Entry<ParsedDbcFile, Class<? extends DbcEntry>> m : incompleteMappings.entrySet()) {
+            for (Map.Entry<DbcFile, Class<? extends DbcEntry>> m : incompleteMappings.entrySet()) {
                 String fileName = m.getKey().getFilename();
                 int fileFields = getFieldCount(m.getKey());
-                int entrySize = m.getKey().getHeader().getRecordSize();
+                int entrySize = m.getKey().getHeader().getEntrySize();
                 String typeName = m.getValue().getName();
                 int typeFields = getFieldCount(m.getValue());
                 int typeUnknownFields = getUnknownFieldCount(m.getValue());

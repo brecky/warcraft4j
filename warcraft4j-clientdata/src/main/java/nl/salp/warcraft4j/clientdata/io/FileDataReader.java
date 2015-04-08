@@ -24,7 +24,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
- * {@WowReader} implementation for reading files.
+ * {@WowReader} implementation for sequentially reading files.
  *
  * @author Barre Dijkstra
  */
@@ -32,14 +32,14 @@ public class FileDataReader extends DataReader {
     /** The input stream. */
     private InputStream stream;
     /** The position in the stream. */
-    private int position;
+    private long position;
 
     /**
      * Create a new FileDataReader instance for the given file.
      *
      * @param file The file.
      *
-     * @throws java.io.IOException When the file could not be read.
+     * @throws IOException When the file could not be read.
      */
     public FileDataReader(File file) throws IOException {
         stream = new BufferedInputStream(new FileInputStream(file));
@@ -47,7 +47,7 @@ public class FileDataReader extends DataReader {
     }
 
     @Override
-    public final int position() {
+    public final long position() {
         return position;
     }
 
@@ -57,13 +57,23 @@ public class FileDataReader extends DataReader {
     }
 
     @Override
-    public final <T> T readNext(DataType<T> dataType) throws IOException {
+    public long remaining() throws IOException {
+        return stream.available();
+    }
+
+    @Override
+    public long size() throws IOException {
+        return remaining() + position();
+    }
+
+    @Override
+    public final <T> T readNext(DataType<T> dataType) throws IOException, DataParsingException {
         return readNext(dataType, dataType.getDefaultByteOrder());
     }
 
 
     @Override
-    public final <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException {
+    public final <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException, DataParsingException {
         byte[] data = new byte[dataType.getLength()];
         stream.read(data);
         position += data.length;

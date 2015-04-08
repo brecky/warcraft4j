@@ -20,9 +20,9 @@
 package nl.salp.warcraft4j.clientdata.dbc.util;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.parser.ParsedDbcFile;
-import nl.salp.warcraft4j.clientdata.dbc.parser.ParsedDbcFileParser;
 import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFileParser;
+import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -47,21 +47,21 @@ public class MissingDbcMappingFinder {
      *
      * @throws IOException When the files reading failed.
      */
-    public Collection<ParsedDbcFile> findAllMissingMappings(String dbcDirectory) throws IOException {
+    public Collection<DbcFile> findAllMissingMappings(String dbcDirectory) throws IOException {
         Set<String> dbcFiles = new HashSet<>(Arrays.asList(getAllClientDatabaseFiles(dbcDirectory)));
         Set<String> mappedFiles = new HashSet<>();
         for (Class<? extends DbcEntry> type : getAllClientDatabaseEntryMappings()) {
-            DbcFile f = type.getAnnotation(DbcFile.class);
+            DbcMapping f = type.getAnnotation(DbcMapping.class);
             if (f != null) {
                 mappedFiles.add(f.file());
             }
         }
         dbcFiles.removeAll(mappedFiles);
 
-        SortedSet<ParsedDbcFile> missingMappings = new TreeSet<>(new Comparator<ParsedDbcFile>() {
+        SortedSet<DbcFile> missingMappings = new TreeSet<>(new Comparator<DbcFile>() {
 
             @Override
-            public int compare(ParsedDbcFile o1, ParsedDbcFile o2) {
+            public int compare(DbcFile o1, DbcFile o2) {
                 return o1.getFilename().compareToIgnoreCase(o2.getFilename());
             }
         });
@@ -82,8 +82,8 @@ public class MissingDbcMappingFinder {
      *
      * @throws IOException When parsing failed.
      */
-    private ParsedDbcFile parse(String filename, String dbcDirectory) throws IOException {
-        ParsedDbcFileParser parser = new ParsedDbcFileParser();
+    private DbcFile parse(String filename, String dbcDirectory) throws IOException {
+        DbcFileParser parser = new DbcFileParser();
         return parser.parseFile(filename, dbcDirectory);
     }
 
@@ -140,13 +140,13 @@ public class MissingDbcMappingFinder {
      *
      * @param missingMappings The missing mappings.
      */
-    private static void print(Collection<ParsedDbcFile> missingMappings) {
+    private static void print(Collection<DbcFile> missingMappings) {
         if (missingMappings.isEmpty()) {
             System.out.println(format("All found DBC and DB2 files are mapped."));
         } else {
             System.out.println(format("Missing mappings for the following %d files", missingMappings.size()));
-            for (ParsedDbcFile m : missingMappings) {
-                System.out.println(format("    - %s (fields:%d, entrySize:%d stringBlock:%s, entries:%d)", m.getFilename(), m.getHeader().getFieldCount(), m.getHeader().getRecordSize(), !m.getStringBlock().getAvailablePositions().isEmpty(), m.getHeader().getRecordCount()));
+            for (DbcFile m : missingMappings) {
+                System.out.println(format("    - %s (fields:%d, entrySize:%d stringBlock:%s, entries:%d)", m.getFilename(), m.getHeader().getEntryFieldCount(), m.getHeader().getEntrySize(), m.getStringTable().getNumberOfEntries() > 0, m.getHeader().getEntryCount()));
             }
         }
     }

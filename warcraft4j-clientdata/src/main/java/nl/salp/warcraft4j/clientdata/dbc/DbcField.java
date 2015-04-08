@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.clientdata.dbc.parser;
+package nl.salp.warcraft4j.clientdata.dbc;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

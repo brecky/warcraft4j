@@ -1,8 +1,8 @@
 package nl.salp.warcraft4j.clientdata.dbc.analysis.validation;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.parser.ParsedDbcFile;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
+import nl.salp.warcraft4j.clientdata.dbc.DbcField;
 import nl.salp.warcraft4j.clientdata.dbc.util.DbcUtil;
 
 import java.lang.reflect.Field;
@@ -32,7 +32,7 @@ public abstract class MappingValidation<T extends DbcEntry> {
      *
      * @return {@code true} if both are valid and also in combination.
      */
-    protected final boolean isValid(ParsedDbcFile file, Class<T> type) {
+    protected final boolean isValid(DbcFile file, Class<T> type) {
         return isNotNull(file) && isNotNull(type) && isMappingForFile(file, type);
     }
 
@@ -44,7 +44,7 @@ public abstract class MappingValidation<T extends DbcEntry> {
      *
      * @return {@code true} if the mapping type contains the mapping for the file.
      */
-    protected boolean isMappingForFile(ParsedDbcFile file, Class<T> type) {
+    protected boolean isMappingForFile(DbcFile file, Class<T> type) {
         return isNotNull(file) && isNotNull(type) && file.getFilename().equals(DbcUtil.getMappedFile(type));
     }
 

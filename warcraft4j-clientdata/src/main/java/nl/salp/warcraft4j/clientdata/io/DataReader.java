@@ -27,9 +27,8 @@ import static org.apache.commons.lang3.ArrayUtils.toPrimitive;
 
 /**
  * Reader for reading data files.
- * <p>
+ * <p/>
  * This reader should either be closed manually via {@link FileDataReader#close()} or by utilizing the {@link java.io.Closeable} implementation.
- * </p>
  *
  * @author Barre Dijkstra
  */
@@ -42,7 +41,7 @@ public abstract class DataReader implements Closeable {
      *
      * @return The current position.
      */
-    public abstract int position();
+    public abstract long position();
 
     /**
      * Check if there is still data available to be read.
@@ -54,6 +53,26 @@ public abstract class DataReader implements Closeable {
     public abstract boolean hasRemaining() throws IOException;
 
     /**
+     * Get the number of remaining bytes of data available from the current position in the data.
+     * <p/>
+     * For readers that use buffering the remaining data can be the already read data and not the total available data.
+     *
+     * @return The number of remaining bytes of data.
+     *
+     * @throws IOException When determining the remaining bytes failed.
+     */
+    public abstract long remaining() throws IOException;
+
+    /**
+     * Get the size of the underlying data source if available.
+     *
+     * @return The size or {@code -1} if the size is not available.
+     *
+     * @throws IOException If the size could not be determined.
+     */
+    public abstract long size() throws IOException;
+
+    /**
      * Read the next value for the given data type from the underlying data using the default byte order of the data type.
      *
      * @param dataType The data type.
@@ -61,9 +80,10 @@ public abstract class DataReader implements Closeable {
      *
      * @return The value.
      *
-     * @throws java.io.IOException When reading failed.
+     * @throws IOException          When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
      */
-    public abstract <T> T readNext(DataType<T> dataType) throws IOException;
+    public abstract <T> T readNext(DataType<T> dataType) throws IOException, DataParsingException;
 
     /**
      * Read the next value for the given data type from the underlying data using the provided byte order.
@@ -74,9 +94,10 @@ public abstract class DataReader implements Closeable {
      *
      * @return The value.
      *
-     * @throws java.io.IOException When reading failed.
+     * @throws IOException          When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
      */
-    public abstract <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException;
+    public abstract <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException, DataParsingException;
 
     /**
      * Read the next complex value from the underlying data type.
@@ -86,9 +107,10 @@ public abstract class DataReader implements Closeable {
      *
      * @return The value.
      *
-     * @throws IOException When reading failed.
+     * @throws IOException          When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
      */
-    public final <T> T readNext(DataParser<T> parser) throws IOException {
+    public <T> T readNext(DataParser<T> parser) throws IOException, DataParsingException {
         return parser.next(this);
     }
 
@@ -97,11 +119,10 @@ public abstract class DataReader implements Closeable {
      *
      * @return The next value.
      *
-     * @throws java.io.IOException When reading failed.
-     * @see DataReader#readNext(DataType)
-     * @see DataType#getTerminatedString()
+     * @throws IOException          When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
      */
-    public final String readNextTerminatedString() throws IOException {
+    public String readNextTerminatedString() throws IOException, DataParsingException {
         return readNext(DataType.getTerminatedString());
     }
 
@@ -110,11 +131,10 @@ public abstract class DataReader implements Closeable {
      *
      * @return The next value.
      *
-     * @throws java.io.IOException When reading failed.
-     * @see DataReader#readNext(DataType)
-     * @see DataType#getFixedLengthString(int)
+     * @throws IOException          When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
      */
-    public final String readNextFixedLengthString(int length) throws IOException {
+    public String readNextFixedLengthString(int length) throws IOException, DataParsingException {
         return readNext(DataType.getFixedLengthString(length));
     }
 
@@ -123,11 +143,10 @@ public abstract class DataReader implements Closeable {
      *
      * @return The next value.
      *
-     * @throws java.io.IOException When reading failed.
-     * @see DataReader#readNext(DataType)
-     * @see DataType#getInteger()
+     * @throws IOException          When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
      */
-    public final int readNextInt32() throws IOException {
+    public int readNextInt32() throws IOException, DataParsingException {
         return readNext(DataType.getInteger());
     }
 
@@ -138,11 +157,10 @@ public abstract class DataReader implements Closeable {
      *
      * @return The next value.
      *
-     * @throws java.io.IOException When reading failed.
-     * @see DataReader#readNext(DataType)
-     * @see DataType#getInteger()
+     * @throws IOException          When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
      */
-    public final int[] readNextInt32Array(int entries) throws IOException {
+    public int[] readNextInt32Array(int entries) throws IOException, DataParsingException {
         return toPrimitive(readNext(DataType.getInteger().asArrayType(entries)));
     }
 
@@ -151,11 +169,10 @@ public abstract class DataReader implements Closeable {
      *
      * @return The next value.
      *
-     * @throws java.io.IOException When reading failed.
-     * @see DataReader#readNext(DataType)
-     * @see DataType#getShort()
+     * @throws IOException          When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
      */
-    public final short readNextShort() throws IOException {
+    public short readNextShort() throws IOException, DataParsingException {
         return readNext(DataType.getShort());
     }
 
@@ -166,11 +183,10 @@ public abstract class DataReader implements Closeable {
      *
      * @return The next value.
      *
-     * @throws java.io.IOException When reading failed.
-     * @see DataReader#readNext(DataType)
-     * @see DataType#getShort()
+     * @throws IOException          When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
      */
-    public final short[] readNextShortArray(int entries) throws IOException {
+    public short[] readNextShortArray(int entries) throws IOException, DataParsingException {
         return toPrimitive(readNext(DataType.getShort().asArrayType(entries)));
     }
 
@@ -179,11 +195,10 @@ public abstract class DataReader implements Closeable {
      *
      * @return The next value.
      *
-     * @throws java.io.IOException When reading failed.
-     * @see DataReader#readNext(DataType)
-     * @see DataType#getFloat()
+     * @throws IOException          When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
      */
-    public final float readNextFloat() throws IOException {
+    public float readNextFloat() throws IOException, DataParsingException {
         return readNext(DataType.getFloat());
     }
 
@@ -192,11 +207,10 @@ public abstract class DataReader implements Closeable {
      *
      * @return The next value.
      *
-     * @throws java.io.IOException When reading failed.
-     * @see DataReader#readNext(DataType)
-     * @see DataType#getBoolean()
+     * @throws IOException          When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
      */
-    public final boolean readNextBoolean() throws IOException {
+    public boolean readNextBoolean() throws IOException, DataParsingException {
         return readNext(DataType.getBoolean());
     }
 
@@ -207,11 +221,10 @@ public abstract class DataReader implements Closeable {
      *
      * @return The next value.
      *
-     * @throws java.io.IOException when reading failed.
-     * @see DataReader#readNext(DataType)
-     * @see DataType#getByteArray(int)
+     * @throws IOException          When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
      */
-    public final byte[] readNextBytes(int length) throws IOException {
+    public byte[] readNextBytes(int length) throws IOException, DataParsingException {
         return readNext(DataType.getByteArray(length));
     }
 
@@ -220,16 +233,10 @@ public abstract class DataReader implements Closeable {
      *
      * @return The next value.
      *
-     * @throws java.io.IOException when reading failed.
-     * @see DataReader#readNext(DataType)
-     * @see DataType#getByte()
+     * @throws IOException          When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
      */
-    public final byte readNextByte() throws IOException {
+    public byte readNextByte() throws IOException, DataParsingException {
         return readNext(DataType.getByte());
-    }
-
-    @Override
-    public void close() throws IOException {
-        // No-op.
     }
 }

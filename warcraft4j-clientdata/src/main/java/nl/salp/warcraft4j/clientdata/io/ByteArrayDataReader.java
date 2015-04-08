@@ -24,11 +24,13 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
- * {@link DataReader} implementation that uses a {@code byte[]} as underlying data.
+ * {@link RandomAccessDataReader} implementation that uses a {@code byte[]} as underlying data.
  */
-public class ByteArrayDataReader extends DataReader {
+public class ByteArrayDataReader extends RandomAccessDataReader {
     /** The ByteBuffer holding the data. */
     private ByteBuffer buffer;
+    /** The size of the data. */
+    private final long dataSize;
 
     /**
      * Create a new ByteArrayDataReader, wrapping the provided byte array.
@@ -36,26 +38,52 @@ public class ByteArrayDataReader extends DataReader {
      * @param data The byte[] to wrap.
      */
     public ByteArrayDataReader(byte[] data) {
-        buffer = ByteBuffer.wrap(data).order(DEFAULT_BYTE_ORDER);
+        this(data, DEFAULT_BYTE_ORDER);
+    }
+
+    /**
+     * Create a new ByteArrayDataReader, wrapping the provided byte array.
+     *
+     * @param data      The byte[] to wrap.
+     * @param byteOrder The byte order to wrap the byte array in.
+     */
+    public ByteArrayDataReader(byte[] data, ByteOrder byteOrder) {
+        buffer = ByteBuffer.wrap(data).order(byteOrder);
+        this.dataSize = data.length;
     }
 
     @Override
-    public int position() {
+    public long position() {
         return buffer.position();
     }
 
     @Override
-    public boolean hasRemaining() throws IOException {
+    public void position(long position) throws IOException, DataParsingException {
+        buffer.position((int) position);
+    }
+
+    @Override
+    public boolean hasRemaining() throws IOException, DataParsingException {
         return buffer.hasRemaining();
     }
 
     @Override
-    public <T> T readNext(DataType<T> dataType) throws IOException {
+    public long size() throws IOException {
+        return dataSize;
+    }
+
+    @Override
+    public long remaining() throws IOException {
+        return buffer.remaining();
+    }
+
+    @Override
+    public <T> T readNext(DataType<T> dataType) throws IOException, DataParsingException {
         return readNext(dataType, dataType.getDefaultByteOrder());
     }
 
     @Override
-    public <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException {
+    public <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException, DataParsingException {
         byte[] data;
         if (dataType.getLength() < 1) {
             data = new byte[buffer.remaining()];
@@ -65,5 +93,10 @@ public class ByteArrayDataReader extends DataReader {
         // FIXME Method dumps all remaining data for var-length data types (and thus moving the position to the end). Think of a different way to deal (shallow copy?) :-)
         buffer.get(data);
         return dataType.readNext(ByteBuffer.wrap(data).order(byteOrder));
+    }
+
+    @Override
+    public void close() throws IOException {
+        // no-op
     }
 }

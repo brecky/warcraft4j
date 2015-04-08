@@ -1,8 +1,8 @@
 package nl.salp.warcraft4j.clientdata.dbc.analysis.validation;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.parser.ParsedDbcFile;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
+import nl.salp.warcraft4j.clientdata.dbc.DbcField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,7 @@ public class FieldCountMappingValidation<T extends DbcEntry> extends MappingVali
     /** The logger instance for the class. */
     private static final Logger LOGGER = LoggerFactory.getLogger(FieldCountMappingValidation.class);
     /** The parsed DBC/DB2 file. */
-    private final ParsedDbcFile file;
+    private final DbcFile file;
     /** The mapping type. */
     private final Class<T> type;
 
@@ -32,14 +32,14 @@ public class FieldCountMappingValidation<T extends DbcEntry> extends MappingVali
      * @param file The parsed DBC/DB2 file.
      * @param type The mapping type.
      */
-    public FieldCountMappingValidation(ParsedDbcFile file, Class<T> type) {
+    public FieldCountMappingValidation(DbcFile file, Class<T> type) {
         this.file = file;
         this.type = type;
     }
 
     @Override
     public boolean isValid() {
-        int fileFields = file.getHeader().getFieldCount();
+        int fileFields = file.getHeader().getEntryFieldCount();
         int mappedFields = getMappedFieldCount(getMappedFields(type, false));
         boolean valid = fileFields == mappedFields;
         if (valid) {

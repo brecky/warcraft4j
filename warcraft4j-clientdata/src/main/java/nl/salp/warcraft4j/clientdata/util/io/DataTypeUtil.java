@@ -20,6 +20,7 @@
 package nl.salp.warcraft4j.clientdata.util.io;
 
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 /**
  * Utility methods for data types.
@@ -31,6 +32,32 @@ public class DataTypeUtil {
      * Private constructor to prevent instantiation.
      */
     private DataTypeUtil() {
+    }
+
+    /**
+     * Trim the byte array by removing the leading 0's.
+     * <p/>
+     * This function is mostly useful in combination with functions like {@code BigInteger#toByteArray()} which prepends with a signing byte (0x00 in case of postive numbers).
+     *
+     * @param data The data to trim.
+     *
+     * @return The trimmed data.
+     */
+    public static byte[] trim(byte[] data) {
+        int idx = 0;
+        while (idx < data.length) {
+            if (data[idx] != 0) {
+                break;
+            }
+            idx++;
+        }
+        byte[] trimmedData;
+        if (idx > 0 && idx < data.length) {
+            trimmedData = Arrays.copyOfRange(data, idx, data.length);
+        } else {
+            trimmedData = data;
+        }
+        return trimmedData;
     }
 
     /**

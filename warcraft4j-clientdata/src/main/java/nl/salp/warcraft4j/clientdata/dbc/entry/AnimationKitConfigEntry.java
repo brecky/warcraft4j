@@ -21,9 +21,9 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
+import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -33,7 +33,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-@DbcFile(file = "AnimKitConfig.dbc")
+@DbcMapping(file = "AnimKitConfig.dbc")
 public class AnimationKitConfigEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.ANIMATION_KIT_CONFIG;
     // TODO Implement me!

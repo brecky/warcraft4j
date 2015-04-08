@@ -2,7 +2,7 @@ package nl.salp.warcraft4j.clientdata.dbc.util;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
+import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -56,8 +56,8 @@ public final class DbcUtil {
      */
     public static <T extends DbcEntry> String getMappedFile(Class<T> mapping) {
         String file = null;
-        if (mapping.isAnnotationPresent(DbcFile.class)) {
-            file = mapping.getAnnotation(DbcFile.class).file();
+        if (mapping.isAnnotationPresent(DbcMapping.class)) {
+            file = mapping.getAnnotation(DbcMapping.class).file();
         }
         return file;
     }

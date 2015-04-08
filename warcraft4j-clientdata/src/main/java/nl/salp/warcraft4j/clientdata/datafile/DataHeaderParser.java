@@ -29,11 +29,13 @@ import java.io.IOException;
  *
  * @author Barre Dijkstra
  */
-class DataHeaderParser implements DataParser<DataHeader> {
+class DataHeaderParser extends DataParser<DataHeader> {
     /** The size of the MD5 segment in bytes. */
     private static final int MD5S_SIZE = 16;
     /** The size of the unknown segment in bytes. */
     private static final int UNKNOWN_SEGMENT_SIZE = 10;
+    /** The size of the full data header. */
+    private static final int HEADER_SIZE = 30;
 
     /**
      * Parse the next header from the reader.
@@ -44,10 +46,15 @@ class DataHeaderParser implements DataParser<DataHeader> {
      *
      * @throws IOException When reading failed.
      */
-    public DataHeader next(DataReader reader) throws IOException {
+    protected DataHeader parse(DataReader reader) throws IOException {
         byte[] md5 = reader.readNextBytes(MD5S_SIZE);
         int blockSize = reader.readNextInt32();
         byte[] unknownSegment = reader.readNextBytes(UNKNOWN_SEGMENT_SIZE);
         return new DataHeader(md5, blockSize, unknownSegment);
+    }
+
+    @Override
+    public int getInstanceDataSize() {
+        return HEADER_SIZE;
     }
 }

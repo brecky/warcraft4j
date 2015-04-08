@@ -17,8 +17,9 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.clientdata.dbc.parser;
+package nl.salp.warcraft4j.clientdata.dbc;
 
+import nl.salp.warcraft4j.clientdata.dbc.DbcField;
 import nl.salp.warcraft4j.clientdata.io.DataType;
 
 import java.nio.ByteOrder;

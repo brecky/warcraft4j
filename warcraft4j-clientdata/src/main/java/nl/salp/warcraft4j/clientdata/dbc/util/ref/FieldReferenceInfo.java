@@ -2,7 +2,7 @@ package nl.salp.warcraft4j.clientdata.dbc.util.ref;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcStore;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.DbcField;
 
 import java.lang.reflect.Field;
 import java.util.*;

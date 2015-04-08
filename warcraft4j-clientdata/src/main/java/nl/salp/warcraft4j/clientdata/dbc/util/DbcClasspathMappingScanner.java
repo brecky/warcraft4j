@@ -20,7 +20,7 @@
 package nl.salp.warcraft4j.clientdata.dbc.util;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
+import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,7 @@ import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
- * Scanner that scans the whole classpath for all top-level classes that implement {@link DbcEntry} and have a {@link DbcFile} annotation present.
+ * Scanner that scans the whole classpath for all top-level classes that implement {@link DbcEntry} and have a {@link DbcMapping} annotation present.
  *
  * @author Barre Dijkstra
  */
@@ -52,7 +52,7 @@ public class DbcClasspathMappingScanner {
     private static final ClassFilter FILTER_CLIENTDATABASEENTRY = new ClassFilter() {
         @Override
         public boolean isMatching(Class<?> type) {
-            return type != null && DbcEntry.class.isAssignableFrom(type) && type.isAnnotationPresent(DbcFile.class);
+            return type != null && DbcEntry.class.isAssignableFrom(type) && type.isAnnotationPresent(DbcMapping.class);
         }
     };
     /** Class filter that filters out classes that are not top level classes. */

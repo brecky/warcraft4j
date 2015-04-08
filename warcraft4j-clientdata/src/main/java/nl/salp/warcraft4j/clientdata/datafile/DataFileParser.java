@@ -31,7 +31,7 @@ import java.util.List;
  *
  * @author Barre Dijkstra
  */
-class DataFileParser implements DataParser<DataFile> {
+class DataFileParser extends DataParser<DataFile> {
     private final String fileName;
     private final int fileSize;
 
@@ -41,11 +41,16 @@ class DataFileParser implements DataParser<DataFile> {
     }
 
     @Override
-    public DataFile next(DataReader reader) throws IOException {
+    protected DataFile parse(DataReader reader) throws IOException {
         List<DataBlock> dataBlocks = new ArrayList<>();
         while (reader.hasRemaining()) {
             dataBlocks.add(reader.readNext(new DataBlockParser()));
         }
         return new DataFile(fileName, fileSize, dataBlocks);
+    }
+
+    @Override
+    public int getInstanceDataSize() {
+        return fileSize;
     }
 }

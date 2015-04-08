@@ -1,10 +1,10 @@
 package nl.salp.warcraft4j.clientdata.dbc.analysis.validation;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.parser.ParsedDbcFile;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
 import nl.salp.warcraft4j.clientdata.dbc.parser.DbcStringTable;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.DbcField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +27,7 @@ public class StringBlockUsageValidation<T extends DbcEntry> extends MappingValid
     /** The percentage of the StringBlock entries that should be used. */
     private final double minUsage;
     /** The parsed DBC/DB2 file. */
-    private final ParsedDbcFile file;
+    private final DbcFile file;
     /** The mapping type. */
     private final Class<T> type;
     /** The parsed instances of the mapping type. */
@@ -39,7 +39,7 @@ public class StringBlockUsageValidation<T extends DbcEntry> extends MappingValid
      * @param instances The parsed instances of the mapping type.
      * @param minUsage  The percentage of the StringBlock entries that should be used.
      */
-    public StringBlockUsageValidation(ParsedDbcFile file, Class<T> type, Collection<T> instances, double minUsage) {
+    public StringBlockUsageValidation(DbcFile file, Class<T> type, Collection<T> instances, double minUsage) {
         this.file = file;
         this.type = type;
         this.instances = instances;
@@ -49,7 +49,7 @@ public class StringBlockUsageValidation<T extends DbcEntry> extends MappingValid
     @Override
     public boolean isValid() {
         boolean valid;
-        if (file.getStringBlock().getAvailablePositions().isEmpty()) {
+        if (file.getStringTable().getNumberOfEntries() == 0) {
             Collection<Field> stringBlockReferences = getStringBlockReferenceFields();
             valid = stringBlockReferences.isEmpty();
             if (valid) {
@@ -73,12 +73,12 @@ public class StringBlockUsageValidation<T extends DbcEntry> extends MappingValid
                     }
                 }
             }
-            double usageCount = stringBlockEntries.size() / file.getStringBlock().getAvailablePositions().size();
+            double usageCount = stringBlockEntries.size() / file.getStringTable().getNumberOfEntries();
             valid = usageCount >= minUsage;
             if (valid) {
-                LOGGER.debug(format("Successfully mapped %s StringBlock entries from %s [entries: %d, references: %d, mapped: %.2f%%, required: %.2%%]", type.getName(), file.getFilename(), file.getStringBlock().getAvailablePositions().size(), stringBlockReferences.size(), usageCount, minUsage));
+                LOGGER.debug(format("Successfully mapped %s StringBlock entries from %s [entries: %d, references: %d, mapped: %.2f%%, required: %.2%%]", type.getName(), file.getFilename(), file.getStringTable().getNumberOfEntries(), stringBlockReferences.size(), usageCount, minUsage));
             } else {
-                LOGGER.warn(format("%s maps to an invalid number of StringBlock entries from %s [entries: %d, references: %d, mapped: %.2f%%, required: %.2%%]", type.getName(), file.getFilename(), file.getStringBlock().getAvailablePositions().size(), stringBlockReferences.size(), usageCount, minUsage));
+                LOGGER.warn(format("%s maps to an invalid number of StringBlock entries from %s [entries: %d, references: %d, mapped: %.2f%%, required: %.2%%]", type.getName(), file.getFilename(), file.getStringTable().getNumberOfEntries(), stringBlockReferences.size(), usageCount, minUsage));
             }
         }
         return valid;
@@ -90,8 +90,8 @@ public class StringBlockUsageValidation<T extends DbcEntry> extends MappingValid
      * @return The values.
      */
     private Collection<String> getStringBlockEntries() {
-        DbcStringTable stringBlock = file.getStringBlock();
-        Collection<String> entries = new HashSet<>(stringBlock.getAvailablePositions().size());
+        DbcStringTable stringBlock = file.getStringTable();
+        Collection<String> entries = new HashSet<>(stringBlock.getNumberOfEntries());
         for (int position : stringBlock.getAvailablePositions()) {
             if (!entries.add(stringBlock.getEntry(position))) {
                 LOGGER.warn(format("Duplicate StringBlock entry found for for file %s [pos: %d, string: %s]", file.getFilename(), position, stringBlock.getEntry(position)));

@@ -22,11 +22,11 @@ package nl.salp.warcraft4j.clientdata.io;
 import java.io.IOException;
 
 /**
- * Data parser that parses instances from a data reader.
+ * Data parser that reads and parses instances from a data reader.
  *
  * @author Barre Dijkstra
  */
-public interface DataParser<T> {
+public abstract class DataParser<T> {
     /**
      * Read and parse the next instance from the reader.
      *
@@ -34,7 +34,33 @@ public interface DataParser<T> {
      *
      * @return The parsed instance.
      *
-     * @throws IOException When reading failed.
+     * @throws IOException          When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
      */
-    T next(DataReader reader) throws IOException;
+    public final T next(DataReader reader) throws IOException, DataParsingException {
+        if (reader.remaining() < getInstanceDataSize()) {
+            throw new IOException("Unable to read %d bytes from a data reader with %d remaining.");
+        }
+        return parse(reader);
+    }
+
+    /**
+     * Read and parse the next instance from the reader.
+     *
+     * @param reader The reader.
+     *
+     * @return The parsed instance.
+     *
+     * @throws IOException          When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
+     */
+    protected abstract T parse(DataReader reader) throws IOException, DataParsingException;
+
+
+    /**
+     * Get the size of the data of an instance in bytes.
+     *
+     * @return The size of the instance data.
+     */
+    public abstract int getInstanceDataSize();
 }

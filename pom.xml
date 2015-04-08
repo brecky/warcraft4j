@@ -68,6 +68,7 @@
     <!-- Project properties -->
     <properties>
         <plugin.maven.version>3.1</plugin.maven.version>
+        <plugin.maven-resources.version>2.7</plugin.maven-resources.version>
         <source.encoding>UTF-8</source.encoding>
         <source.version>1.7</source.version>
         <dependency.guice.version>3.0</dependency.guice.version>
@@ -94,7 +95,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>${plugin.maven.version}</version>
+                    <version>${plugin.maven-resources.version}</version>
                     <configuration>
                         <encoding>${source.encoding}</encoding>
                     </configuration>

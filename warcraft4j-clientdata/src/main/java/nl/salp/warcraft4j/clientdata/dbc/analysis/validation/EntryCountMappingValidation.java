@@ -1,7 +1,7 @@
 package nl.salp.warcraft4j.clientdata.dbc.analysis.validation;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.parser.ParsedDbcFile;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ public class EntryCountMappingValidation<T extends DbcEntry> extends MappingVali
     /** The logger instance for the class. */
     private static final Logger LOGGER = LoggerFactory.getLogger(EntryCountMappingValidation.class);
     /** The parsed DBC/DB2 file. */
-    private final ParsedDbcFile file;
+    private final DbcFile file;
     /** The mapping type. */
     private final Class<T> type;
     /** The parsed instances of the mapping type. */
@@ -33,7 +33,7 @@ public class EntryCountMappingValidation<T extends DbcEntry> extends MappingVali
      * @param type      The mapping type.
      * @param instances The parsed instances of the mapping type.
      */
-    public EntryCountMappingValidation(ParsedDbcFile file, Class<T> type, Collection<T> instances) {
+    public EntryCountMappingValidation(DbcFile file, Class<T> type, Collection<T> instances) {
         this.file = file;
         this.type = type;
         this.instances = instances;
@@ -41,7 +41,7 @@ public class EntryCountMappingValidation<T extends DbcEntry> extends MappingVali
 
     @Override
     public boolean isValid() {
-        int fileEntries = file.getHeader().getRecordCount();
+        int fileEntries = file.getHeader().getEntryCount();
         int parsedEntries = instances.size();
         boolean valid = fileEntries == parsedEntries;
         if (valid) {

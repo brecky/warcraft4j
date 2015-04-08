@@ -1,8 +1,8 @@
 package nl.salp.warcraft4j.clientdata.dbc.analysis.validation;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.parser.ParsedDbcFile;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
+import nl.salp.warcraft4j.clientdata.dbc.DbcField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +26,7 @@ public class PaddingFieldMappingValidation<T extends DbcEntry> extends MappingVa
     /** Method name mask for non-boolean accessors (get...()). */
     private static final String ACCESSOR_GET_MASK = "get%s";
     /** The parsed DBC/DB2 file. */
-    private final ParsedDbcFile file;
+    private final DbcFile file;
     /** The mapping type. */
     private final Class<T> type;
 
@@ -36,7 +36,7 @@ public class PaddingFieldMappingValidation<T extends DbcEntry> extends MappingVa
      * @param file The parsed DBC/DB2 file.
      * @param type The mapping type.
      */
-    public PaddingFieldMappingValidation(ParsedDbcFile file, Class<T> type) {
+    public PaddingFieldMappingValidation(DbcFile file, Class<T> type) {
         this.file = file;
         this.type = type;
     }

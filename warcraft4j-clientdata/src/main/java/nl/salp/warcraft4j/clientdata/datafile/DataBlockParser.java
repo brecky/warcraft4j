@@ -29,11 +29,16 @@ import java.io.IOException;
  *
  * @author Barre Dijkstra
  */
-class DataBlockParser implements DataParser<DataBlock> {
+class DataBlockParser extends DataParser<DataBlock> {
     @Override
-    public DataBlock next(DataReader reader) throws IOException {
+    protected DataBlock parse(DataReader reader) throws IOException {
         DataHeader header = reader.readNext(new DataHeaderParser());
         byte[] data = reader.readNextBytes(header.getDataSize());
         return new DataBlock(header, data);
+    }
+
+    @Override
+    public int getInstanceDataSize() {
+        return 0;
     }
 }
