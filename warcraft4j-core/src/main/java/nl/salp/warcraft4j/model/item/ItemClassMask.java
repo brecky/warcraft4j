@@ -16,14 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
-import nl.salp.warcraft4j.clientdata.dbc.DbcReference;
+package nl.salp.warcraft4j.model.item;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -33,32 +28,22 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author Barre Dijkstra
  */
-@DbcMapping(file = "ItemSubClassMask.dbc")
-public class ItemSubClassMaskEntry implements DbcEntry {
-    private static final DbcType ENTRY_TYPE = DbcType.ITEM_SUB_CLASS_MASK;
-
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+public class ItemClassMask {
+    /** The id of the item class mask. */
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
-    @DbcReference(type = DbcType.ITEM_CLASS)
-    private int classId;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    /** TODO Refactor. */
     private int mask;
-    @DbcField(order = 4, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    /** The name of the item class mask. */
     private String name;
 
-    @Override
-    public DbcType getEntryType() {
-        return ENTRY_TYPE;
+    public ItemClassMask(int id, int mask, String name) {
+        this.id = id;
+        this.mask = mask;
+        this.name = name;
     }
 
-    @Override
     public int getId() {
         return id;
-    }
-
-    public int getClassId() {
-        return classId;
     }
 
     public int getMask() {
@@ -70,13 +55,13 @@ public class ItemSubClassMaskEntry implements DbcEntry {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 
     @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
     }
 
     @Override
