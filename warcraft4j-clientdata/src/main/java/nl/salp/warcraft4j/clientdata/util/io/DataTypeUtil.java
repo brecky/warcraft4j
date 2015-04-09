@@ -19,6 +19,7 @@
 
 package nl.salp.warcraft4j.clientdata.util.io;
 
+import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
@@ -32,6 +33,33 @@ public class DataTypeUtil {
      * Private constructor to prevent instantiation.
      */
     private DataTypeUtil() {
+    }
+
+    /**
+     * Create a 4-element byte[] (32bit) from the given int value.
+     *
+     * @param value The value.
+     *
+     * @return The byte[].
+     */
+    public static byte[] toByteArray(int value) {
+        return new byte[]{
+                (byte) (value >>> 24),
+                (byte) (value >>> 16),
+                (byte) (value >>> 8),
+                (byte) (value)
+        };
+    }
+
+    /**
+     * Create a 8-element byte[] (64bit) from the given long value.
+     *
+     * @param value The value.
+     *
+     * @return The byte[].
+     */
+    public static byte[] toByteArray(long value) {
+        return BigInteger.valueOf(value).toByteArray();
     }
 
     /**
