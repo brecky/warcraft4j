@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import nl.salp.warcraft4j.clientdata.util.hash.Hashes;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -56,7 +56,7 @@ public class ListFile {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                files.put(line, DigestUtils.md5Hex(line));
+                files.put(line, Hashes.MD5.hashHexString(line));
             }
         }
 

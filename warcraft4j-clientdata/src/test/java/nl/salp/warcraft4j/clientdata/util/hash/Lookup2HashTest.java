@@ -27,7 +27,7 @@ import static org.junit.Assert.fail;
  *
  * @author Barre Dijkstra
  */
-public class JenkinsHashTest {
+public class Lookup2HashTest {
     private static final String SHORT_INPUT = "test";
     /** Longer test input (the header of the Bob Jenkins paper) */
     private static final String LONG_INPUT = "Abstract\n\nI offer you a new hash function for hash table lookup that is faster and more thorough than the one you are using now. I also give you a way to verify that it is more thorough.";
@@ -84,9 +84,9 @@ public class JenkinsHashTest {
 
     @Test
     public void testHashes() {
-        JenkinsHash jenkinsHash = new JenkinsHash ();
+        Lookup2Hash lookup2Hash = new Lookup2Hash();
         for (TestData test : tests) {
-            long got = jenkinsHash.jenkinsHash(test.bytes, test.initial);
+            long got = lookup2Hash.jenkinsHash(test.bytes, test.initial);
             if (got != test.expected) {
                 fail("Buffer '" + test.str + "' (len " + test.bytes.length
                         + ") with initial " + test.initial + " expected " + test.expected + " but got " + got);

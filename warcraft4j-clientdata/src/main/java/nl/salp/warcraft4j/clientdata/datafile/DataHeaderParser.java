@@ -21,8 +21,10 @@ package nl.salp.warcraft4j.clientdata.datafile;
 
 import nl.salp.warcraft4j.clientdata.io.DataParser;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
+import nl.salp.warcraft4j.clientdata.io.DataType;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 
 /**
  * {@link DataParser} implementation for {@link DataHeader}.
@@ -48,7 +50,7 @@ class DataHeaderParser extends DataParser<DataHeader> {
      */
     protected DataHeader parse(DataReader reader) throws IOException {
         byte[] md5 = reader.readNextBytes(MD5S_SIZE);
-        int blockSize = reader.readNextInt32();
+        int blockSize = reader.readNext(DataType.getInteger(), ByteOrder.LITTLE_ENDIAN);
         byte[] unknownSegment = reader.readNextBytes(UNKNOWN_SEGMENT_SIZE);
         return new DataHeader(md5, blockSize, unknownSegment);
     }

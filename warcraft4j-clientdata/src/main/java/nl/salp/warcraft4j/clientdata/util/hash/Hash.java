@@ -20,7 +20,7 @@
 package nl.salp.warcraft4j.clientdata.util.hash;
 
 /**
- * Data hash.
+ * Implementation for creating a unique hash of a set of data.
  *
  * @author Barre Dijkstra
  */
@@ -33,4 +33,31 @@ public interface Hash {
      * @return The hash of the data.
      */
     byte[] hash(byte[] data);
+
+    /**
+     * Create a hash from the provided String.
+     *
+     * @param data The String to hash.
+     *
+     * @return The hash of the String.
+     */
+    byte[] hash(String data);
+
+    /**
+     * Get the hash of the provided data as a hex String.
+     *
+     * @param data The data to hash.
+     *
+     * @return The hex String representation of the data hash.
+     */
+    String hashHexString(byte[] data);
+
+    /**
+     * Get the hash of the provided String as a hex String.
+     *
+     * @param data The String to hash.
+     *
+     * @return The hex String representation of the String hash.
+     */
+    String hashHexString(String data);
 }

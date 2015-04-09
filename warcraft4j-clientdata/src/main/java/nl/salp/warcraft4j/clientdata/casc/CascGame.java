@@ -30,13 +30,23 @@ public enum CascGame {
 
     /** The mask for getting the game flag. */
     private static final int GAME_MASK = 0xFFF0000;
+    /** The full name of the game. */
     private final String name;
     /** The flag for the game. */
     private final int gameFlag;
 
-    private CascGame(String name, int gameFlag) {
+    CascGame(String name, int gameFlag) {
         this.name = name;
         this.gameFlag = gameFlag;
+    }
+
+    /**
+     * Get the full name of the game.
+     *
+     * @return The name.
+     */
+    public String getName() {
+        return name;
     }
 
     /**

@@ -19,41 +19,41 @@
 
 package nl.salp.warcraft4j.clientdata.util.hash;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.binary.StringUtils;
+
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
+
+import static nl.salp.warcraft4j.clientdata.util.io.DataTypeUtil.trim;
 
 /**
- * Jenkins hash implementation.
+ * Bob Jenkins' lookup2 hash implementation.
  *
  * @author Barre Dijkstra
  */
-public class JenkinsHash implements Hash {
+public class Lookup2Hash implements Hash {
     /** Bit mask for limiting to 4 byte values. */
     private static final long BITMASK_4BYTE_VALUE = 0xFFFFFFFFL;
     /** The "golden ratio". */
     private static final long GOLDEN_RATIO = 0x09e3779b9L;
 
-    private long a;
-    private long b;
-    private long c;
-
     /**
      * Hash mix the current values.
      */
-    private void mixHash() {
-        a = mix(a, b, c, c >> 13);
-        b = mix(b, c, a, leftShift(a, 8));
-        c = mix(c, a, b, b >> 13);
-        a = mix(a, b, c, c >> 12);
-        b = mix(b, c, a, leftShift(a, 16));
-        c = mix(c, a, b, b >> 5);
-        a = mix(a, b, c, c >> 3);
-        b = mix(b, c, a, leftShift(a, 10));
-        c = mix(c, a, b, b >> 15);
+    private void mixHash(State state) {
+        state.a = mix(state.a, state.b, state.c, state.c >> 13);
+        state.b = mix(state.b, state.c, state.a, leftShift(state.a, 8));
+        state.c = mix(state.c, state.a, state.b, state.b >> 13);
+        state.a = mix(state.a, state.b, state.c, state.c >> 12);
+        state.b = mix(state.b, state.c, state.a, leftShift(state.a, 16));
+        state.c = mix(state.c, state.a, state.b, state.b >> 5);
+        state.a = mix(state.a, state.b, state.c, state.c >> 3);
+        state.b = mix(state.b, state.c, state.a, leftShift(state.a, 10));
+        state.c = mix(state.c, state.a, state.b, state.b >> 15);
     }
 
     /**
-     * Helper method for mixing a single value to help {@link JenkinsHash#mixHash()} readability.
+     * Helper method for mixing a single value to help {@link Lookup2Hash#mixHash(State)} readability.
      *
      * @param target The value to mix.
      * @param first  The first value to mix with.
@@ -134,7 +134,7 @@ public class JenkinsHash implements Hash {
     }
 
     /**
-     * Get a long value (4 bytes) from the data, starting at the offset.
+     * Get a long value (4 bytes) from the datstate.a, starting at the offset.
      *
      * @param data   The data to get the long from.
      * @param offset The offset to start at.
@@ -151,80 +151,103 @@ public class JenkinsHash implements Hash {
     @Override
     public byte[] hash(byte[] data) {
         BigInteger hash = BigInteger.valueOf(jenkinsHash(data));
-        return hash.toByteArray();
+        return trim(hash.toByteArray());
 
     }
 
+    @Override
+    public byte[] hash(String data) {
+        return hash(StringUtils.getBytesUtf8(data));
+    }
+
+    @Override
+    public String hashHexString(byte[] data) {
+        return Hex.encodeHexString(hash(data));
+    }
+
+    @Override
+    public String hashHexString(String data) {
+        return hashHexString(StringUtils.getBytesUtf8(data));
+    }
+
+    /**
+     * Calculate the hash for the provided datstate.a, allowing for continuation of a previous hash (in case of segmented data).
+     *
+     * @param data             The data to hash.
+     * @param continuationHash The hash to continue from or {@code 0} if the hash is a new hash.
+     *
+     * @return The hash.
+     */
     public long jenkinsHash(byte[] data, long continuationHash) {
-        a = GOLDEN_RATIO;
-        b = GOLDEN_RATIO;
-        c = continuationHash;
+        State state = new State(GOLDEN_RATIO, GOLDEN_RATIO, continuationHash);
 
         int pos = 0;
         int len;
         for (len = data.length; len >= 12; len -= 12) {
-            a = add(a, getLong(data, pos));
-            b = add(b, getLong(data, pos + 4));
-            c = add(c, getLong(data, pos + 8));
-            mixHash();
+            state.a = add(state.a, getLong(data, pos));
+            state.b = add(state.b, getLong(data, pos + 4));
+            state.c = add(state.c, getLong(data, pos + 8));
+            mixHash(state);
             pos += 12;
         }
 
-        c += data.length;
+        state.c += data.length;
 
         switch (len) {
             case 11:
-                c = add(c, leftShift(byteToLong(data[pos + 10]), 24));
+                state.c = add(state.c, leftShift(byteToLong(data[pos + 10]), 24));
             case 10:
-                c = add(c, leftShift(byteToLong(data[pos + 9]), 16));
+                state.c = add(state.c, leftShift(byteToLong(data[pos + 9]), 16));
             case 9:
-                c = add(c, leftShift(byteToLong(data[pos + 8]), 8));
+                state.c = add(state.c, leftShift(byteToLong(data[pos + 8]), 8));
                 // the first byte of c is reserved for the length
             case 8:
-                b = add(b, leftShift(byteToLong(data[pos + 7]), 24));
+                state.b = add(state.b, leftShift(byteToLong(data[pos + 7]), 24));
             case 7:
-                b = add(b, leftShift(byteToLong(data[pos + 6]), 16));
+                state.b = add(state.b, leftShift(byteToLong(data[pos + 6]), 16));
             case 6:
-                b = add(b, leftShift(byteToLong(data[pos + 5]), 8));
+                state.b = add(state.b, leftShift(byteToLong(data[pos + 5]), 8));
             case 5:
-                b = add(b, byteToLong(data[pos + 4]));
+                state.b = add(state.b, byteToLong(data[pos + 4]));
             case 4:
-                a = add(a, leftShift(byteToLong(data[pos + 3]), 24));
+                state.a = add(state.a, leftShift(byteToLong(data[pos + 3]), 24));
             case 3:
-                a = add(a, leftShift(byteToLong(data[pos + 2]), 16));
+                state.a = add(state.a, leftShift(byteToLong(data[pos + 2]), 16));
             case 2:
-                a = add(a, leftShift(byteToLong(data[pos + 1]), 8));
+                state.a = add(state.a, leftShift(byteToLong(data[pos + 1]), 8));
             case 1:
-                a = add(a, byteToLong(data[pos + 0]));
+                state.a = add(state.a, byteToLong(data[pos + 0]));
             default:
                 // noop
         }
-        mixHash();
+        mixHash(state);
 
-        return c;
+        return state.c;
     }
 
+    /**
+     * Calculate a new hash of the provided data.
+     *
+     * @param data The data to create a hash for.
+     *
+     * @return The hash.
+     */
     public long jenkinsHash(byte[] data) {
         return jenkinsHash(data, 0);
     }
 
     /**
-     * Hash the data using the 'one-at-a-time' hashing described in the Jenkins' hashing paper.
-     *
-     * @param data The data.
-     *
-     * @return The hash.
+     * TODO state holder as a quick fix to keep the implementation stateless until I have time to refactor the whole implementation.
      */
-    public byte[] oneAtATimeHash(byte[] data) {
-        int hash = 0;
-        for (byte b : data) {
-            hash += b;
-            hash += (hash << 10);
-            hash ^= (hash >> 6);
+    private class State {
+        public long a;
+        public long b;
+        public long c;
+
+        public State(long a, long b, long c) {
+            this.a = a;
+            this.b = b;
+            this.c = c;
         }
-        hash += (hash << 3);
-        hash ^= (hash >> 11);
-        hash += (hash << 15);
-        return ByteBuffer.allocate(4).putInt(hash).array();
     }
 }

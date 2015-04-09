@@ -22,53 +22,26 @@ package nl.salp.warcraft4j.clientdata.util.hash;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.binary.StringUtils;
 
+import java.nio.ByteBuffer;
+
 /**
- * Collection of available hash implementations.
- * <p/>
- * FIXME Switch from single instances to a thread-safe solution in case an implementation is not stateless.
+ * Bob Jenkins' one-at-a-time hash implementation.
  *
  * @author Barre Dijkstra
  */
-public enum Hashes implements Hash {
-    /** 32-bit FNV-1 hash. */
-    FNV1_32BIT(FowlerNollVoHash.hash32fnv1()),
-    /** 32-bit FNV-1a hash. */
-    FNV1A_32BIT(FowlerNollVoHash.hash32fnv1a()),
-    /** 64-bit FNV-1 hash. */
-    FNV1_64BIT(FowlerNollVoHash.hash64fnv1()),
-    /** 64-bit FNV-1a hash. */
-    FNV1A_64BIT(FowlerNollVoHash.hash64fnv1a()),
-    /** Bob Jenkins' lookup2 hash implementation. */
-    LOOKUP2(new Lookup2Hash()),
-    /** Bob Jenkins' one-at-a-time hash. */
-    ONE_AT_A_TIME(new OneAtATimeHash()),
-    /** MD5 hash. */
-    MD5(new Md5Hash());
-
-    /** The hashing implementation. */
-    private final Hash implementation;
-
-    /**
-     * Create a new Hashes instances.
-     *
-     * @param implementation The hashing implementation.
-     */
-    Hashes(Hash implementation) {
-        this.implementation = implementation;
-    }
-
-    /**
-     * Get the hash implementation.
-     *
-     * @return The hash implementation.
-     */
-    public Hash getImplementation() {
-        return implementation;
-    }
-
+public class OneAtATimeHash implements Hash {
     @Override
     public byte[] hash(byte[] data) {
-        return implementation.hash(data);
+        int hash = 0;
+        for (byte b : data) {
+            hash += b;
+            hash += (hash << 10);
+            hash ^= (hash >> 6);
+        }
+        hash += (hash << 3);
+        hash ^= (hash >> 11);
+        hash += (hash << 15);
+        return ByteBuffer.allocate(4).putInt(hash).array();
     }
 
     @Override

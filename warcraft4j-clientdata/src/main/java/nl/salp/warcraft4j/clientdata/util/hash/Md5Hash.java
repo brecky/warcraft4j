@@ -19,6 +19,8 @@
 
 package nl.salp.warcraft4j.clientdata.util.hash;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 
 /**
@@ -26,9 +28,24 @@ import org.apache.commons.codec.digest.DigestUtils;
  *
  * @author Barre Dijkstra
  */
-class Md5Hash implements Hash {
+public class Md5Hash implements Hash {
     @Override
     public byte[] hash(byte[] data) {
         return DigestUtils.md5(data);
+    }
+
+    @Override
+    public byte[] hash(String data) {
+        return hash(StringUtils.getBytesUtf8(data));
+    }
+
+    @Override
+    public String hashHexString(byte[] data) {
+        return Hex.encodeHexString(hash(data));
+    }
+
+    @Override
+    public String hashHexString(String data) {
+        return hashHexString(StringUtils.getBytesUtf8(data));
     }
 }

@@ -19,6 +19,9 @@
 
 package nl.salp.warcraft4j.clientdata.util.hash;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.binary.StringUtils;
+
 import java.math.BigInteger;
 
 import static nl.salp.warcraft4j.clientdata.util.io.DataTypeUtil.trim;
@@ -28,7 +31,7 @@ import static nl.salp.warcraft4j.clientdata.util.io.DataTypeUtil.trim;
  *
  * @author Barre Dijkstra
  */
-abstract class FowlerNollVoHash implements Hash {
+public abstract class FowlerNollVoHash implements Hash {
     /** The offset for 32-bit hashes. */
     private static final BigInteger OFFSET_32 = new BigInteger("811c9dc5", 16);
     /** The prime for 32-bit hashes. */
@@ -60,6 +63,21 @@ abstract class FowlerNollVoHash implements Hash {
         this.offset = offset;
         this.prime = prime;
         this.mod = mod;
+    }
+
+    @Override
+    public byte[] hash(String data) {
+        return hash(StringUtils.getBytesUtf8(data));
+    }
+
+    @Override
+    public String hashHexString(byte[] data) {
+        return Hex.encodeHexString(hash(data));
+    }
+
+    @Override
+    public String hashHexString(String data) {
+        return hashHexString(StringUtils.getBytesUtf8(data));
     }
 
     /**
