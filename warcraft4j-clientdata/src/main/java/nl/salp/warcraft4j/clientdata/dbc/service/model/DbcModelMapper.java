@@ -43,7 +43,7 @@ public abstract class DbcModelMapper<T, E extends DbcEntry> {
      * @throws IOException When the mapped DBC file could not be added.
      */
     public DbcModelMapper(DbcStore store, String dbcDirectory) throws IOException {
-        store.add(getEntryClass(), dbcDirectory);
+        store.read(getEntryClass(), dbcDirectory);
     }
 
     /**

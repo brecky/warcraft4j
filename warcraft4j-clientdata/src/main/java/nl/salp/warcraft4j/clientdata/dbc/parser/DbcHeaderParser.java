@@ -22,6 +22,9 @@ import nl.salp.warcraft4j.clientdata.io.*;
 
 import java.io.IOException;
 
+import static nl.salp.warcraft4j.clientdata.io.DataType.getFixedLengthString;
+import static org.apache.commons.lang3.ArrayUtils.toPrimitive;
+
 /**
  * {@link DataParser} implementation for reading and parsing an {@link DbcHeader} instance.
  *
@@ -50,33 +53,33 @@ public class DbcHeaderParser extends RandomAccessDataParser<DbcHeader> {
     public DbcHeader parse(DataReader reader) throws IOException, DataParsingException {
         DbcHeader.Builder builder = new DbcHeader.Builder();
         // DBC parsing
-        String magicString = reader.readNextFixedLengthString(MAGIC_STRING_LENGTH);
+        String magicString = reader.readNext(getFixedLengthString(MAGIC_STRING_LENGTH));
         int headerSize = DBC_HEADER_SIZE;
         builder.withMagicString(magicString);
-        builder.withEntryCount(reader.readNextInt32());
-        builder.withEntryFieldCount(reader.readNextInt32());
-        builder.withSingleEntrySize(reader.readNextInt32());
-        builder.withStringTableBlockSize(reader.readNextInt32());
+        builder.withEntryCount(reader.readNext(DataType.getInteger()));
+        builder.withEntryFieldCount(reader.readNext(DataType.getInteger()));
+        builder.withSingleEntrySize(reader.readNext(DataType.getInteger()));
+        builder.withStringTableBlockSize(reader.readNext(DataType.getInteger()));
         // DB2 parsing.
         if (DB2_MAGICSTRING.equals(magicString) || ADB_MAGICSTRING.equals(magicString)) {
             headerSize = DB2_HEADER_SIZE;
-            builder.withStringTableBlockHash(reader.readNextInt32());
-            int buildNumber = reader.readNextInt32();
+            builder.withStringTableBlockHash(reader.readNext(DataType.getInteger()));
+            int buildNumber = reader.readNext(DataType.getInteger());
             builder.withBuildNumber(buildNumber);
-            builder.withTimestampLastWritten(reader.readNextInt32());
+            builder.withTimestampLastWritten(reader.readNext(DataType.getInteger()));
 
             if (buildNumber > DB2_LASTBUILD_BEFORE_EXTENSION) {
                 headerSize = DB2_EXTENDED_HEADER_SIZE_BASE;
-                int minEntryId = reader.readNextInt32();
+                int minEntryId = reader.readNext(DataType.getInteger());
                 builder.withMinEntryId(minEntryId);
-                int maxEntryId = reader.readNextInt32();
+                int maxEntryId = reader.readNext(DataType.getInteger());
                 builder.withMaxEntryId(maxEntryId);
-                builder.withLocaleId(reader.readNextInt32());
-                builder.withUnknownDataBlock(reader.readNextBytes(4));
+                builder.withLocaleId(reader.readNext(DataType.getInteger()));
+                builder.withUnknownDataBlock(reader.readNext(DataType.getByteArray(4)));
                 if (maxEntryId > 0) {
                     int entryCount = maxEntryId - minEntryId + 1;
-                    builder.withRowIndexes(reader.readNextInt32Array(entryCount));
-                    builder.withRowStringLength(reader.readNextShortArray(entryCount));
+                    builder.withRowIndexes(toPrimitive(reader.readNext(DataType.getInteger().asArrayType(entryCount))));
+                    builder.withRowStringLength(toPrimitive(reader.readNext(DataType.getShort().asArrayType(entryCount))));
 
                     headerSize += (entryCount * DataType.getInteger().getLength());
                     headerSize += (entryCount * DataType.getShort().getLength());

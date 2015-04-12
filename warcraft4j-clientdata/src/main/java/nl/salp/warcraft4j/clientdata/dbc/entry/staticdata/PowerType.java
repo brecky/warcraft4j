@@ -16,30 +16,44 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package nl.salp.warcraft4j.clientdata.datafile;
-
-import nl.salp.warcraft4j.clientdata.io.DataParser;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.DataType;
-
-import java.io.IOException;
+package nl.salp.warcraft4j.clientdata.dbc.entry.staticdata;
 
 /**
- * {@link DataParser} implementation for {@link DataBlock}.
+ * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-class DataBlockParser extends DataParser<DataBlock> {
-    @Override
-    protected DataBlock parse(DataReader reader) throws IOException {
-        DataHeader header = reader.readNext(new DataHeaderParser());
-        byte[] data = reader.readNext(DataType.getByteArray(header.getDataSize()));
-        return new DataBlock(header, data);
+public enum PowerType {
+    MANA("mana", 0),
+    RAGE("rage", 1),
+    FOCUS("focus", 2),
+    RUNIC_POWER("runic_power", 6),
+    ENERGY("energy", 3);
+
+    private final String name;
+    private final int id;
+
+    PowerType(String name, int id) {
+        this.name = name;
+        this.id = id;
     }
 
-    @Override
-    public int getInstanceDataSize() {
-        return 0;
+    public String getName() {
+        return name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public static PowerType getPowerType(int id) {
+        PowerType powerType = null;
+        for (PowerType pt : PowerType.values()) {
+            if (pt.id == id) {
+                powerType = pt;
+                break;
+            }
+        }
+        return powerType;
     }
 }

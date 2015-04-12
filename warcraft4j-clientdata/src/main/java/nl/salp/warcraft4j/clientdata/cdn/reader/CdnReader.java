@@ -19,10 +19,7 @@
 package nl.salp.warcraft4j.clientdata.cdn.reader;
 
 import nl.salp.warcraft4j.Region;
-import nl.salp.warcraft4j.clientdata.cdn.Application;
-import nl.salp.warcraft4j.clientdata.cdn.ApplicationVersion;
-import nl.salp.warcraft4j.clientdata.cdn.CdnHost;
-import nl.salp.warcraft4j.clientdata.cdn.CdnException;
+import nl.salp.warcraft4j.clientdata.cdn.*;
 
 import java.util.List;
 
@@ -42,6 +39,18 @@ public interface CdnReader {
      * @throws CdnException When reading of the information failed.
      */
     List<CdnHost> getCdnHosts(Application application) throws CdnException;
+
+    /**
+     * Get the application CDN host information for the region.
+     *
+     * @param application The application.
+     * @param region      The region.
+     *
+     * @return The CDN host information.
+     *
+     * @throws CdnException When reading of the information failed.
+     */
+    CdnHost getCdnHost(Application application, Region region) throws CdnException;
 
     /**
      * Get the application versions per region for the given application.
@@ -65,4 +74,20 @@ public interface CdnReader {
      * @throws CdnException When the application version couldn't be read.
      */
     ApplicationVersion getVersion(Application application, Region region) throws CdnException;
+
+    /**
+     * Get a file from the CDN.
+     *
+     * @param application The application.
+     * @param region      The region.
+     * @param fileType    The file type.
+     * @param fileName    The file name.
+     *
+     * @return The file data.
+     *
+     * @throws CdnException When the file could not be read.
+     */
+    byte[] getFile(Application application, Region region, CdnFileType fileType, String fileName) throws CdnException;
+
+    byte[] getConfigFile(Application application, Region region, CdnFileType fileType, String fileName) throws CdnException;
 }

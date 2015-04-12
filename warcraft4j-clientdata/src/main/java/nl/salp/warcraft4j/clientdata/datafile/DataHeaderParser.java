@@ -49,9 +49,9 @@ class DataHeaderParser extends DataParser<DataHeader> {
      * @throws IOException When reading failed.
      */
     protected DataHeader parse(DataReader reader) throws IOException {
-        byte[] md5 = reader.readNextBytes(MD5S_SIZE);
+        byte[] md5 = reader.readNext(DataType.getByteArray(MD5S_SIZE));
         int blockSize = reader.readNext(DataType.getInteger(), ByteOrder.LITTLE_ENDIAN);
-        byte[] unknownSegment = reader.readNextBytes(UNKNOWN_SEGMENT_SIZE);
+        byte[] unknownSegment = reader.readNext(DataType.getByteArray(UNKNOWN_SEGMENT_SIZE));
         return new DataHeader(md5, blockSize, unknownSegment);
     }
 

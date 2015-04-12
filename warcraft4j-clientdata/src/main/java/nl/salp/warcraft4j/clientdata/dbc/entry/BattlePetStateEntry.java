@@ -40,8 +40,8 @@ public class BattlePetStateEntry implements DbcEntry {
     private int id;
     @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
     private int unknown2;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown3;
+    @DbcField(order = 3, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    private String name;
     @DbcField(order = 4, dataType = DbcDataType.UINT32, knownMeaning = false)
     private int unknown4;
     @Override

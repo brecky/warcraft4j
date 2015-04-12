@@ -20,10 +20,7 @@
 package nl.salp.warcraft4j.clientdata.cdn.reader.http;
 
 import nl.salp.warcraft4j.Region;
-import nl.salp.warcraft4j.clientdata.cdn.Application;
-import nl.salp.warcraft4j.clientdata.cdn.ApplicationVersion;
-import nl.salp.warcraft4j.clientdata.cdn.CdnException;
-import nl.salp.warcraft4j.clientdata.cdn.CdnHost;
+import nl.salp.warcraft4j.clientdata.cdn.*;
 import nl.salp.warcraft4j.clientdata.cdn.reader.CdnReader;
 import org.apache.http.client.fluent.Request;
 
@@ -52,6 +49,19 @@ public class HttpCdnReader implements CdnReader {
     }
 
     @Override
+    public CdnHost getCdnHost(Application application, Region region) throws CdnException {
+        CdnHost host = null;
+        List<CdnHost> hosts = getCdnHosts(application);
+        for (CdnHost h : hosts) {
+            if (h.getRegion() == region) {
+                host = h;
+                break;
+            }
+        }
+        return host;
+    }
+
+    @Override
     public List<ApplicationVersion> getVersions(Application application) throws CdnException {
         try {
             return read(new ApplicationVersionParser(), application);
@@ -71,6 +81,23 @@ public class HttpCdnReader implements CdnReader {
             }
         }
         return version;
+    }
+
+    @Override
+    public byte[] getFile(Application application, Region region, CdnFileType fileType, String fileName) throws CdnException {
+        CdnHost host = getCdnHost(application, region);
+
+        String url = null;
+        try {
+            return Request.Get(url).execute().returnContent().asBytes();
+        } catch (IOException e) {
+            throw new CdnException(format("CDN call to retrieve file '%s' failed", url), e);
+        }
+    }
+
+    @Override
+    public byte[] getConfigFile(Application application, Region region, CdnFileType fileType, String fileName) throws CdnException {
+        return new byte[0];
     }
 
     /**
@@ -96,7 +123,7 @@ public class HttpCdnReader implements CdnReader {
                     entries.add(parser.parse(line));
                 }
             } else {
-                throw new CdnException(format("CDN call to '%s' received an invalid header in the response: '%s'", header));
+                throw new CdnException(format("CDN call to '%s' received an invalid header in the response: '%s'", url, header));
             }
         }
         return entries;

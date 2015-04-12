@@ -22,6 +22,7 @@ import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
 import nl.salp.warcraft4j.clientdata.io.ByteArrayDataReader;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
+import nl.salp.warcraft4j.clientdata.io.DataType;
 import nl.salp.warcraft4j.clientdata.io.FileDataReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,7 @@ public class DbcFileParser {
             Timer timer = Timer.start();
             DbcHeader header = reader.readNext(new DbcHeaderParser());
             LOGGER.debug(format("[parseFile::%s] Parsing type %s with %d records with %d fields and %d bytes per record.", filename, header.getMagicString(), header.getEntryCount(), header.getEntryFieldCount(), header.getEntrySize()));
-            byte[] entryData = reader.readNextBytes(header.getEntryBlockSize());
+            byte[] entryData = reader.readNext(DataType.getByteArray(header.getEntryBlockSize()));
             DbcStringTable stringTable = reader.readNext(new DbcStringTableParser(header));
             LOGGER.debug(format("[parseFile::%s] Parsed %d bytes of StringBlock data to %d StringBlock entries.", filename, header.getStringTableBlockSize(), stringTable.getNumberOfEntries()));
             DbcFile dbcFile = new DbcFile(filename, header, entryData, stringTable);
@@ -78,7 +79,7 @@ public class DbcFileParser {
         Timer timer = Timer.start();
         DbcHeader header = reader.readNext(new DbcHeaderParser());
         LOGGER.debug(format("[parse::%s] Parsing type %s with %d records with %d fields and %d bytes per record.", template.getSimpleName(), header.getMagicString(), header.getEntryCount(), header.getEntryFieldCount(), header.getEntrySize()));
-        byte[] entryData = reader.readNextBytes(header.getEntryBlockSize());
+        byte[] entryData = reader.readNext(DataType.getByteArray(header.getEntryBlockSize()));
         DbcStringTable stringTable = reader.readNext(new DbcStringTableParser(header));
         LOGGER.debug(format("[parse::%s] Parsed %d bytes of StringTable data to %d StringTable entries.", template.getSimpleName(), header.getStringTableBlockSize(), stringTable.getNumberOfEntries()));
         Set<T> entries = parseEntries(template, entryData, header, stringTable);

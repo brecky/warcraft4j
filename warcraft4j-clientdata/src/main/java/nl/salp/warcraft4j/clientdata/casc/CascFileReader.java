@@ -16,30 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package nl.salp.warcraft4j.clientdata.casc;
 
-package nl.salp.warcraft4j.clientdata.datafile;
-
-import nl.salp.warcraft4j.clientdata.io.DataParser;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.DataType;
+import nl.salp.warcraft4j.clientdata.casc.CascConfig;
 
 import java.io.IOException;
 
 /**
- * {@link DataParser} implementation for {@link DataBlock}.
+ * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-class DataBlockParser extends DataParser<DataBlock> {
-    @Override
-    protected DataBlock parse(DataReader reader) throws IOException {
-        DataHeader header = reader.readNext(new DataHeaderParser());
-        byte[] data = reader.readNext(DataType.getByteArray(header.getDataSize()));
-        return new DataBlock(header, data);
-    }
+public interface CascFileReader {
+    String getCascFileName(String fileName);
 
-    @Override
-    public int getInstanceDataSize() {
-        return 0;
-    }
+    String getRelativeDirectory(String fileName);
+
+    byte[] read(String type, String cascFileName, CascConfig cascConfig) throws IOException;
 }

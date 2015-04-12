@@ -116,7 +116,7 @@ public class DbcStringTableParser extends RandomAccessDataParser<DbcStringTable>
 
             ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
             byte b;
-            while (reader.hasRemaining() && (b = reader.readNextByte()) != 0) {
+            while (reader.hasRemaining() && (b = reader.readNext(DataType.getByte())) != 0) {
                 byteOut.write(b);
                 readBytes++;
             }

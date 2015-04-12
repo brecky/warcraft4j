@@ -16,30 +16,43 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package nl.salp.warcraft4j.clientdata.datafile;
-
-import nl.salp.warcraft4j.clientdata.io.DataParser;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.DataType;
-
-import java.io.IOException;
+package nl.salp.warcraft4j.clientdata.dbc.entry.staticdata;
 
 /**
- * {@link DataParser} implementation for {@link DataBlock}.
+ * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-class DataBlockParser extends DataParser<DataBlock> {
-    @Override
-    protected DataBlock parse(DataReader reader) throws IOException {
-        DataHeader header = reader.readNext(new DataHeaderParser());
-        byte[] data = reader.readNext(DataType.getByteArray(header.getDataSize()));
-        return new DataBlock(header, data);
-    }
+public enum GarrisonBuildingType {
+    UNKNOWN(0),
+    MINES(1),
+    HERB_GARDEN(2),
+    BARN(3),
+    LUMBER_MILL(4),
+    INN(5),
+    TRADING_POST(6),
+    MENAGERIE(7),
+    BARRACKS(8),
 
-    @Override
-    public int getInstanceDataSize() {
-        return 0;
+    WAR_MILL(10),
+    STABLES(11),
+
+    SPIRIT_LODGE(13),
+    SALVAGE_YARD(14),
+    STOREHOUSE(15),
+    ALCHEMY(16),
+    BLACKSMITHING(17),
+    ENCHANTING(18),
+    ENGINEERING(19),
+    INSCRIPTION(20),
+    JEWELCRAFTING(21),
+    LEATHERWORKING(22),
+    TAILORING(23),
+    FISHING(24),
+    GLADIATOR_SANCTUM(25),
+    WORKSHOP(26);
+
+    GarrisonBuildingType(int id) {
+
     }
 }

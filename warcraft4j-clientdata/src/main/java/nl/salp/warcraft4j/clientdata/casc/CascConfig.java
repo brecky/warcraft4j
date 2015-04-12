@@ -16,30 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package nl.salp.warcraft4j.clientdata.casc;
 
-package nl.salp.warcraft4j.clientdata.datafile;
-
-import nl.salp.warcraft4j.clientdata.io.DataParser;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.DataType;
-
-import java.io.IOException;
+import nl.salp.warcraft4j.Region;
 
 /**
- * {@link DataParser} implementation for {@link DataBlock}.
+ * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-class DataBlockParser extends DataParser<DataBlock> {
-    @Override
-    protected DataBlock parse(DataReader reader) throws IOException {
-        DataHeader header = reader.readNext(new DataHeaderParser());
-        byte[] data = reader.readNext(DataType.getByteArray(header.getDataSize()));
-        return new DataBlock(header, data);
+public class CascConfig {
+    private final String installationDirectory;
+    private final Region preferredRegion;
+    private final boolean online;
+
+    public CascConfig(String installationDirectory, Region preferredRegion, boolean online) {
+        this.installationDirectory = installationDirectory;
+        this.preferredRegion = preferredRegion;
+        this.online = online;
     }
 
-    @Override
-    public int getInstanceDataSize() {
-        return 0;
+    public String getInstallationDirectory() {
+        return installationDirectory;
+    }
+
+    public Region getPreferredRegion() {
+        return preferredRegion;
+    }
+
+    public boolean isOnline() {
+        return online;
     }
 }

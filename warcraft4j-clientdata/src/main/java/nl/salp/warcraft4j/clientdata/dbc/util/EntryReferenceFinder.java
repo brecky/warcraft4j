@@ -38,7 +38,7 @@ public class EntryReferenceFinder {
 
     public Map<Class<? extends DbcEntry>, EntryTypeReferenceInfo> calculateReferences(String dbcDirectory) throws Exception {
         DbcStore dbcStore = new DbcStore();
-        dbcStore.addFromClasspath(dbcDirectory);
+        dbcStore.readFromClasspath(dbcDirectory);
 
         Map<Class<? extends DbcEntry>, EntryTypeReferenceInfo> references = new HashMap<>();
 

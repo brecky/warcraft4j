@@ -21,6 +21,8 @@ package nl.salp.warcraft4j.clientdata.io;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.nio.ByteOrder;
 
 import static org.apache.commons.lang3.ArrayUtils.toPrimitive;
@@ -28,11 +30,11 @@ import static org.apache.commons.lang3.ArrayUtils.toPrimitive;
 /**
  * Reader for reading data files.
  * <p/>
- * This reader should either be closed manually via {@link FileDataReader#close()} or by utilizing the {@link java.io.Closeable} implementation.
+ * This reader should either be closed manually via {@link DataReader#close()} or by utilizing the {@link java.io.Closeable} implementation.
  *
  * @author Barre Dijkstra
  */
-public abstract class DataReader implements Closeable {
+public abstract class DataReader implements Closeable, AutoCloseable {
     /** The default ByteOrder for data files. */
     public static final ByteOrder DEFAULT_BYTE_ORDER = ByteOrder.LITTLE_ENDIAN;
 
@@ -83,7 +85,9 @@ public abstract class DataReader implements Closeable {
      * @throws IOException          When reading the data failed.
      * @throws DataParsingException When parsing the data failed.
      */
-    public abstract <T> T readNext(DataType<T> dataType) throws IOException, DataParsingException;
+    public <T> T readNext(DataType<T> dataType) throws IOException, DataParsingException {
+        return readNext(dataType, dataType.getDefaultByteOrder());
+    }
 
     /**
      * Read the next value for the given data type from the underlying data using the provided byte order.
@@ -114,129 +118,4 @@ public abstract class DataReader implements Closeable {
         return parser.next(this);
     }
 
-    /**
-     * Read the next terminated string from the underlying data.
-     *
-     * @return The next value.
-     *
-     * @throws IOException          When reading the data failed.
-     * @throws DataParsingException When parsing the data failed.
-     */
-    public String readNextTerminatedString() throws IOException, DataParsingException {
-        return readNext(DataType.getTerminatedString());
-    }
-
-    /**
-     * Read the next fixed length string from the underlying data.
-     *
-     * @return The next value.
-     *
-     * @throws IOException          When reading the data failed.
-     * @throws DataParsingException When parsing the data failed.
-     */
-    public String readNextFixedLengthString(int length) throws IOException, DataParsingException {
-        return readNext(DataType.getFixedLengthString(length));
-    }
-
-    /**
-     * Read the next signed 32-bit integer from the underlying data.
-     *
-     * @return The next value.
-     *
-     * @throws IOException          When reading the data failed.
-     * @throws DataParsingException When parsing the data failed.
-     */
-    public int readNextInt32() throws IOException, DataParsingException {
-        return readNext(DataType.getInteger());
-    }
-
-    /**
-     * Read the next signed 32-bit integer array from the underlying data.
-     *
-     * @param entries The number of array entries.
-     *
-     * @return The next value.
-     *
-     * @throws IOException          When reading the data failed.
-     * @throws DataParsingException When parsing the data failed.
-     */
-    public int[] readNextInt32Array(int entries) throws IOException, DataParsingException {
-        return toPrimitive(readNext(DataType.getInteger().asArrayType(entries)));
-    }
-
-    /**
-     * Read the next signed 16-bit short from the underlying data.
-     *
-     * @return The next value.
-     *
-     * @throws IOException          When reading the data failed.
-     * @throws DataParsingException When parsing the data failed.
-     */
-    public short readNextShort() throws IOException, DataParsingException {
-        return readNext(DataType.getShort());
-    }
-
-    /**
-     * Read the next signed 16-bit short array from the underlying data.
-     *
-     * @param entries The number of array entries.
-     *
-     * @return The next value.
-     *
-     * @throws IOException          When reading the data failed.
-     * @throws DataParsingException When parsing the data failed.
-     */
-    public short[] readNextShortArray(int entries) throws IOException, DataParsingException {
-        return toPrimitive(readNext(DataType.getShort().asArrayType(entries)));
-    }
-
-    /**
-     * Read the next 32-bit float from the underlying data.
-     *
-     * @return The next value.
-     *
-     * @throws IOException          When reading the data failed.
-     * @throws DataParsingException When parsing the data failed.
-     */
-    public float readNextFloat() throws IOException, DataParsingException {
-        return readNext(DataType.getFloat());
-    }
-
-    /**
-     * Read the next boolean from the underlying data.
-     *
-     * @return The next value.
-     *
-     * @throws IOException          When reading the data failed.
-     * @throws DataParsingException When parsing the data failed.
-     */
-    public boolean readNextBoolean() throws IOException, DataParsingException {
-        return readNext(DataType.getBoolean());
-    }
-
-    /**
-     * Read the next specified number of bytes as a byte[] from the underlying data.
-     *
-     * @param length The number of bytes to read.
-     *
-     * @return The next value.
-     *
-     * @throws IOException          When reading the data failed.
-     * @throws DataParsingException When parsing the data failed.
-     */
-    public byte[] readNextBytes(int length) throws IOException, DataParsingException {
-        return readNext(DataType.getByteArray(length));
-    }
-
-    /**
-     * Read the next byte from the underlying data.
-     *
-     * @return The next value.
-     *
-     * @throws IOException          When reading the data failed.
-     * @throws DataParsingException When parsing the data failed.
-     */
-    public byte readNextByte() throws IOException, DataParsingException {
-        return readNext(DataType.getByte());
-    }
 }

@@ -16,30 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package nl.salp.warcraft4j.clientdata.datafile;
-
-import nl.salp.warcraft4j.clientdata.io.DataParser;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.DataType;
-
-import java.io.IOException;
+package nl.salp.warcraft4j.clientdata.cdn;
 
 /**
- * {@link DataParser} implementation for {@link DataBlock}.
+ * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-class DataBlockParser extends DataParser<DataBlock> {
-    @Override
-    protected DataBlock parse(DataReader reader) throws IOException {
-        DataHeader header = reader.readNext(new DataHeaderParser());
-        byte[] data = reader.readNext(DataType.getByteArray(header.getDataSize()));
-        return new DataBlock(header, data);
+public enum CdnFileType {
+    CONFIG("config"),
+    DATA("data"),
+    PATCH("patch");
+
+    private final String path;
+
+    CdnFileType(String path) {
+        this.path = path;
     }
 
-    @Override
-    public int getInstanceDataSize() {
-        return 0;
+    public String getPath() {
+        return path;
     }
 }

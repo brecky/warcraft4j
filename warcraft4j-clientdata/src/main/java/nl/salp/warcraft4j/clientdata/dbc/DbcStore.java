@@ -86,7 +86,7 @@ public class DbcStore {
      * @throws IOException                    When reading the file failed.
      * @throws DbcParsingException When the file could not be parsed.
      */
-    public <T extends DbcEntry> void add(Class<T> type, String directory) throws IOException, DbcParsingException {
+    public <T extends DbcEntry> void read(Class<T> type, String directory) throws IOException, DbcParsingException {
         DbcFileParser parser = new DbcFileParser();
         Set<T> entries = parser.parse(type, directory);
         add(entries);
@@ -100,11 +100,11 @@ public class DbcStore {
      * @throws IOException                    When there is a problem loading the instances from the classpath.
      * @throws DbcParsingException When there is a problem parsing the instances.
      */
-    public void addFromClasspath(String directory) throws IOException, DbcParsingException {
+    public void readFromClasspath(String directory) throws IOException, DbcParsingException {
         DbcClasspathMappingScanner scanner = new DbcClasspathMappingScanner(this);
         LOGGER.debug("Scanning classpath for all client database entries.");
         for (Class<? extends DbcEntry> c : scanner.scan()) {
-            add(c, directory);
+            read(c, directory);
         }
     }
 

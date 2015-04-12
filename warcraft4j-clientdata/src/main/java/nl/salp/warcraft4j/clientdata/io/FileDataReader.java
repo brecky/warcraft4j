@@ -19,20 +19,21 @@
 
 package nl.salp.warcraft4j.clientdata.io;
 
-import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * {@WowReader} implementation for sequentially reading files.
  *
  * @author Barre Dijkstra
  */
-public class FileDataReader extends DataReader {
-    /** The input stream. */
-    private InputStream stream;
-    /** The position in the stream. */
-    private long position;
+public class FileDataReader extends InputStreamDataReader {
+    /** The path of the file that the reader is created for. */
+    private final String filePath;
+    /** The canonical path of the file that the reader is created for. */
+    private final String canonicalFilePath;
 
     /**
      * Create a new FileDataReader instance for the given file.
@@ -42,49 +43,26 @@ public class FileDataReader extends DataReader {
      * @throws IOException When the file could not be read.
      */
     public FileDataReader(File file) throws IOException {
-        stream = new BufferedInputStream(new FileInputStream(file));
-        position = 0;
+        super(new BufferedInputStream(new FileInputStream(file)));
+        this.filePath = file.getPath();
+        this.canonicalFilePath = file.getCanonicalPath();
     }
 
-    @Override
-    public final long position() {
-        return position;
+    /**
+     * Get the path of the file that the reader is created for.
+     *
+     * @return The file path.
+     */
+    public String getFilePath() {
+        return filePath;
     }
 
-    @Override
-    public boolean hasRemaining() throws IOException {
-        return stream.available() > 0;
-    }
-
-    @Override
-    public long remaining() throws IOException {
-        return stream.available();
-    }
-
-    @Override
-    public long size() throws IOException {
-        return remaining() + position();
-    }
-
-    @Override
-    public final <T> T readNext(DataType<T> dataType) throws IOException, DataParsingException {
-        return readNext(dataType, dataType.getDefaultByteOrder());
-    }
-
-
-    @Override
-    public final <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException, DataParsingException {
-        byte[] data = new byte[dataType.getLength()];
-        stream.read(data);
-        position += data.length;
-        ByteBuffer buffer = ByteBuffer.wrap(data).order(byteOrder);
-        return dataType.readNext(buffer);
-    }
-
-    @Override
-    public final void close() throws IOException {
-        if (stream != null) {
-            stream.close();
-        }
+    /**
+     * Get the canonical path of the file that the reader is created for.
+     *
+     * @return The canonical file path.
+     */
+    public String getCanonicalFilePath() {
+        return canonicalFilePath;
     }
 }

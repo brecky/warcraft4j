@@ -78,11 +78,6 @@ public class ByteArrayDataReader extends RandomAccessDataReader {
     }
 
     @Override
-    public <T> T readNext(DataType<T> dataType) throws IOException, DataParsingException {
-        return readNext(dataType, dataType.getDefaultByteOrder());
-    }
-
-    @Override
     public <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException, DataParsingException {
         byte[] data;
         if (dataType.getLength() < 1) {
