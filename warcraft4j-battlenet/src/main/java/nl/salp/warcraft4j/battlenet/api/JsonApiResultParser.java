@@ -16,42 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.battlenet.api.wow.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+package nl.salp.warcraft4j.battlenet.api;
 
 /**
- * TODO Document class.
+ * TODO Document.
  *
  * @author Barre Dijkstra
  */
-public class SocketDTO {
-    @JsonProperty("type")
-    private String type;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
+public interface JsonApiResultParser {
+    <T> T parse(String json, Class<T> resultType) throws BattlenetApiParsingException;
 }

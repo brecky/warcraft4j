@@ -45,13 +45,13 @@ public class BattlenetApiConfig {
     /** The default language for the Battle.NET API. */
     private static final String LOCALE_DEFAULT = "en_GB";
     /** The default configuration file name. */
-    public static final String CONFIG_FILENAME_DEFAULT = "w4j_bnet.config";
+    public static final String CONFIG_FILENAME_DEFAULT = "/w4j_bnet.config";
     /** Configuration file key for the application name. */
     private static final String CONFIG_KEY_APPLICATION_NAME = "w4j.bnet.api.application";
     /** Configuration file key for the API key. */
-    private static final String CONFIG_KEY_API_KEY = "w4j.bnet.api.auth.auth.key";
+    private static final String CONFIG_KEY_API_KEY = "w4j.bnet.api.auth.key";
     /** Configuration file key for the API secret key. */
-    private static final String CONFIG_KEY_API_SECRET = "w4j.bnet.api.auth.auth.secret";
+    private static final String CONFIG_KEY_API_SECRET = "w4j.bnet.api.auth.secret";
     /** Configuration file key for the maximum number of API requests per second. */
     private static final String CONFIG_KEY_MAX_REQUESTS_SECOND = "w4j.bnet.api.maxrequests.second";
     /** Configuration file key for the maximum number of API requests per hour. */
@@ -232,6 +232,12 @@ public class BattlenetApiConfig {
         Properties properties = new Properties();
         try (InputStream is = new FileInputStream(configFile)) {
             properties.load(is);
+        } catch (IOException e) {
+            try (InputStream is = BattlenetApiConfig.class.getResourceAsStream(configFile)) {
+                if (is != null) {
+                    properties.load(is);
+                }
+            }
         }
         String applicationName = properties.getProperty(CONFIG_KEY_APPLICATION_NAME);
         String apiKey = properties.getProperty(CONFIG_KEY_API_KEY);

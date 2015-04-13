@@ -34,8 +34,10 @@ import static nl.salp.warcraft4j.battlenet.api.BattlenetApiGroup.WORLD_OF_WARCRA
 public class GetItemApiRequest extends JsonApiRequest<ItemDTO> {
     /** The DTO class. */
     private static final Class<ItemDTO> DTO_CLASS = ItemDTO.class;
-    /** The API method. */
-    private static final String API_METHOD = "/%s/item/%d";
+    /** The API URI mask. */
+    private static final String API_URI_MASK = "/%s/item/%d";
+    /** The API method mask. */
+    private static final String API_METHOD_MASK = "/%s/item";
     /** The API to use. */
     private static final BattlenetApiGroup API = WORLD_OF_WARCRAFT;
     /** Flag indicating if the method requires authentication. */
@@ -60,7 +62,12 @@ public class GetItemApiRequest extends JsonApiRequest<ItemDTO> {
 
     @Override
     public String getRequestUri() {
-        return format(API_METHOD, API.getApiUri(), itemId);
+        return format(API_URI_MASK, API.getApiUri(), itemId);
+    }
+
+    @Override
+    public String getRequestMethodBaseUri() {
+        return format(API_METHOD_MASK, API.getApiUri());
     }
 
     @Override

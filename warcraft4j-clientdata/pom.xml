@@ -35,8 +35,8 @@
     <description>Warcraft4J parser for parsing client files (such as CASC, CDN, DB*, BPL, etc.) to the Warcraft4J model</description>
 
     <properties>
-        <dependency.commons-codec.version>1.10</dependency.commons-codec.version>
-        <dependency.httpclient.version>4.4</dependency.httpclient.version>
+        <dependency.mongojack.version>2.1.0</dependency.mongojack.version>
+        <dependency.mongodb.version>4.4</dependency.mongodb.version>
     </properties>
 
     <dependencies>
@@ -46,36 +46,29 @@
         </dependency>
         <dependency>
             <!-- TODO Move dependency -->
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.5.0</version>
-        </dependency>
-        <dependency>
-            <!-- TODO Move dependency -->
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.5.0</version>
-        </dependency>
-        <dependency>
-            <!-- TODO Move dependency -->
             <groupId>org.mongojack</groupId>
             <artifactId>mongojack</artifactId>
-            <version>2.1.0</version>
+            <version>${dependency.mongojack.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>${dependency.commons-codec.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>${dependency.httpclient.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>fluent-hc</artifactId>
-            <version>${dependency.httpclient.version}</version>
         </dependency>
     </dependencies>
 </project>

@@ -36,8 +36,10 @@ import static nl.salp.warcraft4j.battlenet.api.BattlenetApiGroup.WORLD_OF_WARCRA
 public class GetCharacterApiRequest extends JsonApiRequest<CharacterDTO> {
     /** The DTO class. */
     private static final Class<CharacterDTO> DTO_CLASS = CharacterDTO.class;
-    /** The API method. */
-    private static final String API_METHOD = "/%s/character/%s/%s";
+    /** The API URI mask. */
+    private static final String API_URI_MASK = "/%s/character/%s/%s";
+    /** The API method mask. */
+    private static final String API_METHOD_MASK = "/%s/character";
     /** The API to use. */
     private static final BattlenetApiGroup API = WORLD_OF_WARCRAFT;
     /** Flag indicating if the method requires authentication. */
@@ -72,7 +74,12 @@ public class GetCharacterApiRequest extends JsonApiRequest<CharacterDTO> {
 
     @Override
     public String getRequestUri() {
-        return format(API_METHOD, API.getApiUri(), realm, characterName);
+        return format(API_URI_MASK, API.getApiUri(), realm, characterName);
+    }
+
+    @Override
+    public String getRequestMethodBaseUri() {
+        return format(API_METHOD_MASK, API.getApiUri());
     }
 
     @Override

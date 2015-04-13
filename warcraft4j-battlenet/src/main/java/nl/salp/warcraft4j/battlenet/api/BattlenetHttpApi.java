@@ -19,11 +19,9 @@
 
 package nl.salp.warcraft4j.battlenet.api;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import nl.salp.warcraft4j.Language;
 import nl.salp.warcraft4j.Region;
-import nl.salp.warcraft4j.battlenet.BattlenetApiConfig;
 import nl.salp.warcraft4j.battlenet.BattlenetLocale;
 import nl.salp.warcraft4j.battlenet.BattlenetRegion;
 import org.apache.http.HttpEntity;
@@ -51,7 +49,7 @@ import static java.lang.String.format;
  * @author Barre Dijkstra
  */
 @Singleton
-public class BattlenetHttpApi implements BattlenetApi {
+public class BattlenetHttpApi extends BattlenetApi {
     /** The logger. */
     private static Logger LOGGER = LoggerFactory.getLogger(BattlenetHttpApi.class);
     /** The scheme. */
@@ -62,18 +60,12 @@ public class BattlenetHttpApi implements BattlenetApi {
     private static final String PARAMETER_LOCALE = "locale";
     /** The parameter name for the API key parameter. */
     private static final String PARAMETER_API_KEY = "apikey";
-    /** The configuration. */
-    @Inject
-    private BattlenetApiConfig config;
-    /** The region to get the data from. */
-    private BattlenetRegion region;
-    /** The locale to get the data in. */
-    private BattlenetLocale locale;
 
     /**
      * Create a new BattlenetHttpService with the default region and locale.
      */
     public BattlenetHttpApi() {
+        super();
     }
 
     /**
@@ -83,59 +75,16 @@ public class BattlenetHttpApi implements BattlenetApi {
      * @param language The language to get the data in.
      */
     public BattlenetHttpApi(Region region, Language language) {
-        this.region = BattlenetRegion.getRegionForKey(region);
-        this.locale = BattlenetLocale.getLocale(language);
-    }
-
-    /**
-     * Get the default Battle.NET region to use.
-     *
-     * @return The region.
-     */
-    private BattlenetRegion getRegion() {
-        BattlenetRegion r;
-        if (region == null) {
-            r = config.getDefaultRegion();
-        } else {
-            r = region;
-        }
-        return r;
-    }
-
-    /**
-     * Get the default Battle.NET locale to use.
-     *
-     * @return The locale.
-     */
-    private BattlenetLocale getLocale() {
-        BattlenetLocale l;
-        if (locale == null) {
-            l = config.getDefaultLocale();
-        } else {
-            l = locale;
-        }
-        return l;
+        super(region, language);
     }
 
     @Override
-    public <T> T call(BattlenetApiRequest<T> method) throws IOException, BattlenetApiParsingException {
+    protected <T> String execute(BattlenetRegion region, BattlenetLocale locale, BattlenetApiRequest<T> method) throws IOException {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            URI methodUri = createUri(method);
+            URI methodUri = createUri(region, locale, method);
             LOGGER.debug(format("Calling Battle.NET method %s with URI %s", method.getClass().getName(), methodUri.toASCIIString()));
             HttpUriRequest request = new HttpGet(methodUri);
-            String json = execute(request, httpClient);
-            return method.parse(json);
-        }
-    }
-
-    @Override
-    public <T> T call(BattlenetRegion region, BattlenetLocale locale, BattlenetApiRequest<T> method) throws IOException, BattlenetApiParsingException {
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            URI methodUri = createUri(method);
-            LOGGER.debug(format("Calling Battle.NET method %s with URI %s", method.getClass().getName(), methodUri.toASCIIString()));
-            HttpUriRequest request = new HttpGet(methodUri);
-            String json = execute(request, httpClient);
-            return method.parse(json);
+            return execute(request, httpClient);
         }
     }
 
@@ -193,10 +142,18 @@ public class BattlenetHttpApi implements BattlenetApi {
     protected <T> URI createUri(BattlenetRegion region, BattlenetLocale locale, BattlenetApiRequest<T> method) throws IOException {
         URIBuilder builder = new URIBuilder()
                 .setScheme(BATTLENETAPI_SCHEME)
-                .setHost(format(BATTLENETAPI_SERVER_MASK, region.getApiUri()))
                 .setPath(method.getRequestUri())
-                .addParameter(PARAMETER_API_KEY, config.getBnetApiKey())
-                .addParameter(PARAMETER_LOCALE, locale.getLocale());
+                .addParameter(PARAMETER_API_KEY, getConfig().getBnetApiKey());
+        if (region == null) {
+            builder.setHost(format(BATTLENETAPI_SERVER_MASK, getRegion().getApiUri()));
+        } else {
+            builder.setHost(format(BATTLENETAPI_SERVER_MASK, region.getApiUri()));
+        }
+        if (locale == null) {
+            builder.addParameter(PARAMETER_LOCALE, getLocale().getLocale());
+        } else {
+            builder.addParameter(PARAMETER_LOCALE, locale.getLocale());
+        }
 
         for (Map.Entry<String, String> param : method.getRequestParameters().entrySet()) {
             builder.addParameter(param.getKey(), param.getValue());
