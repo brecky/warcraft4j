@@ -19,9 +19,7 @@
 
 package nl.salp.warcraft4j.model.item;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import nl.salp.warcraft4j.model.Entity;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -33,9 +31,7 @@ import java.util.Map;
  *
  * @author Barre Dijkstra
  */
-public class ItemClass {
-    /** The id of the item group. */
-    private int id;
+public class ItemClass extends Entity {
     /** The price modifier for the item group. */
     private float priceModifier;
     /** The name of the item group. */
@@ -45,8 +41,17 @@ public class ItemClass {
     /** The item class masks for the item class. */
     private Map<Integer, ItemClassMask> itemClassMasks;
 
+    /**
+     * Create a new item class.
+     *
+     * @param id             The id of the item class.
+     * @param priceModifier  The price modifier.
+     * @param name           The name of the item class.
+     * @param itemSubClasses The item subclasses.
+     * @param itemClassMasks The item class masks.
+     */
     public ItemClass(int id, float priceModifier, String name, Collection<ItemSubClass> itemSubClasses, Collection<ItemClassMask> itemClassMasks) {
-        this.id = id;
+        super(id);
         this.priceModifier = priceModifier;
         this.name = name;
         if (itemSubClasses == null) {
@@ -67,10 +72,6 @@ public class ItemClass {
         }
     }
 
-    public int getId() {
-        return id;
-    }
-
     public float getPriceModifier() {
         return priceModifier;
     }
@@ -85,20 +86,5 @@ public class ItemClass {
 
     public Map<Integer, ItemClassMask> getItemClassMasks() {
         return Collections.unmodifiableMap(itemClassMasks);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
     }
 }
