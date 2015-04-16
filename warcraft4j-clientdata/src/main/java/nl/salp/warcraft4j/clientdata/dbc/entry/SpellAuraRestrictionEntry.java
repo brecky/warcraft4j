@@ -18,11 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,22 +34,23 @@ public class SpellAuraRestrictionEntry implements DbcEntry {
 
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown2;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown3;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown4;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown5;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown6;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown7;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown8;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown9;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    private int casterAuraState;
+    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    private int targetAuraState;
+    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    private int casterAuraStateNot;
+    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    private int targetAuraStateNot;
+    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    private int casterAuraSpell;
+    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    private int targetAuraSpell;
+    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    private int excludeCasterAuraSpell;
+    @DbcField(order = 9, dataType = DbcDataType.UINT32)
+    private int excludeTargetAuraSpell;
+
     @Override
     public DbcType getEntryType() {
         return ENTRY_TYPE;
@@ -62,6 +59,38 @@ public class SpellAuraRestrictionEntry implements DbcEntry {
     @Override
     public int getId() {
         return id;
+    }
+
+    public int getCasterAuraState() {
+        return casterAuraState;
+    }
+
+    public int getTargetAuraState() {
+        return targetAuraState;
+    }
+
+    public int getCasterAuraStateNot() {
+        return casterAuraStateNot;
+    }
+
+    public int getTargetAuraStateNot() {
+        return targetAuraStateNot;
+    }
+
+    public int getCasterAuraSpell() {
+        return casterAuraSpell;
+    }
+
+    public int getTargetAuraSpell() {
+        return targetAuraSpell;
+    }
+
+    public int getExcludeCasterAuraSpell() {
+        return excludeCasterAuraSpell;
+    }
+
+    public int getExcludeTargetAuraSpell() {
+        return excludeTargetAuraSpell;
     }
 
     @Override

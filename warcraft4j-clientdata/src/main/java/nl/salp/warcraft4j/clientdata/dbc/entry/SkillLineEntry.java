@@ -18,11 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -39,21 +35,24 @@ public class SkillLineEntry implements DbcEntry {
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
     @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown2;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown3;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown4;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown5;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown6;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown7;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown8;
+    private int categoryId; // FIXME Found a mentioning of it being a reference to SkillLineCategory.dbc ?!?! (might be an unparsed file) else reference to TradeSkillCategoryEntry?
+    @DbcField(order = 3, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    private String displayName;
+    @DbcField(order = 4, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    private String description;
+    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL_ICON)
+    private int spellIconId;
+    @DbcField(order = 6, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    private String alternativeVerb;
+    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    private int canLink; // FIXME Not a boolean?
+    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SKILL_LINE)
+    private int parentSkillLineId;
     @DbcField(order = 9, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown9;
+    private int flags;
+
     @Override
     public DbcType getEntryType() {
         return ENTRY_TYPE;
@@ -62,6 +61,38 @@ public class SkillLineEntry implements DbcEntry {
     @Override
     public int getId() {
         return id;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getSpellIconId() {
+        return spellIconId;
+    }
+
+    public String getAlternativeVerb() {
+        return alternativeVerb;
+    }
+
+    public int getCanLink() {
+        return canLink;
+    }
+
+    public int getParentSkillLineId() {
+        return parentSkillLineId;
+    }
+
+    public int getFlags() {
+        return flags;
     }
 
     @Override

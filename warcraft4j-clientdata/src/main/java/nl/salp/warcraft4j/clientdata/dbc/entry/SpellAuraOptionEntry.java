@@ -18,11 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,22 +34,26 @@ public class SpellAuraOptionEntry implements DbcEntry {
 
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown2;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown3;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown4;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown5;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown6;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown7;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown8;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown9;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL)
+    private int spellId;
+    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.DIFFICULTY)
+    private int difficultyId;
+    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    private int cumulativeAura; // FIXME Double check for being a boolean instead of an uint32.
+    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    private int procChance;
+    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    private int procCharges;
+    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    private int procTypeMask;
+    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    private int procCategoryRecovery;
+    @DbcField(order = 9, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL_PROCS_PER_MINUTE)
+    private int spellProcsPerMinuteId;
+
     @Override
     public DbcType getEntryType() {
         return ENTRY_TYPE;
@@ -62,6 +62,38 @@ public class SpellAuraOptionEntry implements DbcEntry {
     @Override
     public int getId() {
         return id;
+    }
+
+    public int getSpellId() {
+        return spellId;
+    }
+
+    public int getDifficultyId() {
+        return difficultyId;
+    }
+
+    public int getCumulativeAura() {
+        return cumulativeAura;
+    }
+
+    public int getProcChance() {
+        return procChance;
+    }
+
+    public int getProcCharges() {
+        return procCharges;
+    }
+
+    public int getProcTypeMask() {
+        return procTypeMask;
+    }
+
+    public int getProcCategoryRecovery() {
+        return procCategoryRecovery;
+    }
+
+    public int getSpellProcsPerMinuteId() {
+        return spellProcsPerMinuteId;
     }
 
     @Override

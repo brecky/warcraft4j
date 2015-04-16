@@ -18,11 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,12 +34,15 @@ public class SpellFlyoutItemEntry implements DbcEntry {
 
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown2;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown3;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown4;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL_FLYOUT)
+    private int spellFlyoutId;
+    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL)
+    private int spellId;
+    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    private int itemSlot;
+
     @Override
     public DbcType getEntryType() {
         return ENTRY_TYPE;
@@ -52,6 +51,18 @@ public class SpellFlyoutItemEntry implements DbcEntry {
     @Override
     public int getId() {
         return id;
+    }
+
+    public int getSpellFlyoutId() {
+        return spellFlyoutId;
+    }
+
+    public int getSpellId() {
+        return spellId;
+    }
+
+    public int getItemSlot() {
+        return itemSlot;
     }
 
     @Override

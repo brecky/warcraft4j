@@ -18,11 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,8 +34,9 @@ public class SpellFocusObjectEntry implements DbcEntry {
 
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown2;
+    @DbcField(order = 2, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    private String name;
+
     @Override
     public DbcType getEntryType() {
         return ENTRY_TYPE;
@@ -48,6 +45,11 @@ public class SpellFocusObjectEntry implements DbcEntry {
     @Override
     public int getId() {
         return id;
+    }
+
+
+    public String getName() {
+        return name;
     }
 
     @Override

@@ -18,11 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,20 +34,23 @@ public class SkillRaceClassInfoEntry implements DbcEntry {
 
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown2;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown3;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown4;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SKILL_LINE)
+    private int skillLineId;
+    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    private int raceMask; // Mask based on CharacterRaceEntry entries
+    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    private int classMask; // Mask based on CharacterClassEntry entries
     @DbcField(order = 5, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown5;
+    private int flags;
     @DbcField(order = 6, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown6;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown7;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown8;
+    private int availability;
+    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    private int minimumCharacterLevel;
+    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SKILL_TIER)
+    private int skillTierId;
+
     @Override
     public DbcType getEntryType() {
         return ENTRY_TYPE;
@@ -60,6 +59,34 @@ public class SkillRaceClassInfoEntry implements DbcEntry {
     @Override
     public int getId() {
         return id;
+    }
+
+    public int getSkillLineId() {
+        return skillLineId;
+    }
+
+    public int getRaceMask() {
+        return raceMask;
+    }
+
+    public int getClassMask() {
+        return classMask;
+    }
+
+    public int getFlags() {
+        return flags;
+    }
+
+    public int getAvailability() {
+        return availability;
+    }
+
+    public int getMinimumCharacterLevel() {
+        return minimumCharacterLevel;
+    }
+
+    public int getSkillTierId() {
+        return skillTierId;
     }
 
     @Override

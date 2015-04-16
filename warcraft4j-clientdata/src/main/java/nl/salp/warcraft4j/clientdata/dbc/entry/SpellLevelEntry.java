@@ -18,11 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,16 +34,19 @@ public class SpellLevelEntry implements DbcEntry {
 
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown2;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown3;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown4;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown5;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown6;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL)
+    private int spellId;
+    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.DIFFICULTY)
+    private int difficultyId;
+    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    private int baseLevel;
+    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    private int maxLevel;
+    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    private int spellLevel;
+
     @Override
     public DbcType getEntryType() {
         return ENTRY_TYPE;
@@ -56,6 +55,26 @@ public class SpellLevelEntry implements DbcEntry {
     @Override
     public int getId() {
         return id;
+    }
+
+    public int getSpellId() {
+        return spellId;
+    }
+
+    public int getDifficultyId() {
+        return difficultyId;
+    }
+
+    public int getBaseLevel() {
+        return baseLevel;
+    }
+
+    public int getMaxLevel() {
+        return maxLevel;
+    }
+
+    public int getSpellLevel() {
+        return spellLevel;
     }
 
     @Override

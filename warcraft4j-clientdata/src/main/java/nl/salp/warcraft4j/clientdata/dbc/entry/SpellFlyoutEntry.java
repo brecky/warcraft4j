@@ -18,11 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,18 +34,20 @@ public class SpellFlyoutEntry implements DbcEntry {
 
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown2;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown3;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown4;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown5;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown6;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown7;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    private int flags;
+    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    private int raceMask;
+    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    private int classMask;
+    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL_ICON)
+    private int spellIconId;
+    @DbcField(order = 6, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    private String name;
+    @DbcField(order = 7, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    private String description;
+
     @Override
     public DbcType getEntryType() {
         return ENTRY_TYPE;
@@ -58,6 +56,30 @@ public class SpellFlyoutEntry implements DbcEntry {
     @Override
     public int getId() {
         return id;
+    }
+
+    public int getFlags() {
+        return flags;
+    }
+
+    public int getRaceMask() {
+        return raceMask;
+    }
+
+    public int getClassMask() {
+        return classMask;
+    }
+
+    public int getSpellIconId() {
+        return spellIconId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     @Override

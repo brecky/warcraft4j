@@ -18,11 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,66 +34,56 @@ public class SpellEffectEntry implements DbcEntry {
 
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown2;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.DIFFICULTY)
+    private int difficultyId;
     @DbcField(order = 3, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown3;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown4;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown5;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown6;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown7;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown8;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown9;
-    @DbcField(order = 10, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown10;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown11;
-    @DbcField(order = 12, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown12;
-    @DbcField(order = 13, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown13;
-    @DbcField(order = 14, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown14;
-    @DbcField(order = 15, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown15;
-    @DbcField(order = 16, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown16;
-    @DbcField(order = 17, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown17;
-    @DbcField(order = 18, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown18;
-    @DbcField(order = 19, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown19;
-    @DbcField(order = 20, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown20;
-    @DbcField(order = 21, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown21;
-    @DbcField(order = 22, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown22;
-    @DbcField(order = 23, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown23;
-    @DbcField(order = 24, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown24;
-    @DbcField(order = 25, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown25;
-    @DbcField(order = 26, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown26;
-    @DbcField(order = 27, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown27;
-    @DbcField(order = 28, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown28;
-    @DbcField(order = 29, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown29;
-    @DbcField(order = 30, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown30;
-    @DbcField(order = 31, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown31;
+    private int effect; // TODO ref to spell ?
+    @DbcField(order = 4, dataType = DbcDataType.FLOAT)
+    private float effectAmplitude;
+    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    private int effectAura; // TODO ref to spell aura?
+    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    private int effectAuraPeriod;
+    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    private int effectBasePoints;
+    @DbcField(order = 8, dataType = DbcDataType.FLOAT)
+    private float effectBonusCoefficient;
+    @DbcField(order = 9, dataType = DbcDataType.FLOAT)
+    private float effectChainAmplitude;
+    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    private int effectChainTargets;
+    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    private int effectDieSides;
+    @DbcField(order = 12, dataType = DbcDataType.UINT32)
+    private int effectItemType;
+    @DbcField(order = 13, dataType = DbcDataType.UINT32)
+    private int effectMechanic;
+    @DbcField(order = 14, dataType = DbcDataType.UINT32, numberOfEntries = 2)
+    private int[] effectMiscValue;
+    @DbcField(order = 15, dataType = DbcDataType.FLOAT)
+    private float effectPointsPerResource;
+    @DbcField(order = 16, dataType = DbcDataType.UINT32, numberOfEntries = 2)
+    private int[] effectRadiusIndex;
+    @DbcField(order = 17, dataType = DbcDataType.FLOAT)
+    private float effectRealPointsPerLevel;
+    @DbcField(order = 18, dataType = DbcDataType.UINT32, numberOfEntries = 4)
+    private int[] effectSpellClassMasks;
+    @DbcField(order = 19, dataType = DbcDataType.UINT32)
+    private int effectTriggerSpell;
+    @DbcField(order = 20, dataType = DbcDataType.FLOAT)
+    private float effectPositionFacing;
+    @DbcField(order = 21, dataType = DbcDataType.UINT32, numberOfEntries = 2)
+    private int[] implicitTargets;
+    @DbcField(order = 22, dataType = DbcDataType.UINT32)
+    private int spellId;
+    @DbcField(order = 23, dataType = DbcDataType.UINT32)
+    private int effectIndex;
+    @DbcField(order = 24, dataType = DbcDataType.UINT32)
+    private int effectAttribute;
+    @DbcField(order = 25, dataType = DbcDataType.FLOAT)
+    private float bonusCoefficientFromAp;
+
     @Override
     public DbcType getEntryType() {
         return ENTRY_TYPE;
@@ -106,6 +92,102 @@ public class SpellEffectEntry implements DbcEntry {
     @Override
     public int getId() {
         return id;
+    }
+
+    public int getDifficultyId() {
+        return difficultyId;
+    }
+
+    public int getEffect() {
+        return effect;
+    }
+
+    public float getEffectAmplitude() {
+        return effectAmplitude;
+    }
+
+    public int getEffectAura() {
+        return effectAura;
+    }
+
+    public int getEffectAuraPeriod() {
+        return effectAuraPeriod;
+    }
+
+    public int getEffectBasePoints() {
+        return effectBasePoints;
+    }
+
+    public float getEffectBonusCoefficient() {
+        return effectBonusCoefficient;
+    }
+
+    public float getEffectChainAmplitude() {
+        return effectChainAmplitude;
+    }
+
+    public int getEffectChainTargets() {
+        return effectChainTargets;
+    }
+
+    public int getEffectDieSides() {
+        return effectDieSides;
+    }
+
+    public int getEffectItemType() {
+        return effectItemType;
+    }
+
+    public int getEffectMechanic() {
+        return effectMechanic;
+    }
+
+    public int[] getEffectMiscValue() {
+        return effectMiscValue;
+    }
+
+    public float getEffectPointsPerResource() {
+        return effectPointsPerResource;
+    }
+
+    public int[] getEffectRadiusIndex() {
+        return effectRadiusIndex;
+    }
+
+    public float getEffectRealPointsPerLevel() {
+        return effectRealPointsPerLevel;
+    }
+
+    public int[] getEffectSpellClassMasks() {
+        return effectSpellClassMasks;
+    }
+
+    public int getEffectTriggerSpell() {
+        return effectTriggerSpell;
+    }
+
+    public float getEffectPositionFacing() {
+        return effectPositionFacing;
+    }
+
+    public int[] getImplicitTargets() {
+        return implicitTargets;
+    }
+
+    public int getSpellId() {
+        return spellId;
+    }
+
+    public int getEffectIndex() {
+        return effectIndex;
+    }
+
+    public int getEffectAttribute() {
+        return effectAttribute;
+    }
+
+    public float getBonusCoefficientFromAp() {
+        return bonusCoefficientFromAp;
     }
 
     @Override

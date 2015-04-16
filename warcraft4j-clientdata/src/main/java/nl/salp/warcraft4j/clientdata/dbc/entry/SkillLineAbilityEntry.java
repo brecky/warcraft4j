@@ -18,11 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,30 +34,35 @@ public class SkillLineAbilityEntry implements DbcEntry {
 
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown2;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown3;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown4;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown5;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown6;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown7;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown8;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown9;
-    @DbcField(order = 10, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown10;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown11;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SKILL_LINE)
+    private int skillLineId;
+    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL)
+    private int spellId;
+    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    private int raceMask; // Mask based on CharacterRaceEntry entries
+    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    private int classMask; // Mask based on CharacterClassEntry entries
+    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    private int minimumSkillLineRank;
+    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL)
+    private int supersedesSpellId;
+    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    private int acquireMethod;
+    @DbcField(order = 9, dataType = DbcDataType.UINT32)
+    private int trivialSkillLineRankHigh;
+    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    private int trivialSkillLineRankLow;
+    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    private int numberOfSkillUps;
     @DbcField(order = 12, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown12;
+    private int uniqueBit;
     @DbcField(order = 13, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown13;
+    @DbcReference(type = DbcType.TRADE_SKILL_CATEGORY)
+    private int tradeSkillCategoryId;
+
     @Override
     public DbcType getEntryType() {
         return ENTRY_TYPE;
@@ -70,6 +71,54 @@ public class SkillLineAbilityEntry implements DbcEntry {
     @Override
     public int getId() {
         return id;
+    }
+
+    public int getSkillLineId() {
+        return skillLineId;
+    }
+
+    public int getSpellId() {
+        return spellId;
+    }
+
+    public int getRaceMask() {
+        return raceMask;
+    }
+
+    public int getClassMask() {
+        return classMask;
+    }
+
+    public int getMinimumSkillLineRank() {
+        return minimumSkillLineRank;
+    }
+
+    public int getSupersedesSpellId() {
+        return supersedesSpellId;
+    }
+
+    public int getAcquireMethod() {
+        return acquireMethod;
+    }
+
+    public int getTrivialSkillLineRankHigh() {
+        return trivialSkillLineRankHigh;
+    }
+
+    public int getTrivialSkillLineRankLow() {
+        return trivialSkillLineRankLow;
+    }
+
+    public int getNumberOfSkillUps() {
+        return numberOfSkillUps;
+    }
+
+    public int getUniqueBit() {
+        return uniqueBit;
+    }
+
+    public int getTradeSkillCategoryId() {
+        return tradeSkillCategoryId;
     }
 
     @Override

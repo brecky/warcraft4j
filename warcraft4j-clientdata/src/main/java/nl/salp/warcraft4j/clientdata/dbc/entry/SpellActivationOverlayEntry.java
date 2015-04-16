@@ -18,11 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,28 +34,25 @@ public class SpellActivationOverlayEntry implements DbcEntry {
 
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown2;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown3;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown4;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown5;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown6;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown7;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown8;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown9;
-    @DbcField(order = 10, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown10;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown11;
-    @DbcField(order = 12, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown12;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL)
+    private int spellId;
+    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    private int overlayFileDataId;
+    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    private int screenLocationId;
+    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    private int color;
+    @DbcField(order = 6, dataType = DbcDataType.FLOAT)
+    private float scale;
+    @DbcField(order = 7, dataType = DbcDataType.UINT32, numberOfEntries = 4)
+    private int[] iconHighlightSpellClassMasks;
+    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    private int triggerType;
+    @DbcField(order = 9, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SOUND_ENTRY)
+    private int soundEntriesId;
+
     @Override
     public DbcType getEntryType() {
         return ENTRY_TYPE;
@@ -68,6 +61,38 @@ public class SpellActivationOverlayEntry implements DbcEntry {
     @Override
     public int getId() {
         return id;
+    }
+
+    public int getSpellId() {
+        return spellId;
+    }
+
+    public int getOverlayFileDataId() {
+        return overlayFileDataId;
+    }
+
+    public int getScreenLocationId() {
+        return screenLocationId;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public float getScale() {
+        return scale;
+    }
+
+    public int[] getIconHighlightSpellClassMasks() {
+        return iconHighlightSpellClassMasks;
+    }
+
+    public int getTriggerType() {
+        return triggerType;
+    }
+
+    public int getSoundEntriesId() {
+        return soundEntriesId;
     }
 
     @Override

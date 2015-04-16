@@ -18,11 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -36,56 +32,36 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class SpellMiscEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.SPELL_MISC;
 
+    // FIXME It looks like the fields are still off (and certainly not consistent across all sources that are online).
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown2;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown3;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown4;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown5;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown6;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown7;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown8;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown9;
-    @DbcField(order = 10, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown10;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown11;
-    @DbcField(order = 12, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown12;
+    @DbcField(order = 4, dataType = DbcDataType.UINT32, numberOfEntries = 14, knownMeaning = false)
+    private int[] attributes; // FIXME Determine the actual fields
+    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL_CAST_TIME)
+    private int castingTimeId;
+    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL_DURATION)
+    private int durationId;
+    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL_RANGE)
+    private int range;
+    @DbcField(order = 8, dataType = DbcDataType.FLOAT)
+    private float speed;
+    @DbcField(order = 9, dataType = DbcDataType.UINT32, numberOfEntries = 2)
+    @DbcReference(type = DbcType.SPELL_VISUAL)
+    private int[] spellVisualIds;
+    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL_ICON)
+    private int iconId;
+    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL_ICON)
+    private int activeIconId;
+    @DbcField(order = 12, dataType = DbcDataType.UINT32)
+    private int schoolMask;
     @DbcField(order = 13, dataType = DbcDataType.UINT32, knownMeaning = false)
     private int unknown13;
-    @DbcField(order = 14, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown14;
-    @DbcField(order = 15, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown15;
-    @DbcField(order = 16, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown16;
-    @DbcField(order = 17, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown17;
-    @DbcField(order = 18, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown18;
-    @DbcField(order = 19, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown19;
-    @DbcField(order = 20, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown20;
-    @DbcField(order = 21, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown21;
-    @DbcField(order = 22, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown22;
-    @DbcField(order = 23, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown23;
-    @DbcField(order = 24, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown24;
-    @DbcField(order = 25, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown25;
+
     @Override
     public DbcType getEntryType() {
         return ENTRY_TYPE;
@@ -94,6 +70,42 @@ public class SpellMiscEntry implements DbcEntry {
     @Override
     public int getId() {
         return id;
+    }
+
+    public int[] getAttributes() {
+        return attributes;
+    }
+
+    public int getCastingTimeId() {
+        return castingTimeId;
+    }
+
+    public int getDurationId() {
+        return durationId;
+    }
+
+    public int getRange() {
+        return range;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public int[] getSpellVisualIds() {
+        return spellVisualIds;
+    }
+
+    public int getIconId() {
+        return iconId;
+    }
+
+    public int getActiveIconId() {
+        return activeIconId;
+    }
+
+    public int getSchoolMask() {
+        return schoolMask;
     }
 
     @Override

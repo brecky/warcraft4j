@@ -18,11 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,56 +34,45 @@ public class SpellItemEnchantmentEntry implements DbcEntry {
 
     @DbcField(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown2;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown3;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown4;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown5;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown6;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown7;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown8;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown9;
-    @DbcField(order = 10, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown10;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown11;
-    @DbcField(order = 12, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown12;
-    @DbcField(order = 13, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown13;
-    @DbcField(order = 14, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown14;
-    @DbcField(order = 15, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown15;
-    @DbcField(order = 16, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown16;
-    @DbcField(order = 17, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown17;
-    @DbcField(order = 18, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown18;
-    @DbcField(order = 19, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown19;
-    @DbcField(order = 20, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown20;
-    @DbcField(order = 21, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown21;
-    @DbcField(order = 22, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown22;
-    @DbcField(order = 23, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown23;
-    @DbcField(order = 24, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown24;
-    @DbcField(order = 25, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown25;
-    @DbcField(order = 26, dataType = DbcDataType.UINT32, knownMeaning = false)
-    private int unknown26;
+    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    private int charges;
+    @DbcField(order = 3, dataType = DbcDataType.UINT32, numberOfEntries = 3)
+    private int[] effects;
+    @DbcField(order = 4, dataType = DbcDataType.UINT32, numberOfEntries = 3)
+    private int[] effectPointsMinimum;
+    @DbcField(order = 5, dataType = DbcDataType.UINT32, numberOfEntries = 3)
+    private int[] effectArguments;
+    @DbcField(order = 6, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    private String name;
+    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.ITEM_VISUAL)
+    private int itemVisualId;
+    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    private int flags;
+    @DbcField(order = 9, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.ITEM)
+    private int sourceItemId;
+    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SPELL_ITEM_ENCHANTMENT_CONDITION)
+    private int conditionId;
+    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    @DbcReference(type = DbcType.SKILL_LINE)
+    private int requiredSkillId;
+    @DbcField(order = 12, dataType = DbcDataType.UINT32)
+    private int requiredSkillRank;
+    @DbcField(order = 13, dataType = DbcDataType.UINT32)
+    private int minimumLevel;
+    @DbcField(order = 14, dataType = DbcDataType.UINT32)
+    private int maximumLevel;
+    @DbcField(order = 15, dataType = DbcDataType.UINT32)
+    private int itemLevel;
+    @DbcField(order = 16, dataType = DbcDataType.UINT32)
+    private int scalingClass;
+    @DbcField(order = 17, dataType = DbcDataType.UINT32)
+    private int scalingClassRestricted;
+    @DbcField(order = 18, dataType = DbcDataType.FLOAT, numberOfEntries = 3)
+    private float[] effectScalingPoints;
+
     @Override
     public DbcType getEntryType() {
         return ENTRY_TYPE;
@@ -96,6 +81,74 @@ public class SpellItemEnchantmentEntry implements DbcEntry {
     @Override
     public int getId() {
         return id;
+    }
+
+    public int getCharges() {
+        return charges;
+    }
+
+    public int[] getEffects() {
+        return effects;
+    }
+
+    public int[] getEffectPointsMinimum() {
+        return effectPointsMinimum;
+    }
+
+    public int[] getEffectArguments() {
+        return effectArguments;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getItemVisualId() {
+        return itemVisualId;
+    }
+
+    public int getFlags() {
+        return flags;
+    }
+
+    public int getSourceItemId() {
+        return sourceItemId;
+    }
+
+    public int getConditionId() {
+        return conditionId;
+    }
+
+    public int getRequiredSkillId() {
+        return requiredSkillId;
+    }
+
+    public int getRequiredSkillRank() {
+        return requiredSkillRank;
+    }
+
+    public int getMinimumLevel() {
+        return minimumLevel;
+    }
+
+    public int getMaximumLevel() {
+        return maximumLevel;
+    }
+
+    public int getItemLevel() {
+        return itemLevel;
+    }
+
+    public int getScalingClass() {
+        return scalingClass;
+    }
+
+    public int getScalingClassRestricted() {
+        return scalingClassRestricted;
+    }
+
+    public float[] getEffectScalingPoints() {
+        return effectScalingPoints;
     }
 
     @Override
