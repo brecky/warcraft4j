@@ -51,7 +51,7 @@ public class DbcFileParser {
     }
 
     public DbcFile parseFile(String filename, String basePath) throws IOException, IllegalArgumentException {
-        LOGGER.debug(format("[parse::%s] Parsing %s in %s", filename, filename, basePath));
+        LOGGER.debug(format("[parseFile::%s] Parsing %s in %s", filename, filename, basePath));
         File file = new File(basePath, filename);
         try (DataReader reader = new FileDataReader(file)) {
             Timer timer = Timer.start();

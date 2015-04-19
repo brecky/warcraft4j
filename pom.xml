@@ -61,6 +61,7 @@
         <module>warcraft4j-addon</module>
         <module>warcraft4j-clientdata</module>
         <module>warcraft4j-webapp</module>
+        <module>warcraft4j-devtools</module>
     </modules>
 
     <!-- Project properties -->
