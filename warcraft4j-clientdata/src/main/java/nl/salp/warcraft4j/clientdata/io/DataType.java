@@ -19,6 +19,8 @@
 
 package nl.salp.warcraft4j.clientdata.io;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -216,6 +218,11 @@ public abstract class DataType<T> {
      */
     public abstract T readNext(ByteBuffer buffer);
 
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
     /**
      * {@link DataType} implementation that wraps a {@link DataType} as a native array.
      *
@@ -399,7 +406,7 @@ public abstract class DataType<T> {
 
         @Override
         public String readNext(ByteBuffer buffer) {
-            byte[] data = new byte[length];
+            byte[] data = new byte[getLength()];
             buffer.get(data);
             return new String(data, charset);
         }

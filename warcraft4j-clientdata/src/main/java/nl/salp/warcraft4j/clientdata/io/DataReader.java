@@ -21,11 +21,7 @@ package nl.salp.warcraft4j.clientdata.io;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 import java.nio.ByteOrder;
-
-import static org.apache.commons.lang3.ArrayUtils.toPrimitive;
 
 /**
  * Reader for reading data files.
@@ -73,6 +69,15 @@ public abstract class DataReader implements Closeable, AutoCloseable {
      * @throws IOException If the size could not be determined.
      */
     public abstract long size() throws IOException;
+
+    /**
+     * Skip a number of bytes.
+     *
+     * @param bytes The number of bytes to skip.
+     *
+     * @throws IOException When skipping failed.
+     */
+    public abstract void skip(long bytes) throws IOException;
 
     /**
      * Read the next value for the given data type from the underlying data using the default byte order of the data type.

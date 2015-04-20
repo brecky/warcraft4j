@@ -16,109 +16,125 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package nl.salp.warcraft4j.clientdata.dbc.parser;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
-import nl.salp.warcraft4j.clientdata.io.ByteArrayDataReader;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.DataType;
-import nl.salp.warcraft4j.clientdata.io.FileDataReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
 
-import static java.lang.String.format;
-
 /**
- * TODO Document.
+ * File parser for parsing DBC / DB2 files.
  *
  * @author Barre Dijkstra
  */
-public class DbcFileParser {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DbcFileParser.class);
+public interface DbcFileParser {
+    /**
+     * Parse the header of a dbc file.
+     *
+     * @param filename The name of the file.
+     *
+     * @return The parsed header.
+     *
+     * @throws IOException         When there was a problem reading the dbc file.
+     * @throws DbcParsingException When there was a problem parsing the data.
+     */
+    DbcHeader parseHeader(String filename) throws IOException, DbcParsingException;
 
-    private <T extends DbcEntry> DbcMapping getDbcFile(Class<T> template) {
-        DbcMapping dbcMapping = template.getAnnotation(DbcMapping.class);
-        if (dbcMapping == null) {
-            throw new IllegalArgumentException(format("Unable to parse the template class %s with no DbcFile annotation.", template.getName()));
-        }
-        return dbcMapping;
-    }
+    /**
+     * Parse the full meta-data of a dbc file.
+     *
+     * @param filename The name of the file.
+     *
+     * @return The parsed meta-data.
+     *
+     * @throws IOException         When there was a problem reading the dbc file.
+     * @throws DbcParsingException When there was a problem parsing the data.
+     */
+    DbcFile parseMetaData(String filename) throws IOException, DbcParsingException;
 
-    public DbcFile parseFile(String filename, String basePath) throws IOException, IllegalArgumentException {
-        LOGGER.debug(format("[parseFile::%s] Parsing %s in %s", filename, filename, basePath));
-        File file = new File(basePath, filename);
-        try (DataReader reader = new FileDataReader(file)) {
-            Timer timer = Timer.start();
-            DbcHeader header = reader.readNext(new DbcHeaderParser());
-            LOGGER.debug(format("[parseFile::%s] Parsing type %s with %d records with %d fields and %d bytes per record.", filename, header.getMagicString(), header.getEntryCount(), header.getEntryFieldCount(), header.getEntrySize()));
-            byte[] entryData = reader.readNext(DataType.getByteArray(header.getEntryBlockSize()));
-            DbcStringTable stringTable = reader.readNext(new DbcStringTableParser(header));
-            LOGGER.debug(format("[parseFile::%s] Parsed %d bytes of StringBlock data to %d StringBlock entries.", filename, header.getStringTableBlockSize(), stringTable.getNumberOfEntries()));
-            DbcFile dbcFile = new DbcFile(filename, header, entryData, stringTable);
-            LOGGER.debug(format("[parseFile::%s] Parsed file data in %dms.", filename, timer.stop()));
-            return dbcFile;
-        }
-    }
+    /**
+     * Parse the full meta-data of a dbc file.
+     *
+     * @param mappingType The mapping entry type.
+     * @param <T>         The type of the mapping entry.
+     *
+     * @return The parsed meta-data.
+     *
+     * @throws IOException         When there was a problem reading the dbc file.
+     * @throws DbcParsingException When there was a problem parsing the data.
+     */
+    <T extends DbcEntry> DbcFile parseMetaData(Class<T> mappingType) throws IOException, DbcParsingException;
 
+    /**
+     * Parse the entries of a mapped dbc file.
+     *
+     * @param mappingType The mapping entry type.
+     * @param <T>         The type of the mapping entry.
+     *
+     * @return The parsed instances.
+     *
+     * @throws IOException         When there was a problem reading the dbc file.
+     * @throws DbcParsingException When there was a problem parsing the data.
+     */
+    <T extends DbcEntry> Set<T> parse(Class<T> mappingType) throws IOException, DbcParsingException;
 
-    public <T extends DbcEntry> Set<T> parse(Class<T> template, String basePath) throws IOException, IllegalArgumentException {
-        LOGGER.debug(format("[parse::%s] Parsing %s from %s in %s", template.getSimpleName(), template.getName(), getDbcFile(template).file(), basePath));
-        File file = new File(basePath, getDbcFile(template).file());
-        try (DataReader reader = new FileDataReader(file)) {
-            return parse(template, reader);
-        }
-    }
+    /**
+     * Check if direct access for reading the file is supported or if the file can only be read as a whole.
+     *
+     * @return {@code true} if direct access is supported, {@code false} if not.
+     */
+    boolean isDirectAccessSupported();
 
-    private <T extends DbcEntry> Set<T> parse(Class<T> template, DataReader reader) throws IOException {
-        Timer timer = Timer.start();
-        DbcHeader header = reader.readNext(new DbcHeaderParser());
-        LOGGER.debug(format("[parse::%s] Parsing type %s with %d records with %d fields and %d bytes per record.", template.getSimpleName(), header.getMagicString(), header.getEntryCount(), header.getEntryFieldCount(), header.getEntrySize()));
-        byte[] entryData = reader.readNext(DataType.getByteArray(header.getEntryBlockSize()));
-        DbcStringTable stringTable = reader.readNext(new DbcStringTableParser(header));
-        LOGGER.debug(format("[parse::%s] Parsed %d bytes of StringTable data to %d StringTable entries.", template.getSimpleName(), header.getStringTableBlockSize(), stringTable.getNumberOfEntries()));
-        Set<T> entries = parseEntries(template, entryData, header, stringTable);
-        LOGGER.debug(format("[parse::%s] Parsed type with %d entries in %d ms.", template.getSimpleName(), entries.size(), timer.stop()));
-        return entries;
-    }
+    /**
+     * Read a single entry from a mapped dbc file.
+     * <p/>
+     * This method may not be implemented or supported by all parser implementations (check support via {@link #isDirectAccessSupported()}).
+     *
+     * @param mappingType The mapping entry type.
+     * @param index       The index of the instance to read.
+     * @param <T>         The type of the mapping entry.
+     *
+     * @return The read instance.
+     *
+     * @throws IOException                   When there was a problem reading the dbc file.
+     * @throws DbcParsingException           When there was a problem parsing the entry.
+     * @throws DbcEntryNotFoundException     When there was no entry found with the given index.
+     * @throws UnsupportedOperationException When the retrieval of individual entries is not supported by the parser.
+     * @see #isDirectAccessSupported()
+     */
+    <T extends DbcEntry> T parse(Class<T> mappingType, int index) throws IOException, DbcParsingException, DbcEntryNotFoundException, UnsupportedOperationException;
 
-    private <T extends DbcEntry> Set<T> parseEntries(Class<T> template, byte[] data, DbcHeader header, DbcStringTable stringTable) throws IOException {
-        Set<T> entries = new HashSet<>(header.getEntryCount());
+    /**
+     * Parse the string table from a dbc file.
+     * <p/>
+     * This method may not be implemented or supported by all parser implementations (check support via {@link #isDirectAccessSupported()}).
+     *
+     * @param filename The name of the dbc file.
+     *
+     * @return The parsed string table.
+     *
+     * @throws IOException                   When there was a problem reading the dbc file.
+     * @throws DbcParsingException           When there was a problem parsing the string table.
+     * @throws UnsupportedOperationException When the direct parsing of a string table is not supported by the parser.
+     * @see #isDirectAccessSupported()
+     */
+    DbcStringTable parseStringTable(String filename) throws IOException, DbcParsingException, UnsupportedOperationException;
 
-        DataReader reader = new ByteArrayDataReader(data);
-
-        DbcEntryParser<T> parser = new DbcEntryParser<>(template, header, stringTable);
-        for (int i = 0; i < header.getEntryCount(); i++) {
-            T instance = reader.readNext(parser);
-            entries.add(instance);
-        }
-        return entries;
-    }
-
-    private static class Timer {
-        private long startTime;
-        private long endTime;
-
-        private Timer(long startTime) {
-            this.startTime = startTime;
-        }
-
-        public static Timer start() {
-            return new Timer(System.currentTimeMillis());
-        }
-
-        public long stop() {
-            endTime = System.currentTimeMillis();
-            return getDuration();
-        }
-
-        public long getDuration() {
-            return endTime - startTime;
-        }
-    }
+    /**
+     * Parse the string table from a dbc file.
+     * <p/>
+     * This method may not be implemented or supported by all parser implementations (check support via {@link #isDirectAccessSupported()}).
+     *
+     * @param mappingType The mapping entry type.
+     *
+     * @return The parsed string table.
+     *
+     * @throws IOException                   When there was a problem reading the dbc file.
+     * @throws DbcParsingException           When there was a problem parsing the string table.
+     * @throws UnsupportedOperationException When the direct parsing of a string table is not supported by the parser.
+     * @see #isDirectAccessSupported()
+     */
+    <T extends DbcEntry> DbcStringTable parseStringTable(Class<T> mappingType) throws IOException, DbcParsingException, UnsupportedOperationException;
 }

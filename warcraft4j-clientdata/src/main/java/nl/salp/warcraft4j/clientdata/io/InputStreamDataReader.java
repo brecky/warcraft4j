@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import static java.lang.String.format;
+
 /**
  * {@link DataReader} implementation that reads from a {@code java.io.InputStream}.
  *
@@ -62,6 +64,17 @@ public class InputStreamDataReader extends DataReader {
     @Override
     public long size() throws IOException {
         return remaining() + position();
+    }
+
+    @Override
+    public void skip(long bytes) throws IOException {
+        if (bytes < 0) {
+            throw new IllegalArgumentException(format("Unable to skip %d bytes.", bytes));
+        }
+        if ((position() + bytes) > remaining()) {
+            throw new IOException(format("Error skipping %d bytes, skipping past end of the data.", bytes));
+        }
+        stream.skip(bytes);
     }
 
     @Override

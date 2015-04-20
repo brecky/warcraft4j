@@ -23,7 +23,7 @@ import nl.salp.warcraft4j.clientdata.dbc.DbcField;
 import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
 import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFileParser;
+import nl.salp.warcraft4j.clientdata.dbc.parser.FullDbcFileParser;
 import nl.salp.warcraft4j.clientdata.dbc.util.DbcClasspathMappingScanner;
 
 import java.io.File;
@@ -61,8 +61,8 @@ public final class DbcUtils {
      * @throws IOException When reading the data file failed.
      */
     public static <T extends DbcEntry> Set<T> parse(Class<T> mappingType, String dbcDirectory) throws IOException {
-        DbcFileParser parser = new DbcFileParser();
-        return parser.parse(mappingType, dbcDirectory);
+        FullDbcFileParser parser = new FullDbcFileParser(dbcDirectory);
+        return parser.parse(mappingType);
     }
 
     /**
@@ -76,7 +76,7 @@ public final class DbcUtils {
      * @throws IOException When parsing failed.
      */
     public static DbcFile getDbcFile(String filename, String dbcDirectory) throws IOException {
-        DbcFileParser parser = new DbcFileParser();
+        FullDbcFileParser parser = new FullDbcFileParser(dbcDirectory);
         return parser.parseFile(filename, dbcDirectory);
     }
 

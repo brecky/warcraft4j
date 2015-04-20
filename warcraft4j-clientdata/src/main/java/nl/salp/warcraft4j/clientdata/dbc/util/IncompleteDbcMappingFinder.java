@@ -20,7 +20,7 @@ package nl.salp.warcraft4j.clientdata.dbc.util;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFileParser;
+import nl.salp.warcraft4j.clientdata.dbc.parser.FullDbcFileParser;
 import nl.salp.warcraft4j.clientdata.dbc.DbcField;
 import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
 
@@ -77,7 +77,7 @@ public class IncompleteDbcMappingFinder {
      * @throws IOException When parsing failed.
      */
     private DbcFile parse(Class<? extends DbcEntry> type, String dbcDirectory) throws IOException {
-        DbcFileParser parser = new DbcFileParser();
+        FullDbcFileParser parser = new FullDbcFileParser(dbcDirectory);
         return parser.parseFile(type.getAnnotation(DbcMapping.class).file(), dbcDirectory);
     }
 

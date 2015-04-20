@@ -73,10 +73,10 @@ public class RandomAccessFileDataReader extends RandomAccessDataReader {
 
     @Override
     public final <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException {
-        byte[] data = new byte[dataType.getLength()];
         ByteBuffer buffer = ByteBuffer.allocate(dataType.getLength());
         buffer.order(byteOrder);
         channel.read(buffer);
+        buffer.rewind();
         return dataType.readNext(buffer);
     }
 

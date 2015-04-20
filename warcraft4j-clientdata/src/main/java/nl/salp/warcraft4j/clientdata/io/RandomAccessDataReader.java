@@ -21,7 +21,7 @@ package nl.salp.warcraft4j.clientdata.io;
 import java.io.IOException;
 import java.nio.ByteOrder;
 
-import static org.apache.commons.lang3.ArrayUtils.toPrimitive;
+import static java.lang.String.format;
 
 /**
  * {@link DataReader} extension for random access data reading.
@@ -38,6 +38,17 @@ public abstract class RandomAccessDataReader extends DataReader {
      * @throws IOException When the position could not be set.
      */
     public abstract void position(long position) throws IOException;
+
+    @Override
+    public void skip(long bytes) throws IOException {
+        if (bytes < 0) {
+            throw new IllegalArgumentException(format("Unable to skip %d bytes.", bytes));
+        }
+        if (bytes > remaining()) {
+            throw new IOException(format("Error skipping %d bytes, skipping past end of the data.", bytes));
+        }
+        position(position() + bytes);
+    }
 
     /**
      * Read the data in the given data type in the default byte order from the provided file position (moving the file pointer to the 1st byte after the read data).
