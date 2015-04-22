@@ -29,15 +29,31 @@ import java.util.Set;
 import static java.lang.String.format;
 
 /**
- * TODO Document.
+ * {@link DbcFileParser} implementation for reading full files.
  *
  * @author Barre Dijkstra
  */
 public class FullDbcFileParser extends DataReaderDbcFileParser {
+    /**
+     * Create a new parser instance.
+     *
+     * @param dbcDirectory The path to the directory where the DBC/DB2 files that are used are stored.
+     *
+     * @throws IllegalArgumentException When the directory is invalid.
+     * @throws IOException              When there was a problem reading from the directory.
+     */
     public FullDbcFileParser(String dbcDirectory) throws IllegalArgumentException, IOException {
         super(dbcDirectory);
     }
 
+    /**
+     * Create a new parser instance.
+     *
+     * @param dbcDirectory The directory where the DBC/DB2 files that are used are stored.
+     *
+     * @throws IllegalArgumentException When the directory is invalid.
+     * @throws IOException              When there was a problem reading from the directory.
+     */
     public FullDbcFileParser(File dbcDirectory) throws IllegalArgumentException, IOException {
         super(dbcDirectory);
     }
@@ -50,14 +66,14 @@ public class FullDbcFileParser extends DataReaderDbcFileParser {
     @Override
     public <T extends DbcEntry> Set<T> parse(Class<T> mappingType) throws IOException, DbcParsingException {
         File file = getFile(mappingType);
-        LOGGER.debug(format("[parse::%s] Parsing %s from %s in %s", mappingType.getSimpleName(), mappingType.getName(), getFilename(mappingType), dbcDirectory.getPath()));
         try (DataReader reader = new FileDataReader(file)) {
             Timer timer = Timer.start();
+            LOGGER.debug(format("Parsing instances for %s from dbc file %s in directory %s", mappingType.getName(), getFilename(mappingType), dbcDirectory.getPath()));
             DbcHeader header = readHeader(reader);
             byte[] entryData = readDataBlock(reader, header);
             DbcStringTable stringTable = readStringTable(reader, header);
             Set<T> entries = parseEntries(mappingType, entryData, header, stringTable);
-            LOGGER.debug(format("[parse::%s] Parsed type with %d entries in %d ms.", mappingType.getSimpleName(), entries.size(), timer.stop()));
+            LOGGER.debug(format("Finished parsing %d %s instances in %d ms with %d stringTable entries.", entries.size(), mappingType.getName(), timer.stop(), stringTable.getNumberOfEntries()));
             return entries;
         }
     }

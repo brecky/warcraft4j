@@ -36,18 +36,18 @@ import static java.lang.String.format;
  *
  * @author Barre Dijkstra
  */
-public class EntryTypeCollisionValidation extends MappingValidation {
+public class EntryTypeCollisionValidation<T extends DbcEntry> extends MappingValidation<T> {
     /** The logger instance for the class. */
     private static final Logger LOGGER = LoggerFactory.getLogger(EntryCountMappingValidation.class);
     /** The mapping types. */
-    private final Collection<Class<? extends DbcEntry>> mappingTypes;
+    private final Collection<Class<T>> mappingTypes;
 
     /**
      * Create a new instance.
      *
      * @param mappingTypes The type mappings to check.
      */
-    public EntryTypeCollisionValidation(Collection<Class<? extends DbcEntry>> mappingTypes) {
+    public EntryTypeCollisionValidation(Collection<Class<T>> mappingTypes) {
         this.mappingTypes = mappingTypes;
 
     }
@@ -55,8 +55,7 @@ public class EntryTypeCollisionValidation extends MappingValidation {
     @Override
     public boolean isValid() {
         boolean valid = true;
-
-        Map<DbcType, Collection<Class<? extends DbcEntry>>> typeMappings = getTypeMappings();
+        Map<DbcType, Collection<Class<T>>> typeMappings = getTypeMappings();
         for (DbcType entryType : typeMappings.keySet()) {
             if (typeMappings.get(entryType).size() > 1) {
                 LOGGER.warn(format("Entry type %s has multiple mapping types mapped to it: %s", entryType, typeMappings.get(entryType)));
@@ -71,12 +70,12 @@ public class EntryTypeCollisionValidation extends MappingValidation {
      *
      * @return The mapped entry types.
      */
-    private Map<DbcType, Collection<Class<? extends DbcEntry>>> getTypeMappings() {
-        Map<DbcType, Collection<Class<? extends DbcEntry>>> entries = new HashMap<>();
-        for (Class<? extends DbcEntry> type : mappingTypes) {
+    private Map<DbcType, Collection<Class<T>>> getTypeMappings() {
+        Map<DbcType, Collection<Class<T>>> entries = new HashMap<>();
+        for (Class<T> type : mappingTypes) {
             DbcType entryType = DbcUtil.getEntryType(type);
             if (!entries.containsKey(entryType)) {
-                entries.put(entryType, new HashSet<Class<? extends DbcEntry>>());
+                entries.put(entryType, new HashSet<>());
             }
             entries.get(entryType).add(type);
         }

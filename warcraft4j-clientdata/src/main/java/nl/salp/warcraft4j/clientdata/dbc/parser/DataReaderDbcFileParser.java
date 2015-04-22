@@ -50,7 +50,7 @@ abstract class DataReaderDbcFileParser<T extends DataReader> implements DbcFileP
     /**
      * Create a new parser instance.
      *
-     * @param dbcDirectory The path to the directory.
+     * @param dbcDirectory The path to the directory where the DBC/DB2 files that are used are stored.
      *
      * @throws IllegalArgumentException When the directory is invalid.
      * @throws IOException              When there was a problem reading from the directory.
@@ -62,7 +62,7 @@ abstract class DataReaderDbcFileParser<T extends DataReader> implements DbcFileP
     /**
      * Create a new parser instance.
      *
-     * @param dbcDirectory The directory.
+     * @param dbcDirectory The directory where the DBC/DB2 files that are used are stored.
      *
      * @throws IllegalArgumentException When the directory is invalid.
      * @throws IOException              When there was a problem reading from the directory.
@@ -75,14 +75,6 @@ abstract class DataReaderDbcFileParser<T extends DataReader> implements DbcFileP
             throw new IllegalArgumentException(format("Error creating a DirectAccessDbcFileParser with a non-existing or unreadable dbc directory %s", dbcDirectory.getPath()));
         }
         this.dbcDirectory = dbcDirectory.getCanonicalFile();
-    }
-
-    @Override
-    public DbcHeader parseHeader(String filename) throws IOException, DbcParsingException {
-        try (T dataReader = getDataReader(getFile(filename))) {
-            LOGGER.debug(format("Parsing header of dbc file %s.", filename));
-            return readHeader(dataReader);
-        }
     }
 
     /**
@@ -200,6 +192,17 @@ abstract class DataReaderDbcFileParser<T extends DataReader> implements DbcFileP
     }
 
     @Override
+    public DbcHeader parseHeader(String filename) throws IOException, DbcParsingException {
+        final Timer timer = Timer.start();
+        try (T dataReader = getDataReader(getFile(filename))) {
+            LOGGER.debug(format("Parsing header of dbc file %s.", filename));
+            return readHeader(dataReader);
+        } finally {
+            LOGGER.debug(format("Finished parsing dbc file header of file %s in %d ms.", filename, timer.stop()));
+        }
+    }
+
+    @Override
     public <T extends DbcEntry> DbcFile parseMetaData(Class<T> mappingType) throws IOException, DbcParsingException {
         return parseMetaData(getFilename(mappingType));
     }
@@ -235,6 +238,15 @@ abstract class DataReaderDbcFileParser<T extends DataReader> implements DbcFileP
         return file.getCanonicalFile();
     }
 
+    /**
+     * Get the full file reference to the DBC/DB2 files referenced by the entry mapping type.
+     *
+     * @param mappingType The entry mapping type.
+     *
+     * @return The file.
+     *
+     * @throws IOException When the file could not be referenced or cannot be read.
+     */
     protected final File getFile(Class<? extends DbcEntry> mappingType) throws IOException {
         return getFile(getFilename(mappingType));
     }
