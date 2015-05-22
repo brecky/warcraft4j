@@ -1,28 +1,18 @@
-/*
- * Licensed to the Warcraft4J Project under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The Warcraft4J Project licenses
- * this file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-package nl.salp.warcraft4j.dev.dbc.validation;
+package nl.salp.warcraft4j.clientdatabase.analysis.rules;
 
+<<<<<<< Updated upstream:warcraft4j-casc/src/main/java/nl/salp/warcraft4j/clientdatabase/analysis/rules/StringBlockUsageValidation.java
+import nl.salp.warcraft4j.clientdatabase.ClientDatabaseEntry;
+import nl.salp.warcraft4j.clientdatabase.parser.ClientDatabaseFile;
+import nl.salp.warcraft4j.clientdatabase.parser.ClientDatabaseStringBlock;
+import nl.salp.warcraft4j.clientdatabase.parser.DbcDataType;
+import nl.salp.warcraft4j.clientdatabase.parser.DbcField;
+=======
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
 import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
 import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
 import nl.salp.warcraft4j.clientdata.dbc.parser.DbcStringTable;
+>>>>>>> Stashed changes:warcraft4j-devtools/src/main/java/nl/salp/warcraft4j/dev/dbc/validation/StringBlockUsageValidation.java
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,17 +23,17 @@ import java.util.HashSet;
 /**
  * Validate that the values of a StringBlock are used.
  *
- * @param <T> The {@link DbcEntry} mapping type implementation.
+ * @param <T> The {@link ClientDatabaseEntry} mapping type implementation.
  *
  * @author Barre Dijkstra
  */
-public class StringBlockUsageValidation<T extends DbcEntry> extends MappingValidation<T> {
+public class StringBlockUsageValidation<T extends ClientDatabaseEntry> extends MappingValidation<T> {
     /** The logger instance for the class. */
     private static final Logger LOGGER = LoggerFactory.getLogger(StringBlockUsageValidation.class);
     /** The percentage of the StringBlock entries that should be used. */
     private final double minUsage;
     /** The parsed DBC/DB2 file. */
-    private final DbcFile file;
+    private final ClientDatabaseFile file;
     /** The mapping type. */
     private final Class<T> type;
     /** The parsed instances of the mapping type. */
@@ -55,7 +45,7 @@ public class StringBlockUsageValidation<T extends DbcEntry> extends MappingValid
      * @param instances The parsed instances of the mapping type.
      * @param minUsage  The percentage of the StringBlock entries that should be used.
      */
-    public StringBlockUsageValidation(DbcFile file, Class<T> type, Collection<T> instances, double minUsage) {
+    public StringBlockUsageValidation(ClientDatabaseFile file, Class<T> type, Collection<T> instances, double minUsage) {
         this.file = file;
         this.type = type;
         this.instances = instances;
@@ -65,7 +55,7 @@ public class StringBlockUsageValidation<T extends DbcEntry> extends MappingValid
     @Override
     public boolean isValid() {
         boolean valid;
-        if (file.getStringTable().getNumberOfEntries() == 0) {
+        if (file.getStringBlock().getAvailablePositions().isEmpty()) {
             Collection<Field> stringBlockReferences = getStringBlockReferenceFields();
             valid = stringBlockReferences.isEmpty();
             if (valid) {
@@ -89,12 +79,18 @@ public class StringBlockUsageValidation<T extends DbcEntry> extends MappingValid
                     }
                 }
             }
-            double usageCount = stringBlockEntries.size() / file.getStringTable().getNumberOfEntries();
+            double usageCount = stringBlockEntries.size() / file.getStringBlock().getAvailablePositions().size();
             valid = usageCount >= minUsage;
             if (valid) {
+<<<<<<< Updated upstream:warcraft4j-casc/src/main/java/nl/salp/warcraft4j/clientdatabase/analysis/rules/StringBlockUsageValidation.java
+                LOGGER.debug(format("Successfully mapped %s StringBlock entries from %s [entries: %d, references: %d, mapped: %.2f%%, required: %.2%%]", type.getName(), file.getFilename(), file.getStringBlock().getAvailablePositions().size(), stringBlockReferences.size(), usageCount, minUsage));
+            } else {
+                LOGGER.warn(format("%s maps to an invalid number of StringBlock entries from %s [entries: %d, references: %d, mapped: %.2f%%, required: %.2%%]", type.getName(), file.getFilename(), file.getStringBlock().getAvailablePositions().size(), stringBlockReferences.size(), usageCount, minUsage));
+=======
                 LOGGER.debug("Successfully mapped {} StringBlock entries from {} [entries: {}, references: {}, mapped: {}%, required: {}%]", type.getName(), file.getFilename(), file.getStringTable().getNumberOfEntries(), stringBlockReferences.size(), usageCount, minUsage);
             } else {
                 LOGGER.warn("{} maps to an invalid number of StringBlock entries from {} [entries: {}, references: {}, mapped: {}%, required: {}%]", type.getName(), file.getFilename(), file.getStringTable().getNumberOfEntries(), stringBlockReferences.size(), usageCount, minUsage);
+>>>>>>> Stashed changes:warcraft4j-devtools/src/main/java/nl/salp/warcraft4j/dev/dbc/validation/StringBlockUsageValidation.java
             }
         }
         return valid;
@@ -106,8 +102,8 @@ public class StringBlockUsageValidation<T extends DbcEntry> extends MappingValid
      * @return The values.
      */
     private Collection<String> getStringBlockEntries() {
-        DbcStringTable stringBlock = file.getStringTable();
-        Collection<String> entries = new HashSet<>(stringBlock.getNumberOfEntries());
+        ClientDatabaseStringBlock stringBlock = file.getStringBlock();
+        Collection<String> entries = new HashSet<>(stringBlock.getAvailablePositions().size());
         for (int position : stringBlock.getAvailablePositions()) {
             if (!entries.add(stringBlock.getEntry(position))) {
                 LOGGER.warn("Duplicate StringBlock entry found for for file {} [pos: {}, string: {}]", file.getFilename(), position, stringBlock.getEntry(position));

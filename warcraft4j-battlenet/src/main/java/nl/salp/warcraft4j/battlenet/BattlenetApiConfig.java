@@ -1,22 +1,20 @@
 /*
+ * Licensed to the Warcraft4J Project under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The Warcraft4J Project licenses
+ * this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *  * Licensed to the Warcraft4J Project under one
- *  * or more contributor license agreements.  See the NOTICE file
- *  * distributed with this work for additional information
- *  * regarding copyright ownership.  The Warcraft4J Project licenses
- *  * this file to you under the Apache License, Version 2.0 (the
- *  * "License"); you may not use this file except in compliance
- *  * with the License.  You may obtain a copy of the License at
- *  *
- *  * http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing,
- *  * software distributed under the License is distributed on an
- *  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  * KIND, either express or implied.  See the License for the
- *  * specific language governing permissions and limitations
- *  * under the License.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package nl.salp.warcraft4j.battlenet;
@@ -47,13 +45,13 @@ public class BattlenetApiConfig {
     /** The default language for the Battle.NET API. */
     private static final String LOCALE_DEFAULT = "en_GB";
     /** The default configuration file name. */
-    public static final String CONFIG_FILENAME_DEFAULT = "w4j_bnet.config";
+    public static final String CONFIG_FILENAME_DEFAULT = "/w4j_bnet.config";
     /** Configuration file key for the application name. */
     private static final String CONFIG_KEY_APPLICATION_NAME = "w4j.bnet.api.application";
     /** Configuration file key for the API key. */
-    private static final String CONFIG_KEY_API_KEY = "w4j.bnet.api.auth.auth.key";
+    private static final String CONFIG_KEY_API_KEY = "w4j.bnet.api.auth.key";
     /** Configuration file key for the API secret key. */
-    private static final String CONFIG_KEY_API_SECRET = "w4j.bnet.api.auth.auth.secret";
+    private static final String CONFIG_KEY_API_SECRET = "w4j.bnet.api.auth.secret";
     /** Configuration file key for the maximum number of API requests per second. */
     private static final String CONFIG_KEY_MAX_REQUESTS_SECOND = "w4j.bnet.api.maxrequests.second";
     /** Configuration file key for the maximum number of API requests per hour. */
@@ -234,6 +232,12 @@ public class BattlenetApiConfig {
         Properties properties = new Properties();
         try (InputStream is = new FileInputStream(configFile)) {
             properties.load(is);
+        } catch (IOException e) {
+            try (InputStream is = BattlenetApiConfig.class.getResourceAsStream(configFile)) {
+                if (is != null) {
+                    properties.load(is);
+                }
+            }
         }
         String applicationName = properties.getProperty(CONFIG_KEY_APPLICATION_NAME);
         String apiKey = properties.getProperty(CONFIG_KEY_API_KEY);
