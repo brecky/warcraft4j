@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 import static java.lang.String.format;
 import static nl.salp.warcraft4j.clientdata.io.DataType.getByte;
 import static nl.salp.warcraft4j.clientdata.io.DataType.getTerminatedString;
-import static nl.salp.warcraft4j.clientdata.util.io.DataTypeUtil.getAverageBytesPerCharacter;
+import static nl.salp.warcraft4j.clientdata.io.DataTypeUtil.getAverageBytesPerCharacter;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -45,15 +45,16 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  * @author Barre Dijkstra
  */
 public class DbcFile {
+    /** The character set used in DBC files for the DBC string table. */
     private static final Charset STRINGTABLE_CHARSET = StandardCharsets.US_ASCII;
     /** The name of the DBC file. */
     private final String dbcName;
-    /** The name of the DBC file. */
-    private DbcHeader header;
     /** The lock for synchronize on when parsing the DBC file. */
     private final Lock parseLock;
     /** Supplier for the reader to be used for parsing the DBC file. */
     private final Supplier<RandomAccessDataReader> dataReaderSupplier;
+    /** The name of the DBC file. */
+    private DbcHeader header;
 
     /**
      * Create a new DBC file instance.
@@ -65,7 +66,7 @@ public class DbcFile {
      */
     public DbcFile(String dbcName, Supplier<RandomAccessDataReader> dataReaderSupplier) throws IllegalArgumentException {
         if (isEmpty(dbcName)) {
-            throw new IllegalArgumentException(format("Can't create a DBC file without a name."));
+            throw new IllegalArgumentException("Can't create a DBC file without a name.");
         }
         this.dbcName = dbcName;
         this.dataReaderSupplier = dataReaderSupplier;
@@ -132,7 +133,7 @@ public class DbcFile {
             Collection<T> entries = new HashSet<>(header.getEntryCount());
             reader.position(header.getEntryBlockStartingOffset());
             for (int i = 0; i < header.getEntryCount(); i++) {
-                entries.add(reader.readNext(new DbcEntryParser<T>(mappingType, header, stringTable)));
+                entries.add(reader.readNext(new DbcEntryParser<>(mappingType, header, stringTable)));
             }
             return entries;
         } catch (IOException e) {
@@ -176,7 +177,7 @@ public class DbcFile {
      */
     public <T extends DbcEntry> T parseEntryWithIndex(int index, Class<T> mappingType) throws IllegalArgumentException, DbcParsingException {
         if (index < 0 || index >= getNumberOfEntries()) {
-            throw new IllegalArgumentException(format("Unable to parse entry %d of dbc file %s has only %d entries available", index, dbcName, getNumberOfEntries()));
+            throw new DbcEntryNotFoundException(index, mappingType);
         }
         if (!isValidMappingForFile(mappingType)) {
             throw new IllegalArgumentException(format("Can't parse entry %d of dbc file %s with the mapping type %s", index, dbcName, mappingType.getName()));

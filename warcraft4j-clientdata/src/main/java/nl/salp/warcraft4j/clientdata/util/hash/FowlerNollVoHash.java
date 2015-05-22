@@ -24,7 +24,7 @@ import org.apache.commons.codec.binary.StringUtils;
 
 import java.math.BigInteger;
 
-import static nl.salp.warcraft4j.clientdata.util.io.DataTypeUtil.trim;
+import static nl.salp.warcraft4j.clientdata.io.DataTypeUtil.trim;
 
 /**
  * Fowler-Noll-Vo hash implementations (FNV-1 and FNV-1a).

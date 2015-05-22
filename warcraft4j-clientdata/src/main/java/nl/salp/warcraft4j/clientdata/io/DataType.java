@@ -27,7 +27,7 @@ import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import static nl.salp.warcraft4j.clientdata.util.io.DataTypeUtil.getAverageBytesPerCharacter;
+import static nl.salp.warcraft4j.clientdata.io.DataTypeUtil.getAverageBytesPerCharacter;
 
 /**
  * Data type for reading various types of data types (with different byte ordering) via a {@link DataReader}.

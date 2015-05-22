@@ -25,6 +25,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
+import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static java.nio.file.StandardOpenOption.READ;
@@ -130,5 +131,28 @@ public class RandomAccessFileDataReader extends RandomAccessDataReader {
         if (channel != null && channel.isOpen()) {
             channel.close();
         }
+    }
+
+    /**
+     * Get a supplier for creating a {@link RandomAccessDataReader} instance for a file.
+     *
+     * @param file The file.
+     *
+     * @return The supplier.
+     */
+    public static Supplier<RandomAccessDataReader> supplier(File file) {
+        return () -> new RandomAccessFileDataReader(file);
+    }
+
+    /**
+     * Get a supplier for creating a {@link RandomAccessDataReader} instance for a file.
+     *
+     * @param directory The directory the file is in.
+     * @param filename  The name of the file.
+     *
+     * @return The supplier.
+     */
+    public static Supplier<RandomAccessDataReader> supplier(String directory, String filename) {
+        return () -> new RandomAccessFileDataReader(new File(directory, filename));
     }
 }

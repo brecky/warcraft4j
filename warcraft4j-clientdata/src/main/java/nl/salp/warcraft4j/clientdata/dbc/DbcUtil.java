@@ -18,16 +18,24 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcClasspathMappingScanner;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
+import nl.salp.warcraft4j.clientdata.io.RandomAccessDataReader;
+import nl.salp.warcraft4j.clientdata.io.RandomAccessFileDataReader;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Collection;
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Client database related utility methods.
@@ -35,61 +43,328 @@ import java.util.Collection;
  * @author Barre Dijkstra
  */
 public final class DbcUtil {
+    /** Comparator for sorting {@code java.lang.reflect.Field} instances based on their dbc mapping order, placing non-mapped fields last. */
+    public static final Comparator<Field> DBC_FIELD_COMPARATOR = (f1, f2) -> {
+        OptionalInt o1 = getFieldMappingOrder(f1);
+        OptionalInt o2 = getFieldMappingOrder(f2);
+        if (o1.isPresent() && o2.isPresent()) {
+            return Integer.valueOf(o1.getAsInt()).compareTo(o2.getAsInt());
+        } else if (o1.isPresent()) {
+            return -1;
+        } else if (o2.isPresent()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    };
+    /** Comparator for sorting {@link DbcFile} instances based on their DBC filename without path. */
+    public static final Comparator<DbcFile> DBC_FILE_COMPARATOR = (f1, f2) -> {
+        Optional<String> n1 = getFilename(f1);
+        Optional<String> n2 = getFilename(f2);
+        if (n1.isPresent() && n2.isPresent()) {
+            return n1.get().compareTo(n2.get());
+        } else if (n1.isPresent()) {
+            return -1;
+        } else if (n2.isPresent()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    };
+    /** FilenameFilter for filtering DBC type files. */
+    public static final FilenameFilter DBC_FILENAME_FILTER = (dir, name) -> name.endsWith(".db2") || name.endsWith(".dbc");
+
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private DbcUtil() {
     }
 
     /**
-     * Get the {@link DbcType} for the given {@link DbcEntry} class.
+     * Get the {@code java.util.Optional} instance of the filename mapped by a {@link DbcFile}.
+     *
+     * @param dbcFile The DbcFile to get the filename for.
+     *
+     * @return The optional of the filename, being empty if no filename could be retrieved.
+     */
+    public static Optional<String> getFilename(DbcFile dbcFile) {
+        return dbcFile == null ? Optional.empty() : Optional.ofNullable(dbcFile.getDbcName());
+    }
+
+    /**
+     * Get the {@code java.util.Optional} instance of the DBC file mapped by the {@link DbcEntry} type.
+     *
+     * @param entryType    The entry mapping type.
+     * @param dbcDirectory The directory with the DBC files.
+     * @param <T>          The type of the DbcEntry.
+     *
+     * @return The optional of the mapped DbcFile, being empty when it couldn't be resolved.
+     */
+    public static <T extends DbcEntry> Optional<DbcFile> getDbcFile(Class<T> entryType, String dbcDirectory) {
+        return getDbcFile(entryType, new File(dbcDirectory));
+    }
+
+    /**
+     * Get the {@code java.util.Optional} instance of the DBC file mapped by the {@link DbcEntry} type.
+     *
+     * @param entryType    The entry mapping type.
+     * @param dbcDirectory The directory with the DBC files.
+     * @param <T>          The type of the DbcEntry.
+     *
+     * @return The optional of the mapped DbcFile, being empty when it couldn't be resolved.
+     */
+    public static <T extends DbcEntry> Optional<DbcFile> getDbcFile(Class<T> entryType, File dbcDirectory) {
+        Optional<String> file = getMappedFile(entryType);
+        return file.isPresent() ? getDbcFile(entryType, getFileDataReaderSupplier(dbcDirectory.getPath(), file.get())) : Optional.empty();
+    }
+
+    /**
+     * Get the {@code java.util.Optional} instance of the DBC file mapped by the {@link DbcEntry} type.
+     *
+     * @param entryType          The entry mapping type.
+     * @param dataReaderSupplier Supplier for the {@link RandomAccessDataReader} to use for reading the dbc file.
+     * @param <T>                The type of the DbcEntry.
+     *
+     * @return The optional of the mapped DbcFile, being empty when it couldn't be resolved.
+     */
+    public static <T extends DbcEntry> Optional<DbcFile> getDbcFile(Class<T> entryType, Supplier<RandomAccessDataReader> dataReaderSupplier) {
+        Optional<String> file = getMappedFile(entryType);
+        return file.isPresent() ? Optional.of(new DbcFile(file.get(), dataReaderSupplier)) : Optional.empty();
+    }
+
+    /**
+     * Get the {@code java.util.Optional} instance of the {@link DbcMapping} for a entry mapping type.
+     *
+     * @param entryType The entry mapping type.
+     * @param <T>       The type of the DbcEntry.
+     *
+     * @return The optional of the DbcMapping, being empty when none was present.
+     */
+    public static <T extends DbcEntry> Optional<DbcMapping> getMapping(Class<T> entryType) {
+        return getAnnotation(entryType, DbcMapping.class);
+    }
+
+    /**
+     * Get the {@code java.util.Optional} instance of the filename a entry mapping type maps.
+     *
+     * @param entryType The entry mapping type.
+     * @param <T>       The type of the DbcEntry.
+     *
+     * @return The optional of the dbc filename, being empty when none was present.
+     */
+    public static <T extends DbcEntry> Optional<String> getMappedFile(Class<T> entryType) {
+        Optional<DbcMapping> mapping = getMapping(entryType);
+        return mapping.isPresent() ? Optional.ofNullable(mapping.get().file()) : Optional.empty();
+    }
+
+    /**
+     * Get the number of mapped DBC fields on the entry mapping type.
+     *
+     * @param type The type to get the number of mapped fields for.
+     * @param <T>  The type of the entry mapping type.
+     *
+     * @return The number of mapped DBC fields.
+     */
+    public static <T extends DbcEntry> int getMappedFieldCount(Class<T> type) {
+        return getFieldMappingsStream(type, false)
+                .map(DbcUtil::getFieldMapping)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .mapToInt(DbcField::numberOfEntries)
+                .sum();
+    }
+
+    /**
+     * Get the mapped DBC fields on the entry mapping type.
+     *
+     * @param entryType      The type to get the number of mapped fields for.
+     * @param includePadding {@code true} if padding fields should be included.
+     * @param <T>            The type of the entry mapping type.
+     *
+     * @return The mapped DBC fields.
+     */
+    public static <T extends DbcEntry> List<Field> getFieldMappings(Class<T> entryType, boolean includePadding) {
+        return getFieldMappingsStream(entryType, includePadding)
+                .distinct()
+                .sorted(DBC_FIELD_COMPARATOR)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get the mapped DBC fields on the entry mapping type, excluding the padding fields.
+     *
+     * @param entryType The type to get the number of mapped fields for.
+     * @param <T>       The type of the entry mapping type.
+     *
+     * @return The mapped DBC fields, excluding the padding fields.
+     */
+    public static <T extends DbcEntry> List<Field> getFieldMappings(Class<T> entryType) {
+        return getFieldMappings(entryType, false);
+    }
+
+    /**
+     * Get the mapped DBC fields on the entry mapping type of a specific data type.
+     *
+     * @param entryType      The type to get the number of mapped fields for.
+     * @param dataType       The DBC data type of the field mapping.
+     * @param includePadding {@code true} if padding fields should be included.
+     * @param <T>            The type of the entry mapping type.
+     *
+     * @return The mapped DBC fields.
+     */
+    public static <T extends DbcEntry> List<Field> getFieldMappings(Class<T> entryType, DbcDataType dataType, boolean includePadding) {
+        return getFieldMappingsStream(entryType, includePadding)
+                .filter(f -> getFieldMapping(f).get().dataType() == dataType)
+                .distinct()
+                .sorted(DBC_FIELD_COMPARATOR)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get the mapped DBC fields on the entry mapping type of a specific data type, ignoring padding fields.
+     *
+     * @param entryType The type to get the number of mapped fields for.
+     * @param dataType  The DBC data type of the field mapping.
+     * @param <T>       The type of the entry mapping type.
+     *
+     * @return The mapped DBC fields excluding the padding fields.
+     */
+    public static <T extends DbcEntry> List<Field> getFieldMappings(Class<T> entryType, DbcDataType dataType) {
+        return getFieldMappings(entryType, dataType, false);
+    }
+
+    /**
+     * Get the field order of the field mapping for a field.
+     *
+     * @param field The field.
+     *
+     * @return Optional int which is empty when no mapping order was specified.
+     */
+    public static OptionalInt getFieldMappingOrder(Field field) {
+        Optional<DbcField> mapping = getFieldMapping(field);
+        return mapping.isPresent() ? OptionalInt.of(mapping.get().order()) : OptionalInt.empty();
+    }
+
+    /**
+     * Get the total size mapped by the entry type.
+     *
+     * @param entryType The mapping entry type.
+     * @param <T>       The type of the mapping entry type.
+     *
+     * @return The total size mapped in bytes.
+     */
+    public static <T extends DbcEntry> int getMappedEntrySize(Class<T> entryType) {
+        return getFieldMappings(entryType, true).stream()
+                .distinct()
+                .mapToInt(DbcUtil::getDbcDataSize)
+                .sum();
+    }
+
+    /**
+     * Get the mapping information for a field.
+     *
+     * @param field The field to get the mapping information from.
+     *
+     * @return The optional {@link DbcField} with the mapping information.
+     */
+    public static Optional<DbcField> getFieldMapping(Field field) {
+        return getAnnotation(field, DbcField.class);
+    }
+
+    /**
+     * Get the DBC data size of a field.
+     *
+     * @param field The field.
+     *
+     * @return The data size in bytes.
+     */
+    public static int getDbcDataSize(Field field) {
+        Optional<DbcField> fieldMapping = getFieldMapping(field);
+        int size = 0;
+        if (fieldMapping.isPresent()) {
+            if (fieldMapping.get().length() > 0) {
+                size = fieldMapping.get().length() * fieldMapping.get().numberOfEntries();
+            } else {
+                size = (fieldMapping.get().dataType().getDataType(fieldMapping.get()).getLength() * fieldMapping.get().numberOfEntries());
+            }
+        }
+        return size;
+    }
+
+    /**
+     * Get a supplier for a {@link RandomAccessDataReader} for a file.
+     *
+     * @param path The path of the file.
+     *
+     * @return The supplier.
+     */
+    public static Supplier<RandomAccessDataReader> getFileDataReaderSupplier(String path) {
+        return getFileDataReaderSupplier(new File(path));
+    }
+
+    /**
+     * Get a supplier for a {@link RandomAccessDataReader} for a file.
+     *
+     * @param directory The directory the file is located in.
+     * @param filename  The name of the file.
+     *
+     * @return The supplier.
+     */
+    public static Supplier<RandomAccessDataReader> getFileDataReaderSupplier(String directory, String filename) {
+        return getFileDataReaderSupplier(new File(directory, filename));
+    }
+
+    /**
+     * Get a supplier for a {@link RandomAccessDataReader} for a file.
+     *
+     * @param file The file.
+     *
+     * @return The supplier.
+     */
+    public static Supplier<RandomAccessDataReader> getFileDataReaderSupplier(File file) {
+        return () -> new RandomAccessFileDataReader(file);
+    }
+
+
+    /**
+     * Get the {@link DbcType} for the given {@link DbcEntry} class if there is a static field with the DbcType present.
      *
      * @param mappingType The class to get the entry type from.
      *
      * @return The entry type or {@code null} if it could not be determined.
      */
-    public static <T extends DbcEntry> DbcType getEntryType(Class<T> mappingType) {
-        DbcType type = null;
-        if (mappingType != null) {
-            for (Field f : mappingType.getDeclaredFields()) {
-                if (Modifier.isStatic(f.getModifiers())) {
-                    try {
-                        boolean access = f.isAccessible();
-                        f.setAccessible(true);
-                        type = (DbcType) f.get(null);
-                        f.setAccessible(access);
-                        break;
-                    } catch (Exception e) {
-                        // Ignore.
-                    }
-                }
-            }
+    public static <T extends DbcEntry> Optional<DbcType> getEntryType(Class<T> mappingType) {
+        if (mappingType == null || !mappingType.isAnnotationPresent(DbcMapping.class)) {
+            return Optional.empty();
         }
-        return type;
+        return getFieldsStream(mappingType)
+                .filter(f -> Modifier.isStatic(f.getModifiers()))
+                .filter(f -> f.getType() == DbcType.class)
+                .limit(1)
+                .map(f -> getFieldValue(f, DbcType.class, null))
+                .findFirst()
+                .orElse(Optional.empty());
     }
 
     /**
-     * Get the DBC/DB2 file the entry is mapped to.
+     * Find all entry mappings on the classpath of the class loader of the DbcUtil class.
      *
-     * @param mapping The mapping.
-     *
-     * @return The file or {@code null} when no mapped file was found.
+     * @return The entry mappings on the classpath.
      */
-    public static <T extends DbcEntry> String getMappedFile(Class<T> mapping) {
-        String file = null;
-        if (mapping.isAnnotationPresent(DbcMapping.class)) {
-            file = mapping.getAnnotation(DbcMapping.class).file();
-        }
-        return file;
+    public static Collection<Class<? extends DbcEntry>> findMappingsOnClasspath() {
+        return findMappingsOnClasspath(DbcUtil.class.getClassLoader());
     }
 
+
     /**
-     * Find all entry mappings on the classpath.
+     * Find all entry mappings on the classpath of the provided class loader.
      *
      * @param classLoader The class loader to use (scan will include the parent class loaders).
      *
      * @return The entry mappings on the classpath.
      */
     public static Collection<Class<? extends DbcEntry>> findMappingsOnClasspath(ClassLoader classLoader) {
-        DbcClasspathMappingScanner scanner = new DbcClasspathMappingScanner(classLoader);
-        return scanner.scan();
+        return new DbcClasspathMappingScanner(classLoader).scan();
     }
 
     /**
@@ -103,6 +378,78 @@ public final class DbcUtil {
      */
     public static String[] getAllClientDatabaseFiles(String dbcDirectory) throws IOException {
         File dbcDir = new File(dbcDirectory);
-        return dbcDir.list((dir, name) -> name.endsWith(".db2") || name.endsWith(".dbc"));
+        return dbcDir.list(DBC_FILENAME_FILTER);
+    }
+
+    /**
+     * Get a {@code java.util.Optional} instance for an annotation on an element.
+     *
+     * @param element    The annotated element.
+     * @param annotation The class of the annotation to retrieve.
+     * @param <T>        The type of the annotation.
+     *
+     * @return The optional of the annotation instance, being empty when the annotation was not present.
+     */
+    public static <T extends Annotation> Optional<T> getAnnotation(AnnotatedElement element, Class<T> annotation) {
+        return element == null || annotation == null ? Optional.empty() : Optional.ofNullable(element.getAnnotation(annotation));
+    }
+
+    /**
+     * Get a the value of a field on the provided instance.
+     *
+     * @param field    The field to get the value of.
+     * @param type     The type of the value.
+     * @param instance The instance or {@code null} for a static field.
+     * @param <T>      The type of the value.
+     *
+     * @return Optional of the value, where every error situation results an a Optional.empty.
+     */
+    public static <T> Optional<T> getFieldValue(Field field, Class<T> type, Object instance) {
+        if (field == null || type == null || field.getType() != type || (instance != null && instance.getClass() != type)) {
+            return Optional.empty();
+        }
+        boolean access = field.isAccessible();
+        try {
+            field.setAccessible(true);
+            Object value = field.get(instance);
+            return value == null ? Optional.empty() : Optional.of((T) value);
+        } catch (IllegalAccessException e) {
+            return Optional.empty();
+        } finally {
+            field.setAccessible(access);
+        }
+    }
+
+    /**
+     * Get all the DBC mapped fields on a type as a stream.
+     *
+     * @param type           The type.
+     * @param includePadding {@code true} if DBC padding fields should be included.
+     *
+     * @return The stream of the mapped fields.
+     */
+    public static Stream<Field> getFieldMappingsStream(Class<?> type, boolean includePadding) {
+        if (type == null || Object.class == type) {
+            return Stream.empty();
+        }
+        return getFieldsStream(type)
+                .filter(f -> getFieldMapping(f).isPresent())
+                .filter(f -> includePadding || !getFieldMapping(f).get().padding());
+    }
+
+    /**
+     * Get all fields (with any modifier) defined on a type or its parent types as a stream.
+     *
+     * @param type The type to get the fields for.
+     *
+     * @return The fields.
+     */
+    public static Stream<Field> getFieldsStream(Class<?> type) {
+        if (type == null || Object.class == type) {
+            return Stream.empty();
+        }
+        return Stream.concat(Stream.concat(Stream.of(type.getFields()), Stream.of(type.getDeclaredFields())), getFieldsStream(type.getEnclosingClass()))
+                .filter(f -> f != null)
+                .distinct();
     }
 }

@@ -18,6 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.util.io;
 
+import nl.salp.warcraft4j.clientdata.io.DataTypeUtil;
 import org.junit.Test;
 
 import java.nio.charset.Charset;

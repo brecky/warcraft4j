@@ -18,14 +18,10 @@
  */
 package nl.salp.warcraft4j.clientdata.util.hash;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.binary.StringUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
 
-import java.util.Arrays;
-
-import static nl.salp.warcraft4j.clientdata.util.io.DataTypeUtil.toByteArray;
+import static nl.salp.warcraft4j.clientdata.io.DataTypeUtil.toByteArray;
 import static org.junit.Assert.assertEquals;
 
 /**

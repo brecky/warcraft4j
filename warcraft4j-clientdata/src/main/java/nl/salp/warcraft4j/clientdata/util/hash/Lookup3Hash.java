@@ -21,7 +21,7 @@ package nl.salp.warcraft4j.clientdata.util.hash;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.binary.StringUtils;
 
-import static nl.salp.warcraft4j.clientdata.util.io.DataTypeUtil.toByteArray;
+import static nl.salp.warcraft4j.clientdata.io.DataTypeUtil.toByteArray;
 
 /**
  * Jenkins Lookup3 Java implementation.

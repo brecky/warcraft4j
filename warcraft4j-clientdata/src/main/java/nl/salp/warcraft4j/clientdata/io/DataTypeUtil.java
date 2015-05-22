@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.clientdata.util.io;
+package nl.salp.warcraft4j.clientdata.io;
 
 import java.math.BigInteger;
 import java.nio.charset.Charset;
