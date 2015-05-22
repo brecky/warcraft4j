@@ -16,25 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package nl.salp.warcraft4j.io;
-
-import java.io.IOException;
+package nl.salp.warcraft4j.dev.dbc.analysis;
 
 /**
- * Data parser that parses instances from a data reader.
+ * DBC mapping related analysis.
+ *
+ * @param <T> The analysis result type.
  *
  * @author Barre Dijkstra
  */
-public interface DataParser<T> {
+public interface DbcMappingAnalysis<T> {
     /**
-     * Read and parse the next instance from the reader.
+     * Analyse the mapping.
      *
-     * @param reader The reader.
-     *
-     * @return The parsed instance.
-     *
-     * @throws IOException When reading failed.
+     * @return The analysis result.
      */
-    T next(DataReader reader) throws IOException;
+    T analyse();
 }
