@@ -82,7 +82,7 @@ public class BattlenetHttpApi extends BattlenetApi {
     protected <T> String execute(BattlenetRegion region, BattlenetLocale locale, BattlenetApiRequest<T> method) throws IOException {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             URI methodUri = createUri(region, locale, method);
-            LOGGER.debug(format("Calling Battle.NET method %s with URI %s", method.getClass().getName(), methodUri.toASCIIString()));
+            LOGGER.debug("Calling Battle.NET method {} with URI {}", method.getClass().getName(), methodUri.toASCIIString());
             HttpUriRequest request = new HttpGet(methodUri);
             return execute(request, httpClient);
         }
@@ -102,13 +102,13 @@ public class BattlenetHttpApi extends BattlenetApi {
         try (CloseableHttpResponse response = client.execute(request)) {
             StatusLine statusLine = response.getStatusLine();
             if (statusLine.getStatusCode() > 300) {
-                LOGGER.error(format("Request to '%s' returned code %d with message '%s'", request.getURI().toASCIIString(), statusLine.getStatusCode(), statusLine.getReasonPhrase()));
+                LOGGER.error("Request to '{}' returned code {} with message '{}'", request.getURI().toASCIIString(), statusLine.getStatusCode(), statusLine.getReasonPhrase());
                 throw new IOException(format("Error %d: %s", statusLine.getStatusCode(), statusLine.getReasonPhrase()));
             }
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity);
             EntityUtils.consume(entity);
-            LOGGER.debug(format("Request to '%s' successfully completed with code %d", request.getURI().toASCIIString(), statusLine.getStatusCode()));
+            LOGGER.debug("Request to '{}' successfully completed with code {}", request.getURI().toASCIIString(), statusLine.getStatusCode());
             return result;
         }
     }

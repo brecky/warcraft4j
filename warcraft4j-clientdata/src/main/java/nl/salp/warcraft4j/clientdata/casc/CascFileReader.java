@@ -18,8 +18,6 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.clientdata.casc.CascConfig;
-
 import java.io.IOException;
 
 /**
@@ -30,7 +28,7 @@ import java.io.IOException;
 public interface CascFileReader {
     String getCascFileName(String fileName);
 
-    String getRelativeDirectory(String fileName);
+    <T> T parseNamedFile(String fileName, CascFileParser<T> parser) throws CascFileParsingException, IOException;
 
-    byte[] read(String type, String cascFileName, CascConfig cascConfig) throws IOException;
+    <T> T parseFile(String fileHash, CascFileParser<T> parser) throws CascFileParsingException, IOException;
 }

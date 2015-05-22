@@ -16,27 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.Region;
+package nl.salp.warcraft4j.clientdata.casc;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public interface CascInformation {
-    Region getRegion();
-
-    boolean isVersionActive();
-
-    String getBuildHash();
-
-    String getCdnHash();
-
-    String[] getCdnHosts();
-
-    int getBuildNumber();
-
-    String getVersionName();
+public interface CascFileParser<T> {
+    T parse(byte[] data) throws CascFileParsingException;
 }

@@ -198,9 +198,32 @@ public abstract class DataType<T> {
     /**
      * Get the length of the data type in bytes.
      *
-     * @return The length.
+     * @return The length or {@code &lt;= 0} for variable length data types.
+     *
+     * @see #isVariableLength()
      */
     public abstract int getLength();
+
+    /**
+     * Check if the data type is a variable length data type.
+     *
+     * @return {@code true} if the data type is variable length.
+     */
+    public boolean isVariableLength() {
+        return getLength() <= 0;
+    }
+
+    /**
+     * Get the byte to act as a terminator byte for variable length data types.
+     * <p>
+     * This method may be overwritten by implementations.
+     * </p>
+     *
+     * @return The terminator byte.
+     */
+    public byte getVariableLengthTerminator() {
+        return 0x0;
+    }
 
     /**
      * Get the default byte order for the data type.
@@ -322,7 +345,7 @@ public abstract class DataType<T> {
         public String readNext(ByteBuffer buffer) {
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
             byte c;
-            while ((c = buffer.get()) != 0) {
+            while (buffer.hasRemaining() && (c = buffer.get()) != 0) {
                 byteStream.write(c);
             }
             return new String(byteStream.toByteArray(), charset);

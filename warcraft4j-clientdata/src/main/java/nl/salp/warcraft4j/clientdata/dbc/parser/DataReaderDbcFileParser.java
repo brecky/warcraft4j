@@ -20,13 +20,11 @@
 package nl.salp.warcraft4j.clientdata.dbc.parser;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
 import nl.salp.warcraft4j.clientdata.io.ByteArrayDataReader;
 import nl.salp.warcraft4j.clientdata.io.DataParsingException;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.DataType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,8 +40,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * @author Barre Dijkstra
  */
 abstract class DataReaderDbcFileParser<T extends DataReader> implements DbcFileParser {
-    /** The logger instance. */
-    protected static final Logger LOGGER = LoggerFactory.getLogger(RandomAccessDbcFileParser.class);
     /** The directory where the DBC files are located on the filesystem. */
     protected final File dbcDirectory;
 
@@ -53,9 +49,8 @@ abstract class DataReaderDbcFileParser<T extends DataReader> implements DbcFileP
      * @param dbcDirectory The path to the directory where the DBC/DB2 files that are used are stored.
      *
      * @throws IllegalArgumentException When the directory is invalid.
-     * @throws IOException              When there was a problem reading from the directory.
      */
-    public DataReaderDbcFileParser(String dbcDirectory) throws IllegalArgumentException, IOException {
+    public DataReaderDbcFileParser(String dbcDirectory) throws IllegalArgumentException {
         this(new File(dbcDirectory));
     }
 
@@ -65,17 +60,22 @@ abstract class DataReaderDbcFileParser<T extends DataReader> implements DbcFileP
      * @param dbcDirectory The directory where the DBC/DB2 files that are used are stored.
      *
      * @throws IllegalArgumentException When the directory is invalid.
-     * @throws IOException              When there was a problem reading from the directory.
      */
-    public DataReaderDbcFileParser(File dbcDirectory) throws IllegalArgumentException, IOException {
+    public DataReaderDbcFileParser(File dbcDirectory) throws IllegalArgumentException {
         if (dbcDirectory == null) {
             throw new IllegalArgumentException("Can't create a DirectAccessDbcFileParser with a null dbc directory");
         }
         if (!dbcDirectory.exists() || !dbcDirectory.isDirectory() || !dbcDirectory.canRead()) {
             throw new IllegalArgumentException(format("Error creating a DirectAccessDbcFileParser with a non-existing or unreadable dbc directory %s", dbcDirectory.getPath()));
         }
-        this.dbcDirectory = dbcDirectory.getCanonicalFile();
+        try {
+            this.dbcDirectory = dbcDirectory.getCanonicalFile();
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
     }
+
+    protected abstract Logger getLogger();
 
     /**
      * Get a new data reader instance for a file.
@@ -111,17 +111,15 @@ abstract class DataReaderDbcFileParser<T extends DataReader> implements DbcFileP
      *
      * @return The dbc header.
      *
-     * @throws IOException         When reading the dbc header failed.
      * @throws DbcParsingException When parsing the dbc header failed.
      */
-    protected DbcHeader readHeader(T dataReader) throws IOException, DbcParsingException {
-        final Timer timer = Timer.start();
+    protected DbcHeader readHeader(T dataReader) throws DbcParsingException {
         try {
             DbcHeader header = dataReader.readNext(new DbcHeaderParser());
-            LOGGER.debug(format("Read and parsed header block in %d ms. (%d bytes with type %s).", timer.stop(), header.getHeaderSize(), header.getMagicString()));
+            getLogger().debug("Read and parsed header block ({} bytes with type {}).", header.getHeaderSize(), header.getMagicString());
             return header;
-        } catch (DataParsingException e) {
-            throw new DbcParsingException(e);
+        } catch (IOException | DataParsingException e) {
+            throw new DbcParsingException("Error reading DBC header", e);
         }
     }
 
@@ -135,17 +133,15 @@ abstract class DataReaderDbcFileParser<T extends DataReader> implements DbcFileP
      *
      * @return The data block.
      *
-     * @throws IOException         When reading the data block failed.
      * @throws DbcParsingException When parsing the data block failed.
      */
-    protected byte[] readDataBlock(T dataReader, DbcHeader header) throws IOException, DbcParsingException {
-        final Timer timer = Timer.start();
+    protected byte[] readDataBlock(T dataReader, DbcHeader header) throws DbcParsingException {
         try {
             byte[] dataBlock = dataReader.readNext(DataType.getByteArray(header.getEntryBlockSize()));
-            LOGGER.debug(format("Read and parsed data block in %d ms (total of %d bytes for %d entries with %d fields and %d bytes per entry).", timer.stop(), header.getEntryBlockSize(), header.getEntryCount(), header.getEntryFieldCount(), header.getEntrySize()));
+            getLogger().debug("Read and parsed data block (total of {} bytes for {} entries with {} fields and {} bytes per entry).", header.getEntryBlockSize(), header.getEntryCount(), header.getEntryFieldCount(), header.getEntrySize());
             return dataBlock;
-        } catch (DataParsingException e) {
-            throw new DbcParsingException(e);
+        } catch (IOException | DataParsingException e) {
+            throw new DbcParsingException(format("Error reading %d byte data block with %d entries", header.getEntryBlockSize(), header.getEntryCount()), e);
         }
     }
 
@@ -155,15 +151,14 @@ abstract class DataReaderDbcFileParser<T extends DataReader> implements DbcFileP
      * @param dataReader The data reader.
      * @param header     The db file header.
      *
-     * @throws IOException When skipping the data block failed.
+     * @throws DbcParsingException When skipping the data block failed.
      */
-    protected void skipDataBlock(T dataReader, DbcHeader header) throws IOException {
-        final Timer timer = Timer.start();
+    protected void skipDataBlock(T dataReader, DbcHeader header) throws DbcParsingException {
         try {
             dataReader.skip(header.getEntryBlockSize());
-            LOGGER.debug(format("Skipped data block in %d ms (total of %d bytes for %d entries with %d fields and %d bytes per entry).", timer.stop(), header.getEntryBlockSize(), header.getEntryCount(), header.getEntryFieldCount(), header.getEntrySize()));
-        } catch (DataParsingException e) {
-            throw new DbcParsingException(e);
+            getLogger().debug("Skipped data block (total of %d bytes for {} entries with {} fields and {} bytes per entry).", header.getEntryBlockSize(), header.getEntryCount(), header.getEntryFieldCount(), header.getEntrySize());
+        } catch (IOException | DataParsingException e) {
+            throw new DbcParsingException(format("Error skipping %d byte data block", header.getEntryBlockSize()), e);
         }
     }
 
@@ -177,47 +172,48 @@ abstract class DataReaderDbcFileParser<T extends DataReader> implements DbcFileP
      *
      * @return The string table.
      *
-     * @throws IOException         When reading the string table failed.
      * @throws DbcParsingException When parsing the string table failed.
      */
-    protected DbcStringTable readStringTable(T dataReader, DbcHeader header) throws IOException, DbcParsingException {
-        final Timer timer = Timer.start();
+    protected DbcStringTable readStringTable(T dataReader, DbcHeader header) throws DbcParsingException {
         try {
             DbcStringTable stringTable = dataReader.readNext(new DbcStringTableParser(header));
-            LOGGER.debug(format("Read and parsed string table in %d ms (%d bytes of data with %d entries).", timer.stop(), header.getStringTableBlockSize(), stringTable.getNumberOfEntries()));
+            getLogger().debug("Read and parsed string table ({} bytes of data with {} entries).", header.getStringTableBlockSize(), stringTable.getNumberOfEntries());
             return stringTable;
-        } catch (DataParsingException e) {
-            throw new DbcParsingException(e);
+        } catch (IOException | DataParsingException e) {
+            throw new DbcParsingException(format("Error parsing %d byte string table.", header.getStringTableBlockSize()), e);
         }
     }
 
     @Override
-    public DbcHeader parseHeader(String filename) throws IOException, DbcParsingException {
-        final Timer timer = Timer.start();
+    public DbcHeader parseHeader(String filename) throws DbcParsingException {
         try (T dataReader = getDataReader(getFile(filename))) {
-            LOGGER.debug(format("Parsing header of dbc file %s.", filename));
-            return readHeader(dataReader);
-        } finally {
-            LOGGER.debug(format("Finished parsing dbc file header of file %s in %d ms.", filename, timer.stop()));
+            getLogger().debug("Parsing header of dbc file {}.", filename);
+            DbcHeader header = readHeader(dataReader);
+            getLogger().debug("Finished parsing dbc file header of file {}.", filename);
+            return header;
+        } catch (IOException e) {
+            throw new DbcParsingException(format("Error parsing header of file %s", filename), e);
         }
     }
 
     @Override
-    public <T extends DbcEntry> DbcFile parseMetaData(Class<T> mappingType) throws IOException, DbcParsingException {
+    public <T extends DbcEntry> DbcFile parseMetaData(Class<T> mappingType) throws DbcParsingException {
         return parseMetaData(getFilename(mappingType));
     }
 
     @Override
-    public DbcFile parseMetaData(String filename) throws IOException, DbcParsingException {
-        final Timer timer = Timer.start();
+    public DbcFile parseMetaData(String filename) throws DbcParsingException {
         try (T reader = getDataReader(getFile(filename))) {
-            LOGGER.debug(format("Parsing dbc file meta-data of file %s.", filename));
+            getLogger().debug("Parsing dbc file meta-data of file {}.", filename);
             DbcHeader header = readHeader(reader);
+            getLogger().debug("Skipping {} bytes of datablock from position {} for {} with sizes [header: {}, datablock: {}, stringtable: {}]", header.getEntryBlockSize(), reader.position(), filename, header.getHeaderSize(), header.getEntryBlockSize(), header.getStringTableBlockSize());
             skipDataBlock(reader, header);
             DbcStringTable stringTable = readStringTable(reader, header);
-            return new DbcFile(filename, header, stringTable);
-        } finally {
-            LOGGER.debug(format("Finished parsing dbc file meta-data of file %s in %d ms.", filename, timer.stop()));
+            DbcFile dbcFile = new DbcFile(filename, header, stringTable);
+            getLogger().debug("Finished parsing dbc file meta-data of file {}", filename);
+            return dbcFile;
+        } catch (IOException e) {
+            throw new DbcParsingException(format("Error parsing DBC meta-data of file %s", filename), e);
         }
     }
 
@@ -283,10 +279,9 @@ abstract class DataReaderDbcFileParser<T extends DataReader> implements DbcFileP
      *
      * @return The parsed entries.
      *
-     * @throws IOException         When reading the data failed.
      * @throws DbcParsingException When parsing the entries failed.
      */
-    protected <T extends DbcEntry> Set<T> parseEntries(Class<T> mappingType, byte[] data, DbcHeader header, DbcStringTable stringTable) throws IOException, DbcParsingException {
+    protected <T extends DbcEntry> Set<T> parseEntries(Class<T> mappingType, byte[] data, DbcHeader header, DbcStringTable stringTable) throws DbcParsingException {
         Set<T> entries = new HashSet<>(header.getEntryCount());
         DataReader reader = new ByteArrayDataReader(data);
         DbcEntryParser<T> parser = new DbcEntryParser<>(mappingType, header, stringTable);
@@ -294,57 +289,10 @@ abstract class DataReaderDbcFileParser<T extends DataReader> implements DbcFileP
             try {
                 T instance = reader.readNext(parser);
                 entries.add(instance);
-            } catch (DataParsingException e) {
+            } catch (IOException | DataParsingException e) {
                 throw new DbcParsingException(format("Error parsing dbc entry %d of type %s", i, mappingType.getName()));
             }
         }
         return entries;
-    }
-
-    /**
-     * Simple timer for timing execution time.
-     */
-    protected static class Timer {
-        /** The start time (epoch). */
-        private long startTime;
-        /** The end time (epoch). */
-        private long endTime;
-
-        /**
-         * Create a new timer instance.
-         *
-         * @param startTime The time the timer started.
-         */
-        private Timer(long startTime) {
-            this.startTime = startTime;
-        }
-
-        /**
-         * Start a new timer.
-         *
-         * @return The timer.
-         */
-        public static Timer start() {
-            return new Timer(System.currentTimeMillis());
-        }
-
-        /**
-         * Stop the timer.
-         *
-         * @return The timed duration in milliseconds.
-         */
-        public long stop() {
-            endTime = System.currentTimeMillis();
-            return getDuration();
-        }
-
-        /**
-         * Get the timed duration in milliseconds (will be negative while still running).
-         *
-         * @return The timed duration.
-         */
-        public long getDuration() {
-            return endTime - startTime;
-        }
     }
 }

@@ -203,7 +203,7 @@ public class DbcStore {
         if (!instances.containsKey(entryType)) {
             typeMappings.put(type, entryType);
             instances.put(entryType, new ValuesMapping<>(type, entryType));
-            LOGGER.debug(format("Added client database entry for entry type %s with type %s", entryType, type.getName()));
+            LOGGER.debug("Added client database entry for entry type {} with type {}", entryType, type.getName());
         }
         return (ValuesMapping<T>) instances.get(entryType);
     }

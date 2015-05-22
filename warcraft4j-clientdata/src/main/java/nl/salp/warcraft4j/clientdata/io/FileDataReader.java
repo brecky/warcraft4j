@@ -34,6 +34,8 @@ public class FileDataReader extends InputStreamDataReader {
     private final String filePath;
     /** The canonical path of the file that the reader is created for. */
     private final String canonicalFilePath;
+    /** The size of the file in bytes. */
+    private final long fileSize;
 
     /**
      * Create a new FileDataReader instance for the given file.
@@ -44,8 +46,19 @@ public class FileDataReader extends InputStreamDataReader {
      */
     public FileDataReader(File file) throws IOException {
         super(new BufferedInputStream(new FileInputStream(file)));
+        this.fileSize = file.length();
         this.filePath = file.getPath();
         this.canonicalFilePath = file.getCanonicalPath();
+    }
+
+    @Override
+    public long remaining() throws IOException {
+        return fileSize - position();
+    }
+
+    @Override
+    public long size() throws IOException {
+        return fileSize;
     }
 
     /**

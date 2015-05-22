@@ -20,7 +20,7 @@ package nl.salp.warcraft4j.clientdata.dbc.analysis.validation;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
 import nl.salp.warcraft4j.clientdata.dbc.util.DbcUtil;
 
 import java.lang.reflect.Field;

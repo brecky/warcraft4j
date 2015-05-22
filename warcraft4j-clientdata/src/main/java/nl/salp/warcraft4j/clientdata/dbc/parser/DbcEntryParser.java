@@ -18,9 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc.parser;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcDataType;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.RandomAccessDataParser;
 import org.apache.commons.lang3.ArrayUtils;

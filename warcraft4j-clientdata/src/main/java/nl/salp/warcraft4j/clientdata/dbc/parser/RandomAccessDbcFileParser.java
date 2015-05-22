@@ -23,10 +23,13 @@ import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.io.DataType;
 import nl.salp.warcraft4j.clientdata.io.RandomAccessDataReader;
 import nl.salp.warcraft4j.clientdata.io.RandomAccessFileDataReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,16 +41,23 @@ import static java.lang.String.format;
  * @author Barre Dijkstra
  */
 public class RandomAccessDbcFileParser extends DataReaderDbcFileParser<RandomAccessDataReader> {
+    /** The logger instance. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(RandomAccessDbcFileParser.class);
+
     /**
      * Create a new parser instance.
      *
      * @param dbcDirectory The path of the directory containing the DBC/DB2 files.
      *
      * @throws IllegalArgumentException When the directory is invalid.
-     * @throws IOException              When the directory can not be read.
      */
-    public RandomAccessDbcFileParser(String dbcDirectory) throws IllegalArgumentException, IOException {
+    public RandomAccessDbcFileParser(String dbcDirectory) throws IllegalArgumentException {
         super(dbcDirectory);
+    }
+
+    @Override
+    protected Logger getLogger() {
+        return LOGGER;
     }
 
     /**
@@ -56,9 +66,8 @@ public class RandomAccessDbcFileParser extends DataReaderDbcFileParser<RandomAcc
      * @param dbcDirectory The directory containing the DBC/DB2 files.
      *
      * @throws IllegalArgumentException When the directory is invalid.
-     * @throws IOException              When the directory can not be read.
      */
-    public RandomAccessDbcFileParser(File dbcDirectory) throws IllegalArgumentException, IOException {
+    public RandomAccessDbcFileParser(File dbcDirectory) throws IllegalArgumentException {
         super(dbcDirectory);
     }
 
@@ -68,10 +77,20 @@ public class RandomAccessDbcFileParser extends DataReaderDbcFileParser<RandomAcc
     }
 
     @Override
-    public <T extends DbcEntry> Set<T> parse(Class<T> mappingType) throws IOException, DbcParsingException {
+    public <T extends DbcEntry> Set<T> parse(Class<T> mappingType) throws DbcParsingException {
+        try (RandomAccessDataReader reader = getDataReader(mappingType)) {
+            DbcHeader header = readHeader(reader);
+            DbcStringTable stringTable = readStringTable(reader, header);
 
-        // TODO Implement me!
-        return null;
+            Set<T> entries = new HashSet<>(header.getEntryCount());
+            reader.position(header.getEntryBlockStartingOffset());
+            for (int i = 0; i < header.getEntryCount(); i++) {
+                entries.add(reader.readNext(new DbcEntryParser<T>(mappingType, header, stringTable)));
+            }
+            return entries;
+        } catch (IOException e) {
+            throw new DbcParsingException(format("Error parsing entries of mapping type %s", mappingType.getName()), e);
+        }
     }
 
     @Override
@@ -80,18 +99,19 @@ public class RandomAccessDbcFileParser extends DataReaderDbcFileParser<RandomAcc
     }
 
     @Override
-    public <T extends DbcEntry> T parse(Class<T> mappingType, int index) throws IOException, DbcParsingException, DbcEntryNotFoundException, UnsupportedOperationException {
-        final Timer timer = Timer.start();
+    public <T extends DbcEntry> T parse(Class<T> mappingType, int index) throws DbcParsingException, DbcEntryNotFoundException, UnsupportedOperationException {
         try (RandomAccessDataReader reader = getDataReader(mappingType)) {
-            LOGGER.debug(format("Reading %s entry with index %d with file position %d/%d", mappingType.getName(), index, reader.position(), reader.remaining()));
+            getLogger().debug("Reading {} entry with index {} with file position {}/{}", mappingType.getName(), index, reader.position(), reader.remaining());
             DbcHeader header = readHeader(reader);
             DbcStringTable stringTable = readStringTable(reader, header);
             int position = getPositionForEntry(header, index);
             reader.position(position);
             DbcEntryParser<T> parser = new DbcEntryParser<>(mappingType, header, stringTable);
             T instance = parser.parse(reader);
-            LOGGER.debug(format("Parsed %s entry with index %d in %d ms. (%s)", mappingType.getName(), index, timer.stop(), instance));
+            getLogger().debug("Parsed {} entry with index {} (%s)", mappingType.getName(), index, instance);
             return instance;
+        } catch (IOException e) {
+            throw new DbcParsingException(format("Error parsing entry with index %d of mapping type %s", mappingType.getName(), index), e);
         }
     }
 
@@ -128,27 +148,28 @@ public class RandomAccessDbcFileParser extends DataReaderDbcFileParser<RandomAcc
     private int getPositionForEntry(DbcHeader header, int index) {
         int offset = header.getEntryBlockStartingOffset();
         offset = offset + (index * header.getEntrySize());
-        LOGGER.debug(format("Calculated offset %d for entry with [index: %d, headerSize: %db, entryBlockSize: %d, entries: %d, entrySize: %db, minIdd: %d]",
+        LOGGER.debug("Calculated offset {} for entry with [index: {}, headerSize: {}b, entryBlockSize: {}, entries: {}, entrySize: {}b, minIdd: {}]",
                 offset, index, header.getHeaderSize(), header.getEntryBlockSize(), header.getEntryCount(), header.getEntrySize(), header.getMinimumEntryId()
-        ));
+        );
         return offset;
     }
 
     @Override
-    public DbcStringTable parseStringTable(String filename) throws IOException, DbcParsingException, UnsupportedOperationException {
-        Timer timer = Timer.start();
+    public DbcStringTable parseStringTable(String filename) throws DbcParsingException, UnsupportedOperationException {
         try (RandomAccessDataReader reader = getDataReader(getFile(filename))) {
-            LOGGER.debug(format("Reading string table from %s", filename));
+            getLogger().debug("Reading string table from {}", filename);
             DbcHeader header = readHeader(reader);
             reader.position(header.getStringTableStartingOffset());
             DbcStringTable stringTable = readStringTable(reader, header);
-            LOGGER.debug(format("Read and parsed string table from dbc file %s in %s ms.", filename, timer.stop()));
+            getLogger().debug("Read and parsed string table from dbc file {}.", filename);
             return stringTable;
+        } catch (IOException e) {
+            throw new DbcParsingException(format("Error parsing string table of file %s", filename), e);
         }
     }
 
     @Override
-    public <T extends DbcEntry> DbcStringTable parseStringTable(Class<T> mappingType) throws IOException, DbcParsingException, UnsupportedOperationException {
+    public <T extends DbcEntry> DbcStringTable parseStringTable(Class<T> mappingType) throws DbcParsingException, UnsupportedOperationException {
         return parseStringTable(getFilename(mappingType));
     }
 }

@@ -17,22 +17,28 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.clientdata.dbc;
+package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.io.IOException;
 
 /**
- * TODO Document.
+ * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
-public @interface DbcReference {
-    DbcType type();
+public class HttpCascFileReader implements CascFileReader {
+    @Override
+    public String getCascFileName(String fileName) {
+        return null;
+    }
+
+    @Override
+    public <T> T parseNamedFile(String fileName, CascFileParser<T> parser) throws CascFileParsingException, IOException {
+        return null;
+    }
+
+    @Override
+    public <T> T parseFile(String fileHash, CascFileParser<T> parser) throws CascFileParsingException, IOException {
+        return null;
+    }
 }

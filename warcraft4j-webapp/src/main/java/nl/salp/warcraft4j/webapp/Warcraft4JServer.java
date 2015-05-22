@@ -59,7 +59,7 @@ public class Warcraft4JServer {
 
         try {
             String baseUrl = BASE_URI + config.getRestServiceBaseUri();
-            LOGGER.debug(format("Starting server for URL %s", baseUrl));
+            LOGGER.debug("Starting server for URL {}", baseUrl);
             final HttpServer server = GrizzlyServerFactory.createHttpServer(baseUrl, rc, ioc);
             server.start();
 

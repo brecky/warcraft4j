@@ -17,7 +17,9 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.clientdata.dbc;
+package nl.salp.warcraft4j.clientdata.dbc.parser;
+
+import nl.salp.warcraft4j.clientdata.dbc.DbcType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -30,7 +32,7 @@ import java.lang.annotation.Target;
  * @author Barre Dijkstra
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-public @interface DbcMapping {
-    String file();
+@Target({ElementType.FIELD})
+public @interface DbcReference {
+    DbcType type();
 }

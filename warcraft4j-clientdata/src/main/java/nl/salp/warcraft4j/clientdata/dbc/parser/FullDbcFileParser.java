@@ -21,6 +21,8 @@ package nl.salp.warcraft4j.clientdata.dbc.parser;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.FileDataReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,15 +36,17 @@ import static java.lang.String.format;
  * @author Barre Dijkstra
  */
 public class FullDbcFileParser extends DataReaderDbcFileParser {
+    /** The logger instance. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(FullDbcFileParser.class);
+
     /**
      * Create a new parser instance.
      *
      * @param dbcDirectory The path to the directory where the DBC/DB2 files that are used are stored.
      *
      * @throws IllegalArgumentException When the directory is invalid.
-     * @throws IOException              When there was a problem reading from the directory.
      */
-    public FullDbcFileParser(String dbcDirectory) throws IllegalArgumentException, IOException {
+    public FullDbcFileParser(String dbcDirectory) throws IllegalArgumentException {
         super(dbcDirectory);
     }
 
@@ -52,10 +56,14 @@ public class FullDbcFileParser extends DataReaderDbcFileParser {
      * @param dbcDirectory The directory where the DBC/DB2 files that are used are stored.
      *
      * @throws IllegalArgumentException When the directory is invalid.
-     * @throws IOException              When there was a problem reading from the directory.
      */
-    public FullDbcFileParser(File dbcDirectory) throws IllegalArgumentException, IOException {
+    public FullDbcFileParser(File dbcDirectory) throws IllegalArgumentException {
         super(dbcDirectory);
+    }
+
+    @Override
+    protected Logger getLogger() {
+        return LOGGER;
     }
 
     @Override
@@ -64,17 +72,17 @@ public class FullDbcFileParser extends DataReaderDbcFileParser {
     }
 
     @Override
-    public <T extends DbcEntry> Set<T> parse(Class<T> mappingType) throws IOException, DbcParsingException {
-        File file = getFile(mappingType);
-        try (DataReader reader = new FileDataReader(file)) {
-            Timer timer = Timer.start();
-            LOGGER.debug(format("Parsing instances for %s from dbc file %s in directory %s", mappingType.getName(), getFilename(mappingType), dbcDirectory.getPath()));
+    public <T extends DbcEntry> Set<T> parse(Class<T> mappingType) throws DbcParsingException {
+        try (DataReader reader = new FileDataReader(getFile(mappingType))) {
+            getLogger().debug("Parsing instances for {} from dbc file {} in directory {}", mappingType.getName(), getFilename(mappingType), dbcDirectory.getPath());
             DbcHeader header = readHeader(reader);
             byte[] entryData = readDataBlock(reader, header);
             DbcStringTable stringTable = readStringTable(reader, header);
             Set<T> entries = parseEntries(mappingType, entryData, header, stringTable);
-            LOGGER.debug(format("Finished parsing %d %s instances in %d ms with %d stringTable entries.", entries.size(), mappingType.getName(), timer.stop(), stringTable.getNumberOfEntries()));
+            getLogger().debug("Finished parsing {} {} instances with {} stringTable entries.", entries.size(), mappingType.getName(), stringTable.getNumberOfEntries());
             return entries;
+        } catch (IOException e) {
+            throw new DbcParsingException(format("Error parsing entries of mapping type %s", mappingType.getName()), e);
         }
     }
 
@@ -83,35 +91,30 @@ public class FullDbcFileParser extends DataReaderDbcFileParser {
         return false;
     }
 
+    /**
+     * This method will always throw a {@code UnsupportedOperationException}.
+     * {@inheritDoc}
+     */
     @Override
-    public <T extends DbcEntry> T parse(Class<T> mappingType, int id) throws IOException, DbcParsingException, DbcEntryNotFoundException, UnsupportedOperationException {
+    public <T extends DbcEntry> T parse(Class<T> mappingType, int id) throws DbcParsingException, DbcEntryNotFoundException, UnsupportedOperationException {
         throw new UnsupportedOperationException("Random access in files is not supported by the FullDbcFileParser.");
     }
 
+    /**
+     * This method will always throw a {@code UnsupportedOperationException}.
+     * {@inheritDoc}
+     */
     @Override
-    public DbcStringTable parseStringTable(String filename) throws IOException, DbcParsingException, UnsupportedOperationException {
+    public DbcStringTable parseStringTable(String filename) throws DbcParsingException, UnsupportedOperationException {
         throw new UnsupportedOperationException("Random access in files is not supported by the FullDbcFileParser.");
     }
 
+    /**
+     * This method will always throw a {@code UnsupportedOperationException}.
+     * {@inheritDoc}
+     */
     @Override
-    public <T extends DbcEntry> DbcStringTable parseStringTable(Class<T> mappingType) throws IOException, DbcParsingException, UnsupportedOperationException {
+    public <T extends DbcEntry> DbcStringTable parseStringTable(Class<T> mappingType) throws DbcParsingException, UnsupportedOperationException {
         throw new UnsupportedOperationException("Random access in files is not supported by the FullDbcFileParser.");
-    }
-
-
-    public DbcFile parseFile(String filename, String basePath) throws IOException, IllegalArgumentException {
-        LOGGER.debug(format("[parseFile::%s] Parsing %s in %s", filename, filename, basePath));
-        File file = new File(basePath, filename);
-        try (DataReader reader = new FileDataReader(file)) {
-            Timer timer = Timer.start();
-            DbcHeader header = reader.readNext(new DbcHeaderParser());
-            LOGGER.debug(format("[parseFile::%s] Parsing type %s with %d records with %d fields and %d bytes per record.", filename, header.getMagicString(), header.getEntryCount(), header.getEntryFieldCount(), header.getEntrySize()));
-            reader.skip(header.getEntryBlockSize()); // Skip the entries.
-            DbcStringTable stringTable = reader.readNext(new DbcStringTableParser(header));
-            LOGGER.debug(format("[parseFile::%s] Parsed %d bytes of StringBlock data to %d StringBlock entries.", filename, header.getStringTableBlockSize(), stringTable.getNumberOfEntries()));
-            DbcFile dbcFile = new DbcFile(filename, header, stringTable);
-            LOGGER.debug(format("[parseFile::%s] Parsed file data in %dms.", filename, timer.stop()));
-            return dbcFile;
-        }
     }
 }

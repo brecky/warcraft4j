@@ -18,6 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.io;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -71,19 +72,56 @@ public class InputStreamDataReader extends DataReader {
         if (bytes < 0) {
             throw new IllegalArgumentException(format("Unable to skip %d bytes.", bytes));
         }
-        if ((position() + bytes) > remaining()) {
-            throw new IOException(format("Error skipping %d bytes, skipping past end of the data.", bytes));
+        if (bytes > remaining()) {
+            throw new IOException(format("Error skipping %d bytes from position %d with %d bytes available.", bytes, position, remaining()));
         }
-        stream.skip(bytes);
+        long remaining = bytes;
+        while (remaining > 0) {
+            remaining -= stream.skip(remaining);
+        }
+        position += bytes;
     }
 
     @Override
     public final <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException, DataParsingException {
-        byte[] data = new byte[dataType.getLength()];
-        stream.read(data);
-        position += data.length;
-        ByteBuffer buffer = ByteBuffer.wrap(data).order(byteOrder);
+        ByteBuffer buffer;
+        if (dataType.isVariableLength()) {
+            buffer = getVarLenBuffer(dataType, byteOrder);
+        } else {
+            byte[] data = new byte[dataType.getLength()];
+            stream.read(data);
+            buffer = ByteBuffer.wrap(data).order(byteOrder);
+        }
+        position += buffer.limit();
+        buffer.rewind();
         return dataType.readNext(buffer);
+    }
+
+    /**
+     * Get a buffer for a variable length data type.
+     *
+     * @param dataType  The data type.
+     * @param byteOrder The byte order for the returned buffer.
+     * @param <T>       The data type.
+     *
+     * @return The byte buffer.
+     *
+     * @throws IOException When creating the buffer failed.
+     */
+    private <T> ByteBuffer getVarLenBuffer(DataType<T> dataType, ByteOrder byteOrder) throws IOException {
+        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream()) {
+            boolean done = false;
+            byte b;
+            while (!done) {
+                if ((b = (byte) stream.read()) != -1) {
+                    byteOut.write(b);
+                    done = (b == dataType.getVariableLengthTerminator());
+                } else {
+                    done = true;
+                }
+            }
+            return ByteBuffer.wrap(byteOut.toByteArray()).order(byteOrder);
+        }
     }
 
     @Override

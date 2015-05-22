@@ -20,7 +20,6 @@
 package nl.salp.warcraft4j.clientdata.dbc.parser;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
 
 import static java.lang.String.format;
 

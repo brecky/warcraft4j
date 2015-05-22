@@ -19,15 +19,13 @@
 package nl.salp.warcraft4j.clientdata.dbc.analysis.validation;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
 import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
-
-import static java.lang.String.format;
 
 /**
  * Validate that the number of bytes of a file entry are mapped.
@@ -61,9 +59,9 @@ public class FieldSizeMappingValidation<T extends DbcEntry> extends MappingValid
         int mappedEntrySize = getSize(getMappedFields(type, true));
         boolean valid = fileEntrySize == mappedEntrySize;
         if (valid) {
-            LOGGER.debug(format("Successfully mapped %s bytes from %s: [expected: %d, actual: %d]", type.getName(), file.getFilename(), fileEntrySize, mappedEntrySize));
+            LOGGER.debug("Successfully mapped {} bytes from {}: [expected: {}, actual: {}]", type.getName(), file.getFilename(), fileEntrySize, mappedEntrySize);
         } else {
-            LOGGER.warn(format("%s has an invalid number bytes mapped from %s: [expected: %d, actual: %d]", type.getName(), file.getFilename(), fileEntrySize, mappedEntrySize));
+            LOGGER.warn("{} has an invalid number bytes mapped from {}: [expected: {}, actual: {}]", type.getName(), file.getFilename(), fileEntrySize, mappedEntrySize);
         }
         return valid;
     }

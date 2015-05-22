@@ -16,51 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package nl.salp.warcraft4j.clientdata.casc;
 
-import java.io.InputStream;
-import java.util.Map;
+import nl.salp.warcraft4j.Region;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-abstract class CascConfigDataParser {
-    private Map<Integer, Field> indexedFields;
-    private Map<String, Integer> fieldNames;
-
-    private void parse(InputStream stream) {
-
-    }
-
-    protected static final class Field {
-        private int index;
-        private String name;
-        private String type;
-        private int length;
-
-        public Field(int index, String name, String type, int length) {
-            this.index = index;
-            this.name = name;
-            this.type = type;
-            this.length = length;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public int getLength() {
-            return length;
-        }
-    }
+public class Casc {
+    private Region region;
+    private int build;
+    private String version;
+    private String buildConfigHash;
+    private String cdnConfigHash;
+    private String installationHash;
 }

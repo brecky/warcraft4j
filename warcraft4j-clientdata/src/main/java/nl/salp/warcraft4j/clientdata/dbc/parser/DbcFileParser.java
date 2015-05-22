@@ -21,7 +21,6 @@ package nl.salp.warcraft4j.clientdata.dbc.parser;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 
-import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -37,10 +36,9 @@ public interface DbcFileParser {
      *
      * @return The parsed header.
      *
-     * @throws IOException         When there was a problem reading the dbc file.
      * @throws DbcParsingException When there was a problem parsing the data.
      */
-    DbcHeader parseHeader(String filename) throws IOException, DbcParsingException;
+    DbcHeader parseHeader(String filename) throws DbcParsingException;
 
     /**
      * Parse the full meta-data of a dbc file.
@@ -49,10 +47,9 @@ public interface DbcFileParser {
      *
      * @return The parsed meta-data.
      *
-     * @throws IOException         When there was a problem reading the dbc file.
      * @throws DbcParsingException When there was a problem parsing the data.
      */
-    DbcFile parseMetaData(String filename) throws IOException, DbcParsingException;
+    DbcFile parseMetaData(String filename) throws DbcParsingException;
 
     /**
      * Parse the full meta-data of a dbc file.
@@ -62,10 +59,9 @@ public interface DbcFileParser {
      *
      * @return The parsed meta-data.
      *
-     * @throws IOException         When there was a problem reading the dbc file.
      * @throws DbcParsingException When there was a problem parsing the data.
      */
-    <T extends DbcEntry> DbcFile parseMetaData(Class<T> mappingType) throws IOException, DbcParsingException;
+    <T extends DbcEntry> DbcFile parseMetaData(Class<T> mappingType) throws DbcParsingException;
 
     /**
      * Parse the entries of a mapped dbc file.
@@ -75,10 +71,9 @@ public interface DbcFileParser {
      *
      * @return The parsed instances.
      *
-     * @throws IOException         When there was a problem reading the dbc file.
      * @throws DbcParsingException When there was a problem parsing the data.
      */
-    <T extends DbcEntry> Set<T> parse(Class<T> mappingType) throws IOException, DbcParsingException;
+    <T extends DbcEntry> Set<T> parse(Class<T> mappingType) throws DbcParsingException;
 
     /**
      * Check if direct access for reading the file is supported or if the file can only be read as a whole.
@@ -98,13 +93,12 @@ public interface DbcFileParser {
      *
      * @return The read instance.
      *
-     * @throws IOException                   When there was a problem reading the dbc file.
      * @throws DbcParsingException           When there was a problem parsing the entry.
      * @throws DbcEntryNotFoundException     When there was no entry found with the given index.
      * @throws UnsupportedOperationException When the retrieval of individual entries is not supported by the parser.
      * @see #isDirectAccessSupported()
      */
-    <T extends DbcEntry> T parse(Class<T> mappingType, int index) throws IOException, DbcParsingException, DbcEntryNotFoundException, UnsupportedOperationException;
+    <T extends DbcEntry> T parse(Class<T> mappingType, int index) throws DbcParsingException, DbcEntryNotFoundException, UnsupportedOperationException;
 
     /**
      * Parse the string table from a dbc file.
@@ -115,12 +109,11 @@ public interface DbcFileParser {
      *
      * @return The parsed string table.
      *
-     * @throws IOException                   When there was a problem reading the dbc file.
      * @throws DbcParsingException           When there was a problem parsing the string table.
      * @throws UnsupportedOperationException When the direct parsing of a string table is not supported by the parser.
      * @see #isDirectAccessSupported()
      */
-    DbcStringTable parseStringTable(String filename) throws IOException, DbcParsingException, UnsupportedOperationException;
+    DbcStringTable parseStringTable(String filename) throws DbcParsingException, UnsupportedOperationException;
 
     /**
      * Parse the string table from a dbc file.
@@ -131,10 +124,9 @@ public interface DbcFileParser {
      *
      * @return The parsed string table.
      *
-     * @throws IOException                   When there was a problem reading the dbc file.
      * @throws DbcParsingException           When there was a problem parsing the string table.
      * @throws UnsupportedOperationException When the direct parsing of a string table is not supported by the parser.
      * @see #isDirectAccessSupported()
      */
-    <T extends DbcEntry> DbcStringTable parseStringTable(Class<T> mappingType) throws IOException, DbcParsingException, UnsupportedOperationException;
+    <T extends DbcEntry> DbcStringTable parseStringTable(Class<T> mappingType) throws DbcParsingException, UnsupportedOperationException;
 }

@@ -19,8 +19,8 @@
 package nl.salp.warcraft4j.clientdata.dbc.analysis.validation;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
 import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
-import nl.salp.warcraft4j.clientdata.dbc.DbcField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +81,7 @@ public class PaddingFieldMappingValidation<T extends DbcEntry> extends MappingVa
         if (isPaddingField(field)) {
             if (!Modifier.isTransient(field.getModifiers())) {
                 valid = false;
-                LOGGER.warn(format("%s.%s is a non transient padding field.", type.getName(), field.getName()));
+                LOGGER.warn("{}.{} is a non transient padding field.", type.getName(), field.getName());
             }
             if (isAccessorMethodAvailable(field)) {
                 valid = false;
@@ -121,7 +121,7 @@ public class PaddingFieldMappingValidation<T extends DbcEntry> extends MappingVa
             String methodName = format(nameMask, fieldName);
             type.getMethod(methodName);
             methodAvailable = true;
-            LOGGER.warn(format("%s.%s() is most probably an accessor method for padding field %s.", type.getName(), methodName, field.getName()));
+            LOGGER.warn("{}.{}() is most probably an accessor method for padding field {}.", type.getName(), methodName, field.getName());
         } catch (NoSuchMethodException e) {
             // Ignore.
         }

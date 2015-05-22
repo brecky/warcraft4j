@@ -29,8 +29,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import static java.lang.String.format;
-
 /**
  * Validation that validates that only one mapping type uses the same entry type.
  *
@@ -58,7 +56,7 @@ public class EntryTypeCollisionValidation extends MappingValidation {
         Map<DbcType, Collection<Class<? extends DbcEntry>>> typeMappings = getTypeMappings();
         for (DbcType entryType : typeMappings.keySet()) {
             if (typeMappings.get(entryType).size() > 1) {
-                LOGGER.warn(format("Entry type %s has multiple mapping types mapped to it: %s", entryType, typeMappings.get(entryType)));
+                LOGGER.warn("Entry type {} has multiple mapping types mapped to it: {}", entryType, typeMappings.get(entryType));
                 valid = false;
             }
         }

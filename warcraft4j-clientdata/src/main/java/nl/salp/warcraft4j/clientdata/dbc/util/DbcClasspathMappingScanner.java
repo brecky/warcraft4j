@@ -20,7 +20,8 @@
 package nl.salp.warcraft4j.clientdata.dbc.util;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
-import nl.salp.warcraft4j.clientdata.dbc.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,16 +29,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  * Scanner that scans the whole classpath for all top-level classes that implement {@link DbcEntry} and have a {@link DbcMapping} annotation present.
@@ -49,19 +49,9 @@ public class DbcClasspathMappingScanner {
     private static final Logger LOGGER = LoggerFactory.getLogger(DbcClasspathMappingScanner.class);
 
     /** Class filter filters out classes that are not a client database entry. */
-    private static final ClassFilter FILTER_CLIENTDATABASEENTRY = new ClassFilter() {
-        @Override
-        public boolean isMatching(Class<?> type) {
-            return type != null && DbcEntry.class.isAssignableFrom(type) && type.isAnnotationPresent(DbcMapping.class);
-        }
-    };
+    private static final ClassFilter FILTER_CLIENTDATABASEENTRY = type -> type != null && DbcEntry.class.isAssignableFrom(type) && type.isAnnotationPresent(DbcMapping.class);
     /** Class filter that filters out classes that are not top level classes. */
-    private static final ClassFilter FILTER_TOPLEVELCLASS = new ClassFilter() {
-        @Override
-        public boolean isMatching(Class<?> type) {
-            return type != null && type.getName().indexOf('$') == -1;
-        }
-    };
+    private static final ClassFilter FILTER_TOPLEVELCLASS = type -> type != null && type.getName().indexOf('$') == -1;
     /** The classloader to use. */
     private final ClassLoader classLoader;
 
@@ -100,25 +90,10 @@ public class DbcClasspathMappingScanner {
      * @return The found client database entry classes.
      */
     public Collection<Class<? extends DbcEntry>> scan(String basePackage) {
-        LOGGER.debug(format("Scanning package [%s] for ClientDatabaseEntry implementations", basePackage));
+        LOGGER.debug("Scanning package [{}] for ClientDatabaseEntry implementations", basePackage);
         FileClasspathScanner scanner = new FileClasspathScanner(basePackage, FILTER_CLIENTDATABASEENTRY, FILTER_TOPLEVELCLASS);
-        for (Map.Entry<URI, ClassLoader> entry : getResources(classLoader).entrySet()) {
-            try {
-                scanner.scan(entry.getKey(), entry.getValue());
-            } catch (IOException e) {
-                LOGGER.error(format("Error scanning classpath URI %s: %s)", entry.getKey(), e.getMessage()), e);
-            }
-        }
-
-        Collection<Class<? extends DbcEntry>> entries = new HashSet<>();
-        for (Class<?> c : scanner.getClasses()) {
-            if (DbcEntry.class.isAssignableFrom(c)) {
-                entries.add((Class<DbcEntry>) c);
-            } else {
-                LOGGER.debug(format("Ignoring non ClientDatabaseEntry class %s", c.getName()));
-            }
-        }
-        return entries;
+        getResources(classLoader).forEach((uri, classLoader) -> scanner.scan(uri, classLoader));
+        return scanner.getClasses().stream().filter(DbcEntry.class::isAssignableFrom).map(c -> (Class<DbcEntry>) c).collect(Collectors.toSet());
     }
 
     /**
@@ -128,7 +103,7 @@ public class DbcClasspathMappingScanner {
      *
      * @return The path resource URIs with their corresponding class loader.
      */
-    private Map<URI, ClassLoader> getResources(ClassLoader classLoader) {
+    private Map<URI, ClassLoader> getResources(final ClassLoader classLoader) {
         LinkedHashMap<URI, ClassLoader> resources = new LinkedHashMap<>();
         ClassLoader parent = classLoader.getParent();
         if (parent != null) {
@@ -136,17 +111,16 @@ public class DbcClasspathMappingScanner {
         }
         if (URLClassLoader.class.isAssignableFrom(classLoader.getClass())) {
             URLClassLoader cl = (URLClassLoader) classLoader;
-            for (URL url : cl.getURLs()) {
-                URI uri;
-                try {
-                    uri = url.toURI();
-                } catch (URISyntaxException e) {
-                    throw new IllegalArgumentException(e);
-                }
-                if (!resources.containsKey(uri)) {
-                    resources.put(uri, classLoader);
-                }
-            }
+            resources.putAll(
+                    Stream.of(cl.getURLs())
+                            .map(url -> {
+                                try {
+                                    return url.toURI();
+                                } catch (URISyntaxException e) {
+                                    throw new IllegalArgumentException(e);
+                                }
+                            })
+                            .collect(Collectors.toMap(uri -> uri, (uri) -> classLoader)));
         }
         return resources;
     }
@@ -207,20 +181,25 @@ public class DbcClasspathMappingScanner {
          * @param uri         the URI (either a directory or jar-file) to scan.
          * @param classLoader The class loader to use.
          *
-         * @throws IOException When scanning failed.
+         * @throws DbcScanningException When scanning failed.
          */
-        public void scan(URI uri, ClassLoader classLoader) throws IOException {
+        public void scan(URI uri, ClassLoader classLoader) throws DbcScanningException {
             if ("file".equals(uri.getScheme()) && scannedUris.add(uri)) {
                 File file = new File(uri);
-                if (!file.exists()) {
-                    LOGGER.warn(format("Tried to scan non-existing file %s", file.getCanonicalPath()));
-                    // Shouldn't happen....
-                } else if (file.isDirectory()) {
-                    LOGGER.debug(format("Scanning directory %s", file.getCanonicalPath()));
-                    scanDirectory(file, classLoader);
-                } else {
-                    LOGGER.debug(format("Scanning JAR file %s", file.getCanonicalPath()));
-                    scanJarFile(file, classLoader);
+                try {
+                    if (!file.exists()) {
+                        LOGGER.warn("Tried to scan non-existing file {}", file.getCanonicalPath());
+                        // Shouldn't happen....
+                    } else if (file.isDirectory()) {
+                        LOGGER.debug("Scanning directory {}", file.getCanonicalPath());
+                        scanDirectory(file, classLoader);
+                    } else {
+                        LOGGER.debug("Scanning JAR file {}", file.getCanonicalPath());
+                        scanJarFile(file, classLoader);
+                    }
+                } catch (IOException e) {
+                    LOGGER.error("Error scanning classpath URI {}: {})", uri, e.getMessage(), e);
+                    throw new DbcScanningException(e);
                 }
             }
         }
@@ -231,9 +210,9 @@ public class DbcClasspathMappingScanner {
          * @param directory   The directory to scan.
          * @param classLoader The class loader to use.
          *
-         * @throws IOException When scanning fails.
+         * @throws DbcScanningException When scanning failed.
          */
-        private void scanDirectory(File directory, ClassLoader classLoader) throws IOException {
+        private void scanDirectory(File directory, ClassLoader classLoader) throws DbcScanningException {
             scanDirectory(directory, "", Collections.<File>emptySet(), classLoader);
         }
 
@@ -245,24 +224,26 @@ public class DbcClasspathMappingScanner {
          * @param parents         The parent files.
          * @param classLoader     The class loader to use.
          *
-         * @throws IOException When scanning fails.
+         * @throws DbcScanningException When scanning failed.
          */
-        private void scanDirectory(File directory, String directoryPrefix, Set<File> parents, ClassLoader classLoader) throws IOException {
-            File canonical = directory.getCanonicalFile();
+        private void scanDirectory(File directory, String directoryPrefix, Set<File> parents, ClassLoader classLoader) throws DbcScanningException {
+            File canonical = null;
+            try {
+                canonical = directory.getCanonicalFile();
+            } catch (IOException e) {
+                throw new DbcScanningException(e);
+            }
             if (!parents.contains(canonical)) {
                 File[] files = directory.listFiles();
                 if (files != null) {
                     Set<File> newParents = new HashSet(parents);
                     newParents.add(canonical);
-                    for (File f : files) {
-                        String name = f.getName();
-                        if (f.isDirectory()) {
-                            scanDirectory(f, directoryPrefix + name + "/", newParents, classLoader);
-                        } else {
-                            String fileName = directoryPrefix + name;
-                            loadFile(fileName, classLoader);
-                        }
-                    }
+                    Stream.of(files)
+                            .filter(File::isDirectory)
+                            .forEach(file -> scanDirectory(file, format("%s%s/", directoryPrefix, file.getName()), newParents, classLoader));
+                    Stream.of(files)
+                            .filter(File::isFile)
+                            .forEach(file -> loadFile(format("%s%s", directoryPrefix, file.getName()), classLoader));
                 }
             }
         }
@@ -274,20 +255,17 @@ public class DbcClasspathMappingScanner {
          * @param file        The jar file.
          * @param classLoader The class loader to use.
          *
-         * @throws IOException When scanning fails.
+         * @throws DbcScanningException When scanning failed.
          */
-        private void scanJarFile(File file, ClassLoader classLoader) throws IOException {
+        private void scanJarFile(File file, ClassLoader classLoader) {
             try (JarFile jarFile = new JarFile(file)) {
-                for (URI uri : getClasspathFromJarManifest(file, jarFile.getManifest())) {
-                    scan(uri, classLoader);
-                }
-                Enumeration<JarEntry> entries = jarFile.entries();
-                while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
-                    if (!entry.isDirectory()) {
-                        loadFile(entry.getName(), classLoader);
-                    }
-                }
+                getClasspathFromJarManifest(file, jarFile.getManifest())
+                        .forEach(uri -> scan(uri, classLoader));
+                jarFile.stream()
+                        .filter(entry -> !entry.isDirectory())
+                        .forEach(entry -> loadFile(entry.getName(), classLoader));
+            } catch (IOException e) {
+                throw new DbcScanningException(e);
             }
         }
 
@@ -304,21 +282,24 @@ public class DbcClasspathMappingScanner {
             if (manifest == null) {
                 entries = Collections.emptySet();
             } else {
-                entries = new HashSet<>();
                 String classPathAttribute = manifest.getMainAttributes().getValue(Attributes.Name.CLASS_PATH.toString());
-                if (classPathAttribute != null) {
+                if (classPathAttribute == null) {
+                    entries = Collections.emptySet();
+                } else {
+                    entries = Stream.of(classPathAttribute.split(" "))
+                            .filter(StringUtils::isNotEmpty)
+                            .map(resource -> getClassPathEntry(jarFile, resource))
+                            .collect(Collectors.toSet());
+/*
                     StringTokenizer tokenizer = new StringTokenizer(classPathAttribute, " ");
                     while (tokenizer.hasMoreElements()) {
                         String resource = tokenizer.nextToken().trim().toLowerCase();
                         if (isNotEmpty(resource)) {
-                            try {
                                 URI uri = getClassPathEntry(jarFile, resource);
                                 entries.add(uri);
-                            } catch (URISyntaxException e) {
-                                // Ignore.
-                            }
                         }
                     }
+*/
                 }
             }
             return entries;
@@ -434,11 +415,15 @@ public class DbcClasspathMappingScanner {
      *
      * @return The URI.
      *
-     * @throws URISyntaxException When the constructed URI resulted in an invalid URI.
+     * @throws DbcScanningException When the constructed URI resulted in an invalid URI.
      */
-    private static URI getClassPathEntry(File jarFile, String path)
-            throws URISyntaxException {
-        URI uri = new URI(path);
+    private static URI getClassPathEntry(File jarFile, String path) throws DbcScanningException {
+        URI uri = null;
+        try {
+            uri = new URI(path);
+        } catch (URISyntaxException e) {
+            throw new DbcScanningException(e);
+        }
         if (uri.isAbsolute()) {
             return uri;
         } else {

@@ -22,10 +22,11 @@ import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import static java.lang.String.format;
 
 /**
  * REST resource for exposing player character related API methods.
@@ -50,7 +51,7 @@ public class PlayerCharacterResource {
             @PathParam("region") String region,
             @PathParam("realm") String realm,
             @PathParam("character") String character) {
-        LOGGER.debug(format("Got a call for character/%s/%s/%s -> getPlayer(%s, %s, %s)", region, realm, character, region, realm, character));
+        LOGGER.debug("Got a call for character/{}/{}/{} -> getPlayer({}, {}, {})", region, realm, character, region, realm, character);
         return "character.get";
     }
 }

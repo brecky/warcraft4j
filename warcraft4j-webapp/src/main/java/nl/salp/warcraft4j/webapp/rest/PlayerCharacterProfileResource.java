@@ -28,8 +28,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import static java.lang.String.format;
-
 /**
  * REST resource for exposing player character related API methods.
  *
@@ -50,9 +48,7 @@ public class PlayerCharacterProfileResource {
     @GET
     @Path("/new")
     public String newProfile() {
-
-        LOGGER.debug(format("Got a call for profile/new -> newProfile(%s, %s, %s)"));
-
+        LOGGER.debug("Got a call for profile/new -> newProfile(%s, %s, %s)");
         return "profile.newProfile";
     }
 
@@ -62,9 +58,7 @@ public class PlayerCharacterProfileResource {
             @PathParam("region") String region,
             @PathParam("realm") String realm,
             @PathParam("character") String character) {
-
-        LOGGER.debug(format("Got a call for profile/from/%s/%s/%s -> createProfileFromCharacter(%s, %s, %s)", region, realm, character, region, realm, character));
-
+        LOGGER.debug("Got a call for profile/from/{}/{}/{} -> createProfileFromCharacter({}, {}, {})", region, realm, character, region, realm, character);
         return "profile.createProfileFromCharacter";
     }
 }

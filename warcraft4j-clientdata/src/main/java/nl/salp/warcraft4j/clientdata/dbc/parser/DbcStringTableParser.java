@@ -24,11 +24,16 @@ import nl.salp.warcraft4j.clientdata.io.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static nl.salp.warcraft4j.clientdata.io.DataType.getTerminatedString;
+import static nl.salp.warcraft4j.clientdata.util.io.DataTypeUtil.getAverageBytesPerCharacter;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  * {@link DataParser} implementation for reading and parsing a {@link DbcStringTable}.
@@ -36,6 +41,7 @@ import static java.lang.String.format;
  * @author Barre Dijkstra
  */
 public class DbcStringTableParser extends RandomAccessDataParser<DbcStringTable> {
+    private static final Charset STRINGTABLE_CHARSET = StandardCharsets.US_ASCII;
     /** The header of the DBC file to parse the string table from. */
     private final DbcHeader header;
 
@@ -90,9 +96,7 @@ public class DbcStringTableParser extends RandomAccessDataParser<DbcStringTable>
         return strings;
     }
 
-
-    @Override
-    public DbcStringTable parse(DataReader reader) throws IOException, DataParsingException {
+    private Map<Integer, String> parseStringTable(DataReader reader) throws IOException, DataParsingException {
         Map<Integer, String> strings = new HashMap<>();
 
         int offset;
@@ -110,6 +114,19 @@ public class DbcStringTableParser extends RandomAccessDataParser<DbcStringTable>
             throw new DataParsingException(format("Invalid data reader cursor position and unable to set the position. (dataReader: %s, position: %d, stringTableOffset: %d)", reader.getClass().getName(), reader.position(), header.getStringTableStartingOffset()));
         }
 
+        final int tableSize = header.getStringTableBlockSize();
+        long readBytes = 0;
+        while (reader.hasRemaining() && readBytes < tableSize) {
+            int position = (int) reader.position() - offset;
+            String value = reader.readNext(getTerminatedString(STRINGTABLE_CHARSET));
+            int valueSize = value.length() * getAverageBytesPerCharacter(STRINGTABLE_CHARSET);
+
+            readBytes = readBytes + valueSize;
+            if (isNotEmpty(value)) {
+                strings.put(position, value);
+            }
+        }
+        /*
         long readBytes = 0;
         while (reader.hasRemaining() && readBytes < header.getStringTableBlockSize()) {
             int position = (int) (reader.position() - offset);
@@ -124,6 +141,19 @@ public class DbcStringTableParser extends RandomAccessDataParser<DbcStringTable>
             if (!value.isEmpty()) {
                 strings.put(position, value);
             }
+        }
+        */
+        return strings;
+    }
+
+
+    @Override
+    public DbcStringTable parse(DataReader reader) throws IOException, DataParsingException {
+        Map<Integer, String> strings;
+        if (header.getStringTableBlockSize() > 2) {
+            strings = parseStringTable(reader);
+        } else {
+            strings = Collections.emptyMap();
         }
         return new DbcStringTable(strings);
     }

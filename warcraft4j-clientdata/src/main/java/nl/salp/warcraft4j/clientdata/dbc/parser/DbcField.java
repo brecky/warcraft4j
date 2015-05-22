@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.clientdata.dbc;
+package nl.salp.warcraft4j.clientdata.dbc.parser;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,7 +25,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * TODO Document.
+ * Annotation for mapping a DBC field.
+ * <p>
+ *     Annotate
+ * </p>
  *
  * @author Barre Dijkstra
  */

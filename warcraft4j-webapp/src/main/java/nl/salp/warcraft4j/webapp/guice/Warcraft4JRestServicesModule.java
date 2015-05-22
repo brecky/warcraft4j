@@ -52,12 +52,12 @@ public class Warcraft4JRestServicesModule extends ServletModule {
 
         ResourceConfig rc = new PackagesResourceConfig(config.getServicePackages());
         for (Class<?> resource : rc.getClasses()) {
-            LOGGER.debug(format("Binding service package resource %s", resource.getName()));
+            LOGGER.debug("Binding service package resource {}", resource.getName());
             bind(resource);
         }
 
         String restApiUri = format("%s*", config.getRestServiceBaseUri());
-        LOGGER.debug(format("Serving '%s' with GuiceContainer.class", restApiUri));
+        LOGGER.debug("Serving '{}' with GuiceContainer.class", restApiUri);
         serve(restApiUri).with(GuiceContainer.class);
     }
 

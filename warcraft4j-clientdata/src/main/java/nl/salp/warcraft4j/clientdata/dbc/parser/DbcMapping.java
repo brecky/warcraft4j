@@ -16,35 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.Region;
+package nl.salp.warcraft4j.clientdata.dbc.parser;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * TODO Document class.
+ * TODO Document.
  *
  * @author Barre Dijkstra
  */
-public class CascConfig {
-    private final String installationDirectory;
-    private final Region preferredRegion;
-    private final boolean online;
-
-    public CascConfig(String installationDirectory, Region preferredRegion, boolean online) {
-        this.installationDirectory = installationDirectory;
-        this.preferredRegion = preferredRegion;
-        this.online = online;
-    }
-
-    public String getInstallationDirectory() {
-        return installationDirectory;
-    }
-
-    public Region getPreferredRegion() {
-        return preferredRegion;
-    }
-
-    public boolean isOnline() {
-        return online;
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+public @interface DbcMapping {
+    String file();
 }
