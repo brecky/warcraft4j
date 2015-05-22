@@ -1,0 +1,12 @@
+#######################################################################
+# Example configuration file for the DBC entry mapping file generator #
+#######################################################################
+
+# Indicate if existing mapping classes should be overwritten (true) or skipped (false).
+w4j.dbcmapping.target.override=true
+
+# The directory to place the generated DBC entry mappings in.
+w4j.dbcmapping.target.directory=/home/user/projects/warcraft4j/my-module/target/generated/dbc-entries
+
+# The package of the generated DBC entry mappings.
+w4j.dbcmapping.target.package=nl.salp.warcraft4j.mymodule.dbc

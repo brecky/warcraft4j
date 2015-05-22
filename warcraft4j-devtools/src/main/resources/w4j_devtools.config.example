@@ -1,0 +1,8 @@
+####################################################################
+# Example configuration file for the Warcraft4J development tools. #
+####################################################################
+
+# The local World of Warcraft installation directory
+w4j.directory.wow=/games/wow
+# Path to the local directory that contains extract DBC and DB2 files.
+w4j.directory.dbc=/home/user/data/dbc

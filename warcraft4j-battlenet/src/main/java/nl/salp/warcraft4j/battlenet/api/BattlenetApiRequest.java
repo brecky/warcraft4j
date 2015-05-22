@@ -37,27 +37,31 @@ public interface BattlenetApiRequest<T> {
     boolean isAuthenticationRequired();
 
     /**
-     * Parse the result data.
+     * Get the request URI for the call.
      *
-     * @param data The data to parse.
-     *
-     * @return The parsed result.
-     *
-     * @throws BattlenetApiParsingException When parsing failed.
+     * @return The request URI.
      */
-    T parse(String data) throws BattlenetApiParsingException;
+    String getRequestUri();
+
 
     /**
      * Get the request URI for the call.
      *
      * @return The request URI.
      */
-    public String getRequestUri();
+    String getRequestMethodBaseUri();
 
     /**
      * Get the parameters for the request.
      *
      * @return The parameters.
      */
-    public Map<String, String> getRequestParameters();
+    Map<String, String> getRequestParameters();
+
+    /**
+     * Get the result type of the method.
+     *
+     * @return The result type.
+     */
+    Class<T> getResultType();
 }
