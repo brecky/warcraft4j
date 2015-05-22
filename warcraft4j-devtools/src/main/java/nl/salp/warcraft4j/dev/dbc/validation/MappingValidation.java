@@ -1,16 +1,27 @@
-package nl.salp.warcraft4j.clientdatabase.analysis.rules;
+/*
+ * Licensed to the Warcraft4J Project under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The Warcraft4J Project licenses
+ * this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package nl.salp.warcraft4j.dev.dbc.validation;
 
-<<<<<<< Updated upstream:warcraft4j-casc/src/main/java/nl/salp/warcraft4j/clientdatabase/analysis/rules/MappingValidation.java
-import nl.salp.warcraft4j.clientdatabase.ClientDatabaseEntry;
-import nl.salp.warcraft4j.clientdatabase.parser.ClientDatabaseFile;
-import nl.salp.warcraft4j.clientdatabase.parser.DbcField;
-import nl.salp.warcraft4j.clientdatabase.util.ClientDatabaseUtil;
-=======
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
 import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
 import nl.salp.warcraft4j.clientdata.dbc.util.DbcUtil;
->>>>>>> Stashed changes:warcraft4j-devtools/src/main/java/nl/salp/warcraft4j/dev/dbc/validation/MappingValidation.java
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -22,7 +33,7 @@ import java.util.TreeSet;
  *
  * @author Barre Dijkstra
  */
-public abstract class MappingValidation<T extends ClientDatabaseEntry> {
+public abstract class MappingValidation<T extends DbcEntry> {
 
     /**
      * Execute the rule.
@@ -39,7 +50,7 @@ public abstract class MappingValidation<T extends ClientDatabaseEntry> {
      *
      * @return {@code true} if both are valid and also in combination.
      */
-    protected final boolean isValid(ClientDatabaseFile file, Class<T> type) {
+    protected final boolean isValid(DbcFile file, Class<T> type) {
         return isNotNull(file) && isNotNull(type) && isMappingForFile(file, type);
     }
 
@@ -51,8 +62,8 @@ public abstract class MappingValidation<T extends ClientDatabaseEntry> {
      *
      * @return {@code true} if the mapping type contains the mapping for the file.
      */
-    protected boolean isMappingForFile(ClientDatabaseFile file, Class<T> type) {
-        return isNotNull(file) && isNotNull(type) && file.getFilename().equals(ClientDatabaseUtil.getMappedFile(type));
+    protected boolean isMappingForFile(DbcFile file, Class<T> type) {
+        return isNotNull(file) && isNotNull(type) && file.getFilename().equals(DbcUtil.getMappedFile(type));
     }
 
     /**
