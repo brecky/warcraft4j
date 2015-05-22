@@ -19,7 +19,7 @@
 
 package nl.salp.warcraft4j.clientdata.dbc;
 
-import nl.salp.warcraft4j.clientdata.dbc.parser.*;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.DataType;
 import nl.salp.warcraft4j.clientdata.io.RandomAccessDataReader;
@@ -44,7 +44,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  *
  * @author Barre Dijkstra
  */
-public class DbcFile implements DbcFileParser {
+public class DbcFile {
     private static final Charset STRINGTABLE_CHARSET = StandardCharsets.US_ASCII;
     /** The name of the DBC file. */
     private final String dbcName;
@@ -79,97 +79,6 @@ public class DbcFile implements DbcFileParser {
      */
     private RandomAccessDataReader getDataReader() {
         return dataReaderSupplier.get();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see DbcFile#getHeader()
-     */
-    @Override
-    @Deprecated
-    public DbcHeader parseHeader(String filename) throws DbcParsingException {
-        return getHeader();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see DbcFile#getHeader()
-     * @see DbcFile#parseStringTable()
-     */
-    @Override
-    @Deprecated
-    public nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile parseMetaData(String filename) throws DbcParsingException {
-        return new nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile(filename, getHeader(), parseStringTable());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see DbcFile#getHeader()
-     * @see DbcFile#parseStringTable()
-     */
-    @Override
-    @Deprecated
-    public <T extends DbcEntry> nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile parseMetaData(Class<T> mappingType) throws DbcParsingException {
-        String filename = mappingType.getAnnotation(DbcMapping.class).file();
-        return new nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile(filename, getHeader(), parseStringTable());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see DbcFile#parseEntries(Class)
-     */
-    @Override
-    @Deprecated
-    public <T extends DbcEntry> Set<T> parse(Class<T> mappingType) throws DbcParsingException {
-        return (Set<T>) parseEntries(mappingType);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@code true} at all times.
-     */
-    @Override
-    @Deprecated
-    public boolean isDirectAccessSupported() {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see DbcFile#parseEntryWithIndex(int, Class)
-     */
-    @Override
-    @Deprecated
-    public <T extends DbcEntry> T parse(Class<T> mappingType, int index) throws DbcParsingException, DbcEntryNotFoundException, UnsupportedOperationException {
-        return parseEntryWithIndex(index, mappingType);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see DbcFile#parseStringTable()
-     */
-    @Override
-    @Deprecated
-    public DbcStringTable parseStringTable(String filename) throws DbcParsingException, UnsupportedOperationException {
-        return parseStringTable();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see DbcFile#parseStringTable()
-     */
-    @Override
-    @Deprecated
-    public <T extends DbcEntry> DbcStringTable parseStringTable(Class<T> mappingType) throws DbcParsingException, UnsupportedOperationException {
-        return parseStringTable();
     }
 
     /**

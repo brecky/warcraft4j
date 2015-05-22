@@ -19,13 +19,12 @@
 
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcStore;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcReference;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -65,23 +64,6 @@ public class AchievementCategoryEntry implements DbcEntry {
      */
     public int getParentAchievementCategoryId() {
         return parentAchievementCategoryId;
-    }
-
-    /**
-     * Get the parent achievement category, resolving it on the client database.
-     *
-     * @param dbcStore The client database.
-     *
-     * @return The parent achievement or {@code null} if it could not be resolved.
-     *
-     * @see #getParentAchievementCategoryId()
-     */
-    public AchievementCategoryEntry getParent(DbcStore dbcStore) {
-        AchievementCategoryEntry parent = null;
-        if (this.parentAchievementCategoryId > 0 && dbcStore != null) {
-            parent = dbcStore.resolve(AchievementCategoryEntry.class, this.parentAchievementCategoryId);
-        }
-        return parent;
     }
 
     /**

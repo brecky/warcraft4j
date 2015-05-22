@@ -19,23 +19,20 @@
 package nl.salp.warcraft4j.dev.dbc;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
+import nl.salp.warcraft4j.clientdata.dbc.DbcFile;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
-import nl.salp.warcraft4j.clientdata.dbc.parser.FullDbcFileParser;
-import nl.salp.warcraft4j.clientdata.dbc.util.DbcClasspathMappingScanner;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcClasspathMappingScanner;
+import nl.salp.warcraft4j.clientdata.io.RandomAccessFileDataReader;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  * DBC and mapping related utility methods.
@@ -47,71 +44,6 @@ public final class DbcUtils {
      * Private constructor to prevent instantiation.
      */
     private DbcUtils() {
-    }
-
-    /**
-     * Parse a DBC/DB2 to the mapped entry instances.
-     *
-     * @param mappingType  The class of the dbc mapping entry to map to.
-     * @param dbcDirectory Directory with unpacked DBC/DB2 files.
-     * @param <T>          The type of the dbc mapping entry.
-     *
-     * @return The parsed entries.
-     */
-    public static <T extends DbcEntry> Set<T> parse(Class<T> mappingType, String dbcDirectory) {
-        FullDbcFileParser parser = new FullDbcFileParser(dbcDirectory);
-        return parser.parse(mappingType);
-    }
-
-    /**
-     * Get the parsed {@link DbcFile} meta-data for a DBC file.
-     *
-     * @param filename     The file name.
-     * @param dbcDirectory Directory with unpacked DBC/DB2 files.
-     *
-     * @return The parsed file.
-     */
-    public static DbcFile getDbcFile(String filename, String dbcDirectory) {
-        FullDbcFileParser parser = new FullDbcFileParser(dbcDirectory);
-        return parser.parseMetaData(filename);
-    }
-
-    /**
-     * Get the parsed {@link DbcFile} meta-data for a dbc mapping type.
-     *
-     * @param mappingType  The dbc mapping type class to get the meta-data for.
-     * @param dbcDirectory Directory with unpacked DBC/DB2 files.
-     * @param <T>          The dbc mapping type.
-     *
-     * @return The parsed file.
-     *
-     * @throws IllegalArgumentException When the mapping type does not point refer to a file.
-     */
-    public static <T extends DbcEntry> DbcFile getDbcFile(Class<T> mappingType, String dbcDirectory) {
-        if (mappingType.isAnnotationPresent(DbcMapping.class) || isEmpty(mappingType.getAnnotation(DbcMapping.class).file())) {
-            throw new IllegalArgumentException(format("Can not get the DbcFile meta data for entry %s with no @DbcMapping annotation or no file set.", mappingType.getName()));
-        }
-        String fileName = mappingType.getAnnotation(DbcMapping.class).file();
-        return getDbcFile(fileName, dbcDirectory);
-    }
-
-    /**
-     * Get the mapping entry types that map to the given file.
-     *
-     * @param file The DbcFile to get the mappings for.
-     *
-     * @return The mapping entry types.
-     */
-    public static Collection<Class<? extends DbcEntry>> getMappings(DbcFile file) {
-        Collection<Class<? extends DbcEntry>> mappings = new HashSet<>();
-        if (file != null && isNotEmpty(file.getFilename())) {
-            for (Class<? extends DbcEntry> mapping : getAllClientDatabaseEntryMappings()) {
-                if (file.getFilename().equals(getMappedFile(mapping))) {
-                    mappings.add(mapping);
-                }
-            }
-        }
-        return mappings;
     }
 
     /**
@@ -188,31 +120,6 @@ public final class DbcUtils {
     public static File[] getAllDbcFiles(String dbcDirectory) {
         File dbcDir = new File(dbcDirectory);
         return dbcDir.listFiles(getDbcFilenameFilter());
-    }
-
-
-    /**
-     * Parse all DBC and DB2 files in the configured DBC directory.
-     *
-     * @param dbcDirectory Directory with unpacked DBC/DB2 files.
-     *
-     * @return All parsed files.
-     */
-    public static Set<DbcFile> parseDbcFiles(String dbcDirectory) {
-        Set<DbcFile> parsedFiles = new HashSet<>();
-        for (String file : getAllDbcFilePaths(dbcDirectory)) {
-            parsedFiles.add(getDbcFile(file, dbcDirectory));
-        }
-        return parsedFiles;
-    }
-
-    /**
-     * Get a Comparator implementation for DbcFile instances.
-     *
-     * @return The comparator.
-     */
-    public static Comparator<DbcFile> getDbcFileComparator() {
-        return DbcFileComparator.INSTANCE;
     }
 
     /**
@@ -353,6 +260,12 @@ public final class DbcUtils {
         return FieldOrderComparator.INSTANCE;
     }
 
+    public static Collection<DbcFile> parseDbcFiles(String dbcDirectoryPath) {
+        return Stream.of(new File(dbcDirectoryPath).list((dir, file) -> file.endsWith(".db2") || file.endsWith(".dbc")))
+                .map(file -> new DbcFile(file, () -> new RandomAccessFileDataReader(new File(dbcDirectoryPath, file))))
+                .collect(Collectors.toSet());
+    }
+
     /**
      * Filename filter for filtering DBC files.
      */
@@ -390,29 +303,6 @@ public final class DbcUtils {
                 cmp = -1;
             } else {
                 cmp = Integer.valueOf(o1.getAnnotation(DbcField.class).order()).compareTo(o2.getAnnotation(DbcField.class).order());
-            }
-            return cmp;
-        }
-    }
-
-    /**
-     * Comparator for comparing DbcFile instances (based on filename).
-     */
-    private static class DbcFileComparator implements Comparator<DbcFile> {
-        /** Singleton instance of the comparator. */
-        public static final DbcFileComparator INSTANCE = new DbcFileComparator();
-
-        @Override
-        public int compare(DbcFile o1, DbcFile o2) {
-            int cmp;
-            if (o1 == null && o2 == null) {
-                cmp = 0;
-            } else if (o1 == null) {
-                cmp = 1;
-            } else if (o2 == null) {
-                cmp = -1;
-            } else {
-                cmp = o1.getFilename().compareToIgnoreCase(o2.getFilename());
             }
             return cmp;
         }

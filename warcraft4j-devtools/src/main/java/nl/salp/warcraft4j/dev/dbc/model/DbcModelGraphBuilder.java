@@ -20,7 +20,7 @@ package nl.salp.warcraft4j.dev.dbc.model;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcReference;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcReference;
 import nl.salp.warcraft4j.dev.dbc.DbcUtils;
 
 import java.util.*;

@@ -19,13 +19,12 @@
 
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcStore;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcReference;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -74,23 +73,6 @@ public class CriteriaTreeEntry implements DbcEntry {
         return criteriaId;
     }
 
-    /**
-     * Get the criteria for this tree.
-     *
-     * @param dbcStore The client database to resolve the criteria on.
-     *
-     * @return The criteria or {@code null} if no criteria was linked.
-     *
-     * @see #getCriteriaId()
-     */
-    public CriteriaEntry getCriteria(DbcStore dbcStore) {
-        CriteriaEntry criteria = null;
-        if (criteriaId > 0 && dbcStore != null) {
-            criteria = dbcStore.resolve(CriteriaEntry.class, criteriaId);
-        }
-        return criteria;
-    }
-
     public long getAmount() {
         return amount;
     }
@@ -101,23 +83,6 @@ public class CriteriaTreeEntry implements DbcEntry {
 
     public int getParentId() {
         return parentId;
-    }
-
-    /**
-     * Get the parent criteria tree.
-     *
-     * @param dbcStore The client database to resolve the parent on.
-     *
-     * @return The parent or {@code null} if no parent could be resolved.
-     *
-     * @see #getParentId()
-     */
-    public CriteriaTreeEntry getParent(DbcStore dbcStore) {
-        CriteriaTreeEntry entry = null;
-        if (parentId > 0 && dbcStore != null) {
-            entry = dbcStore.resolve(CriteriaTreeEntry.class, parentId);
-        }
-        return entry;
     }
 
     public int getFlags() {
