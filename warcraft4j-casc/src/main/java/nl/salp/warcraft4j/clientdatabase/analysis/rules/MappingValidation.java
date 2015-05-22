@@ -1,9 +1,16 @@
 package nl.salp.warcraft4j.clientdatabase.analysis.rules;
 
+<<<<<<< Updated upstream:warcraft4j-casc/src/main/java/nl/salp/warcraft4j/clientdatabase/analysis/rules/MappingValidation.java
 import nl.salp.warcraft4j.clientdatabase.ClientDatabaseEntry;
 import nl.salp.warcraft4j.clientdatabase.parser.ClientDatabaseFile;
 import nl.salp.warcraft4j.clientdatabase.parser.DbcField;
 import nl.salp.warcraft4j.clientdatabase.util.ClientDatabaseUtil;
+=======
+import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
+import nl.salp.warcraft4j.clientdata.dbc.util.DbcUtil;
+>>>>>>> Stashed changes:warcraft4j-devtools/src/main/java/nl/salp/warcraft4j/dev/dbc/validation/MappingValidation.java
 
 import java.lang.reflect.Field;
 import java.util.Collection;

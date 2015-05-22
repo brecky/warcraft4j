@@ -16,10 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package nl.salp.warcraft4j.dev.dbc.model;
 
 /**
- * TODO Document.
+ * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-package nl.salp.warcraft4j.casc;
+public class DbcModelGenerator {
+    public DbcModelGenerator() {
+
+    }
+
+    public static void main(String... args) {
+        new DbcModelGenerator();
+    }
+}

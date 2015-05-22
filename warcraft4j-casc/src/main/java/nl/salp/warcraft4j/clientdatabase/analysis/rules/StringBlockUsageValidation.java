@@ -1,18 +1,24 @@
 package nl.salp.warcraft4j.clientdatabase.analysis.rules;
 
+<<<<<<< Updated upstream:warcraft4j-casc/src/main/java/nl/salp/warcraft4j/clientdatabase/analysis/rules/StringBlockUsageValidation.java
 import nl.salp.warcraft4j.clientdatabase.ClientDatabaseEntry;
 import nl.salp.warcraft4j.clientdatabase.parser.ClientDatabaseFile;
 import nl.salp.warcraft4j.clientdatabase.parser.ClientDatabaseStringBlock;
 import nl.salp.warcraft4j.clientdatabase.parser.DbcDataType;
 import nl.salp.warcraft4j.clientdatabase.parser.DbcField;
+=======
+import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcStringTable;
+>>>>>>> Stashed changes:warcraft4j-devtools/src/main/java/nl/salp/warcraft4j/dev/dbc/validation/StringBlockUsageValidation.java
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashSet;
-
-import static java.lang.String.format;
 
 /**
  * Validate that the values of a StringBlock are used.
@@ -53,9 +59,9 @@ public class StringBlockUsageValidation<T extends ClientDatabaseEntry> extends M
             Collection<Field> stringBlockReferences = getStringBlockReferenceFields();
             valid = stringBlockReferences.isEmpty();
             if (valid) {
-                LOGGER.debug(format("Successfully mapped %s StringBlock entries from %s [entries: 0, references: %d]", type.getName(), file.getFilename(), stringBlockReferences.size()));
+                LOGGER.debug("Successfully mapped {} StringBlock entries from {} [entries: 0, references: {}]", type.getName(), file.getFilename(), stringBlockReferences.size());
             } else {
-                LOGGER.warn(format("%s maps to an invalid number of StringBlock entries from %s [entries: 0, references: %d]", type.getName(), file.getFilename(), stringBlockReferences.size()));
+                LOGGER.warn("{} maps to an invalid number of StringBlock entries from {} [entries: 0, references: {}]", type.getName(), file.getFilename(), stringBlockReferences.size());
             }
         } else {
             Collection<String> stringBlockEntries = getStringBlockEntries();
@@ -68,7 +74,7 @@ public class StringBlockUsageValidation<T extends ClientDatabaseEntry> extends M
                         if (stringBlockEntries.remove(value)) {
                             removedEntries.add(value);
                         } else {
-                            LOGGER.warn(format("Confused: unable to find a StringBlock entry for %s[id=%d].%s with value '%s', while it was parsed from the StringBlock...", type.getName(), instance.getId(), field.getName(), value));
+                            LOGGER.warn("Confused: unable to find a StringBlock entry for {}[id={}].{} with value '{}', while it was parsed from the StringBlock...", type.getName(), instance.getId(), field.getName(), value);
                         }
                     }
                 }
@@ -76,9 +82,15 @@ public class StringBlockUsageValidation<T extends ClientDatabaseEntry> extends M
             double usageCount = stringBlockEntries.size() / file.getStringBlock().getAvailablePositions().size();
             valid = usageCount >= minUsage;
             if (valid) {
+<<<<<<< Updated upstream:warcraft4j-casc/src/main/java/nl/salp/warcraft4j/clientdatabase/analysis/rules/StringBlockUsageValidation.java
                 LOGGER.debug(format("Successfully mapped %s StringBlock entries from %s [entries: %d, references: %d, mapped: %.2f%%, required: %.2%%]", type.getName(), file.getFilename(), file.getStringBlock().getAvailablePositions().size(), stringBlockReferences.size(), usageCount, minUsage));
             } else {
                 LOGGER.warn(format("%s maps to an invalid number of StringBlock entries from %s [entries: %d, references: %d, mapped: %.2f%%, required: %.2%%]", type.getName(), file.getFilename(), file.getStringBlock().getAvailablePositions().size(), stringBlockReferences.size(), usageCount, minUsage));
+=======
+                LOGGER.debug("Successfully mapped {} StringBlock entries from {} [entries: {}, references: {}, mapped: {}%, required: {}%]", type.getName(), file.getFilename(), file.getStringTable().getNumberOfEntries(), stringBlockReferences.size(), usageCount, minUsage);
+            } else {
+                LOGGER.warn("{} maps to an invalid number of StringBlock entries from {} [entries: {}, references: {}, mapped: {}%, required: {}%]", type.getName(), file.getFilename(), file.getStringTable().getNumberOfEntries(), stringBlockReferences.size(), usageCount, minUsage);
+>>>>>>> Stashed changes:warcraft4j-devtools/src/main/java/nl/salp/warcraft4j/dev/dbc/validation/StringBlockUsageValidation.java
             }
         }
         return valid;
@@ -94,7 +106,7 @@ public class StringBlockUsageValidation<T extends ClientDatabaseEntry> extends M
         Collection<String> entries = new HashSet<>(stringBlock.getAvailablePositions().size());
         for (int position : stringBlock.getAvailablePositions()) {
             if (!entries.add(stringBlock.getEntry(position))) {
-                LOGGER.warn(format("Duplicate StringBlock entry found for for file %s [pos: %d, string: %s]", file.getFilename(), position, stringBlock.getEntry(position)));
+                LOGGER.warn("Duplicate StringBlock entry found for for file {} [pos: {}, string: {}]", file.getFilename(), position, stringBlock.getEntry(position));
             }
         }
         return entries;
@@ -134,6 +146,7 @@ public class StringBlockUsageValidation<T extends ClientDatabaseEntry> extends M
             value = (String) field.get(instance);
             field.setAccessible(access);
         } catch (IllegalAccessException e) {
+            // Ignore.
         }
 
         return value;

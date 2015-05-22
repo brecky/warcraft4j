@@ -1,15 +1,19 @@
 package nl.salp.warcraft4j.clientdatabase.analysis.rules;
 
+<<<<<<< Updated upstream:warcraft4j-casc/src/main/java/nl/salp/warcraft4j/clientdatabase/analysis/rules/FieldCountMappingValidation.java
 import nl.salp.warcraft4j.clientdatabase.ClientDatabaseEntry;
 import nl.salp.warcraft4j.clientdatabase.parser.ClientDatabaseFile;
 import nl.salp.warcraft4j.clientdatabase.parser.DbcField;
+=======
+import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
+>>>>>>> Stashed changes:warcraft4j-devtools/src/main/java/nl/salp/warcraft4j/dev/dbc/validation/FieldCountMappingValidation.java
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
-
-import static java.lang.String.format;
 
 /**
  * Validate that all the fields in the data file are mapped.
@@ -43,9 +47,9 @@ public class FieldCountMappingValidation<T extends ClientDatabaseEntry> extends 
         int mappedFields = getMappedFieldCount(getMappedFields(type, false));
         boolean valid = fileFields == mappedFields;
         if (valid) {
-            LOGGER.debug(format("Successfully mapped %s fields from %s: [expected: %d, actual: %d]", type.getName(), file.getFilename(), fileFields, mappedFields));
+            LOGGER.debug("Successfully mapped {} fields from {}: [expected: {}, actual: {}]", type.getName(), file.getFilename(), fileFields, mappedFields);
         } else {
-            LOGGER.warn(format("%s has an invalid number of fields mapped from %s: [expected: %d, actual: %d]", type.getName(), file.getFilename(), fileFields, mappedFields));
+            LOGGER.warn("{} has an invalid number of fields mapped from {}: [expected: {}, actual: {}]", type.getName(), file.getFilename(), fileFields, mappedFields);
         }
         return valid;
     }

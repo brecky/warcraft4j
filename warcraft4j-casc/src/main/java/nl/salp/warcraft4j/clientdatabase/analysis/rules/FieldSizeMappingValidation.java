@@ -1,15 +1,19 @@
 package nl.salp.warcraft4j.clientdatabase.analysis.rules;
 
+<<<<<<< Updated upstream:warcraft4j-casc/src/main/java/nl/salp/warcraft4j/clientdatabase/analysis/rules/FieldSizeMappingValidation.java
 import nl.salp.warcraft4j.clientdatabase.ClientDatabaseEntry;
 import nl.salp.warcraft4j.clientdatabase.parser.ClientDatabaseFile;
 import nl.salp.warcraft4j.clientdatabase.parser.DbcField;
+=======
+import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
+>>>>>>> Stashed changes:warcraft4j-devtools/src/main/java/nl/salp/warcraft4j/dev/dbc/validation/FieldSizeMappingValidation.java
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
-
-import static java.lang.String.format;
 
 /**
  * Validate that the number of bytes of a file entry are mapped.
@@ -43,9 +47,9 @@ public class FieldSizeMappingValidation<T extends ClientDatabaseEntry> extends M
         int mappedEntrySize = getSize(getMappedFields(type, true));
         boolean valid = fileEntrySize == mappedEntrySize;
         if (valid) {
-            LOGGER.debug(format("Successfully mapped %s bytes from %s: [expected: %d, actual: %d]", type.getName(), file.getFilename(), fileEntrySize, mappedEntrySize));
+            LOGGER.debug("Successfully mapped {} bytes from {}: [expected: {}, actual: {}]", type.getName(), file.getFilename(), fileEntrySize, mappedEntrySize);
         } else {
-            LOGGER.warn(format("%s has an invalid number bytes mapped from %s: [expected: %d, actual: %d]", type.getName(), file.getFilename(), fileEntrySize, mappedEntrySize));
+            LOGGER.warn("{} has an invalid number bytes mapped from {}: [expected: {}, actual: {}]", type.getName(), file.getFilename(), fileEntrySize, mappedEntrySize);
         }
         return valid;
     }

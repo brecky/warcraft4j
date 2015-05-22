@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
-import static java.lang.String.format;
-
 /**
  * Validate that the all entries are mapped and parsed.
  *
@@ -45,9 +43,9 @@ public class EntryCountMappingValidation<T extends ClientDatabaseEntry> extends 
         int parsedEntries = instances.size();
         boolean valid = fileEntries == parsedEntries;
         if (valid) {
-            LOGGER.debug(format("Successfully parsed %s instances from %s: [expected: %d, actual: %d]", type.getName(), file.getFilename(), fileEntries, parsedEntries));
+            LOGGER.debug("Successfully parsed {} instances from {}: [expected: {}, actual: {}]", type.getName(), file.getFilename(), fileEntries, parsedEntries);
         } else {
-            LOGGER.warn(format("%s has an invalid number of parsed instances from %s: [expected: %d, actual: %d]", type.getName(), file.getFilename(), fileEntries, parsedEntries));
+            LOGGER.warn("{} has an invalid number of parsed instances from {}: [expected: {}, actual: {}]", type.getName(), file.getFilename(), fileEntries, parsedEntries);
         }
         return valid;
     }

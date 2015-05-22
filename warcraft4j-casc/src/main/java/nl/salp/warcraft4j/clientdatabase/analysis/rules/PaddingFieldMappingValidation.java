@@ -1,8 +1,14 @@
 package nl.salp.warcraft4j.clientdatabase.analysis.rules;
 
+<<<<<<< Updated upstream:warcraft4j-casc/src/main/java/nl/salp/warcraft4j/clientdatabase/analysis/rules/PaddingFieldMappingValidation.java
 import nl.salp.warcraft4j.clientdatabase.ClientDatabaseEntry;
 import nl.salp.warcraft4j.clientdatabase.parser.ClientDatabaseFile;
 import nl.salp.warcraft4j.clientdatabase.parser.DbcField;
+=======
+import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
+>>>>>>> Stashed changes:warcraft4j-devtools/src/main/java/nl/salp/warcraft4j/dev/dbc/validation/PaddingFieldMappingValidation.java
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
