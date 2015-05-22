@@ -20,8 +20,8 @@ package nl.salp.warcraft4j.dev.dbc.codegen.dbcmapping;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcFile;
 import nl.salp.warcraft4j.clientdata.dbc.DbcStringTable;
+import nl.salp.warcraft4j.clientdata.dbc.DbcUtil;
 import nl.salp.warcraft4j.dev.DevToolsConfig;
-import nl.salp.warcraft4j.dev.dbc.DbcUtils;
 import nl.salp.warcraft4j.dev.dbc.codegen.VelocityGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
 
@@ -91,7 +93,9 @@ public class DbcMappingGenerator extends VelocityGenerator<DbcFile> {
         if (!targetDir.exists() && !targetDir.mkdirs()) {
             throw new IllegalArgumentException(format("Unable to create output directory %s", targetDir.getPath()));
         }
-        Collection<DbcFile> files = DbcUtils.parseDbcFiles(generalConfig.getDbcDirectoryPath());
+        Collection<DbcFile> files = Stream.of(DbcUtil.getAllClientDatabaseFiles(generalConfig.getDbcDirectoryPath()))
+                .map(f -> new DbcFile(f, DbcUtil.getFileDataReaderSupplier(generalConfig.getDbcDirectoryPath(), f)))
+                .collect(Collectors.toSet());
         LOGGER.debug("Attempting to generate {} mappings (overriding: {}) to directory {}", files.size(), config.overrideEntries(), targetDir.getPath());
         generate(files);
     }
