@@ -18,6 +18,10 @@
  */
 package nl.salp.warcraft4j.clientdata.io;
 
+import nl.salp.warcraft4j.clientdata.io.datatype.DataType;
+import nl.salp.warcraft4j.clientdata.io.parser.DataParser;
+import nl.salp.warcraft4j.clientdata.io.parser.DataParsingException;
+
 import java.io.IOException;
 import java.nio.ByteOrder;
 
@@ -29,7 +33,6 @@ import static java.lang.String.format;
  * @author Barre Dijkstra
  */
 public abstract class RandomAccessDataReader extends DataReader {
-
     /**
      * Set the position of the reader cursor.
      *
@@ -37,7 +40,13 @@ public abstract class RandomAccessDataReader extends DataReader {
      *
      * @throws IOException When the position could not be set.
      */
+    @Override
     public abstract void position(long position) throws IOException;
+
+    @Override
+    public boolean isRandomAccessSupported() {
+        return true;
+    }
 
     @Override
     public void skip(long bytes) throws IOException {

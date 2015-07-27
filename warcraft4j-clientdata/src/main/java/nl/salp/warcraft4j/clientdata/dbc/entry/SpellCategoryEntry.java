@@ -22,7 +22,7 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -37,17 +37,17 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class SpellCategoryEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.SPELL_CATEGORY;
 
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32)
     private int flags;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.UINT32)
     private int usesPerWeek;
-    @DbcField(order = 4, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String name;
-    @DbcField(order = 5, dataType = DbcDataType.INT32)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.INT32)
     private int maxCharges;
-    @DbcField(order = 6, dataType = DbcDataType.INT32)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.INT32)
     private int chargeRecoveryTime;
 
     @Override

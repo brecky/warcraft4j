@@ -19,10 +19,15 @@
 package nl.salp.warcraft4j.clientdata.dbc;
 
 import nl.salp.warcraft4j.clientdata.io.*;
+import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
+import nl.salp.warcraft4j.clientdata.io.parser.DataParser;
+import nl.salp.warcraft4j.clientdata.io.parser.DataParsingException;
+import nl.salp.warcraft4j.clientdata.io.parser.RandomAccessDataParser;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 
-import static nl.salp.warcraft4j.clientdata.io.DataType.getFixedLengthString;
+import static nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory.getFixedLengthString;
 import static org.apache.commons.lang3.ArrayUtils.toPrimitive;
 
 /**
@@ -53,36 +58,36 @@ class DbcHeaderParser extends RandomAccessDataParser<DbcHeader> {
     public DbcHeader parse(DataReader reader) throws IOException, DataParsingException {
         DbcHeader.Builder builder = new DbcHeader.Builder();
         // DBC parsing
-        String magicString = reader.readNext(getFixedLengthString(MAGIC_STRING_LENGTH));
+        String magicString = reader.readNext(DataTypeFactory.getFixedLengthString(MAGIC_STRING_LENGTH));
         int headerSize = DBC_HEADER_SIZE;
         builder.withMagicString(magicString);
-        builder.withEntryCount(reader.readNext(DataType.getInteger()));
-        builder.withEntryFieldCount(reader.readNext(DataType.getInteger()));
-        builder.withSingleEntrySize(reader.readNext(DataType.getInteger()));
-        builder.withStringTableBlockSize(reader.readNext(DataType.getInteger()));
+        builder.withEntryCount(reader.readNext(DataTypeFactory.getInteger(), ByteOrder.LITTLE_ENDIAN));
+        builder.withEntryFieldCount(reader.readNext(DataTypeFactory.getInteger(), ByteOrder.LITTLE_ENDIAN));
+        builder.withSingleEntrySize(reader.readNext(DataTypeFactory.getInteger(), ByteOrder.LITTLE_ENDIAN));
+        builder.withStringTableBlockSize(reader.readNext(DataTypeFactory.getInteger(), ByteOrder.LITTLE_ENDIAN));
         // DB2 parsing.
         if (DB2_MAGICSTRING.equals(magicString) || ADB_MAGICSTRING.equals(magicString)) {
             headerSize = DB2_HEADER_SIZE;
-            builder.withStringTableBlockHash(reader.readNext(DataType.getInteger()));
-            int buildNumber = reader.readNext(DataType.getInteger());
+            builder.withStringTableBlockHash(reader.readNext(DataTypeFactory.getInteger(), ByteOrder.LITTLE_ENDIAN));
+            int buildNumber = reader.readNext(DataTypeFactory.getInteger(), ByteOrder.LITTLE_ENDIAN);
             builder.withBuildNumber(buildNumber);
-            builder.withTimestampLastWritten(reader.readNext(DataType.getInteger()));
+            builder.withTimestampLastWritten(reader.readNext(DataTypeFactory.getInteger(), ByteOrder.LITTLE_ENDIAN));
 
             if (buildNumber > DB2_LASTBUILD_BEFORE_EXTENSION) {
                 headerSize = DB2_EXTENDED_HEADER_SIZE_BASE;
-                int minEntryId = reader.readNext(DataType.getInteger());
+                int minEntryId = reader.readNext(DataTypeFactory.getInteger(), ByteOrder.LITTLE_ENDIAN);
                 builder.withMinEntryId(minEntryId);
-                int maxEntryId = reader.readNext(DataType.getInteger());
+                int maxEntryId = reader.readNext(DataTypeFactory.getInteger(), ByteOrder.LITTLE_ENDIAN);
                 builder.withMaxEntryId(maxEntryId);
-                builder.withLocaleId(reader.readNext(DataType.getInteger()));
-                builder.withUnknownDataBlock(reader.readNext(DataType.getByteArray(4)));
+                builder.withLocaleId(reader.readNext(DataTypeFactory.getInteger(), ByteOrder.LITTLE_ENDIAN));
+                builder.withUnknownDataBlock(reader.readNext(DataTypeFactory.getByteArray(4)));
                 if (maxEntryId > 0) {
                     int entryCount = maxEntryId - minEntryId + 1;
-                    builder.withRowIndexes(toPrimitive(reader.readNext(DataType.getInteger().asArrayType(entryCount))));
-                    builder.withRowStringLength(toPrimitive(reader.readNext(DataType.getShort().asArrayType(entryCount))));
+                    builder.withRowIndexes(toPrimitive(reader.readNext(DataTypeFactory.getInteger().asArrayType(entryCount), ByteOrder.LITTLE_ENDIAN)));
+                    builder.withRowStringLength(toPrimitive(reader.readNext(DataTypeFactory.getShort().asArrayType(entryCount), ByteOrder.LITTLE_ENDIAN)));
 
-                    headerSize += (entryCount * DataType.getInteger().getLength());
-                    headerSize += (entryCount * DataType.getShort().getLength());
+                    headerSize += (entryCount * DataTypeFactory.getInteger().getLength());
+                    headerSize += (entryCount * DataTypeFactory.getShort().getLength());
                 }
             }
         }

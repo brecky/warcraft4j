@@ -21,7 +21,7 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -54,21 +54,21 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class CharacterSectionEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.CHARACTER_SECTION;
 
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32)
     private int raceId;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.UINT32)
     private int genderId;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32)
     private int baseSection;
-    @DbcField(order = 5, dataType = DbcDataType.STRINGTABLE_REFERENCE, numberOfEntries = 3)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.STRINGTABLE_REFERENCE, numberOfEntries = 3)
     private String[] textures;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.UINT32)
     private int flags;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.UINT32)
     private int variationIndex;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.UINT32)
     private int colorIndex;
 
 

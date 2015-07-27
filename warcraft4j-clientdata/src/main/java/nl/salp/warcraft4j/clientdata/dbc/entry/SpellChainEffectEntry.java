@@ -21,7 +21,7 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -36,103 +36,103 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class SpellChainEffectEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.SPELL_CHAIN_EFFECT;
 
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.FLOAT)
     private float averageSegmentLength;
-    @DbcField(order = 3, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.FLOAT)
     private float width;
-    @DbcField(order = 4, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.FLOAT)
     private float noiseScale;
-    @DbcField(order = 5, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.FLOAT)
     private float textCoordinateScale;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.UINT32)
     private int segmentDuration;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.UINT32)
     private int segmentDelay;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.UINT32)
     private int flags;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.UINT32)
     private int jointCount;
-    @DbcField(order = 10, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.FLOAT)
     private float jointOffsetRadius;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 11, dataType = DbcDataType.UINT32)
     private int jointsPerMinorJoint;
-    @DbcField(order = 12, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 12, dataType = DbcDataType.UINT32)
     private int minorJointsPerMajorJoint;
-    @DbcField(order = 13, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 13, dataType = DbcDataType.FLOAT)
     private float minorJointScale;
-    @DbcField(order = 14, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 14, dataType = DbcDataType.FLOAT)
     private float majorJointScale;
-    @DbcField(order = 15, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 15, dataType = DbcDataType.FLOAT)
     private float jointMoveSpeed;
-    @DbcField(order = 16, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 16, dataType = DbcDataType.FLOAT)
     private float jointSmoothness;
-    @DbcField(order = 17, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 17, dataType = DbcDataType.FLOAT)
     private float minimumDurationBetweenJointJumps;
-    @DbcField(order = 18, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 18, dataType = DbcDataType.FLOAT)
     private float maximumDurationBetweenJointJumps;
-    @DbcField(order = 19, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 19, dataType = DbcDataType.FLOAT)
     private float waveHeight;
-    @DbcField(order = 20, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 20, dataType = DbcDataType.FLOAT)
     private float waveFrequency;
-    @DbcField(order = 21, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 21, dataType = DbcDataType.FLOAT)
     private float waveSpeed;
-    @DbcField(order = 22, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 22, dataType = DbcDataType.FLOAT)
     private float minimumWaveAngle;
-    @DbcField(order = 23, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 23, dataType = DbcDataType.FLOAT)
     private float maximumWaveAngle;
-    @DbcField(order = 24, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 24, dataType = DbcDataType.FLOAT)
     private float minimumWaveSpin;
-    @DbcField(order = 25, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 25, dataType = DbcDataType.FLOAT)
     private float maximumWaveSpin;
-    @DbcField(order = 26, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 26, dataType = DbcDataType.FLOAT)
     private float arcHeight;
-    @DbcField(order = 27, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 27, dataType = DbcDataType.FLOAT)
     private float minimumArcAngle;
-    @DbcField(order = 28, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 28, dataType = DbcDataType.FLOAT)
     private float maximumArcAngle;
-    @DbcField(order = 29, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 29, dataType = DbcDataType.FLOAT)
     private float minimumArcSpin;
-    @DbcField(order = 30, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 30, dataType = DbcDataType.FLOAT)
     private float maximumArcSpin;
-    @DbcField(order = 31, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 31, dataType = DbcDataType.FLOAT)
     private float delayBetweenEffects;
-    @DbcField(order = 32, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 32, dataType = DbcDataType.FLOAT)
     private float minimumFlickerOnDuration;
-    @DbcField(order = 33, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 33, dataType = DbcDataType.FLOAT)
     private float maximumFlickerOnDuration;
-    @DbcField(order = 34, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 34, dataType = DbcDataType.FLOAT)
     private float minimumFlickerOffDuration;
-    @DbcField(order = 35, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 35, dataType = DbcDataType.FLOAT)
     private float maximumFlickerOffDuration;
-    @DbcField(order = 36, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 36, dataType = DbcDataType.FLOAT)
     private float pulseSpeed;
-    @DbcField(order = 37, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 37, dataType = DbcDataType.FLOAT)
     private float pulseOnLength;
-    @DbcField(order = 38, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 38, dataType = DbcDataType.FLOAT)
     private float pulseFadeLength;
-    @DbcField(order = 39, dataType = DbcDataType.BYTE)
+    @DbcFieldMapping(order = 39, dataType = DbcDataType.BYTE)
     private byte alpha;
-    @DbcField(order = 40, dataType = DbcDataType.BYTE)
+    @DbcFieldMapping(order = 40, dataType = DbcDataType.BYTE)
     private byte red;
-    @DbcField(order = 41, dataType = DbcDataType.BYTE)
+    @DbcFieldMapping(order = 41, dataType = DbcDataType.BYTE)
     private byte green;
-    @DbcField(order = 42, dataType = DbcDataType.BYTE)
+    @DbcFieldMapping(order = 42, dataType = DbcDataType.BYTE)
     private byte blue;
-    @DbcField(order = 43, dataType = DbcDataType.BYTE)
+    @DbcFieldMapping(order = 43, dataType = DbcDataType.BYTE)
     private byte blendMode;
-    @DbcField(order = 44, dataType = DbcDataType.BYTE, numberOfEntries = 3, padding = true)
+    @DbcFieldMapping(order = 44, dataType = DbcDataType.BYTE, numberOfEntries = 3, padding = true)
     private transient byte[] padding1;
-    @DbcField(order = 45, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 45, dataType = DbcDataType.UINT32)
     private int renderLayer;
-    @DbcField(order = 46, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 46, dataType = DbcDataType.FLOAT)
     private float textureLength;
-    @DbcField(order = 47, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 47, dataType = DbcDataType.FLOAT)
     private float wavePhase;
-    @DbcField(order = 48, dataType = DbcDataType.UINT32, numberOfEntries = 11)
+    @DbcFieldMapping(order = 48, dataType = DbcDataType.UINT32, numberOfEntries = 11)
     private int[] spellChainEffectId; // 11
-    @DbcField(order = 49, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 49, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String texture;
 
     @Override

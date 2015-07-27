@@ -22,7 +22,7 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -37,33 +37,33 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class AreaPointOfInterestEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.AREA_POINT_OF_INTEREST;
 
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32)
     private int importance;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.UINT32)
     private int iconId;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32)
     private int factionId;
-    @DbcField(order = 5, dataType = DbcDataType.FLOAT, numberOfEntries = 2)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.FLOAT, numberOfEntries = 2)
     private float[] position; // 2
-    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.UINT32)
     private int continentId;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.UINT32)
     private int flags;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.UINT32)
     private int areaId;
-    @DbcField(order = 9, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String name;
-    @DbcField(order = 10, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String description;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 11, dataType = DbcDataType.UINT32)
     private int worldStateId;
-    @DbcField(order = 12, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 12, dataType = DbcDataType.UINT32)
     private int playerConditionId;
-    @DbcField(order = 13, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 13, dataType = DbcDataType.UINT32)
     private int worldMapLink;
-    @DbcField(order = 14, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 14, dataType = DbcDataType.UINT32)
     private int portLocationId;
 
     @Override

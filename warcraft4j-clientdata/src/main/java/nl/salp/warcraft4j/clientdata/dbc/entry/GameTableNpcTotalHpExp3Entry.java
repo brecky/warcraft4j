@@ -21,7 +21,7 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -36,9 +36,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class GameTableNpcTotalHpExp3Entry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.GAME_TABLE_NPC_TOTAL_HP_EXP3;
     // TODO Implement me!
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int level;
-    @DbcField(order = 2, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.FLOAT)
     private float totalHp;
 
     @Override

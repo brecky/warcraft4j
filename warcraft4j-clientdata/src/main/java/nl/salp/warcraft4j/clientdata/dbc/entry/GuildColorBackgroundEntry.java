@@ -21,7 +21,7 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -38,15 +38,15 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class GuildColorBackgroundEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.GUILD_COLOR_BACKGROUND;
 
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.BYTE)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.BYTE)
     private byte red;
-    @DbcField(order = 3, dataType = DbcDataType.BYTE)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.BYTE)
     private byte green;
-    @DbcField(order = 4, dataType = DbcDataType.BYTE)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.BYTE)
     private byte blue;
-    @DbcField(order = 5, dataType = DbcDataType.BYTE, padding = true)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.BYTE, padding = true)
     private transient byte padding;
 
     @Override

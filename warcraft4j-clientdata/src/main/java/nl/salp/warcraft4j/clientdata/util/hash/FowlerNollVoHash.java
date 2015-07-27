@@ -24,8 +24,6 @@ import org.apache.commons.codec.binary.StringUtils;
 
 import java.math.BigInteger;
 
-import static nl.salp.warcraft4j.clientdata.io.DataTypeUtil.trim;
-
 /**
  * Fowler-Noll-Vo hash implementations (FNV-1 and FNV-1a).
  *
@@ -139,7 +137,7 @@ public abstract class FowlerNollVoHash implements Hash {
                 hash = hash.multiply(prime).mod(mod);
                 hash = hash.xor(BigInteger.valueOf((int) b & 0xff));
             }
-            return trim(hash.toByteArray());
+            return hash.toByteArray();
         }
     }
 
@@ -165,7 +163,7 @@ public abstract class FowlerNollVoHash implements Hash {
                 hash = hash.xor(BigInteger.valueOf((int) b & 0xff));
                 hash = hash.multiply(prime).mod(mod);
             }
-            return trim(hash.toByteArray());
+            return hash.toByteArray();
         }
     }
 

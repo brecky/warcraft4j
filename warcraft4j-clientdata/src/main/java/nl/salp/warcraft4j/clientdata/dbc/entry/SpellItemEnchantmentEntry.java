@@ -20,7 +20,7 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.*;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -36,45 +36,45 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class SpellItemEnchantmentEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.SPELL_ITEM_ENCHANTMENT;
 
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32)
     private int charges;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32, numberOfEntries = 3)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.UINT32, numberOfEntries = 3)
     private int[] effects;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, numberOfEntries = 3)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32, numberOfEntries = 3)
     private int[] effectPointsMinimum;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32, numberOfEntries = 3)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.UINT32, numberOfEntries = 3)
     private int[] effectArguments;
-    @DbcField(order = 6, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String name;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.ITEM_VISUAL)
     private int itemVisualId;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.UINT32)
     private int flags;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.ITEM)
     private int sourceItemId;
-    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.SPELL_ITEM_ENCHANTMENT_CONDITION)
     private int conditionId;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 11, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.SKILL_LINE)
     private int requiredSkillId;
-    @DbcField(order = 12, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 12, dataType = DbcDataType.UINT32)
     private int requiredSkillRank;
-    @DbcField(order = 13, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 13, dataType = DbcDataType.UINT32)
     private int minimumLevel;
-    @DbcField(order = 14, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 14, dataType = DbcDataType.UINT32)
     private int maximumLevel;
-    @DbcField(order = 15, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 15, dataType = DbcDataType.UINT32)
     private int itemLevel;
-    @DbcField(order = 16, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 16, dataType = DbcDataType.UINT32)
     private int scalingClass;
-    @DbcField(order = 17, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 17, dataType = DbcDataType.UINT32)
     private int scalingClassRestricted;
-    @DbcField(order = 18, dataType = DbcDataType.FLOAT, numberOfEntries = 3)
+    @DbcFieldMapping(order = 18, dataType = DbcDataType.FLOAT, numberOfEntries = 3)
     private float[] effectScalingPoints;
 
     @Override

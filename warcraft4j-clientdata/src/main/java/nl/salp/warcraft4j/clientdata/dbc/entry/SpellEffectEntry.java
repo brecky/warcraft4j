@@ -20,7 +20,7 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.*;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -36,56 +36,56 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class SpellEffectEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.SPELL_EFFECT;
 
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.DIFFICULTY)
     private int difficultyId;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32, knownMeaning = false)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.UINT32, knownMeaning = false)
     private int effect; // TODO ref to spell ?
-    @DbcField(order = 4, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.FLOAT)
     private float effectAmplitude;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.UINT32)
     private int effectAura; // TODO ref to spell aura?
-    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.UINT32)
     private int effectAuraPeriod;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.UINT32)
     private int effectBasePoints;
-    @DbcField(order = 8, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.FLOAT)
     private float effectBonusCoefficient;
-    @DbcField(order = 9, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.FLOAT)
     private float effectChainAmplitude;
-    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.UINT32)
     private int effectChainTargets;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 11, dataType = DbcDataType.UINT32)
     private int effectDieSides;
-    @DbcField(order = 12, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 12, dataType = DbcDataType.UINT32)
     private int effectItemType;
-    @DbcField(order = 13, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 13, dataType = DbcDataType.UINT32)
     private int effectMechanic;
-    @DbcField(order = 14, dataType = DbcDataType.UINT32, numberOfEntries = 2)
+    @DbcFieldMapping(order = 14, dataType = DbcDataType.UINT32, numberOfEntries = 2)
     private int[] effectMiscValue;
-    @DbcField(order = 15, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 15, dataType = DbcDataType.FLOAT)
     private float effectPointsPerResource;
-    @DbcField(order = 16, dataType = DbcDataType.UINT32, numberOfEntries = 2)
+    @DbcFieldMapping(order = 16, dataType = DbcDataType.UINT32, numberOfEntries = 2)
     private int[] effectRadiusIndex;
-    @DbcField(order = 17, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 17, dataType = DbcDataType.FLOAT)
     private float effectRealPointsPerLevel;
-    @DbcField(order = 18, dataType = DbcDataType.UINT32, numberOfEntries = 4)
+    @DbcFieldMapping(order = 18, dataType = DbcDataType.UINT32, numberOfEntries = 4)
     private int[] effectSpellClassMasks;
-    @DbcField(order = 19, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 19, dataType = DbcDataType.UINT32)
     private int effectTriggerSpell;
-    @DbcField(order = 20, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 20, dataType = DbcDataType.FLOAT)
     private float effectPositionFacing;
-    @DbcField(order = 21, dataType = DbcDataType.UINT32, numberOfEntries = 2)
+    @DbcFieldMapping(order = 21, dataType = DbcDataType.UINT32, numberOfEntries = 2)
     private int[] implicitTargets;
-    @DbcField(order = 22, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 22, dataType = DbcDataType.UINT32)
     private int spellId;
-    @DbcField(order = 23, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 23, dataType = DbcDataType.UINT32)
     private int effectIndex;
-    @DbcField(order = 24, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 24, dataType = DbcDataType.UINT32)
     private int effectAttribute;
-    @DbcField(order = 25, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 25, dataType = DbcDataType.FLOAT)
     private float bonusCoefficientFromAp;
 
     @Override

@@ -21,7 +21,7 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -37,49 +37,49 @@ public class WbCertBlacklistEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.WB_CERT_BLACKLIST;
 
     // FIXME There are 0 entries in the file, so analysis is impossible (and the structure complete differs from the WbCertWhitelist entries.
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
     private int unknown2;
-    @DbcField(order = 3, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown3;
-    @DbcField(order = 4, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown4;
-    @DbcField(order = 5, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown5;
-    @DbcField(order = 6, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown6;
-    @DbcField(order = 7, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown7;
-    @DbcField(order = 8, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown8;
-    @DbcField(order = 9, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown9;
-    @DbcField(order = 10, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown10;
-    @DbcField(order = 11, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 11, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown11;
-    @DbcField(order = 12, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 12, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown12;
-    @DbcField(order = 13, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 13, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown13;
-    @DbcField(order = 14, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 14, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown14;
-    @DbcField(order = 15, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 15, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown15;
-    @DbcField(order = 16, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 16, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown16;
-    @DbcField(order = 17, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 17, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown17;
-    @DbcField(order = 18, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 18, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown18;
-    @DbcField(order = 19, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 19, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown19;
-    @DbcField(order = 20, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 20, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown20;
-    @DbcField(order = 21, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 21, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown21;
-    @DbcField(order = 22, dataType = DbcDataType.BYTE, knownMeaning = false)
+    @DbcFieldMapping(order = 22, dataType = DbcDataType.BYTE, knownMeaning = false)
     private byte unknown22;
 
     @Override

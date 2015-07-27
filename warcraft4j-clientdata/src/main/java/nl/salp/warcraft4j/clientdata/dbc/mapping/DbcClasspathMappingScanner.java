@@ -46,11 +46,14 @@ import static java.lang.String.format;
 public class DbcClasspathMappingScanner {
     /** The logger instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(DbcClasspathMappingScanner.class);
+    private static final String[] CORE_PACKAGES = {"com.sun", "sun", "javax", "java", "jdk"};
 
     /** Class filter filters out classes that are not a client database entry. */
     private static final ClassFilter FILTER_CLIENTDATABASEENTRY = type -> type != null && DbcEntry.class.isAssignableFrom(type) && type.isAnnotationPresent(DbcMapping.class);
     /** Class filter that filters out classes that are not top level classes. */
     private static final ClassFilter FILTER_TOPLEVELCLASS = type -> type != null && type.getName().indexOf('$') == -1;
+    /** Class filter that filters out classes that are part of the Java core. */
+    private static final ClassFilter FILTER_JAVACORE = type -> type != null && Stream.of(CORE_PACKAGES).noneMatch(p -> type.getName().startsWith(p));
     /** The classloader to use. */
     private final ClassLoader classLoader;
 
@@ -90,7 +93,7 @@ public class DbcClasspathMappingScanner {
      */
     public Collection<Class<? extends DbcEntry>> scan(String basePackage) {
         LOGGER.debug("Scanning package [{}] for ClientDatabaseEntry implementations", basePackage);
-        FileClasspathScanner scanner = new FileClasspathScanner(basePackage, FILTER_CLIENTDATABASEENTRY, FILTER_TOPLEVELCLASS);
+        FileClasspathScanner scanner = new FileClasspathScanner(basePackage, FILTER_CLIENTDATABASEENTRY, FILTER_TOPLEVELCLASS, FILTER_JAVACORE);
         getResources(classLoader).forEach((uri, classLoader) -> scanner.scan(uri, classLoader));
         return scanner.getClasses().stream().filter(DbcEntry.class::isAssignableFrom).map(c -> (Class<DbcEntry>) c).collect(Collectors.toSet());
     }
@@ -128,6 +131,7 @@ public class DbcClasspathMappingScanner {
     /**
      * Filter for filtering out non-matching classes.
      */
+    @FunctionalInterface
     private interface ClassFilter {
         /**
          * Check if a class matches the filter.
@@ -289,16 +293,6 @@ public class DbcClasspathMappingScanner {
                             .filter(StringUtils::isNotEmpty)
                             .map(resource -> getClassPathEntry(jarFile, resource))
                             .collect(Collectors.toSet());
-/*
-                    StringTokenizer tokenizer = new StringTokenizer(classPathAttribute, " ");
-                    while (tokenizer.hasMoreElements()) {
-                        String resource = tokenizer.nextToken().trim().toLowerCase();
-                        if (isNotEmpty(resource)) {
-                                URI uri = getClassPathEntry(jarFile, resource);
-                                entries.add(uri);
-                        }
-                    }
-*/
                 }
             }
             return entries;
@@ -306,19 +300,14 @@ public class DbcClasspathMappingScanner {
 
         /**
          * Load class file.
-         * <p/>
+         * <p>
          * Class files are only loaded when they are in the matching appropriate package, are not a Java core class and are a top-level class.
          *
          * @param filename    The filename.
          * @param classLoader The class loader to use.
          */
         private void loadFile(String filename, ClassLoader classLoader) {
-            if (isTopLevelClassName(filename) && !isJavaCore(filename) && isMatchingPackage(filename)) {
-                Class<?> type = load(filename, classLoader);
-                if (isMatchingFilters(type)) {
-                    classes.add(type);
-                }
-            }
+            load(filename, classLoader).filter(this::isMatchingFilters).ifPresent(t -> classes.add(t));
         }
 
         /**
@@ -372,18 +361,8 @@ public class DbcClasspathMappingScanner {
          * @return {@code true} if the class matches all filters.
          */
         private boolean isMatchingFilters(Class<?> type) {
-            boolean matching = true;
-            if (type == null) {
-                matching = false;
-            } else {
-                for (ClassFilter filter : filters) {
-                    matching = matching && filter.isMatching(type);
-                }
-            }
-            return matching;
+            return type != null && Stream.of(filters).allMatch(f -> f.isMatching(type));
         }
-
-
     }
 
     /**
@@ -392,16 +371,14 @@ public class DbcClasspathMappingScanner {
      * @param name        The name of the class.
      * @param classLoader The class loader to use.
      *
-     * @return The class instance or {@code null} if there was a problem loading the class.
+     * @return The optional class instance which is not set if a problem occurred loading the class.
      */
-    private static Class<?> load(String name, ClassLoader classLoader) {
-        Class<?> clazz = null;
+    private static Optional<Class<?>> load(String name, ClassLoader classLoader) {
+        Optional<Class<?>> clazz;
         try {
-            clazz = classLoader.loadClass(getClassName(name));
-        } catch (NoClassDefFoundError e) {
-            // Ignore.
-        } catch (ClassNotFoundException e) {
-            // Ignore.
+            clazz = Optional.of(classLoader.loadClass(getClassName(name)));
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
+            clazz = Optional.empty();
         }
         return clazz;
     }

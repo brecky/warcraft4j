@@ -20,7 +20,7 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.*;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -36,15 +36,15 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class SpellEffectScalingEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.SPELL_EFFECT_SCALING;
 
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.FLOAT)
     private float coefficient;
-    @DbcField(order = 3, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.FLOAT)
     private float variance;
-    @DbcField(order = 4, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.FLOAT)
     private float resourceCoefficient;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.SPELL_EFFECT)
     private int spellEffectId;
 

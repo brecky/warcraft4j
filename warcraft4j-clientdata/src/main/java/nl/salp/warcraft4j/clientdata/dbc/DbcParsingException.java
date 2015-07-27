@@ -19,7 +19,7 @@
 
 package nl.salp.warcraft4j.clientdata.dbc;
 
-import nl.salp.warcraft4j.clientdata.io.DataParsingException;
+import nl.salp.warcraft4j.clientdata.io.parser.DataParsingException;
 
 /**
  * Data parsing exception for DBC related parsing.

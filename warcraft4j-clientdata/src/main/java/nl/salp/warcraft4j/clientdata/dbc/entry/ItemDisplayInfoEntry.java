@@ -21,7 +21,7 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -39,30 +39,30 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class ItemDisplayInfoEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.ITEM_DISPLAY_INFO;
 
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.STRINGTABLE_REFERENCE, numberOfEntries = 2)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.STRINGTABLE_REFERENCE, numberOfEntries = 2)
     private String[] modelName;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, numberOfEntries = 2)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32, numberOfEntries = 2)
     @DbcReference(type = DbcType.TEXTURE_FILE_DATA) // Refers to column #2....
     private int[] modelTexture;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32, numberOfEntries = 3)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.UINT32, numberOfEntries = 3)
     private int[] geosetGroup;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.UINT32)
     private int flags;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.SPELL_VISUAL)
     private int spellVisualId;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32, numberOfEntries = 2)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.UINT32, numberOfEntries = 2)
     @DbcReference(type = DbcType.HELMET_GEOSET_VISUAL_DATA)
     private int[] helmetGeosetVisualId;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32, numberOfEntries = 9)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.UINT32, numberOfEntries = 9)
     @DbcReference(type = DbcType.TEXTURE_FILE_DATA) // Refers to TextureFileData#textureItemId (TextureFileData.dbc, field #2)
     private int[] textures;
-    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.ITEM_VISUAL)
     private int itemVisualId;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 11, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.PARTICLE_COLOR)
     private int particleColorId;
 

@@ -19,9 +19,10 @@
 package nl.salp.warcraft4j.clientdata.dbc;
 
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldType;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.RandomAccessDataParser;
+import nl.salp.warcraft4j.clientdata.io.parser.RandomAccessDataParser;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.IOException;
@@ -58,29 +59,29 @@ class DbcEntryParser<T extends DbcEntry> extends RandomAccessDataParser<T> {
     }
 
     @Override
-    protected T parse(DataReader reader) throws IOException, DbcParsingException {
+    public T parse(DataReader reader) throws IOException, DbcParsingException {
         T instance = instantiate();
         SortedMap<Integer, Field> fields = parseFields(mappingType);
         for (int fieldIndex : fields.keySet()) {
             Field field = fields.get(fieldIndex);
-            DbcField fieldInfo = field.getAnnotation(DbcField.class);
-            DbcDataType dbcDataType = fieldInfo.dataType();
-            Object value = reader.readNext(dbcDataType.getDataType(fieldInfo), dbcDataType.getByteOrder(fieldInfo));
+            DbcFieldType fieldType = new DbcFieldType(field.getAnnotation(DbcFieldMapping.class));
 
-            if (fieldInfo.padding()) {
+            Object value = reader.readNext(fieldType.getDataType(), fieldType.getByteOrder());
+
+            if (fieldType.isPadding()) {
                 // Ignore.
-            } else if (DbcDataType.STRINGTABLE_REFERENCE == fieldInfo.dataType()) {
-                if (fieldInfo.numberOfEntries() > 1) {
-                    List<String> entries = new ArrayList<>(fieldInfo.numberOfEntries());
+            } else if (DbcDataType.STRINGTABLE_REFERENCE == fieldType.getDbcDataType()) {
+                if (fieldType.isArray()) {
+                    List<String> entries = new ArrayList<>(fieldType.getArraySize());
                     for (int i : (Integer[]) value) {
                         entries.add(getStringTableReference(i, stringTable));
                     }
-                    setValue(field, entries.toArray(new String[fieldInfo.numberOfEntries()]), instance, fieldInfo);
+                    setValue(field, entries.toArray(new String[fieldType.getArraySize()]), instance);
                 } else {
-                    setValue(field, getStringTableReference((int) value, stringTable), instance, fieldInfo);
+                    setValue(field, getStringTableReference((int) value, stringTable), instance);
                 }
             } else {
-                setValue(field, value, instance, fieldInfo);
+                setValue(field, value, instance);
             }
         }
         return instance;
@@ -130,17 +131,16 @@ class DbcEntryParser<T extends DbcEntry> extends RandomAccessDataParser<T> {
 
     /**
      * Set the value of a field on a DbcEntry instance.
-     * <p/>
+     * <p>
      * TODO Quick version and needs to be refactored heavily; use delegates, allow for field/method/constructor setting of values, clean-up.
      *
-     * @param field     The field to set the value on.
-     * @param value     The value to set.
-     * @param instance  The entry instance to set the value on.
-     * @param fieldInfo The field info of the field.
+     * @param field    The field to set the value on.
+     * @param value    The value to set.
+     * @param instance The entry instance to set the value on.
      *
      * @throws DbcParsingException If the value could not be set.
      */
-    private void setValue(Field field, Object value, T instance, DbcField fieldInfo) throws DbcParsingException {
+    private void setValue(Field field, Object value, T instance) throws DbcParsingException {
         boolean accessible = field.isAccessible();
         try {
             field.setAccessible(true);
@@ -159,6 +159,9 @@ class DbcEntryParser<T extends DbcEntry> extends RandomAccessDataParser<T> {
             } else if (field.getType() == short[].class) {
                 field.set(instance, ArrayUtils.toPrimitive(((Short[]) value)));
             } else if (field.getType() == int.class) {
+                if (Long.class.isAssignableFrom(value.getClass())) {
+                    System.out.println("Long -> Int cast failure inc.");
+                }
                 field.setInt(instance, ((Integer) value).intValue());
             } else if (field.getType() == int[].class) {
                 field.set(instance, ArrayUtils.toPrimitive(((Integer[]) value)));
@@ -195,8 +198,8 @@ class DbcEntryParser<T extends DbcEntry> extends RandomAccessDataParser<T> {
     private <T extends DbcEntry> SortedMap<Integer, Field> parseFields(Class<T> template) {
         SortedMap<Integer, Field> fields = new TreeMap<>();
         for (Field f : template.getDeclaredFields()) {
-            if (f.isAnnotationPresent(DbcField.class)) {
-                DbcField meta = f.getAnnotation(DbcField.class);
+            if (f.isAnnotationPresent(DbcFieldMapping.class)) {
+                DbcFieldMapping meta = f.getAnnotation(DbcFieldMapping.class);
                 if (fields.containsKey(meta.order())) {
                     throw new IllegalArgumentException("Double mapping found for column " + meta.order() + " in model " + template.getName());
                 }
@@ -204,7 +207,7 @@ class DbcEntryParser<T extends DbcEntry> extends RandomAccessDataParser<T> {
             }
         }
         if (fields.isEmpty()) {
-            throw new IllegalArgumentException("No fields annotated with @DbcField mapping information.");
+            throw new IllegalArgumentException("No fields annotated with @DbcFieldMapping mapping information.");
         }
         return fields;
     }

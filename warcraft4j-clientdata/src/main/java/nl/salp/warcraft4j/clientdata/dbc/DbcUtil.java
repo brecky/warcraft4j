@@ -18,20 +18,20 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc;
 
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcClasspathMappingScanner;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.*;
 import nl.salp.warcraft4j.clientdata.io.RandomAccessDataReader;
-import nl.salp.warcraft4j.clientdata.io.RandomAccessFileDataReader;
+import nl.salp.warcraft4j.clientdata.io.file.FileDataReader;
 
-import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -101,7 +101,7 @@ public final class DbcUtil {
      * @return The optional of the mapped DbcFile, being empty when it couldn't be resolved.
      */
     public static <T extends DbcEntry> Optional<DbcFile> getDbcFile(Class<T> entryType, String dbcDirectory) {
-        return getDbcFile(entryType, new File(dbcDirectory));
+        return getDbcFile(entryType, Paths.get(dbcDirectory));
     }
 
     /**
@@ -113,9 +113,9 @@ public final class DbcUtil {
      *
      * @return The optional of the mapped DbcFile, being empty when it couldn't be resolved.
      */
-    public static <T extends DbcEntry> Optional<DbcFile> getDbcFile(Class<T> entryType, File dbcDirectory) {
+    public static <T extends DbcEntry> Optional<DbcFile> getDbcFile(Class<T> entryType, Path dbcDirectory) {
         Optional<String> file = getMappedFile(entryType);
-        return file.isPresent() ? getDbcFile(entryType, getFileDataReaderSupplier(dbcDirectory.getPath(), file.get())) : Optional.empty();
+        return file.isPresent() ? getDbcFile(entryType, getFileDataReaderSupplier(dbcDirectory, file.get())) : Optional.empty();
     }
 
     /**
@@ -170,7 +170,7 @@ public final class DbcUtil {
                 .map(DbcUtil::getFieldMapping)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .mapToInt(DbcField::numberOfEntries)
+                .mapToInt(DbcFieldMapping::numberOfEntries)
                 .sum();
     }
 
@@ -241,7 +241,7 @@ public final class DbcUtil {
      * @return Optional int which is empty when no mapping order was specified.
      */
     public static OptionalInt getFieldMappingOrder(Field field) {
-        Optional<DbcField> mapping = getFieldMapping(field);
+        Optional<DbcFieldMapping> mapping = getFieldMapping(field);
         return mapping.isPresent() ? OptionalInt.of(mapping.get().order()) : OptionalInt.empty();
     }
 
@@ -265,10 +265,10 @@ public final class DbcUtil {
      *
      * @param field The field to get the mapping information from.
      *
-     * @return The optional {@link DbcField} with the mapping information.
+     * @return The optional {@link DbcFieldMapping} with the mapping information.
      */
-    public static Optional<DbcField> getFieldMapping(Field field) {
-        return getAnnotation(field, DbcField.class);
+    public static Optional<DbcFieldMapping> getFieldMapping(Field field) {
+        return getAnnotation(field, DbcFieldMapping.class);
     }
 
     /**
@@ -279,14 +279,10 @@ public final class DbcUtil {
      * @return The data size in bytes.
      */
     public static int getDbcDataSize(Field field) {
-        Optional<DbcField> fieldMapping = getFieldMapping(field);
+        Optional<DbcFieldMapping> fieldMapping = getFieldMapping(field);
         int size = 0;
         if (fieldMapping.isPresent()) {
-            if (fieldMapping.get().length() > 0) {
-                size = fieldMapping.get().length() * fieldMapping.get().numberOfEntries();
-            } else {
-                size = (fieldMapping.get().dataType().getDataType(fieldMapping.get()).getLength() * fieldMapping.get().numberOfEntries());
-            }
+            size = new DbcFieldType(fieldMapping.get()).getDataSize();
         }
         return size;
     }
@@ -299,7 +295,7 @@ public final class DbcUtil {
      * @return The supplier.
      */
     public static Supplier<RandomAccessDataReader> getFileDataReaderSupplier(String path) {
-        return getFileDataReaderSupplier(new File(path));
+        return getFileDataReaderSupplier(Paths.get(path));
     }
 
     /**
@@ -311,7 +307,31 @@ public final class DbcUtil {
      * @return The supplier.
      */
     public static Supplier<RandomAccessDataReader> getFileDataReaderSupplier(String directory, String filename) {
-        return getFileDataReaderSupplier(new File(directory, filename));
+        return getFileDataReaderSupplier(Paths.get(directory).resolve(filename));
+    }
+
+    /**
+     * Get a supplier for a {@link RandomAccessDataReader} for a file.
+     *
+     * @param directory The directory the file is located in.
+     * @param filename  The name of the file.
+     *
+     * @return The supplier.
+     */
+    public static Supplier<RandomAccessDataReader> getFileDataReaderSupplier(Path directory, String filename) {
+        return getFileDataReaderSupplier(directory.resolve(filename));
+    }
+
+    /**
+     * Get a supplier for a {@link RandomAccessDataReader} for a file.
+     *
+     * @param directory The directory the file is located in.
+     * @param file  The file.
+     *
+     * @return The supplier.
+     */
+    public static Supplier<RandomAccessDataReader> getFileDataReaderSupplier(Path directory, Path file) {
+        return getFileDataReaderSupplier(directory.resolve(file));
     }
 
     /**
@@ -321,8 +341,8 @@ public final class DbcUtil {
      *
      * @return The supplier.
      */
-    public static Supplier<RandomAccessDataReader> getFileDataReaderSupplier(File file) {
-        return () -> new RandomAccessFileDataReader(file);
+    public static Supplier<RandomAccessDataReader> getFileDataReaderSupplier(Path file) {
+        return () -> new FileDataReader(file);
     }
 
 
@@ -333,7 +353,7 @@ public final class DbcUtil {
      *
      * @return The entry type or {@code null} if it could not be determined.
      */
-    public static <T extends DbcEntry> Optional<DbcType> getEntryType(Class<T> mappingType) {
+    public static <T extends DbcEntry> Optional<DbcType> getDbcType(Class<T> mappingType) {
         if (mappingType == null || !mappingType.isAnnotationPresent(DbcMapping.class)) {
             return Optional.empty();
         }
@@ -377,8 +397,20 @@ public final class DbcUtil {
      * @throws IOException When reading failed.
      */
     public static String[] getAllClientDatabaseFiles(String dbcDirectory) throws IOException {
-        File dbcDir = new File(dbcDirectory);
-        return dbcDir.list(DBC_FILENAME_FILTER);
+        Path path = Paths.get(dbcDirectory);
+        List<String> files = new ArrayList<>();
+        try (DirectoryStream<Path> stream = path.getFileSystem().provider().newDirectoryStream(path, p -> isReadableFile(p) && isDbcFile(p))) {
+            stream.forEach(p -> files.add(String.valueOf(p)));
+        }
+        return files.toArray(new String[files.size()]);
+    }
+
+    private static boolean isReadableFile(Path path) {
+        return path != null && Files.exists(path) && Files.isRegularFile(path) && Files.isReadable(path);
+    }
+
+    private static boolean isDbcFile(Path path) {
+        return path != null && (String.valueOf(path.getFileName()).endsWith("dbc") || String.valueOf(path.getFileName()).endsWith("db2"));
     }
 
     /**

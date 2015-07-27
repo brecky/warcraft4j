@@ -21,7 +21,7 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcField;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -35,21 +35,21 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @DbcMapping(file = "FactionTemplate.dbc")
 public class FactionTemplateEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.FACTION_TEMPLATE;
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32)
     private int factionId;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.UINT32)
     private int flags;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32)
     private int factionGroupId;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.UINT32)
     private int friendGroupId;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.UINT32)
     private int enemyGroupId;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32, numberOfEntries = 4)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.UINT32, numberOfEntries = 4)
     private int[] enemies; // 4
-    @DbcField(order = 8, dataType = DbcDataType.UINT32, numberOfEntries = 4)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.UINT32, numberOfEntries = 4)
     private int[] friends; // 4
 
     @Override

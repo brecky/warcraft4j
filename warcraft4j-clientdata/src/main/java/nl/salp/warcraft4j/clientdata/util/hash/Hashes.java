@@ -40,8 +40,6 @@ public enum Hashes implements Hash {
     FNV1A_64BIT(FowlerNollVoHash.hash64fnv1a()),
     /** Bob Jenkins' lookup2 hash implementation. */
     LOOKUP2(new Lookup2Hash()),
-    /** Bob Jenkins' lookup3 32-bit little endian  hash (aka {@code littlehash()}). */
-    LOOKUP3_32BIT_LE(Lookup3Hash.littleEndian32bit()),
     /** Bob Jenkins' one-at-a-time hash. */
     ONE_AT_A_TIME(new OneAtATimeHash()),
     /** MD5 hash. */

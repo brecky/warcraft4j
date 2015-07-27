@@ -1,0 +1,29 @@
+{
+  "filename": "DBFilesClient/Achievement_Category.dbc",
+  "targetClass": "nl.salp.warcraft4j.clientdata.dbc.entry.AchievementCategoryEntry",
+  "dbcType": "ACHIEVEMENT_CATEGORY",
+  "mapping": "field",
+  "fields": [
+    {
+      "name": "id",
+      "column": 1,
+      "type": "uint32"
+    },
+    {
+      "name": "parentAchievementCategoryId",
+      "column": 2,
+      "type": "uint32",
+      "references": "ACHIEVEMENT_CATEGORY"
+    },
+    {
+      "name": "name",
+      "column": 3,
+      "type": "stringtable_reference"
+    },
+    {
+      "name": "uiOrder",
+      "column": 4,
+      "type": "int32"
+    }
+  ]
+}
