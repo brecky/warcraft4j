@@ -26,11 +26,38 @@ import java.util.List;
  * @author Barre Dijkstra
  */
 public interface CascConfig {
+    /**
+     * Get the available regions.
+     *
+     * @return The regions.
+     */
     List<String> getAvailableRegions();
 
+    /**
+     * Get the content checksum of the root file.
+     *
+     * @return The content checksum.
+     */
     Checksum getRootContentChecksum();
 
+    /**
+     * Get the file key of the encoding file.
+     *
+     * @return The file key.
+     */
     Checksum getEncodingFileChecksum();
 
+    /**
+     * Get the size of the encoding file.
+     *
+     * @return The size in bytes.
+     */
+    long getEncodingFileSize();
+
+    /**
+     * Get the CDN URL.
+     *
+     * @return The CDN URL.
+     */
     String getCdnUrl();
 }

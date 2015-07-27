@@ -19,19 +19,19 @@
 package nl.salp.warcraft4j.clientdata.casc.local;
 
 import nl.salp.warcraft4j.clientdata.casc.CascConfig;
-import nl.salp.warcraft4j.clientdata.casc.CascFileParsingException;
+import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.casc.Checksum;
 import nl.salp.warcraft4j.clientdata.casc.Config;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeUtil;
 import nl.salp.warcraft4j.clientdata.io.file.FileDataReader;
 
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * TODO Add description.
@@ -39,7 +39,39 @@ import java.util.function.Supplier;
  * @author Barre Dijkstra
  */
 public class LocalCascConfig implements CascConfig {
-    private static final String BUILD_INFO_FILENAME = ".build.info";
+    private static final String FILENAME_BUILDINFO = ".build.info";
+    private static final String KEY_BUILDINFO_ACTIVE = "Active";
+    private static final String KEY_BUILDINFO_ARMADILLO = "Armadillo";
+    private static final String KEY_BUILDINFO_BUILD = "Build Key";
+    private static final String KEY_BUILDINFO_CDN = "CDN Key";
+    private static final String KEY_BUILDINFO_CDN_HOSTS = "CDN Hosts";
+    private static final String KEY_BUILDINFO_CDN_PATH = "CDN Path";
+    private static final String KEY_BUILDINFO_IM_SIZE = "IM Size";
+    private static final String KEY_BUILDINFO_INSTALL = "Install Key";
+    private static final String KEY_BUILDINFO_LAST_ACTIVATION = "Last Activated";
+    private static final String KEY_BUILDINFO_REGIONS = "Branch";
+    private static final String KEY_BUILDINFO_TAGS = "Tags";
+    private static final String KEY_BUILDINFO_VERSION = "Version";
+
+    private static final String KEY_BUILD_DOWNLOAD = "download";
+    private static final String KEY_BUILD_ENCODING = "encoding";
+    private static final String KEY_BUILD_ENCODING_SIZE = "encoding-size";
+    private static final String KEY_BUILD_INSTALL = "install";
+    private static final String KEY_BUILD_INSTALLER = "build-playbuild-installer";
+    private static final String KEY_BUILD_NAME = "build-name";
+    private static final String KEY_BUILD_PATCH = "patch";
+    private static final String KEY_BUILD_PATCH_CONFIG = "patch-config";
+    private static final String KEY_BUILD_PATCH_SIZE = "patch-size";
+    private static final String KEY_BUILD_PRODUCT = "build-product";
+    private static final String KEY_BUILD_ROOT = "root";
+    private static final String KEY_BUILD_UID = "build-uid";
+
+    private static final String KEY_CDN_BUILDS = "builds";
+    private static final String KEY_CDN_ARCHIVES = "archives";
+    private static final String KEY_CDN_ARCHIVE_GROUP = "archive-group";
+    private static final String KEY_CDN_PATCH_ARCHIVES = "patch-archives";
+    private static final String KEY_CDN_PATCH_ARCHIVE_GROUP = "patch-achive-group";
+
     private final Path installationDirectory;
     private Config buildInfo;
     private Config build;
@@ -50,33 +82,33 @@ public class LocalCascConfig implements CascConfig {
     }
 
     private Supplier<DataReader> getBuildInfoReader() {
-        return () -> new FileDataReader(installationDirectory.resolve(BUILD_INFO_FILENAME));
+        return () -> new FileDataReader(installationDirectory.resolve(FILENAME_BUILDINFO));
     }
 
     private Supplier<DataReader> getConfigDataReader(String checksum) {
         return () -> new FileDataReader(installationDirectory.resolve(Paths.get("Data", "config", checksum.substring(0, 2), checksum.substring(2, 4), checksum)));
     }
 
-    protected Config getBuildInfo() {
+    protected final Config getBuildInfo() {
         if (buildInfo == null) {
             buildInfo = Config.tableConfig(getBuildInfoReader());
         }
         return buildInfo;
     }
 
-    protected Config getBuild() {
+    protected final Config getBuild() {
         if (build == null) {
-            String checksum = getBuildInfo().getFirstValue("Build Key")
-                    .orElseThrow(() -> new CascFileParsingException("No active configurations found to get the build key from."));
+            String checksum = getBuildInfo().getFirstValue(KEY_BUILDINFO_BUILD)
+                    .orElseThrow(() -> new CascParsingException("No active configurations found to get the build key from."));
             build = Config.keyValueConfig(getConfigDataReader(checksum));
         }
         return build;
     }
 
-    protected Config getCdn() {
+    protected final Config getCdn() {
         if (cdn == null) {
-            String checksum = getBuildInfo().getFirstValue("CDN Key")
-                    .orElseThrow(() -> new CascFileParsingException("No active configurations found to get the CDN key from."));
+            String checksum = getBuildInfo().getFirstValue(KEY_BUILDINFO_CDN)
+                    .orElseThrow(() -> new CascParsingException("No active configurations found to get the CDN key from."));
             build = Config.keyValueConfig(getConfigDataReader(checksum));
         }
         return cdn;
@@ -84,29 +116,65 @@ public class LocalCascConfig implements CascConfig {
 
     @Override
     public List<String> getAvailableRegions() {
-        return getBuildInfo().getValues("Branch")
+        return getBuildInfo().getValues(KEY_BUILDINFO_REGIONS)
                 .orElse(Collections.emptyList());
+    }
+
+    /**
+     * Check if the configuration for a region is active.
+     *
+     * @param region The region to check.
+     *
+     * @return {@code true} if the region is active.
+     */
+    public boolean isConfigurationForRegionActive(String region) {
+        return isConfigurationActive(getAvailableRegions().indexOf(region));
+    }
+
+    /**
+     * Check if a configuration is active.
+     *
+     * @param index The index of the configuration.
+     *
+     * @return {@code true} if the configuration is active.
+     */
+    protected boolean isConfigurationActive(int index) {
+        boolean active = false;
+        List<Boolean> activeFlags = getBuildInfo().getValues(KEY_BUILDINFO_ACTIVE)
+                .map(v -> v.stream().map(s -> "1".equals(s)).collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
+        if (activeFlags.size() > index) {
+            active = activeFlags.get(index);
+        }
+        return active;
+
     }
 
     @Override
     public Checksum getRootContentChecksum() {
-        return getBuild().getLastValue("root", (s) -> new Checksum(DataTypeUtil.hexStringToByteArray(s)))
-                .orElseThrow(() -> new CascFileParsingException("No root content checksum defined."));
+        return getBuild().getLastValue(KEY_BUILD_ROOT, (s) -> new Checksum(DataTypeUtil.hexStringToByteArray(s)))
+                .orElseThrow(() -> new CascParsingException("No root content checksum defined."));
     }
 
     @Override
     public Checksum getEncodingFileChecksum() {
-        return getBuild().getLastValue("encoding", (s) -> new Checksum(DataTypeUtil.hexStringToByteArray(s)))
-                .orElseThrow(() -> new CascFileParsingException("No encoding file checksum defined."));
+        return getBuild().getLastValue(KEY_BUILD_ENCODING, (s) -> new Checksum(DataTypeUtil.hexStringToByteArray(s)))
+                .orElseThrow(() -> new CascParsingException("No encoding file checksum defined."));
+    }
+
+    @Override
+    public long getEncodingFileSize() {
+        return getBuild().getLastValue(KEY_BUILD_ENCODING_SIZE, Long::valueOf)
+                .orElseThrow(() -> new CascParsingException("No encoding file size defined."));
     }
 
     @Override
     public String getCdnUrl() {
-        String host = getBuildInfo().getFirstValue("CDN Hosts")
+        String host = getBuildInfo().getFirstValue(KEY_BUILDINFO_CDN_HOSTS)
                 .map(s -> s.split(" ")[0])
-                .orElseThrow(() -> new CascFileParsingException("No CDN host(s) defined."));
-        String path = getBuildInfo().getFirstValue("CDN Path")
-                .orElseThrow(() -> new CascFileParsingException("No CDN path defined."));
+                .orElseThrow(() -> new CascParsingException("No CDN host(s) defined."));
+        String path = getBuildInfo().getFirstValue(KEY_BUILDINFO_CDN_PATH)
+                .orElseThrow(() -> new CascParsingException("No CDN path defined."));
         return String.format("http://%s%s", host, path);
     }
 }

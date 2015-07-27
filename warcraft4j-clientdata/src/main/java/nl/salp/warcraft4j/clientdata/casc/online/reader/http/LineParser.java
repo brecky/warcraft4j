@@ -17,10 +17,10 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.clientdata.cdn.reader.http;
+package nl.salp.warcraft4j.clientdata.casc.online.reader.http;
 
-import nl.salp.warcraft4j.clientdata.cdn.Application;
-import nl.salp.warcraft4j.clientdata.cdn.CdnException;
+import nl.salp.warcraft4j.clientdata.casc.online.Application;
+import nl.salp.warcraft4j.clientdata.casc.online.CdnException;
 
 /**
  * Parser for parsing a CDN file text line to a parsed instance.

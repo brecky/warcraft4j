@@ -16,25 +16,40 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.cdn;
+
+package nl.salp.warcraft4j.clientdata.casc.online;
 
 /**
- * TODO Document class.
+ * General exception for CDN related exceptions.
  *
  * @author Barre Dijkstra
  */
-public enum CdnFileType {
-    CONFIG("config"),
-    DATA("data"),
-    PATCH("patch");
-
-    private final String path;
-
-    CdnFileType(String path) {
-        this.path = path;
+public class CdnException extends Exception {
+    /**
+     * Create a new CdnException with a custom message.
+     *
+     * @param message The message.
+     */
+    public CdnException(String message) {
+        super(message);
     }
 
-    public String getPath() {
-        return path;
+    /**
+     * Create a new CdnException with a custom message and a cause exception.
+     *
+     * @param message The message.
+     * @param cause   The exception.
+     */
+    public CdnException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    /**
+     * Create a new CdnException from the cause exception,
+     *
+     * @param cause The exception.
+     */
+    public CdnException(Throwable cause) {
+        super(cause);
     }
 }

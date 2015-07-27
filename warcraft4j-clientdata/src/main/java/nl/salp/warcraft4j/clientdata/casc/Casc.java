@@ -199,7 +199,7 @@ public class Casc {
         if (encodingFile == null) {
             IndexEntry indexEntry = Optional.ofNullable(getConfig().getEncodingFileChecksum())
                     .flatMap(this::getIndexEntryForFileChecksum)
-                    .orElseThrow(() -> new CascFileParsingException(format("No entry found for encoding file entry %s", getConfig().getEncodingFileChecksum())));
+                    .orElseThrow(() -> new CascParsingException(format("No entry found for encoding file entry %s", getConfig().getEncodingFileChecksum())));
             LOGGER.debug("Parsing encoding file from {} bytes of data in data.{} at offset {}",
                     indexEntry.getFileSize(),
                     format("%03d", indexEntry.getFileNumber()),
@@ -210,7 +210,7 @@ public class Casc {
             try (RandomAccessDataReader reader = readerSupplier.get()) {
                 encodingFile = reader.readNext(new EncodingFileParser());
             } catch (IOException e) {
-                throw new CascFileParsingException(format("Error parsing encoding file %s", getConfig().getEncodingFileChecksum()), e);
+                throw new CascParsingException(format("Error parsing encoding file %s", getConfig().getEncodingFileChecksum()), e);
             } finally {
                 parseLock.unlock();
             }
@@ -227,11 +227,11 @@ public class Casc {
     public Root getRoot() {
         if (root == null) {
             Checksum contentChecksum = Optional.of(config.getRootContentChecksum())
-                    .orElseThrow(() -> new CascFileParsingException(format("No checksum found for root file")));
+                    .orElseThrow(() -> new CascParsingException(format("No checksum found for root file")));
             Checksum fileKey = getFileKeyForContentChecksum(contentChecksum)
-                    .orElseThrow(() -> new CascFileParsingException(format("No file key found for root file entry %s", contentChecksum)));
+                    .orElseThrow(() -> new CascParsingException(format("No file key found for root file entry %s", contentChecksum)));
             IndexEntry indexEntry = getIndexEntryForFileKey(fileKey)
-                    .orElseThrow(() -> new CascFileParsingException(format("No index entry found for root file entry %s with key %s", contentChecksum, fileKey)));
+                    .orElseThrow(() -> new CascParsingException(format("No index entry found for root file entry %s with key %s", contentChecksum, fileKey)));
             LOGGER.debug("Initialising root file from {} bytes of data in data.{} at offset {}",
                     indexEntry.getFileSize(),
                     format("%03d", indexEntry.getFileNumber()),
@@ -242,7 +242,7 @@ public class Casc {
             try (DataReader reader = readerSupplier.get()) {
                 root = reader.readNext(new RootFileParser(blteFile.getDecompressedSize()));
             } catch (IOException e) {
-                throw new CascFileParsingException(format("Error parsing root file from data file %d at offset %d", indexEntry.getFileNumber(), indexEntry.getDataFileOffset()), e);
+                throw new CascParsingException(format("Error parsing root file from data file %d at offset %d", indexEntry.getFileNumber(), indexEntry.getDataFileOffset()), e);
             } finally {
                 parseLock.unlock();
             }
@@ -297,7 +297,7 @@ public class Casc {
                 out.flush();
             }
         } catch (IOException e) {
-            throw new CascFileParsingException(e);
+            throw new CascParsingException(e);
         }
         return writtenBytes;
     }

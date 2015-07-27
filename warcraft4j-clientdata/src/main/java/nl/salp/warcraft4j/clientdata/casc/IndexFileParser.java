@@ -80,7 +80,7 @@ public class IndexFileParser implements DataParser<IndexFile> {
         return new IndexFile(file, fileNumber, fileVersion, entries);
     }
 
-    private void validateHeader(DataReader reader) throws CascFileParsingException, IOException {
+    private void validateHeader(DataReader reader) throws CascParsingException, IOException {
         long position = reader.position();
 
         int headerLen = (int) (reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.LITTLE_ENDIAN).longValue() & (Integer.MAX_VALUE | Integer.MIN_VALUE));
@@ -90,7 +90,7 @@ public class IndexFileParser implements DataParser<IndexFile> {
 
         int h2 = JenkinsHash.hashLittle2b(data, headerLen);
         if (hash != h2) {
-            throw new CascFileParsingException(format("Invalid index header hash %X -> %X", hash, h2));
+            throw new CascParsingException(format("Invalid index header hash %X -> %X", hash, h2));
         }
 
         reader.position(position);
@@ -99,7 +99,7 @@ public class IndexFileParser implements DataParser<IndexFile> {
     private IndexHeaderV2 parseHeader(DataReader reader) throws IOException {
         int indexVersion = reader.readNext(DataTypeFactory.getUnsignedShort(), ByteOrder.LITTLE_ENDIAN);
         if (indexVersion != 0x07) {
-            throw new CascFileParsingException(format("Invalid index file header version 0x%02X, requires 0x07", indexVersion));
+            throw new CascParsingException(format("Invalid index file header version 0x%02X, requires 0x07", indexVersion));
         }
         byte keyIndex = reader.readNext(DataTypeFactory.getByte());
         byte extraBytes = reader.readNext(DataTypeFactory.getByte());
@@ -109,7 +109,7 @@ public class IndexFileParser implements DataParser<IndexFile> {
         byte segmentBits = reader.readNext(DataTypeFactory.getByte());
         long maxFileOffset = reader.readNext(DataTypeFactory.getLong(), ByteOrder.BIG_ENDIAN);
         if (extraBytes != 0x00 || spanSizeBytes != 0x04 || spanOffsetBytes != 0x05 || keyBytes != 0x09) {
-            throw new CascFileParsingException("Invalid index file header");
+            throw new CascParsingException("Invalid index file header");
         }
         return new IndexHeaderV2(indexVersion, keyIndex, extraBytes, spanSizeBytes, spanOffsetBytes, keyBytes, segmentBits, maxFileOffset);
     }

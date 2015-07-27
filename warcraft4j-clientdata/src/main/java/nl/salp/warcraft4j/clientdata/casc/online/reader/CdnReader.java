@@ -16,10 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.cdn.reader;
+package nl.salp.warcraft4j.clientdata.casc.online.reader;
 
 import nl.salp.warcraft4j.Region;
-import nl.salp.warcraft4j.clientdata.cdn.*;
+import nl.salp.warcraft4j.clientdata.casc.online.*;
 
 import java.util.List;
 

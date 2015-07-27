@@ -17,23 +17,43 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.clientdata.casc;
+package nl.salp.warcraft4j.clientdata.casc.online;
 
 /**
- * TODO Document class.
+ * Application available in a CDN.
  *
  * @author Barre Dijkstra
  */
-public class CascFileParsingException extends RuntimeException {
-    public CascFileParsingException(String message) {
-        super(message);
+public enum Application {
+    /** World of Warcraft (live). */
+    WORLD_OF_WARCRAFT_LIVE("wow"),
+    /** World of Warcraft (PTR). */
+    WORLD_OF_WARCRAFT_PTR("wowt"),
+    /** World of Warcraft (beta). */
+    WORLD_OF_WARCRAFT_BETA("wow_beta"),
+    /** Heroes of the Storm (live, though currently only available as beta). */
+    HEROES_OF_THE_STORM("storm");
+
+    /**
+     * The CDN key for the application.
+     */
+    private final String key;
+
+    /**
+     * Create a new Application instance.
+     *
+     * @param key The CDN key for the application.
+     */
+    private Application(String key) {
+        this.key = key;
     }
 
-    public CascFileParsingException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public CascFileParsingException(Throwable cause) {
-        super(cause);
+    /**
+     * Get the CDN key for the application.
+     *
+     * @return The CDN key.
+     */
+    public String getKey() {
+        return key;
     }
 }

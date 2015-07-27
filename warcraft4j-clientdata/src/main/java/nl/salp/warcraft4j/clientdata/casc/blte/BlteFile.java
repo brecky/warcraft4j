@@ -18,9 +18,8 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.blte;
 
-import nl.salp.warcraft4j.clientdata.casc.CascFileParsingException;
+import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.io.ByteArrayDataReader;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.RandomAccessDataReader;
 
 import java.io.ByteArrayOutputStream;
@@ -81,7 +80,7 @@ public class BlteFile {
 		try {
 			out.write(byteArray);
 		} catch (IOException e) {
-			throw new CascFileParsingException("Unable to concatenate chunk data", e);
+			throw new CascParsingException("Unable to concatenate chunk data", e);
 		}
 	}
 }

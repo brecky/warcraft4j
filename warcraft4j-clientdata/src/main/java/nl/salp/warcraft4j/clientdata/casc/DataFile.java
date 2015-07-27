@@ -20,8 +20,6 @@ package nl.salp.warcraft4j.clientdata.casc;
 
 import nl.salp.warcraft4j.clientdata.casc.blte.BlteFile;
 import nl.salp.warcraft4j.clientdata.casc.blte.BlteFileParser;
-import nl.salp.warcraft4j.clientdata.io.ByteArrayDataReader;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.RandomAccessDataReader;
 import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.clientdata.io.file.FileDataReader;
@@ -47,7 +45,7 @@ public class DataFile {
     private final Path path;
     private final Map<Integer, BlockHeader> entries;
 
-    public DataFile(int fileNumber, Path path) throws CascFileParsingException {
+    public DataFile(int fileNumber, Path path) throws CascParsingException {
         this.fileNumber = fileNumber;
         this.path = path;
         this.entries = new HashMap<>();
@@ -66,7 +64,7 @@ public class DataFile {
         try (RandomAccessDataReader reader = getRawBlteReader(header).get()) {
             return reader.readNext(new BlteFileParser(index));
         } catch (IOException e) {
-            throw new CascFileParsingException(format("Error reading %dB BLTE file from data file %d (%s) with data file offset %d", index.getFileSize(), fileNumber, path, header.getDataStart()), e);
+            throw new CascParsingException(format("Error reading %dB BLTE file from data file %d (%s) with data file offset %d", index.getFileSize(), fileNumber, path, header.getDataStart()), e);
         }
     }
 
@@ -76,7 +74,7 @@ public class DataFile {
 
     private BlockHeader getBlockHeader(IndexEntry index) {
         if (index.getFileNumber() != fileNumber) {
-            throw new CascFileParsingException(format("Tried to read file with data file number %d from data file number %d", index.getFileNumber(), fileNumber));
+            throw new CascParsingException(format("Tried to read file with data file number %d from data file number %d", index.getFileNumber(), fileNumber));
         }
         if (!entries.containsKey(index.getDataFileOffset())) {
             entries.put(index.getDataFileOffset(), parseBlockHeader(index));
@@ -99,7 +97,7 @@ public class DataFile {
             byte[] unknown = reader.readNext(DataTypeFactory.getByteArray(10));
             return new BlockHeader(index.getDataFileOffset(), hash, blockSize, unknown);
         } catch (IOException e) {
-            throw new CascFileParsingException(format("Error reading data file %d (%s) for offset %d", fileNumber, path, index.getDataFileOffset()), e);
+            throw new CascParsingException(format("Error reading data file %d (%s) for offset %d", fileNumber, path, index.getDataFileOffset()), e);
         }
     }
 

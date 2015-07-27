@@ -19,8 +19,7 @@
 package nl.salp.warcraft4j.clientdata.casc.info;
 
 import nl.salp.warcraft4j.clientdata.casc.Branch;
-import nl.salp.warcraft4j.clientdata.casc.CascFileParsingException;
-import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeUtil;
+import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
@@ -62,7 +61,7 @@ abstract class BuildInfoFileParser<T> extends InfoFileParser<T> {
     protected List<BuildInfoFile> parseEntries(Map<String, Field> fields) {
         int entryCount = getEntryCount(fields);
         if (entryCount < 1) {
-            throw new CascFileParsingException("The build info file contains no entries.");
+            throw new CascParsingException("The build info file contains no entries.");
         }
         return IntStream.range(0, getEntryCount(fields)).mapToObj(i -> parseEntry(fields, i)).collect(Collectors.toList());
     }
@@ -106,11 +105,11 @@ abstract class BuildInfoFileParser<T> extends InfoFileParser<T> {
     }
 
 
-    protected static Supplier<CascFileParsingException> missingFieldEntry(String fieldName, int index) {
-        return () -> new CascFileParsingException(format("Unable to find an entry for field %s with index %d", fieldName, index));
+    protected static Supplier<CascParsingException> missingFieldEntry(String fieldName, int index) {
+        return () -> new CascParsingException(format("Unable to find an entry for field %s with index %d", fieldName, index));
     }
 
-    protected static Supplier<CascFileParsingException> missingField(String fieldName) {
-        return () -> new CascFileParsingException(format("Unable to find field %s", fieldName));
+    protected static Supplier<CascParsingException> missingField(String fieldName) {
+        return () -> new CascParsingException(format("Unable to find field %s", fieldName));
     }
 }

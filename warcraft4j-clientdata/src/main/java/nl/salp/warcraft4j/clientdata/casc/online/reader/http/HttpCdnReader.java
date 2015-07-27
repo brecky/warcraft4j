@@ -17,11 +17,11 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.clientdata.cdn.reader.http;
+package nl.salp.warcraft4j.clientdata.casc.online.reader.http;
 
 import nl.salp.warcraft4j.Region;
-import nl.salp.warcraft4j.clientdata.cdn.*;
-import nl.salp.warcraft4j.clientdata.cdn.reader.CdnReader;
+import nl.salp.warcraft4j.clientdata.casc.online.*;
+import nl.salp.warcraft4j.clientdata.casc.online.reader.CdnReader;
 import org.apache.http.client.fluent.Request;
 
 import java.io.BufferedReader;

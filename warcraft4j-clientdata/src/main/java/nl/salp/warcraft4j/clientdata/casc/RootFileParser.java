@@ -68,7 +68,7 @@ public class RootFileParser implements DataParser<Root> {
             totalEntries += entryCount;
             long blockUnknown = reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN);
             long blockFlags = reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN);
-            Locale.getLocale(blockFlags).orElseThrow(() -> new CascFileParsingException(format("Unable to find a locale for flag %d", blockFlags)));
+            Locale.getLocale(blockFlags).orElseThrow(() -> new CascParsingException(format("Unable to find a locale for flag %d", blockFlags)));
 
             List<Long> entryUnknown = new ArrayList<>();
             for (long i = 0; i < entryCount; i++) {

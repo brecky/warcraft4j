@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.blte;
 
-import nl.salp.warcraft4j.clientdata.casc.CascFileParsingException;
+import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.casc.Checksum;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
@@ -80,7 +80,7 @@ class BlteMultiChunkParser extends BlteChunkParser {
                     checksum
                     );
             if (!checksum.equals(dataChecksum)) {
-                throw new CascFileParsingException(format("Error parsing BLTE chunk with compression %s, mismatching checksum (got %s, expected %s)", compressionType, dataChecksum, checksum));
+                throw new CascParsingException(format("Error parsing BLTE chunk with compression %s, mismatching checksum (got %s, expected %s)", compressionType, dataChecksum, checksum));
             }
 
             return new BlteChunk(data.length, decompressedSize, data, getDecompressor(compressionType));

@@ -16,44 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package nl.salp.warcraft4j.clientdata.cdn;
+package nl.salp.warcraft4j.clientdata.casc;
 
 /**
- * Application available in a CDN.
+ * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public enum Application {
-    /** World of Warcraft (live). */
-    WORLD_OF_WARCRAFT_LIVE("wow"),
-    /** World of Warcraft (PTR). */
-    WORLD_OF_WARCRAFT_PTR("wowt"),
-    /** World of Warcraft (beta). */
-    WORLD_OF_WARCRAFT_BETA("wow_beta"),
-    /** Heroes of the Storm (live, though currently only available as beta). */
-    HEROES_OF_THE_STORM("storm");
-
-    /**
-     * The CDN key for the application.
-     */
-    private final String key;
-
-    /**
-     * Create a new Application instance.
-     *
-     * @param key The CDN key for the application.
-     */
-    private Application(String key) {
-        this.key = key;
+public class CascException extends RuntimeException {
+    public CascException(String message) {
+        super(message);
     }
 
-    /**
-     * Get the CDN key for the application.
-     *
-     * @return The CDN key.
-     */
-    public String getKey() {
-        return key;
+    public CascException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public CascException(Throwable cause) {
+        super(cause);
     }
 }

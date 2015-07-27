@@ -48,7 +48,7 @@ public class Config {
             try (DataReader reader = dataReaderSupplier.get()) {
                 values = configParser.parse(reader);
             } catch (IOException e) {
-                throw new CascFileParsingException("Error parsing configuration file", e);
+                throw new CascParsingException("Error parsing configuration file", e);
             }
         }
         return values;
@@ -126,12 +126,12 @@ public class Config {
     }
 
     interface ConfigParser {
-        Map<String, List<String>> parse(DataReader reader) throws IOException, CascFileParsingException;
+        Map<String, List<String>> parse(DataReader reader) throws IOException, CascParsingException;
     }
 
     private static class KeyValueConfigParser implements ConfigParser {
         @Override
-        public Map<String, List<String>> parse(DataReader reader) throws IOException, CascFileParsingException {
+        public Map<String, List<String>> parse(DataReader reader) throws IOException, CascParsingException {
             Map<String, List<String>> values = new HashMap<>();
             while (reader.hasRemaining()) {
                 String line = reader.readNext(DataTypeFactory.getStringLine()).trim();
@@ -148,7 +148,7 @@ public class Config {
 
     private static class TableConfigParser implements ConfigParser {
         @Override
-        public Map<String, List<String>> parse(DataReader reader) throws IOException, CascFileParsingException {
+        public Map<String, List<String>> parse(DataReader reader) throws IOException, CascParsingException {
             Map<String, List<String>> values = new HashMap<>();
             Map<Integer, String> headerIndexes = new HashMap<>();
             boolean header = true;

@@ -57,7 +57,7 @@ public class Index {
                 .filter(i -> i < 0 || i > 32)
                 .count();
         if (failCnt > 0) {
-            throw new CascFileParsingException(String.format("Got %d entries with negative keys...", failCnt));
+            throw new CascParsingException(String.format("Got %d entries with negative keys...", failCnt));
         }
         indexFiles.stream()
                 .map(IndexFile::getEntries)

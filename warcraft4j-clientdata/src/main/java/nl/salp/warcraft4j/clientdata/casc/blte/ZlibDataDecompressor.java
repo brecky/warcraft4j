@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.blte;
 
-import nl.salp.warcraft4j.clientdata.casc.CascFileParsingException;
+import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,12 +35,12 @@ class ZlibDataDecompressor implements DataDecompressor {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZlibDataDecompressor.class);
 
     @Override
-    public byte[] decompress(byte[] data, long compressedSize, long decompressedSize) throws CascFileParsingException {
+    public byte[] decompress(byte[] data, long compressedSize, long decompressedSize) throws CascParsingException {
         return decompress(data, 0, compressedSize, decompressedSize);
     }
 
     @Override
-    public byte[] decompress(byte[] data, long offset, long compressedSize, long decompressedSize) throws CascFileParsingException {
+    public byte[] decompress(byte[] data, long offset, long compressedSize, long decompressedSize) throws CascParsingException {
         try {
             // CASCExplorer uses eq of ArrayUtils.subarray(data, 2, data.length - 2) instead of full array size, which is the 2 byte zip header
             Inflater decompresser = new Inflater(false);
@@ -50,12 +50,12 @@ class ZlibDataDecompressor implements DataDecompressor {
             int resultLength = decompresser.inflate(result);
             decompresser.end();
             if (resultLength != decompressedSize) {
-                throw new CascFileParsingException(String.format("Decompressed BLTE chunk to a %dB output while %dB was specified.", resultLength, decompressedSize));
+                throw new CascParsingException(String.format("Decompressed BLTE chunk to a %dB output while %dB was specified.", resultLength, decompressedSize));
             }
             LOGGER.trace("Succesfully decompressed gzip'd chunk data to {}B of data.", result.length, decompressedSize);
             return result;
         } catch (DataFormatException e) {
-            throw new CascFileParsingException(e);
+            throw new CascParsingException(e);
         }
     }
 

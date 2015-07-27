@@ -170,7 +170,7 @@ public class EncodingFileParser implements DataParser<EncodingFile> {
             byte[] checksum = reader.readNext(DataTypeFactory.getByteArray(CHECKSUM_SIZE));
             return new EncodingFileBlockChecksum(contentChecksum, checksum);
         } catch (IOException e) {
-            throw new CascFileParsingException(e);
+            throw new CascParsingException(e);
         }
     }
 
@@ -186,7 +186,7 @@ public class EncodingFileParser implements DataParser<EncodingFile> {
             LOGGER.trace("Successfully parsed encoding file block with {} entries and MD5 checksum {}", entries.size(), DataTypeUtil.byteArrayToHexString(checksum));
             return new EncodingFileBlock(entries, checksum);
         } catch (IOException e) {
-            throw new CascFileParsingException(e);
+            throw new CascParsingException(e);
         }
     }
 

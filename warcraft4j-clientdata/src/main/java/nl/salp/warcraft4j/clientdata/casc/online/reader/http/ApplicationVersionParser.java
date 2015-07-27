@@ -16,13 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.cdn.reader.http;
+
+package nl.salp.warcraft4j.clientdata.casc.online.reader.http;
 
 import nl.salp.warcraft4j.Region;
-import nl.salp.warcraft4j.clientdata.cdn.Application;
-import nl.salp.warcraft4j.clientdata.cdn.CdnException;
-import nl.salp.warcraft4j.clientdata.cdn.CdnHost;
-import nl.salp.warcraft4j.clientdata.cdn.CdnRegion;
+import nl.salp.warcraft4j.clientdata.casc.online.Application;
+import nl.salp.warcraft4j.clientdata.casc.online.ApplicationVersion;
+import nl.salp.warcraft4j.clientdata.casc.online.CdnException;
+import nl.salp.warcraft4j.clientdata.casc.online.CdnRegion;
+
+import java.util.StringTokenizer;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -32,14 +35,15 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  * {@link LineParser} implementation for parsing CDN host information.
  *
  * @author Barre Dijkstra
- * @see nl.salp.warcraft4j.clientdata.cdn.CdnHost
- * @see nl.salp.warcraft4j.clientdata.cdn.reader.http.HttpCdnReader
+ * @see ApplicationVersion
+ * @see nl.salp.warcraft4j.clientdata.casc.online.reader.http.HttpCdnReader
  */
-class CdnHostParser implements LineParser<CdnHost> {
-    /** The header of the CDN information file. */
-    private static final String HEADER = "Name!STRING:0|Path!STRING:0|Hosts!STRING:0";
+
+class ApplicationVersionParser implements LineParser<ApplicationVersion> {
+    /** The header of the version file. */
+    private static final String HEADER = "Region!STRING:0|BuildConfig!HEX:16|CDNConfig!HEX:16|BuildId!DEC:4|VersionsName!String:0";
     /** The URI format mask for the URL to retrieve the CDN information from. */
-    private static final String URI_MASK = "http://us.patch.battle.net/%s/cdns";
+    private static final String URI_MASK = "http://us.patch.battle.net/%s/versions";
 
     @Override
     public String getCdnUrl(Application application) throws CdnException {
@@ -55,24 +59,19 @@ class CdnHostParser implements LineParser<CdnHost> {
     }
 
     @Override
-    public CdnHost parse(String line) throws CdnException {
+    public ApplicationVersion parse(String line) throws CdnException {
         if (isEmpty(line)) {
-            throw new CdnException("Can't parse an empty line into a CDN information instance.");
+            throw new CdnException("Can't parse an empty line into a CDN application version.");
         }
-
-        String[] data = line.split("\\|");
-        if (data.length != 3) {
-            throw new CdnException(format("Tried parse an invalid line into a CDN information instance: '%s'", line));
+        StringTokenizer tokenizer = new StringTokenizer(line, "|");
+        if (tokenizer.countTokens() != 5) {
+            throw new CdnException(format("Tried parse an invalid line into a CDN application version: '%s'", line));
         }
-        Region region = CdnRegion.getRegion(data[0]).getRegion();
-        String path = data[1];
-        String[] hosts;
-        if (data[2].contains(" ")) {
-            hosts = data[2].split(" ");
-        } else {
-            hosts = new String[]{data[2]};
-        }
-        return new CdnHost(region, path, hosts);
+        Region region = CdnRegion.getRegion(tokenizer.nextToken()).getRegion();
+        String buildConfig = tokenizer.nextToken();
+        String cdnConfig = tokenizer.nextToken();
+        String buildId = tokenizer.nextToken();
+        String versionName = tokenizer.nextToken();
+        return new ApplicationVersion(region, buildConfig, cdnConfig, buildId, versionName);
     }
-
 }

@@ -19,7 +19,6 @@
 package nl.salp.warcraft4j.clientdata.casc;
 
 import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeUtil;
 import nl.salp.warcraft4j.clientdata.io.file.FileDataReader;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
@@ -77,7 +76,7 @@ public class IndexParser {
             LOGGER.debug("Parsing index file {}", path);
             return reader.readNext(new IndexFileParser(path, IndexParser::parseFileNumber, IndexParser::parseFileVersion));
         } catch (IOException e) {
-            throw new CascFileParsingException(format("Error parsing index file %s", path), e);
+            throw new CascParsingException(format("Error parsing index file %s", path), e);
         }
     }
 
@@ -101,7 +100,7 @@ public class IndexParser {
             LOGGER.trace("Found {} up-to-date index files in {}", latestFiles.size(), path);
             return latestFiles.values();
         } catch (IOException e) {
-            throw new CascFileParsingException("Error getting the latest index files", e);
+            throw new CascParsingException("Error getting the latest index files", e);
         }
     }
 
@@ -113,7 +112,7 @@ public class IndexParser {
             LOGGER.trace("Found {} index files in {}", scanner.getIndexFiles().size(), path);
             return scanner.getIndexFiles();
         } catch (IOException e) {
-            throw new CascFileParsingException("Error getting all index files", e);
+            throw new CascParsingException("Error getting all index files", e);
         }
     }
 
@@ -130,28 +129,28 @@ public class IndexParser {
             LOGGER.trace("Found {} index files in {}, not in the {} element file list", files.size(), path, excludedPaths.size());
             return files;
         } catch (IOException e) {
-            throw new CascFileParsingException("Error getting all index files", e);
+            throw new CascParsingException("Error getting all index files", e);
         }
     }
 
 
-    private static int parseFileNumber(Path file) throws CascFileParsingException {
+    private static int parseFileNumber(Path file) throws CascParsingException {
         try {
             String filename = String.valueOf(file.getFileName());
             byte[] data = Hex.decodeHex(filename.substring(0, filename.indexOf('.')).toCharArray());
             return data[0];
         } catch (DecoderException e) {
-            throw new CascFileParsingException("Unable to parse the file number.", e);
+            throw new CascParsingException("Unable to parse the file number.", e);
         }
     }
 
-    private static int parseFileVersion(Path file) throws CascFileParsingException {
+    private static int parseFileVersion(Path file) throws CascParsingException {
         try {
             String filename = String.valueOf(file.getFileName());
             byte[] data = Hex.decodeHex(filename.substring(0, filename.indexOf('.')).toCharArray());
             return ByteBuffer.wrap(data, 1, 4).order(ByteOrder.BIG_ENDIAN).getInt();
         } catch (DecoderException e) {
-            throw new CascFileParsingException("Unable to parse the file version.", e);
+            throw new CascParsingException("Unable to parse the file version.", e);
         }
     }
 

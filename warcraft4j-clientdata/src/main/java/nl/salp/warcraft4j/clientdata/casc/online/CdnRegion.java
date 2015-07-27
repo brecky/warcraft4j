@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.clientdata.cdn;
+package nl.salp.warcraft4j.clientdata.casc.online;
 
 import nl.salp.warcraft4j.Region;
 

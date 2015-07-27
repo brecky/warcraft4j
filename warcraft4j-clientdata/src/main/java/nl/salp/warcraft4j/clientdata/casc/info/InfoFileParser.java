@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.info;
 
-import nl.salp.warcraft4j.clientdata.casc.CascFileParsingException;
+import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.clientdata.io.parser.DataParser;
 import nl.salp.warcraft4j.clientdata.io.parser.DataParsingException;
@@ -44,7 +44,7 @@ abstract class InfoFileParser<T> implements DataParser<T> {
     public final T parse(DataReader reader) throws IOException, DataParsingException {
         List<String> lines = readFile(reader);
         if (lines.size() < 2) {
-            throw new CascFileParsingException(format("Only %d lines in info file, including header.", lines.size()));
+            throw new CascParsingException(format("Only %d lines in info file, including header.", lines.size()));
         }
         String headerLine = lines.get(0);
         List<String> dataLines = lines.subList(1, lines.size());
@@ -123,7 +123,7 @@ abstract class InfoFileParser<T> implements DataParser<T> {
     private String getData(Field field, String line) {
         String[] dataSegments = line.split("\\|");
         if (field.getIndex() >= dataSegments.length) {
-            throw new CascFileParsingException(format("Data for field %s not available.", field.getName()));
+            throw new CascParsingException(format("Data for field %s not available.", field.getName()));
         }
         return dataSegments[field.getIndex()];
     }

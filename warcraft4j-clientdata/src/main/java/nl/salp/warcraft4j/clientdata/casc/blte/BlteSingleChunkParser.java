@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.blte;
 
-import nl.salp.warcraft4j.clientdata.casc.CascFileParsingException;
+import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.clientdata.io.parser.DataParsingException;
@@ -65,7 +65,7 @@ class BlteSingleChunkParser extends BlteChunkParser {
             char compressionType = (char) chunkData[0];
             byte[] data = ArrayUtils.subarray(chunkData, 1, chunkData.length);
             if (data.length != decompressedSize) {
-                throw new CascFileParsingException(format("Error parsing BLTE chunk, got %d bytes of compressed data instead of %d", data.length, compressedSize));
+                throw new CascParsingException(format("Error parsing BLTE chunk, got %d bytes of compressed data instead of %d", data.length, compressedSize));
             }
             return new BlteChunk(data.length, decompressedSize, data, getDecompressor(compressionType));
         } catch (IOException e) {

@@ -18,8 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.blte;
 
-import nl.salp.warcraft4j.clientdata.casc.Casc;
-import nl.salp.warcraft4j.clientdata.casc.CascFileParsingException;
+import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,18 +36,18 @@ class RawDataDecompressor implements DataDecompressor {
     private static final Logger LOGGER = LoggerFactory.getLogger(RawDataDecompressor.class);
 
     @Override
-    public byte[] decompress(byte[] data, long compressedSize, long decompressedSize) throws CascFileParsingException {
+    public byte[] decompress(byte[] data, long compressedSize, long decompressedSize) throws CascParsingException {
         if (data.length != decompressedSize) {
-            throw new CascFileParsingException(format("Error parsing BLTE chunk, got %d bytes of compressed data instead of %d", data.length, decompressedSize));
+            throw new CascParsingException(format("Error parsing BLTE chunk, got %d bytes of compressed data instead of %d", data.length, decompressedSize));
         }
         LOGGER.trace("Decompressing {}B of raw chunk data to {}B of data.", data.length, decompressedSize);
         return data;
     }
 
     @Override
-    public byte[] decompress(byte[] data, long dataOffset, long dataLength, long decompressedSize) throws CascFileParsingException {
+    public byte[] decompress(byte[] data, long dataOffset, long dataLength, long decompressedSize) throws CascParsingException {
         if (data.length != decompressedSize) {
-            throw new CascFileParsingException(format("Error parsing BLTE chunk, got %d bytes of compressed data instead of %d", data.length, decompressedSize));
+            throw new CascParsingException(format("Error parsing BLTE chunk, got %d bytes of compressed data instead of %d", data.length, decompressedSize));
         }
         LOGGER.trace("Decompressing {}B of raw chunk data to {}B of data.", data.length, decompressedSize);
         return Arrays.copyOfRange(data, (int) dataOffset, (int) dataLength);

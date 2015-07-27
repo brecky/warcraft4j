@@ -16,17 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc.blte;
-
-import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
+package nl.salp.warcraft4j.clientdata.casc.online;
 
 /**
- * TODO Add description.
+ * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-interface DataDecompressor {
-    byte[] decompress(byte[] data, long compressedSize, long decompressedSize) throws CascParsingException;
+public enum CdnFileType {
+    CONFIG("config"),
+    DATA("data"),
+    PATCH("patch");
 
-    byte[] decompress(byte[] data, long dataOffset, long dataLength, long decompressedSize) throws CascParsingException;
+    private final String path;
+
+    CdnFileType(String path) {
+        this.path = path;
+    }
+
+    public String getPath() {
+        return path;
+    }
 }

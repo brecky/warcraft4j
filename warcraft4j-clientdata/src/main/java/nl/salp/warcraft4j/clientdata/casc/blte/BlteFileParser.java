@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.blte;
 
-import nl.salp.warcraft4j.clientdata.casc.CascFileParsingException;
+import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
@@ -76,7 +76,7 @@ public class BlteFileParser implements DataParser<BlteFile> {
 
         List<BlteChunk> chunks = reader.readNext(parser);
         if (chunks.size() != chunkCount) {
-            throw new CascFileParsingException(format("Parsed %d chunks of data from BLTE file while %d chunks were expected.", chunks.size(), chunkCount));
+            throw new CascParsingException(format("Parsed %d chunks of data from BLTE file while %d chunks were expected.", chunks.size(), chunkCount));
         }
         LOGGER.debug("Successfully parsed {} bytes file from BLTE file with {} bytes of data from {} chunk(s)",
                 chunks.stream().mapToLong(BlteChunk::getCompressedSize).sum(),

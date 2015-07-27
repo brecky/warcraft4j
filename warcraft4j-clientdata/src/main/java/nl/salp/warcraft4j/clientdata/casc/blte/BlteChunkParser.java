@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.blte;
 
-import nl.salp.warcraft4j.clientdata.casc.CascFileParsingException;
+import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.parser.DataParser;
 import nl.salp.warcraft4j.clientdata.io.parser.DataParsingException;
@@ -66,7 +66,7 @@ abstract class BlteChunkParser implements DataParser<List<BlteChunk>> {
         return headers;
     }
 
-    protected abstract BlteChunkHeader parseChunkHeader(DataReader reader) throws CascFileParsingException;
+    protected abstract BlteChunkHeader parseChunkHeader(DataReader reader) throws CascParsingException;
 
     private final List<BlteChunk> parseChunks(List<BlteChunkHeader> headers, DataReader reader) throws DataParsingException {
         List<BlteChunk> chunks = new ArrayList<>();
@@ -79,7 +79,7 @@ abstract class BlteChunkParser implements DataParser<List<BlteChunk>> {
         return chunks;
     }
 
-    protected abstract BlteChunk parseChunk(DataReader reader, BlteChunkHeader header) throws CascFileParsingException;
+    protected abstract BlteChunk parseChunk(DataReader reader, BlteChunkHeader header) throws CascParsingException;
 
     protected static final DataDecompressor getDecompressor(char type) {
         DataDecompressor decompressor;
@@ -91,7 +91,7 @@ abstract class BlteChunkParser implements DataParser<List<BlteChunk>> {
                 decompressor = new ZlibDataDecompressor();
                 break;
             default:
-                throw new CascFileParsingException(format("Unable to determine the BLTE chunk decompression strategy for type '%s'", type));
+                throw new CascParsingException(format("Unable to determine the BLTE chunk decompression strategy for type '%s'", type));
         }
         return decompressor;
     }

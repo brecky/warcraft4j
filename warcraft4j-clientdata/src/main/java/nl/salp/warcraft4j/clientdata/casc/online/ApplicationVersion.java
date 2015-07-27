@@ -16,53 +16,49 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package nl.salp.warcraft4j.clientdata.cdn;
+package nl.salp.warcraft4j.clientdata.casc.online;
 
 import nl.salp.warcraft4j.Region;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-
 /**
- * CDN host information that provides all hosts and the path for a region.
+ * CDN application version information.
  *
  * @author Barre Dijkstra
  */
-public class CdnHost {
+public class ApplicationVersion {
     /** The region. */
-    private Region region;
-    /** The path. */
-    private String path;
-    /** The CDN hosts. */
-    private String[] hosts;
+    private final Region region;
+    /** The build config. */
+    private final String buildConfig;
+    /** The cdn config. */
+    private final String cdnConfig;
+    /** The build ID. */
+    private final String buildId;
+    /** The version name. */
+    private final String versionName;
 
     /**
-     * Create a new CDN host information object.
+     * Create a new CDN ApplicationVersion.
      *
-     * @param region The region the CDN information is for.
-     * @param path   The base path on the host(s) for the CDN.
-     * @param hosts  The host(s) of the CDN.
+     * @param region      The region.
+     * @param buildConfig The build config.
+     * @param cdnConfig   The CDN config.
+     * @param buildId     The build ID.
+     * @param versionName The version name.
      */
-    public CdnHost(Region region, String path, String... hosts) {
-        if (region == null) {
-            throw new IllegalArgumentException("Unable to create CDN host information with no region specified.");
-        }
-        if (isEmpty(path)) {
-            throw new IllegalArgumentException("Unable to create CDN host information with no path specified.");
-        }
-        if (hosts == null || hosts.length == 0) {
-            throw new IllegalArgumentException("Unable to create CDN host information with no host entries.");
-        }
+    public ApplicationVersion(Region region, String buildConfig, String cdnConfig, String buildId, String versionName) {
         this.region = region;
-        this.path = path;
-        this.hosts = hosts;
+        this.buildConfig = buildConfig;
+        this.cdnConfig = cdnConfig;
+        this.buildId = buildId;
+        this.versionName = versionName;
     }
 
     /**
-     * Get the region the CDN is for.
+     * Get the region the application version is applicable for.
      *
      * @return The region.
      */
@@ -71,30 +67,39 @@ public class CdnHost {
     }
 
     /**
-     * Get the base path on the host(s) for the CDN.
+     * Get the build configuration for the application in the CDN.
      *
-     * @return The path.
+     * @return The build configuration.
      */
-    public String getPath() {
-        return path;
+    public String getBuildConfig() {
+        return buildConfig;
     }
 
     /**
-     * Get all hosts that are listed for the region CDN.
+     * Get the CDN configuration for the application.
      *
-     * @return The hosts.
+     * @return The CDN configuration.
      */
-    public String[] getHosts() {
-        return hosts;
+    public String getCdnConfig() {
+        return cdnConfig;
     }
 
     /**
-     * Get the (first) host for the region CDN.
+     * Get the build ID of the application in the CDN.
      *
-     * @return The host.
+     * @return The build ID.
      */
-    public String getHost() {
-        return hosts[0];
+    public String getBuildId() {
+        return buildId;
+    }
+
+    /**
+     * Get the version number of the application in the CDN.
+     *
+     * @return The version number.
+     */
+    public String getVersionName() {
+        return versionName;
     }
 
     @Override
