@@ -20,9 +20,9 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -35,11 +35,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @DbcMapping(file = "ItemXBonusTree.db2")
 public class ItemXBonusTreeEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.ITEM_X_BONUS_TREE;
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32)
     private int itemId;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.UINT32)
     private int bonusTreeId;
 
     @Override

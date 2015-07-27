@@ -21,9 +21,9 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -36,29 +36,29 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @DbcMapping(file = "Criteria.dbc")
 public class CriteriaEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.CRITERIA;
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32)
     private int type;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.UINT32)
     private int criteriaLinkId; // Id of the link to various entry types, based on the criteria type
-    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32)
     private int startEvent;                                      // 3
-    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.UINT32)
     private int startAsset;                                      // 4
-    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.UINT32)
     private int startTimer;                                      // 5
-    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.UINT32)
     private int failEvent;                                       // 6
-    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.UINT32)
     private int failAsset;                                       // 7
-    @DbcField(order = 9, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.UINT32)
     private int modifierTreeId;                                  // 8
-    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.UINT32)
     private int flags;                                         // 9
-    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 11, dataType = DbcDataType.UINT32)
     private int eligibilityWorldStateId;                         // 10
-    @DbcField(order = 12, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 12, dataType = DbcDataType.UINT32)
     private int eligibilityWorldStateValue;                      // 11
 
     @Override

@@ -20,9 +20,9 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -35,37 +35,37 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @DbcMapping(file = "BattleMasterList.dbc")
 public class BattleMasterListEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.BATTLE_MASTER_LIST;
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.INT32, numberOfEntries = 16)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.INT32, numberOfEntries = 16)
     private int[] mapIds; // 16
-    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.UINT32)
     private int instanceType; // 3: BG, 4: Arena
-    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32)
     private int groupsAllowed;
-    @DbcField(order = 5, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String name;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.UINT32)
     private int maxGroupSize;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.UINT32)
     private int holidayWorldStateId;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.UINT32)
     private int minLevel; // (sync with PvPDifficulty.dbc content)
-    @DbcField(order = 9, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.UINT32)
     private int maxLevel; // (sync with PvPDifficulty.dbc content)
-    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.UINT32)
     private int ratedPlayers;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 11, dataType = DbcDataType.UINT32)
     private int minPlayers;
-    @DbcField(order = 12, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 12, dataType = DbcDataType.UINT32)
     private int maxPlayers;
-    @DbcField(order = 13, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 13, dataType = DbcDataType.UINT32)
     private int flags; // 2: Rated Battlegrounds
-    @DbcField(order = 14, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 14, dataType = DbcDataType.UINT32)
     private int iconId;
-    @DbcField(order = 15, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 15, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String gameType;
-    @DbcField(order = 16, dataType = DbcDataType.UINT32, knownMeaning = false)
+    @DbcFieldMapping(order = 16, dataType = DbcDataType.UINT32, knownMeaning = false)
     private int unknown1;
 
     @Override

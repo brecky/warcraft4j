@@ -19,10 +19,10 @@
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.*;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcReference;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -37,33 +37,33 @@ public class SpellMiscEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.SPELL_MISC;
 
     // FIXME It looks like the fields are still off (and certainly not consistent across all sources that are online).
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, numberOfEntries = 14, knownMeaning = false)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32, numberOfEntries = 14, knownMeaning = false)
     private int[] attributes; // FIXME Determine the actual fields
-    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.SPELL_CAST_TIME)
     private int castingTimeId;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.SPELL_DURATION)
     private int durationId;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.SPELL_RANGE)
     private int range;
-    @DbcField(order = 8, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.FLOAT)
     private float speed;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32, numberOfEntries = 2)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.UINT32, numberOfEntries = 2)
     @DbcReference(type = DbcType.SPELL_VISUAL)
     private int[] spellVisualIds;
-    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.SPELL_ICON)
     private int iconId;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 11, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.SPELL_ICON)
     private int activeIconId;
-    @DbcField(order = 12, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 12, dataType = DbcDataType.UINT32)
     private int schoolMask;
-    @DbcField(order = 13, dataType = DbcDataType.UINT32, knownMeaning = false)
+    @DbcFieldMapping(order = 13, dataType = DbcDataType.UINT32, knownMeaning = false)
     private int unknown13;
 
     @Override

@@ -20,9 +20,9 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -36,9 +36,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class SpellSpecialUnitEffectEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.SPELL_SPECIAL_UNIT_EFFECT;
 
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
     private int unknown2;
     @Override
     public DbcType getEntryType() {

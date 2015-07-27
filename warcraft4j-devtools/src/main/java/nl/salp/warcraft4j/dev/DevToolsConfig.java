@@ -21,6 +21,8 @@ package nl.salp.warcraft4j.dev;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import static java.lang.String.format;
@@ -71,15 +73,15 @@ public class DevToolsConfig {
         return dbcDirectory;
     }
 
-    public File getDbcDirectory() {
-        return new File(dbcDirectory);
+    public Path getDbcDirectory() {
+        return Paths.get(dbcDirectory);
     }
 
     public String getWowDirectoryPath() {
         return wowDirectory;
     }
 
-    public File getWowDirectory() {
-        return new File(wowDirectory);
+    public Path getWowDirectory() {
+        return Paths.get(wowDirectory);
     }
 }

@@ -21,9 +21,9 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -36,55 +36,55 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @DbcMapping(file = "AreaTable.dbc")
 public class AreaTableEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.AREA_TABLE;
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32)
     private int mapId;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.UINT32)
     private int parentAreaId;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32)
     private int areaBit;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32, numberOfEntries = 2)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.UINT32, numberOfEntries = 2)
     private int[] flags; // 2
-    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.UINT32)
     private int soundProviderPref;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.UINT32)
     private int soundProviderPrefUnderwater;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.UINT32)
     private int ambienceId;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.UINT32)
     private int zoneMusic;
-    @DbcField(order = 10, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String zoneName;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 11, dataType = DbcDataType.UINT32)
     private int introSound;
-    @DbcField(order = 12, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 12, dataType = DbcDataType.UINT32)
     private int explorationLevel;
-    @DbcField(order = 13, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 13, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String areaName;
-    @DbcField(order = 14, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 14, dataType = DbcDataType.UINT32)
     private int factionGroupMask;
-    @DbcField(order = 15, dataType = DbcDataType.UINT32, numberOfEntries = 4)
+    @DbcFieldMapping(order = 15, dataType = DbcDataType.UINT32, numberOfEntries = 4)
     private int[] liquidTypeId; // 4
-    @DbcField(order = 16, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 16, dataType = DbcDataType.FLOAT)
     private float ambientMultiplier;
-    @DbcField(order = 17, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 17, dataType = DbcDataType.UINT32)
     private int mountFlags;
-    @DbcField(order = 18, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 18, dataType = DbcDataType.UINT32)
     private int uwIntroSound;
-    @DbcField(order = 19, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 19, dataType = DbcDataType.UINT32)
     private int uwZoneMusic;
-    @DbcField(order = 20, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 20, dataType = DbcDataType.UINT32)
     private int uwAmbience;
-    @DbcField(order = 21, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 21, dataType = DbcDataType.UINT32)
     private int worldPvpId;  // -> World_PVP_Area.dbc
-    @DbcField(order = 22, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 22, dataType = DbcDataType.UINT32)
     private int pvpCombatWorldStateId;
-    @DbcField(order = 23, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 23, dataType = DbcDataType.UINT32)
     private int wildBattlePetLevelMin;
-    @DbcField(order = 24, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 24, dataType = DbcDataType.UINT32)
     private int wildBattlePetLevelMax;
-    @DbcField(order = 25, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 25, dataType = DbcDataType.UINT32)
     private int windSettingsId;
 
     @Override

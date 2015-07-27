@@ -21,9 +21,9 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -36,39 +36,39 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @DbcMapping(file = "AnimKitSegment.dbc")
 public class AnimationKitSegmentEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.ANIMATION_KIT_SEGMENT;
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32)
     private int parentAnimationKitId;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.UINT32)
     private int orderIndex;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32)
     private int animationId;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.UINT32)
     private int animationStartTime;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.UINT32)
     private int animationKitConfigId;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.UINT32)
     private int startCondition;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.UINT32)
     private int startConditionParameter;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.UINT32)
     private int startConditionDelay;
-    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.UINT32)
     private int endCondition;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 11, dataType = DbcDataType.UINT32)
     private int endConditionParameter;
-    @DbcField(order = 12, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 12, dataType = DbcDataType.UINT32)
     private int endConditionDelay;
-    @DbcField(order = 13, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 13, dataType = DbcDataType.FLOAT)
     private float speed;
-    @DbcField(order = 14, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 14, dataType = DbcDataType.UINT32)
     private int segmentFlags;
-    @DbcField(order = 15, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 15, dataType = DbcDataType.UINT32)
     private int forcedVariation;
-    @DbcField(order = 16, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 16, dataType = DbcDataType.UINT32)
     private int overrideConfigFlags;
-    @DbcField(order = 17, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 17, dataType = DbcDataType.UINT32)
     private int loopToSegmentIndex;
 
     @Override

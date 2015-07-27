@@ -20,9 +20,9 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -36,15 +36,15 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class ItemBonusEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.ITEM_BONUS;
 
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32)
     private int bonusListId;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.UINT32)
     private int type;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, numberOfEntries = 2)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32, numberOfEntries = 2)
     private int[] value;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.UINT32)
     private int index;
 
     @Override

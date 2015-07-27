@@ -19,6 +19,10 @@
 
 package nl.salp.warcraft4j.clientdata.io;
 
+import nl.salp.warcraft4j.clientdata.io.datatype.DataType;
+import nl.salp.warcraft4j.clientdata.io.parser.DataParsingException;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -80,14 +84,39 @@ public class ByteArrayDataReader extends RandomAccessDataReader {
     @Override
     public <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException, DataParsingException {
         byte[] data;
-        if (dataType.getLength() < 1) {
-            data = new byte[buffer.remaining()];
+        if (dataType.isVariableLength()) {
+            data = getVarLenData(dataType);
         } else {
             data = new byte[dataType.getLength()];
+            this.buffer.get(data);
         }
-        // FIXME Method dumps all remaining data for var-length data types (and thus moving the position to the end). Think of a different way to deal (shallow copy?) :-)
-        buffer.get(data);
-        return dataType.readNext(ByteBuffer.wrap(data).order(byteOrder));
+        return dataType.readNext(ByteBuffer.wrap(data).order(byteOrder), byteOrder);
+    }
+
+    /**
+     * Get a buffer for a variable length data type.
+     *
+     * @param dataType The data type.
+     * @param <T>      The data type.
+     *
+     * @return The byte buffer.
+     *
+     * @throws IOException When creating the buffer failed.
+     */
+    private <T> byte[] getVarLenData(DataType<T> dataType) throws IOException {
+        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream()) {
+            boolean done = false;
+            while (!done) {
+                byte value;
+                if ((value = buffer.get()) > 0) {
+                    byteOut.write(value);
+                    done = dataType.isVariableLengthTerminator(value);
+                } else {
+                    done = true;
+                }
+            }
+            return byteOut.toByteArray();
+        }
     }
 
     @Override

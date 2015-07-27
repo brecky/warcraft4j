@@ -20,10 +20,10 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcReference;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -36,14 +36,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @DbcMapping(file = "CharacterFacialHairStyles.dbc")
 public class CharacterFacialHairStyleEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.CHARACTER_FACIAL_HAIR_STYLE;
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.CHARACTER_RACE)
     private int raceId;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.UINT32)
     private int sexId; // 0: male, 1: female
-    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32)
     private int variation;
     /*
     [0] This is the small part of Geoset identificator. Determines mixing of different facial elements, on Night Elves this is chin hair.
@@ -52,7 +52,7 @@ public class CharacterFacialHairStyleEntry implements DbcEntry {
     [3] 0
     [4] 0 or 2 - these both rows have strange values for foresttrolls. This controls small\big ears for BloodElves( geo 701,702)
      */
-    @DbcField(order = 5, dataType = DbcDataType.UINT32, numberOfEntries = 5)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.UINT32, numberOfEntries = 5)
     private int[] geosets; // 5
 
     @Override

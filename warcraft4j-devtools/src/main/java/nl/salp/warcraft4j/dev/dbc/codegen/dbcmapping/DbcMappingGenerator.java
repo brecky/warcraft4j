@@ -18,9 +18,10 @@
  */
 package nl.salp.warcraft4j.dev.dbc.codegen.dbcmapping;
 
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile;
+import nl.salp.warcraft4j.clientdata.dbc.DbcFile;
+import nl.salp.warcraft4j.clientdata.dbc.DbcStringTable;
+import nl.salp.warcraft4j.clientdata.dbc.DbcUtil;
 import nl.salp.warcraft4j.dev.DevToolsConfig;
-import nl.salp.warcraft4j.dev.dbc.DbcUtils;
 import nl.salp.warcraft4j.dev.dbc.codegen.VelocityGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
 
@@ -90,7 +93,9 @@ public class DbcMappingGenerator extends VelocityGenerator<DbcFile> {
         if (!targetDir.exists() && !targetDir.mkdirs()) {
             throw new IllegalArgumentException(format("Unable to create output directory %s", targetDir.getPath()));
         }
-        Collection<DbcFile> files = DbcUtils.parseDbcFiles(generalConfig.getDbcDirectoryPath());
+        Collection<DbcFile> files = Stream.of(DbcUtil.getAllClientDatabaseFiles(generalConfig.getDbcDirectoryPath()))
+                .map(f -> new DbcFile(f, DbcUtil.getFileDataReaderSupplier(generalConfig.getDbcDirectoryPath(), f)))
+                .collect(Collectors.toSet());
         LOGGER.debug("Attempting to generate {} mappings (overriding: {}) to directory {}", files.size(), config.overrideEntries(), targetDir.getPath());
         generate(files);
     }
@@ -98,7 +103,7 @@ public class DbcMappingGenerator extends VelocityGenerator<DbcFile> {
 
     @Override
     protected File getOutputFile(DbcFile dbcFile) throws IOException {
-        String fileName = getEntryClassName(dbcFile.getFilename()) + ".java";
+        String fileName = getEntryClassName(dbcFile.getDbcName()) + ".java";
         return new File(config.getFullTargetDirectory(), fileName);
     }
 
@@ -113,14 +118,15 @@ public class DbcMappingGenerator extends VelocityGenerator<DbcFile> {
 
     private DbcInformation getDbcInformation(DbcFile dbcFile) {
         DbcEntryInformation entryInformation = new DbcEntryInformation(dbcFile.getHeader().getEntryCount(), dbcFile.getHeader().getEntryFieldCount(), dbcFile.getHeader().getEntrySize());
-        DbcStringTableInformation stringTableInformation = new DbcStringTableInformation(dbcFile.getStringTable().getNumberOfEntries(), dbcFile.getHeader().getStringTableBlockSize(), dbcFile.getStringTable().getNumberOfEntries() > 0);
-        return new DbcInformation(dbcFile.getFilename(), dbcFile.getHeader().getMagicString(), entryInformation, stringTableInformation);
+        DbcStringTable stringTable = dbcFile.parseStringTable();
+        DbcStringTableInformation stringTableInformation = new DbcStringTableInformation(stringTable.getNumberOfEntries(), dbcFile.getHeader().getStringTableBlockSize(), stringTable.getNumberOfEntries() > 0);
+        return new DbcInformation(dbcFile.getDbcName(), dbcFile.getHeader().getMagicString(), entryInformation, stringTableInformation);
     }
 
     private EntryInformation getEntryInformation(DbcFile dbcFile) {
         String targetPackage = config.getTargetPackage();
-        String className = getEntryClassName(dbcFile.getFilename());
-        String dbcType = getDbcTypeName(dbcFile.getFilename());
+        String className = getEntryClassName(dbcFile.getDbcName());
+        String dbcType = getDbcTypeName(dbcFile.getDbcName());
         int entrySize = dbcFile.getHeader().getEntryFieldCount() * 4;
         int sizeDifference = (entrySize - dbcFile.getHeader().getEntrySize());
         boolean invalidSize = (sizeDifference != 0);

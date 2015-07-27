@@ -18,6 +18,9 @@
  */
 package nl.salp.warcraft4j.clientdata.io;
 
+import nl.salp.warcraft4j.clientdata.io.datatype.DataType;
+import nl.salp.warcraft4j.clientdata.io.parser.DataParsingException;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -94,7 +97,7 @@ public class InputStreamDataReader extends DataReader {
         }
         position += buffer.limit();
         buffer.rewind();
-        return dataType.readNext(buffer);
+        return dataType.readNext(buffer, byteOrder);
     }
 
     /**
@@ -115,7 +118,7 @@ public class InputStreamDataReader extends DataReader {
             while (!done) {
                 if ((b = (byte) stream.read()) != -1) {
                     byteOut.write(b);
-                    done = (b == dataType.getVariableLengthTerminator());
+                    done = dataType.isVariableLengthTerminator(b);
                 } else {
                     done = true;
                 }

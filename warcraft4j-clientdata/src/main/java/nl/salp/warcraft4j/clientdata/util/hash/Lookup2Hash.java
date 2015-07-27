@@ -24,7 +24,7 @@ import org.apache.commons.codec.binary.StringUtils;
 
 import java.math.BigInteger;
 
-import static nl.salp.warcraft4j.clientdata.util.io.DataTypeUtil.trim;
+import static nl.salp.warcraft4j.clientdata.io.datatype.DataTypeUtil.trim;
 
 /**
  * Bob Jenkins' lookup2 hash implementation.

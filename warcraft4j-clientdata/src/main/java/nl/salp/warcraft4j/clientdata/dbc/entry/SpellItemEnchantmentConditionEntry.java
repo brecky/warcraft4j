@@ -20,9 +20,9 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,25 +38,25 @@ public class SpellItemEnchantmentConditionEntry implements DbcEntry {
 
     // Check http://pxr.dk/wowdev/wiki/index.php?title=SpellItemEnchantmentCondition.dbc for analysis on values.
 
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.BYTE, numberOfEntries = 5)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.BYTE, numberOfEntries = 5)
     private byte[] ltOperandTypes;
-    @DbcField(order = 3, dataType = DbcDataType.BYTE, numberOfEntries = 3, padding = true)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.BYTE, numberOfEntries = 3, padding = true)
     private transient byte[] padding1;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32, numberOfEntries = 5)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32, numberOfEntries = 5)
     private int[] ltOperands;
-    @DbcField(order = 5, dataType = DbcDataType.BYTE, numberOfEntries = 5)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.BYTE, numberOfEntries = 5)
     private byte[] operators;
-    @DbcField(order = 6, dataType = DbcDataType.BYTE, numberOfEntries = 5)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.BYTE, numberOfEntries = 5)
     private byte[] rtOperandTypes;
-    @DbcField(order = 7, dataType = DbcDataType.BYTE, numberOfEntries = 2, padding = true)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.BYTE, numberOfEntries = 2, padding = true)
     private transient byte[] padding2;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32, numberOfEntries = 5)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.UINT32, numberOfEntries = 5)
     private int[] rtOperands;
-    @DbcField(order = 9, dataType = DbcDataType.BYTE, numberOfEntries = 5)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.BYTE, numberOfEntries = 5)
     private byte[] logic;
-    @DbcField(order = 10, dataType = DbcDataType.BYTE, numberOfEntries = 3, padding = true)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.BYTE, numberOfEntries = 3, padding = true)
     private transient byte[] padding3;
 
     @Override

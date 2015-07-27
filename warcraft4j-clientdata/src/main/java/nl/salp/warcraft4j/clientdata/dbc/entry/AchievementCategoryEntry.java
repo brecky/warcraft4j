@@ -19,13 +19,9 @@
 
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcStore;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcReference;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,14 +34,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @DbcMapping(file = "Achievement_Category.dbc")
 public class AchievementCategoryEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.ACHIEVEMENT_CATEGORY;
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.ACHIEVEMENT_CATEGORY)
     private int parentAchievementCategoryId; // -1 for main category
-    @DbcField(order = 3, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String name;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32)
     private int uiOrder;
 
     @Override
@@ -65,23 +61,6 @@ public class AchievementCategoryEntry implements DbcEntry {
      */
     public int getParentAchievementCategoryId() {
         return parentAchievementCategoryId;
-    }
-
-    /**
-     * Get the parent achievement category, resolving it on the client database.
-     *
-     * @param dbcStore The client database.
-     *
-     * @return The parent achievement or {@code null} if it could not be resolved.
-     *
-     * @see #getParentAchievementCategoryId()
-     */
-    public AchievementCategoryEntry getParent(DbcStore dbcStore) {
-        AchievementCategoryEntry parent = null;
-        if (this.parentAchievementCategoryId > 0 && dbcStore != null) {
-            parent = dbcStore.resolve(AchievementCategoryEntry.class, this.parentAchievementCategoryId);
-        }
-        return parent;
     }
 
     /**

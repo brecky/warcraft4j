@@ -21,9 +21,9 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -36,35 +36,35 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @DbcMapping(file = "AreaTrigger.dbc")
 public class AreaTriggerEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.AREA_TRIGGER;
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32)
     private int mapId;
-    @DbcField(order = 3, dataType = DbcDataType.FLOAT, numberOfEntries = 3)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.FLOAT, numberOfEntries = 3)
     private float[] position;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32)
     private int phaseUsageFlags;
-    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.UINT32)
     private int phaseId;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.UINT32)
     private int phaseGroupId;
-    @DbcField(order = 7, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.FLOAT)
     private float radius;
-    @DbcField(order = 8, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.FLOAT)
     private float boxLength;
-    @DbcField(order = 9, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.FLOAT)
     private float boxWidth;
-    @DbcField(order = 10, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.FLOAT)
     private float boxHeight;
-    @DbcField(order = 11, dataType = DbcDataType.FLOAT)
+    @DbcFieldMapping(order = 11, dataType = DbcDataType.FLOAT)
     private float boxYaw;
-    @DbcField(order = 12, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 12, dataType = DbcDataType.UINT32)
     private int shapeType;
-    @DbcField(order = 13, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 13, dataType = DbcDataType.UINT32)
     private int shapeId;
-    @DbcField(order = 14, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 14, dataType = DbcDataType.UINT32)
     private int areaTriggerActionSetId;
-    @DbcField(order = 15, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 15, dataType = DbcDataType.UINT32)
     private int flags;
 
     @Override

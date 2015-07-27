@@ -21,10 +21,10 @@ package nl.salp.warcraft4j.clientdata.util.hash;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.math.BigInteger;
-
-import static nl.salp.warcraft4j.clientdata.util.io.DataTypeUtil.trim;
+import java.util.Arrays;
 
 /**
  * Fowler-Noll-Vo hash implementations (FNV-1 and FNV-1a).
@@ -80,13 +80,30 @@ public abstract class FowlerNollVoHash implements Hash {
         return hashHexString(StringUtils.getBytesUtf8(data));
     }
 
+    protected static byte[] sizeHashArray(byte[] hash, int hashSizeBits) {
+        int size = hashSizeBits / 8;
+        byte[] resized;
+        if (size == hash.length) {
+            resized = hash;
+        } else if (size > hash.length) {
+            // TODO Optimise.
+            resized = new byte[size - hash.length];
+            Arrays.fill(resized, 0, size - hash.length, (byte) 0x0);
+            ArrayUtils.addAll(resized, hash);
+        } else {
+            // Truncate based on big endian ordering
+            resized = ArrayUtils.subarray(hash, hash.length - size, hash.length);
+        }
+        return resized;
+    }
+
     /**
      * Create a Fowler-Noll-Vo hash instance that returns a 32-bit hash calculated with FNV-1.
      *
      * @return The 32-bit FNV-1 hash instance.
      */
     public static FowlerNollVoHash hash32fnv1() {
-        return new Fnv1Hash(OFFSET_32, PRIME_32, MOD_32);
+        return new Fnv1Hash(32, OFFSET_32, PRIME_32, MOD_32);
     }
 
     /**
@@ -95,7 +112,7 @@ public abstract class FowlerNollVoHash implements Hash {
      * @return The 64-bit FNV-1 hash instance.
      */
     public static FowlerNollVoHash hash64fnv1() {
-        return new Fnv1Hash(OFFSET_64, PRIME_64, MOD_64);
+        return new Fnv1Hash(64, OFFSET_64, PRIME_64, MOD_64);
     }
 
     /**
@@ -104,7 +121,7 @@ public abstract class FowlerNollVoHash implements Hash {
      * @return The 32-bit FNV-1a hash instance.
      */
     public static FowlerNollVoHash hash32fnv1a() {
-        return new Fnv1aHash(OFFSET_32, PRIME_32, MOD_32);
+        return new Fnv1aHash(32, OFFSET_32, PRIME_32, MOD_32);
     }
 
     /**
@@ -113,14 +130,14 @@ public abstract class FowlerNollVoHash implements Hash {
      * @return The 64-bit FNV-1a hash instance.
      */
     public static FowlerNollVoHash hash64fnv1a() {
-        return new Fnv1aHash(OFFSET_64, PRIME_64, MOD_64);
+        return new Fnv1aHash(64, OFFSET_64, PRIME_64, MOD_64);
     }
 
     /**
      * {@link FowlerNollVoHash} implementation for FNV-1.
      */
     private static class Fnv1Hash extends FowlerNollVoHash {
-
+        private final int hashSizeBits;
         /**
          * Create a new Fnv1Hash.
          *
@@ -128,8 +145,9 @@ public abstract class FowlerNollVoHash implements Hash {
          * @param prime  The prime to hash with.
          * @param mod    The mod to hash with.
          */
-        protected Fnv1Hash(BigInteger offset, BigInteger prime, BigInteger mod) {
+        protected Fnv1Hash(int hashSizeBits, BigInteger offset, BigInteger prime, BigInteger mod) {
             super(offset, prime, mod);
+            this.hashSizeBits = hashSizeBits;
         }
 
         @Override
@@ -139,7 +157,7 @@ public abstract class FowlerNollVoHash implements Hash {
                 hash = hash.multiply(prime).mod(mod);
                 hash = hash.xor(BigInteger.valueOf((int) b & 0xff));
             }
-            return trim(hash.toByteArray());
+            return sizeHashArray(hash.toByteArray(), hashSizeBits);
         }
     }
 
@@ -147,6 +165,7 @@ public abstract class FowlerNollVoHash implements Hash {
      * {@link FowlerNollVoHash} implementation for FNV-1a.
      */
     private static class Fnv1aHash extends FowlerNollVoHash {
+        private final int hashSizeBits;
         /**
          * Create a new Fnv1aHash.
          *
@@ -154,8 +173,9 @@ public abstract class FowlerNollVoHash implements Hash {
          * @param prime  The prime to hash with.
          * @param mod    The mod to hash with.
          */
-        protected Fnv1aHash(BigInteger offset, BigInteger prime, BigInteger mod) {
+        protected Fnv1aHash(int hashSizeBits, BigInteger offset, BigInteger prime, BigInteger mod) {
             super(offset, prime, mod);
+            this.hashSizeBits = hashSizeBits;
         }
 
         @Override
@@ -165,7 +185,7 @@ public abstract class FowlerNollVoHash implements Hash {
                 hash = hash.xor(BigInteger.valueOf((int) b & 0xff));
                 hash = hash.multiply(prime).mod(mod);
             }
-            return trim(hash.toByteArray());
+            return sizeHashArray(hash.toByteArray(), hashSizeBits);
         }
     }
 

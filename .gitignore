@@ -49,3 +49,9 @@ nb-configuration.xml
 *.iwl
 *.ips
 *.iml
+
+#####
+# Environment specific files
+#####
+data/
+analysis/

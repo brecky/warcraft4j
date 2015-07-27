@@ -19,12 +19,13 @@
 
 package nl.salp.warcraft4j.clientdata.dbc;
 
-import nl.salp.warcraft4j.clientdata.dbc.parser.*;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.DataType;
 import nl.salp.warcraft4j.clientdata.io.RandomAccessDataReader;
+import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -33,9 +34,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
-import static nl.salp.warcraft4j.clientdata.io.DataType.getByte;
-import static nl.salp.warcraft4j.clientdata.io.DataType.getTerminatedString;
-import static nl.salp.warcraft4j.clientdata.util.io.DataTypeUtil.getAverageBytesPerCharacter;
+import static nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory.getByte;
+import static nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory.getTerminatedString;
+import static nl.salp.warcraft4j.clientdata.io.datatype.DataTypeUtil.getAverageBytesPerCharacter;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -44,16 +45,17 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  *
  * @author Barre Dijkstra
  */
-public class DbcFile implements DbcFileParser {
+public class DbcFile {
+    /** The character set used in DBC files for the DBC string table. */
     private static final Charset STRINGTABLE_CHARSET = StandardCharsets.US_ASCII;
     /** The name of the DBC file. */
     private final String dbcName;
-    /** The name of the DBC file. */
-    private DbcHeader header;
     /** The lock for synchronize on when parsing the DBC file. */
     private final Lock parseLock;
     /** Supplier for the reader to be used for parsing the DBC file. */
     private final Supplier<RandomAccessDataReader> dataReaderSupplier;
+    /** The name of the DBC file. */
+    private DbcHeader header;
 
     /**
      * Create a new DBC file instance.
@@ -65,7 +67,12 @@ public class DbcFile implements DbcFileParser {
      */
     public DbcFile(String dbcName, Supplier<RandomAccessDataReader> dataReaderSupplier) throws IllegalArgumentException {
         if (isEmpty(dbcName)) {
-            throw new IllegalArgumentException(format("Can't create a DBC file without a name."));
+            throw new IllegalArgumentException("Can't create a DbcFile instance without no file name.");
+        }
+        try (RandomAccessDataReader reader = dataReaderSupplier.get()) {
+            // no-op
+        } catch (IOException e) {
+            throw new IllegalArgumentException(format("Error opening DbcFile %s", dbcName), e);
         }
         this.dbcName = dbcName;
         this.dataReaderSupplier = dataReaderSupplier;
@@ -79,97 +86,6 @@ public class DbcFile implements DbcFileParser {
      */
     private RandomAccessDataReader getDataReader() {
         return dataReaderSupplier.get();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see DbcFile#getHeader()
-     */
-    @Override
-    @Deprecated
-    public DbcHeader parseHeader(String filename) throws DbcParsingException {
-        return getHeader();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see DbcFile#getHeader()
-     * @see DbcFile#parseStringTable()
-     */
-    @Override
-    @Deprecated
-    public nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile parseMetaData(String filename) throws DbcParsingException {
-        return new nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile(filename, getHeader(), parseStringTable());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see DbcFile#getHeader()
-     * @see DbcFile#parseStringTable()
-     */
-    @Override
-    @Deprecated
-    public <T extends DbcEntry> nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile parseMetaData(Class<T> mappingType) throws DbcParsingException {
-        String filename = mappingType.getAnnotation(DbcMapping.class).file();
-        return new nl.salp.warcraft4j.clientdata.dbc.parser.DbcFile(filename, getHeader(), parseStringTable());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see DbcFile#parseEntries(Class)
-     */
-    @Override
-    @Deprecated
-    public <T extends DbcEntry> Set<T> parse(Class<T> mappingType) throws DbcParsingException {
-        return (Set<T>) parseEntries(mappingType);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@code true} at all times.
-     */
-    @Override
-    @Deprecated
-    public boolean isDirectAccessSupported() {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see DbcFile#parseEntryWithIndex(int, Class)
-     */
-    @Override
-    @Deprecated
-    public <T extends DbcEntry> T parse(Class<T> mappingType, int index) throws DbcParsingException, DbcEntryNotFoundException, UnsupportedOperationException {
-        return parseEntryWithIndex(index, mappingType);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see DbcFile#parseStringTable()
-     */
-    @Override
-    @Deprecated
-    public DbcStringTable parseStringTable(String filename) throws DbcParsingException, UnsupportedOperationException {
-        return parseStringTable();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see DbcFile#parseStringTable()
-     */
-    @Override
-    @Deprecated
-    public <T extends DbcEntry> DbcStringTable parseStringTable(Class<T> mappingType) throws DbcParsingException, UnsupportedOperationException {
-        return parseStringTable();
     }
 
     /**
@@ -223,7 +139,7 @@ public class DbcFile implements DbcFileParser {
             Collection<T> entries = new HashSet<>(header.getEntryCount());
             reader.position(header.getEntryBlockStartingOffset());
             for (int i = 0; i < header.getEntryCount(); i++) {
-                entries.add(reader.readNext(new DbcEntryParser<T>(mappingType, header, stringTable)));
+                entries.add(reader.readNext(new DbcEntryParser<>(mappingType, header, stringTable)));
             }
             return entries;
         } catch (IOException e) {
@@ -245,7 +161,7 @@ public class DbcFile implements DbcFileParser {
             reader.position(header.getEntryBlockStartingOffset());
             for (int i = 0; i < header.getEntryCount(); i++) {
                 long offset = header.getEntryBlockStartingOffset() + (i * header.getEntrySize());
-                ids[i] = reader.read(DataType.getInteger(), offset);
+                ids[i] = reader.read(DataTypeFactory.getInteger(), offset, ByteOrder.LITTLE_ENDIAN);
             }
             return ids;
         } catch (IOException e) {
@@ -267,7 +183,7 @@ public class DbcFile implements DbcFileParser {
      */
     public <T extends DbcEntry> T parseEntryWithIndex(int index, Class<T> mappingType) throws IllegalArgumentException, DbcParsingException {
         if (index < 0 || index >= getNumberOfEntries()) {
-            throw new IllegalArgumentException(format("Unable to parse entry %d of dbc file %s has only %d entries available", index, dbcName, getNumberOfEntries()));
+            throw new DbcEntryNotFoundException(index, mappingType);
         }
         if (!isValidMappingForFile(mappingType)) {
             throw new IllegalArgumentException(format("Can't parse entry %d of dbc file %s with the mapping type %s", index, dbcName, mappingType.getName()));
@@ -301,7 +217,7 @@ public class DbcFile implements DbcFileParser {
                 long readBytes = 0;
                 while (reader.hasRemaining() && readBytes < tableSize) {
                     int position = (int) reader.position() - tableStart;
-                    String value = reader.readNext(getTerminatedString(STRINGTABLE_CHARSET));
+                    String value = reader.readNext(DataTypeFactory.getTerminatedString(STRINGTABLE_CHARSET));
                     int valueSize = value.length() * getAverageBytesPerCharacter(STRINGTABLE_CHARSET);
 
                     readBytes = readBytes + valueSize;
@@ -339,7 +255,7 @@ public class DbcFile implements DbcFileParser {
         try (RandomAccessDataReader reader = getDataReader()) {
             long position = getHeader().getStringTableStartingOffset() + stringTableId;
             if (reader.read(getByte(), position - 1) == 0) {
-                value = reader.read(getTerminatedString(STRINGTABLE_CHARSET), position);
+                value = reader.read(DataTypeFactory.getTerminatedString(STRINGTABLE_CHARSET), position);
             }
         } catch (IOException e) {
             throw new DbcParsingException(format("Error reading string table value %d", stringTableId), e);

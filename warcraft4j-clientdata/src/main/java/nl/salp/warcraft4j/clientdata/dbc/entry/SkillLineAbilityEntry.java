@@ -19,10 +19,10 @@
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.*;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcReference;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -36,34 +36,34 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class SkillLineAbilityEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.SKILL_LINE_ABILITY;
 
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.SKILL_LINE)
     private int skillLineId;
-    @DbcField(order = 3, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.SPELL)
     private int spellId;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32)
     private int raceMask; // Mask based on CharacterRaceEntry entries
-    @DbcField(order = 5, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.UINT32)
     private int classMask; // Mask based on CharacterClassEntry entries
-    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.UINT32)
     private int minimumSkillLineRank;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.SPELL)
     private int supersedesSpellId;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.UINT32)
     private int acquireMethod;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.UINT32)
     private int trivialSkillLineRankHigh;
-    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.UINT32)
     private int trivialSkillLineRankLow;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 11, dataType = DbcDataType.UINT32)
     private int numberOfSkillUps;
-    @DbcField(order = 12, dataType = DbcDataType.UINT32, knownMeaning = false)
+    @DbcFieldMapping(order = 12, dataType = DbcDataType.UINT32, knownMeaning = false)
     private int uniqueBit;
-    @DbcField(order = 13, dataType = DbcDataType.UINT32, knownMeaning = false)
+    @DbcFieldMapping(order = 13, dataType = DbcDataType.UINT32, knownMeaning = false)
     @DbcReference(type = DbcType.TRADE_SKILL_CATEGORY)
     private int tradeSkillCategoryId;
 

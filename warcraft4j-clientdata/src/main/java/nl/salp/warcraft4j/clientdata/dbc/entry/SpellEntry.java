@@ -21,9 +21,9 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -37,53 +37,53 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class SpellEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.SPELL;
 
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String name;
-    @DbcField(order = 3, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String subText;
-    @DbcField(order = 4, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String description;
-    @DbcField(order = 5, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String auraDescription;
-    @DbcField(order = 6, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.UINT32)
     private int runeCostId;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.UINT32)
     private int spellMissileId;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.UINT32)
     private int descriptionVariableId;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.UINT32)
     private int scalingId;
-    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.UINT32)
     private int auraOptions;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 11, dataType = DbcDataType.UINT32)
     private int auraRestrictionId;
-    @DbcField(order = 12, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 12, dataType = DbcDataType.UINT32)
     private int castingRequirementsId;
-    @DbcField(order = 13, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 13, dataType = DbcDataType.UINT32)
     private int categoriesId;
-    @DbcField(order = 14, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 14, dataType = DbcDataType.UINT32)
     private int classOptionsId;
-    @DbcField(order = 15, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 15, dataType = DbcDataType.UINT32)
     private int cooldownsId;
-    @DbcField(order = 16, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 16, dataType = DbcDataType.UINT32)
     private int equippedItemsId;
-    @DbcField(order = 17, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 17, dataType = DbcDataType.UINT32)
     private int interruptsId;
-    @DbcField(order = 18, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 18, dataType = DbcDataType.UINT32)
     private int levelsId;
-    @DbcField(order = 19, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 19, dataType = DbcDataType.UINT32)
     private int reagentsId;
-    @DbcField(order = 20, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 20, dataType = DbcDataType.UINT32)
     private int shapeshiftId;
-    @DbcField(order = 21, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 21, dataType = DbcDataType.UINT32)
     private int targetRestrictionsId;
-    @DbcField(order = 22, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 22, dataType = DbcDataType.UINT32)
     private int totemsId;
-    @DbcField(order = 23, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 23, dataType = DbcDataType.UINT32)
     private int requiredProjectId;
-    @DbcField(order = 24, dataType = DbcDataType.UINT32, knownMeaning = false)
+    @DbcFieldMapping(order = 24, dataType = DbcDataType.UINT32, knownMeaning = false)
     private int miscId;
 
     @Override

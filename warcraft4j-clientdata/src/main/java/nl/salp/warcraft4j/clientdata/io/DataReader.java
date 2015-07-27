@@ -19,13 +19,17 @@
 
 package nl.salp.warcraft4j.clientdata.io;
 
+import nl.salp.warcraft4j.clientdata.io.datatype.DataType;
+import nl.salp.warcraft4j.clientdata.io.parser.DataParser;
+import nl.salp.warcraft4j.clientdata.io.parser.DataParsingException;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteOrder;
 
 /**
  * Reader for reading data files.
- * <p/>
+ * <p>
  * This reader should either be closed manually via {@link DataReader#close()} or by utilizing the {@link java.io.Closeable} implementation.
  *
  * @author Barre Dijkstra
@@ -42,6 +46,33 @@ public abstract class DataReader implements Closeable, AutoCloseable {
     public abstract long position();
 
     /**
+     * Set the position of the reader cursor.
+     *
+     * @param position The position.
+     *
+     * @throws IOException                   When the position could not be set.
+     * @throws UnsupportedOperationException When the position is before the current reading position and random access is not supported.
+     * @see #isRandomAccessSupported()
+     */
+    public void position(long position) throws IOException, UnsupportedOperationException {
+        long cur = position();
+        if (position > cur) {
+            skip(position - cur);
+        } else if (position < cur) {
+            throw new UnsupportedOperationException("Unable to positioning the reader before the current reading position on a non-random access reader");
+        }
+    }
+
+    /**
+     * Check if full random access (backward and forward repositioning) is supported.
+     *
+     * @return {@code true} if full repositioning is supported.
+     */
+    public boolean isRandomAccessSupported() {
+        return false;
+    }
+
+    /**
      * Check if there is still data available to be read.
      *
      * @return {@code true} if there is still data available to be read.
@@ -52,7 +83,7 @@ public abstract class DataReader implements Closeable, AutoCloseable {
 
     /**
      * Get the number of remaining bytes of data available from the current position in the data.
-     * <p/>
+     * <p>
      * For readers that use buffering the remaining data can be the already read data and not the total available data.
      *
      * @return The number of remaining bytes of data.

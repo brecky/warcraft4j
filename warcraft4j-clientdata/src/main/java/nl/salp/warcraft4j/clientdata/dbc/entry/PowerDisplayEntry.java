@@ -20,9 +20,9 @@ package nl.salp.warcraft4j.clientdata.dbc.entry;
 
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,19 +38,19 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class PowerDisplayEntry implements DbcEntry {
     private static final DbcType ENTRY_TYPE = DbcType.POWER_DISPLAY;
 
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.UINT32, knownMeaning = false)
     private int actualType;
-    @DbcField(order = 3, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String globalStringBaseTag;
-    @DbcField(order = 4, dataType = DbcDataType.BYTE)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.BYTE)
     private byte red;
-    @DbcField(order = 5, dataType = DbcDataType.BYTE)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.BYTE)
     private byte green;
-    @DbcField(order = 6, dataType = DbcDataType.BYTE)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.BYTE)
     private byte blue;
-    @DbcField(order = 7, dataType = DbcDataType.BYTE, padding = true)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.BYTE, padding = true)
     private transient byte padding;
 
     @Override

@@ -19,13 +19,12 @@
 
 package nl.salp.warcraft4j.clientdata.dbc.entry;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcStore;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcDataType;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcField;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcMapping;
-import nl.salp.warcraft4j.clientdata.dbc.parser.DbcReference;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
+import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcReference;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -64,38 +63,38 @@ public class AchievementEntry implements DbcEntry {
 
     /** The entry type. */
     private static final DbcType ENTRY_TYPE = DbcType.ACHIEVEMENT;
-    @DbcField(order = 1, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 1, dataType = DbcDataType.UINT32)
     private int id;
-    @DbcField(order = 2, dataType = DbcDataType.INT32)
+    @DbcFieldMapping(order = 2, dataType = DbcDataType.INT32)
     private int faction;
-    @DbcField(order = 3, dataType = DbcDataType.INT32)
+    @DbcFieldMapping(order = 3, dataType = DbcDataType.INT32)
     private int mapId;
-    @DbcField(order = 4, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 4, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.ACHIEVEMENT)
     private int parentAchievementId;
-    @DbcField(order = 5, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 5, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String title;
-    @DbcField(order = 6, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 6, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String description;
-    @DbcField(order = 7, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 7, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.ACHIEVEMENT_CATEGORY)
     private int categoryId;
-    @DbcField(order = 8, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 8, dataType = DbcDataType.UINT32)
     private int achievementPoints;
-    @DbcField(order = 9, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 9, dataType = DbcDataType.UINT32)
     private int uiOrder;
-    @DbcField(order = 10, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 10, dataType = DbcDataType.UINT32)
     private int flags;
-    @DbcField(order = 11, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 11, dataType = DbcDataType.UINT32)
     @DbcReference(type = DbcType.SPELL_ICON)
     private int iconId;
-    @DbcField(order = 12, dataType = DbcDataType.STRINGTABLE_REFERENCE)
+    @DbcFieldMapping(order = 12, dataType = DbcDataType.STRINGTABLE_REFERENCE)
     private String reward;
-    @DbcField(order = 13, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 13, dataType = DbcDataType.UINT32)
     private int minimumCriteria;
-    @DbcField(order = 14, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 14, dataType = DbcDataType.UINT32)
     private int sharesCriteria;
-    @DbcField(order = 15, dataType = DbcDataType.UINT32)
+    @DbcFieldMapping(order = 15, dataType = DbcDataType.UINT32)
     private int criteriaTreeId;
 
     @Override
@@ -145,30 +144,6 @@ public class AchievementEntry implements DbcEntry {
     }
 
     /**
-     * Get the parent achievement.
-     * <p/>
-     * When there is a parent achievement:
-     * <ul>
-     * <li>The achievement can not start before the parent is completed</li>
-     * <li>All criteria from the parent should be used when the achievement doesn't have its own</li>
-     * <li>The progress of the parent achievement should be used as the starting point of the achievement</li>
-     * </ul>
-     *
-     * @param dbcStore The client database instance to resolve the parent achievement on.
-     *
-     * @return The parent achievement or {@code null} if the achievement could not be resolved.
-     *
-     * @see #getParentAchievementId()
-     */
-    public AchievementEntry getParentAchievement(DbcStore dbcStore) {
-        AchievementEntry entry = null;
-        if (parentAchievementId > 0 && dbcStore != null) {
-            entry = dbcStore.resolve(AchievementEntry.class, parentAchievementId);
-        }
-        return entry;
-    }
-
-    /**
      * Get the title of the achievement.
      *
      * @return The title.
@@ -193,23 +168,6 @@ public class AchievementEntry implements DbcEntry {
      */
     public int getCategoryId() {
         return categoryId;
-    }
-
-    /**
-     * Get the achievement category the achievement belongs to.
-     *
-     * @param dbcStore The client database instance to resolve the achievement category on.
-     *
-     * @return The achievement category or {@code null} if it could not be resolved.
-     *
-     * @see #getCategoryId()
-     */
-    public AchievementCategoryEntry getCategory(DbcStore dbcStore) {
-        AchievementCategoryEntry category = null;
-        if (categoryId > 0 && dbcStore != null) {
-            category = dbcStore.resolve(AchievementCategoryEntry.class, categoryId);
-        }
-        return category;
     }
 
     /**
@@ -251,24 +209,6 @@ public class AchievementEntry implements DbcEntry {
     }
 
     /**
-     * Get the icon to display for the achievement.
-     *
-     * @param dbcStore The client database to resolve the icon on.
-     *
-     * @return The icon or {@code null} if the icon could not be resolved.
-     *
-     * @see #getIconId()
-     */
-    public SpellIconEntry getIcon(DbcStore dbcStore) {
-        SpellIconEntry icon = null;
-        if (iconId > 0 && dbcStore != null) {
-            icon = dbcStore.resolve(SpellIconEntry.class, iconId);
-        }
-        return icon;
-
-    }
-
-    /**
      * Get the reward text.
      *
      * @return The reward text or {@code null} if no reward is available.
@@ -304,19 +244,6 @@ public class AchievementEntry implements DbcEntry {
      */
     public int getCriteriaTreeId() {
         return criteriaTreeId;
-    }
-
-    /**
-     * @param dbcStore
-     *
-     * @return
-     */
-    public CriteriaTreeEntry getCriteriaTree(DbcStore dbcStore) {
-        CriteriaTreeEntry tree = null;
-        if (criteriaTreeId > 0 && dbcStore != null) {
-            tree = dbcStore.resolve(CriteriaTreeEntry.class, criteriaTreeId);
-        }
-        return tree;
     }
 
     @Override
