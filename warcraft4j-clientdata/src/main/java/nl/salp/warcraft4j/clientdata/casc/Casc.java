@@ -240,7 +240,7 @@ public class Casc {
             Supplier<RandomAccessDataReader> readerSupplier = blteFile.getDataReader();
             parseLock.lock();
             try (DataReader reader = readerSupplier.get()) {
-                root = reader.readNext(new RootFileParser(blteFile.getDecompressedSize()));
+                root = reader.readNext(new RootFileParser());
             } catch (IOException e) {
                 throw new CascParsingException(format("Error parsing root file from data file %d at offset %d", indexEntry.getFileNumber(), indexEntry.getDataFileOffset()), e);
             } finally {

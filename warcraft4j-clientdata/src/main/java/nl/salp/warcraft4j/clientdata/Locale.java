@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  */
 public enum Locale {
     ALL(-1),
-    ONE(0),
+    NONE(0),
     UNKNOWN_1(0x1),
     EN_US(0x2),
     KO_KR(0x4),

@@ -22,6 +22,8 @@ import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
@@ -46,15 +48,21 @@ class ZlibDataDecompressor implements DataDecompressor {
             Inflater decompresser = new Inflater(false);
             LOGGER.trace("Decompressing {}B of gzip'd chunk data to {}B.", compressedSize, compressedSize);
             decompresser.setInput(data, (int) offset, data.length);
-            byte[] result = new byte[(int) decompressedSize];
-            int resultLength = decompresser.inflate(result);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            long resultLength = 0;
+            while (!decompresser.finished()) {
+                byte[] result = new byte[4096];
+                resultLength += decompresser.inflate(result);
+                out.write(result);
+            }
+            byte[] result = out.toByteArray();
             decompresser.end();
-            if (resultLength != decompressedSize) {
+            if (resultLength != decompressedSize && (compressedSize != decompressedSize)) {
                 throw new CascParsingException(String.format("Decompressed BLTE chunk to a %dB output while %dB was specified.", resultLength, decompressedSize));
             }
-            LOGGER.trace("Succesfully decompressed gzip'd chunk data to {}B of data.", result.length, decompressedSize);
+            LOGGER.trace("Succesfully decompressed gzip'd chunk data to {}B of data.", result.length);
             return result;
-        } catch (DataFormatException e) {
+        } catch (DataFormatException | IOException e) {
             throw new CascParsingException(e);
         }
     }

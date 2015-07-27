@@ -43,10 +43,8 @@ import static java.nio.ByteOrder.LITTLE_ENDIAN;
 public class RootFileParser implements DataParser<Root> {
     /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(RootFileParser.class);
-    private final long rootBlockSize;
 
-    public RootFileParser(long rootBlockSize) {
-        this.rootBlockSize = rootBlockSize - 30;
+    public RootFileParser() {
     }
 
     @Override
@@ -59,31 +57,33 @@ public class RootFileParser implements DataParser<Root> {
 
     private Map<Long, List<RootEntry>> parseEntryBlocks(DataReader reader) throws IOException, DataParsingException {
         Map<Long, List<RootEntry>> entries = new HashMap<>();
-        long endPosition = reader.position() + rootBlockSize;
         long totalEntries = 0;
         long totalReadEntries = 0;
-        LOGGER.trace("Reading entries from position {} / {}", reader.position(), endPosition);
-        while (reader.position() < endPosition) {
+        LOGGER.trace("Reading entries from position {} ({} remaining)", reader.position(), reader.remaining());
+        while (reader.remaining() > 4) {
             long entryCount = reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN);
-            totalEntries += entryCount;
-            long blockUnknown = reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN);
-            long blockFlags = reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN);
-            Locale.getLocale(blockFlags).orElseThrow(() -> new CascParsingException(format("Unable to find a locale for flag %d", blockFlags)));
+            if (entryCount > 0) {
+                LOGGER.trace("Reading {} entries from position {} ({} remaining)", entryCount, reader.position(), reader.remaining());
+                totalEntries += entryCount;
+                long blockUnknown = reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN);
+                long blockFlags = reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN);
+                Locale.getLocale(blockFlags).orElseThrow(() -> new CascParsingException(format("Unable to find a locale for flag %d", blockFlags)));
 
-            List<Long> entryUnknown = new ArrayList<>();
-            for (long i = 0; i < entryCount; i++) {
-                entryUnknown.add(reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN));
-            }
-            for (long i = 0; i < entryCount; i++) {
-                byte[] contentChecksum = reader.readNext(DataTypeFactory.getByteArray(16));
-                long filenameHash = reader.readNext(DataTypeFactory.getLong(), LITTLE_ENDIAN);
-                if (!entries.containsKey(filenameHash)) {
-                    entries.put(filenameHash, new ArrayList<>());
+                List<Long> entryUnknown = new ArrayList<>();
+                for (long i = 0; i < entryCount; i++) {
+                    entryUnknown.add(reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN));
                 }
-                entries.get(filenameHash).add(new RootEntry(filenameHash, new Checksum(contentChecksum), blockFlags, blockUnknown, entryUnknown.get((int) i)));
-                totalReadEntries++;
+                for (long i = 0; i < entryCount; i++) {
+                    byte[] contentChecksum = reader.readNext(DataTypeFactory.getByteArray(16));
+                    long filenameHash = reader.readNext(DataTypeFactory.getLong(), LITTLE_ENDIAN);
+                    if (!entries.containsKey(filenameHash)) {
+                        entries.put(filenameHash, new ArrayList<>());
+                    }
+                    entries.get(filenameHash).add(new RootEntry(filenameHash, new Checksum(contentChecksum), blockFlags, blockUnknown, entryUnknown.get((int) i)));
+                    totalReadEntries++;
+                }
+                LOGGER.trace("Read {} entries from {} calculated, on position {}", totalReadEntries, totalEntries, reader.position());
             }
-            LOGGER.trace("Read {} entries from {} calculated, on position {} / {}", totalReadEntries, totalEntries, reader.position(), endPosition);
         }
         return entries;
     }

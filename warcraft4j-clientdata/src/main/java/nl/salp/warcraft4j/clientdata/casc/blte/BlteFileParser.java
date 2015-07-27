@@ -51,6 +51,11 @@ public class BlteFileParser implements DataParser<BlteFile> {
         this.fileSize = entry.getFileSize();
     }
 
+    public BlteFileParser(long fileSize) {
+        this.entry= null;
+        this.fileSize = fileSize;
+    }
+
     @Override
     public BlteFile parse(DataReader reader) throws IOException, DataParsingException {
         LOGGER.trace("Parsing {}B BLTE file from data file at offset {}", fileSize, reader.position());
