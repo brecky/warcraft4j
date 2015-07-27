@@ -18,7 +18,6 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.clientdata.io.parser.DataParser;
@@ -138,36 +137,25 @@ public class IndexFileParser implements DataParser<IndexFile> {
         return entry;
     }
 
-    private byte[] parseUnknownData(DataReader reader, long dataLength) throws IOException {
-        ByteOutputStream out = new ByteOutputStream();
-        while (reader.hasRemaining()) {
-            out.write(reader.readNext(DataTypeFactory.getByte()));
-        }
-        return out.getBytes();
-    }
-
     @Override
     public int getInstanceDataSize() {
         return 0;
     }
 
     private static class IndexHeaderV2 {
-        /*
-USHORT IndexVersion;                        // Must be 0x07
-BYTE   KeyIndex;                            // Must be equal to the file key index
-BYTE   ExtraBytes;                          // (?) Extra bytes in the key record
-BYTE   SpanSizeBytes;                       // Size of field with file size
-BYTE   SpanOffsBytes;                       // Size of field with file offset
-BYTE   KeyBytes;                            // Size of the file key (bytes)
-BYTE   SegmentBits;                         // Number of bits for the file offset (rest is archive index)
-ULONGLONG MaxFileOffset;
-*/
+        /** The index version, must be 0x07 for CASCv2. */
         private final int indexVersion;
+        /** The file key index. */
         private final byte keyIndex;
+        /** Empty byte */
         private final byte unknown1;
+        /** The size of the field with the file size in bytes. */
         private final byte spanSizeBytes;
+        /** The size of the field with the file offset in bytes. */
         private final byte spanOffsetBytes;
+        /** Size of the file key in bytes. */
         private final byte keyBytes;
+        /** Number of bits for the file offset (rest is archive index). */
         private final byte segmentBits;
         private final long maxFileOffset;
 
