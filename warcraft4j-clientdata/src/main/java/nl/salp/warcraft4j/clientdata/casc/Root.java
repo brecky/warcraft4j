@@ -37,7 +37,19 @@ public class Root {
         this.entries = Optional.ofNullable(entries).filter(m -> !m.isEmpty()).orElseThrow(() -> new IllegalArgumentException("Can't initialise the root with no entries."));
     }
 
-    public List<RootEntry> getEntries(long hash) {
+    public long getHashCount() {
+        return entries.size();
+    }
+
+    public Set<Long> getHashes() {
+        return Collections.unmodifiableSet(entries.keySet());
+    }
+
+    public boolean isEntryAvailable(long hash) {
+        return entries.containsKey(hash) && !getEntries(hash).isEmpty();
+    }
+
+    protected List<RootEntry> getEntries(long hash) {
         return entries.getOrDefault(hash, Collections.emptyList());
     }
 
@@ -47,7 +59,7 @@ public class Root {
                 .collect(Collectors.toList());
     }
 
-    public Collection<RootEntry> getEntries() {
+    protected Collection<RootEntry> getEntries() {
         return entries.values().stream().flatMap(List::stream).collect(Collectors.toList());
     }
 

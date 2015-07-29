@@ -80,15 +80,15 @@ public class Index {
     }
 
     public Optional<Integer> getDataFileNumber(Checksum fileKey) {
-        return getEntry(fileKey).map(e -> (int) e.getFileNumber());
+        return getEntry(fileKey).map(IndexEntry::getFileNumber);
     }
 
     public Optional<Integer> getDataOffset(Checksum fileKey) {
-        return getEntry(fileKey).map(e -> e.getDataFileOffset());
+        return getEntry(fileKey).map(IndexEntry::getDataFileOffset);
     }
 
     public Optional<Long> getDataSize(Checksum fileKey) {
-        return getEntry(fileKey).map(e -> e.getFileSize());
+        return getEntry(fileKey).map(IndexEntry::getFileSize);
     }
 
     public Collection<IndexEntry> getEntries() {

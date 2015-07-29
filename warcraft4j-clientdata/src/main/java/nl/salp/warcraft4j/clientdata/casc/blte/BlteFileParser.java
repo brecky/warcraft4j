@@ -83,7 +83,7 @@ public class BlteFileParser implements DataParser<BlteFile> {
         if (chunks.size() != chunkCount) {
             throw new CascParsingException(format("Parsed %d chunks of data from BLTE file while %d chunks were expected.", chunks.size(), chunkCount));
         }
-        LOGGER.debug("Successfully parsed {} bytes file from BLTE file with {} bytes of data from {} chunk(s)",
+        LOGGER.trace("Successfully parsed {} bytes file from BLTE file with {} bytes of data from {} chunk(s)",
                 chunks.stream().mapToLong(BlteChunk::getCompressedSize).sum(),
                 chunks.stream().mapToLong(BlteChunk::getDecompressedSize).sum(),
                 chunkCount);

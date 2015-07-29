@@ -50,7 +50,7 @@ public class EncodingFile {
         return locale;
     }
 
-    public Optional<EncodingEntry> getEncodingEntry(Checksum contentChecksum) {
+    protected Optional<EncodingEntry> getEncodingEntry(Checksum contentChecksum) {
         return Optional.ofNullable(entries.get(contentChecksum));
     }
 
@@ -62,8 +62,12 @@ public class EncodingFile {
         return getEncodingEntry(contentChecksum).map(EncodingEntry::getFileKey);
     }
 
-    public Collection<EncodingEntry> getEntries() {
+    protected Collection<EncodingEntry> getEntries() {
         return entries.values();
+    }
+
+    public int getEntryCount() {
+        return entries.size();
     }
 
     @Override

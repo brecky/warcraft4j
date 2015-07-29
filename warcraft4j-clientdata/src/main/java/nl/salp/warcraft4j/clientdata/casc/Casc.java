@@ -21,6 +21,7 @@ package nl.salp.warcraft4j.clientdata.casc;
 
 import nl.salp.warcraft4j.clientdata.casc.blte.BlteFile;
 import nl.salp.warcraft4j.clientdata.casc.local.LocalCascConfig;
+import nl.salp.warcraft4j.clientdata.io.CompositeDataReader;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.RandomAccessDataReader;
 import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
@@ -42,6 +43,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * TODO Document class.
@@ -117,6 +119,10 @@ public class Casc {
         return branch;
     }
 
+    public String getCdnUrl() {
+        return getConfig().getCdnUrl();
+    }
+
     /**
      * Get the actual (hash-based) file path for the given file path.
      *
@@ -124,7 +130,7 @@ public class Casc {
      *
      * @return The actual file path.
      */
-    public <T> Optional<T> readFile(String path, Function<BlteFile, T> parser) {
+    protected <T> Optional<T> readFile(String path, Function<BlteFile, T> parser) {
         return Optional.ofNullable(getIndexEntry(path).get(0))
                 .map(e -> parser.apply(getDataFile(e).getEntry(e)));
     }
@@ -137,11 +143,11 @@ public class Casc {
         return getEncodingFile().getFileKey(contentChecksum);
     }
 
-    public Optional<IndexEntry> getIndexEntryForFileKey(Checksum fileKey) {
+    protected Optional<IndexEntry> getIndexEntryForFileKey(Checksum fileKey) {
         return getIndex().getEntry(fileKey);
     }
 
-    public Optional<IndexEntry> getIndexEntryForFileChecksum(Checksum fileChecksum) {
+    protected Optional<IndexEntry> getIndexEntryForFileChecksum(Checksum fileChecksum) {
         Checksum cs = fileChecksum;
         if (fileChecksum.length() > 9) {
             cs = fileChecksum.trim(9);
@@ -149,17 +155,16 @@ public class Casc {
         return getIndexEntryForFileKey(cs);
     }
 
-    public List<IndexEntry> getIndexEntry(String path) {
+    protected List<IndexEntry> getIndexEntry(String path) {
         return Optional.ofNullable(path)
-                .map(s -> s.replace('/', '\\').toUpperCase().getBytes(StandardCharsets.US_ASCII))
-                .map(d -> JenkinsHash.hashLittle2(d, d.length))
+                .map(Casc::hashFilename)
                 .map(this::getContentChecksumForFilenameHash)
                 .map(c -> c.stream().map(this::getFileKeyForContentChecksum).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()))
                 .map(c -> c.stream().map(this::getIndexEntryForFileKey).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
     }
 
-    public DataFile getDataFile(IndexEntry entry) {
+    protected DataFile getDataFile(IndexEntry entry) {
         if (!dataFiles.containsKey(entry.getFileNumber())) {
             parseLock.lock();
             try {
@@ -173,7 +178,7 @@ public class Casc {
         return dataFiles.get(entry.getFileNumber());
     }
 
-    public CascConfig getConfig() {
+    protected CascConfig getConfig() {
         if (config == null) {
             parseLock.lock();
             try {
@@ -195,7 +200,7 @@ public class Casc {
      *
      * @return The encoding file.
      */
-    public EncodingFile getEncodingFile() {
+    protected EncodingFile getEncodingFile() {
         if (encodingFile == null) {
             IndexEntry indexEntry = Optional.ofNullable(getConfig().getEncodingFileChecksum())
                     .flatMap(this::getIndexEntryForFileChecksum)
@@ -214,9 +219,13 @@ public class Casc {
             } finally {
                 parseLock.unlock();
             }
-            LOGGER.debug("Successfully parsed encoding file with {} entries", getEncodingFile().getEntries().size());
+            LOGGER.debug("Successfully parsed encoding file with {} entries", encodingFile.getEntryCount());
         }
         return encodingFile;
+    }
+
+    public long getEncodingEntryCount() {
+        return getEncodingFile().getEntryCount();
     }
 
     /**
@@ -224,7 +233,7 @@ public class Casc {
      *
      * @return The root file.
      */
-    public Root getRoot() {
+    protected Root getRoot() {
         if (root == null) {
             Checksum contentChecksum = Optional.of(config.getRootContentChecksum())
                     .orElseThrow(() -> new CascParsingException(format("No checksum found for root file")));
@@ -246,9 +255,58 @@ public class Casc {
             } finally {
                 parseLock.unlock();
             }
-            LOGGER.debug("Successfully parsed root file with {} entries", root.getEntries().size());
+            LOGGER.debug("Successfully parsed root file with {} entries", root.getHashCount());
         }
         return root;
+    }
+
+    public Set<Long> getRegisteredHashes() {
+        return getRoot().getHashes();
+    }
+
+    public long getRegisteredHashCount() {
+        return getRoot().getHashCount();
+    }
+
+    public boolean isHashRegistered(long hash) {
+        return getRoot().isEntryAvailable(hash);
+    }
+
+    public boolean isHashForValidDataBlock(long hash) {
+        return getRoot().getContentChecksums(hash).stream()
+                .allMatch(c -> Optional.ofNullable(c)
+                                .flatMap(this::getFileKeyForContentChecksum)
+                                .flatMap(this::getIndexEntryForFileKey)
+                                .isPresent()
+                );
+    }
+
+    public Supplier<RandomAccessDataReader> getFileReader(String filename) {
+        return getFileReader(hashFilename(filename));
+    }
+
+    public Supplier<RandomAccessDataReader> getFileReader(long hash) {
+        return getFileReader(hash, 0, 0);
+    }
+
+    public Supplier<RandomAccessDataReader> getFileReader(long hash, long offset, long length) {
+        List<IndexEntry> indexEntries = getRoot().getContentChecksums(hash).stream()
+                .map(h -> {
+                    Optional<Checksum> c = getFileKeyForContentChecksum(h);
+                    if (!c.isPresent()) {
+                        throw new CascParsingException(format("No file key found for file with hash %s", hash));
+                    }
+                    return c.get();
+                })
+                .map(c -> {
+                    Optional<IndexEntry> i = this.getIndexEntryForFileKey(c);
+                    if (!i.isPresent()) {
+                        throw new CascParsingException(format("No index entry found for file hash %s", hash));
+                    }
+                    return i.get();
+                })
+                .collect(Collectors.toList());
+        return getBlteDataReader(indexEntries, offset, length);
     }
 
     /**
@@ -256,7 +314,7 @@ public class Casc {
      *
      * @return The index files.
      */
-    public Index getIndex() {
+    protected Index getIndex() {
         if (index == null) {
             LOGGER.debug("Initialising index files");
             parseLock.lock();
@@ -270,23 +328,66 @@ public class Casc {
         return index;
     }
 
-    public Collection<IndexEntry> getIndexEntries() {
-        return getIndex().getEntries();
+    public long getIndexEntryCount() {
+        return getIndex().getEntryCount();
     }
 
-    public Path getDataFilePath(IndexEntry entry) {
+    protected Path getDataFilePath(IndexEntry entry) {
         String filename = format("data.%03d", entry.getFileNumber());
         return installationDirectory.resolve(Paths.get("Data", "data", filename));
     }
 
-    public Supplier<RandomAccessDataReader> getBlteDataReader(IndexEntry entry) {
-        DataFile dataFile = getDataFile(entry);
-        LOGGER.debug("Creating BLTE reader supplier from data file {} ({}) at offset {} for file with key {} ", dataFile.getFileNumber(), dataFile.getPath(), entry.getDataFileOffset(), entry.getFileKey());
-        return dataFile.getEntryReader(entry);
+    protected Supplier<RandomAccessDataReader> getBlteDataReader(IndexEntry... entries) {
+        return getBlteDataReader(Arrays.asList(entries));
     }
 
+    protected Supplier<RandomAccessDataReader> getBlteDataReader(List<IndexEntry> entries, long offset, long length) {
+        Supplier<RandomAccessDataReader> blteDataReader;
+        if (entries.size() == 1) {
+            IndexEntry entry = entries.iterator().next();
+            DataFile dataFile = getDataFile(entry);
+            LOGGER.trace("Creating BLTE reader supplier from data file {} ({}) at offset {} for file with key {} ", dataFile.getFileNumber(), dataFile.getPath(), entry
+                    .getDataFileOffset(), entry.getFileKey());
+            blteDataReader = dataFile.getEntryReader(entry, offset, length);
+        } else {
+            blteDataReader = () -> {
+                try {
+                    return new CompositeDataReader(entries.stream()
+                            .map(entry -> getDataFile(entry).getEntryReader(entry))
+                            .collect(Collectors.toList()));
+                } catch (IOException e) {
+                    throw new CascParsingException(format("Error creating single BLTE reader from %d entries", entries.size()), e);
+                }
+            };
+            LOGGER.trace("Creating single BLTE reader supplier from {} entries.", entries.size());
+        }
+        return blteDataReader;
+    }
 
-    public long extractBlteFile(IndexEntry entry, Supplier<OutputStream> outputStreamSupplier) {
+    protected Supplier<RandomAccessDataReader> getBlteDataReader(List<IndexEntry> entries) {
+        Supplier<RandomAccessDataReader> blteDataReader;
+        if (entries.size() == 1) {
+            IndexEntry entry = entries.iterator().next();
+            DataFile dataFile = getDataFile(entry);
+            LOGGER.debug("Creating BLTE reader supplier from data file {} ({}) at offset {} for file with key {} ", dataFile.getFileNumber(), dataFile.getPath(), entry
+                    .getDataFileOffset(), entry.getFileKey());
+            blteDataReader = dataFile.getEntryReader(entry);
+        } else {
+            blteDataReader = () -> {
+                try {
+                    return new CompositeDataReader(entries.stream()
+                            .map(entry -> getDataFile(entry).getEntryReader(entry))
+                            .collect(Collectors.toList()));
+                } catch (IOException e) {
+                    throw new CascParsingException(format("Error creating single BLTE reader from %d entries", entries.size()), e);
+                }
+            };
+            LOGGER.debug("Creating single BLTE reader supplier from {} entries.", entries.size());
+        }
+        return blteDataReader;
+    }
+
+    protected long extractBlteFile(IndexEntry entry, Supplier<OutputStream> outputStreamSupplier) {
         long writtenBytes = 0;
         try (RandomAccessDataReader reader = getBlteDataReader(entry).get()) {
             try (OutputStream out = outputStreamSupplier.get()) {
@@ -302,14 +403,26 @@ public class Casc {
         return writtenBytes;
     }
 
-    private Supplier<BlteFile> getBlteFile(IndexEntry entry) {
+    protected Supplier<BlteFile> getBlteFile(IndexEntry entry) {
         DataFile dataFile = getDataFile(entry);
-        LOGGER.debug("Creating BLTE file supplier from data file {} ({}) at offset {} for file with key {} ", dataFile.getFileNumber(), dataFile.getPath(), entry.getDataFileOffset(), entry.getFileKey());
+        LOGGER.debug("Creating BLTE file supplier from data file {} ({}) at offset {} for file with key {} ", dataFile.getFileNumber(), dataFile.getPath(), entry
+                .getDataFileOffset(), entry.getFileKey());
         return () -> getDataFile(entry).getEntry(entry);
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public static long hashFilename(String filename) {
+        long hash;
+        if (isEmpty(filename)) {
+            hash = 0;
+        } else {
+            byte[] data = filename.replace('/', '\\').toUpperCase().getBytes(StandardCharsets.US_ASCII);
+            hash = JenkinsHash.hashLittle2(data, data.length);
+        }
+        return hash;
     }
 }

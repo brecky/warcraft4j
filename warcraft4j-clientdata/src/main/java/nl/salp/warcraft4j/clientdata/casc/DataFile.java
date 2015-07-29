@@ -72,6 +72,10 @@ public class DataFile {
         return getEntry(index).getDataReader();
     }
 
+    public Supplier<RandomAccessDataReader> getEntryReader(IndexEntry index, long offset, long length) {
+        return getEntry(index).getDataReader(offset, length);
+    }
+
     private BlockHeader getBlockHeader(IndexEntry index) {
         if (index.getFileNumber() != fileNumber) {
             throw new CascParsingException(format("Tried to read file with data file number %d from data file number %d", index.getFileNumber(), fileNumber));
