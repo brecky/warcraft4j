@@ -18,46 +18,36 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
- * TODO Add description.
+ * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public interface CascConfig {
-    /**
-     * Get the available regions.
-     *
-     * @return The regions.
-     */
-    List<String> getAvailableRegions();
+public enum Region {
+    UNITED_STATES("us"),
+    XX("xx"),
+    EUROPE("eu"),
+    KOREA("kr"),
+    TAIWAN("tw"),
+    CHINA("cn"),
+    SINGAPORE("sg");
 
-    /**
-     * Get the content checksum of the root file.
-     *
-     * @return The content checksum.
-     */
-    Checksum getRootContentChecksum();
+    private final String regionCode;
 
-    /**
-     * Get the file key of the encoding file.
-     *
-     * @return The file key.
-     */
-    Checksum getEncodingFileChecksum();
+    Region(String regionCode) {
+        this.regionCode = regionCode;
+    }
 
-    /**
-     * Get the size of the encoding file.
-     *
-     * @return The size in bytes.
-     */
-    long getEncodingFileSize();
+    public String getRegionCode() {
+        return regionCode;
+    }
 
-    /**
-     * Get the CDN URL.
-     *
-     * @return The CDN URL.
-     */
-    String getCdnUrl();
+    public static Optional<Region> getRegion(String regionCode) {
+        return Stream.of(Region.values())
+                .filter(r -> r.getRegionCode().equals(regionCode))
+                .findFirst();
+    }
 }

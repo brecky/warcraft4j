@@ -19,6 +19,7 @@
 package nl.salp.warcraft4j.clientdata.casc;
 
 import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeUtil;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -29,14 +30,12 @@ import java.util.Optional;
  * @author Barre Dijkstra
  */
 public class Checksum {
-    private static final long FNV_PRIME32 = 16777619L;
-    private static final long FNV_OFFSET32 = 2166136261L;
     private final byte[] checksum;
     private final int hash;
 
     public Checksum(byte[] checksum) {
         this.checksum = Optional.ofNullable(checksum).filter(c -> c.length > 0).orElseThrow(() -> new IllegalArgumentException("Can't create a checksum from an empty array"));
-        this.hash = to32BitFnv1aHash(this.checksum);
+        this.hash = CascUtil.hash(checksum);
     }
 
     public byte[] getChecksum() {
@@ -50,8 +49,7 @@ public class Checksum {
     public Checksum trim(int length) {
         byte[] trimmed = checksum;
         if (length < checksum.length) {
-            trimmed = Arrays.copyOf(checksum, length);
-            // trimmed = Arrays.copyOfRange(checksum, 0, length);
+            trimmed = ArrayUtils.subarray(checksum, 0, length);
         }
         return new Checksum(trimmed);
     }
@@ -73,15 +71,5 @@ public class Checksum {
     @Override
     public String toString() {
         return DataTypeUtil.byteArrayToHexString(checksum);
-    }
-
-    private static int to32BitFnv1aHash(byte[] value) {
-        long hash = FNV_OFFSET32;
-        for (byte b : value) {
-            hash ^= b;
-            hash *= FNV_PRIME32;
-        }
-
-        return (int) (hash & 0xFFFFFFFF);
     }
 }

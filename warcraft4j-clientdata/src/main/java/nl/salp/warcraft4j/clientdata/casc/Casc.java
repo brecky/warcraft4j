@@ -20,7 +20,10 @@
 package nl.salp.warcraft4j.clientdata.casc;
 
 import nl.salp.warcraft4j.clientdata.casc.blte.BlteFile;
-import nl.salp.warcraft4j.clientdata.casc.local.LocalCascConfig;
+import nl.salp.warcraft4j.clientdata.casc.config.CascConfig;
+import nl.salp.warcraft4j.clientdata.casc.config.CdnCascConfig;
+import nl.salp.warcraft4j.clientdata.casc.config.CdnVersion;
+import nl.salp.warcraft4j.clientdata.casc.config.LocalCascConfig;
 import nl.salp.warcraft4j.clientdata.io.CompositeDataReader;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.RandomAccessDataReader;
@@ -57,8 +60,8 @@ public class Casc {
     private static final String BUILD_INFO_FILE = ".build.info";
     /** The path to the World of Warcraft installation directory.. */
     private final Path installationDirectory;
-    /** The installation branch to use. */
-    private final Branch branch;
+    /** The installation region to use. */
+    private final Region region;
     /** Lock for parsing. */
     private final Lock parseLock;
     /** The CASC configuration. */
@@ -75,14 +78,14 @@ public class Casc {
      * Create a new CASC instance.
      *
      * @param installationDirectory The path to the World of Warcraft installation directory.
-     * @param branch                The installation branch for which the CASC is initialised.
+     * @param region                The installation region for which the CASC is initialised.
      */
-    public Casc(Path installationDirectory, Branch branch) {
+    public Casc(Path installationDirectory, Region region) {
         this.installationDirectory = installationDirectory;
-        this.branch = branch;
+        this.region = region;
         this.parseLock = new ReentrantLock();
         this.dataFiles = new HashMap<>();
-        LOGGER.debug("Creating new CASC container (branch: {}, localDirectory: {})", branch, installationDirectory);
+        LOGGER.debug("Creating new CASC container (region: {}, localDirectory: {})", region, installationDirectory);
     }
 
     /**
@@ -111,12 +114,12 @@ public class Casc {
     }
 
     /**
-     * Get the installation branch for which the CASC is initialised.
+     * Get the installation region for which the CASC is initialised.
      *
-     * @return The installation branch.
+     * @return The installation region.
      */
-    public Branch getBranch() {
-        return branch;
+    public Region getRegion() {
+        return region;
     }
 
     public String getCdnUrl() {
@@ -183,7 +186,8 @@ public class Casc {
             parseLock.lock();
             try {
                 LOGGER.debug("Parsing config file from {}", installationDirectory);
-                config = new LocalCascConfig(installationDirectory);
+                //config = new LocalCascConfig(region, installationDirectory, new FileDataReaderProvider());
+                config = new CdnCascConfig(region, CdnVersion.WOW_LIVE, new CdnDataReaderProvider());
                 LOGGER.debug("Successfully parsed config file with CDN url {}, encoding file {} and root {}",
                         config.getCdnUrl(),
                         config.getEncodingFileChecksum(),

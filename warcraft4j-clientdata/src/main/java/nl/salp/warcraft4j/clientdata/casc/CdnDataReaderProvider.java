@@ -16,44 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package nl.salp.warcraft4j.clientdata.casc;
 
-package nl.salp.warcraft4j.clientdata.casc.online;
+import nl.salp.warcraft4j.clientdata.casc.DataReaderProvider;
+import nl.salp.warcraft4j.clientdata.io.DataReader;
+import nl.salp.warcraft4j.clientdata.io.http.HttpDataReader;
+
+import java.util.function.Supplier;
 
 /**
- * Application available in a CDN.
+ * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public enum Application {
-    /** World of Warcraft (live). */
-    WORLD_OF_WARCRAFT_LIVE("wow"),
-    /** World of Warcraft (PTR). */
-    WORLD_OF_WARCRAFT_PTR("wowt"),
-    /** World of Warcraft (beta). */
-    WORLD_OF_WARCRAFT_BETA("wow_beta"),
-    /** Heroes of the Storm (live, though currently only available as beta). */
-    HEROES_OF_THE_STORM("storm");
-
-    /**
-     * The CDN key for the application.
-     */
-    private final String key;
-
-    /**
-     * Create a new Application instance.
-     *
-     * @param key The CDN key for the application.
-     */
-    private Application(String key) {
-        this.key = key;
+public class CdnDataReaderProvider implements DataReaderProvider<String> {
+    public Supplier<DataReader> getHttpDataReader(String url) {
+        return () -> new HttpDataReader(url);
     }
 
-    /**
-     * Get the CDN key for the application.
-     *
-     * @return The CDN key.
-     */
-    public String getKey() {
-        return key;
+    public Supplier<DataReader> getDataReader(String url) {
+        return getHttpDataReader(url);
     }
 }

@@ -16,25 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc.online;
+package nl.salp.warcraft4j.clientdata.casc;
+
+import nl.salp.warcraft4j.clientdata.io.DataReader;
+
+import java.util.function.Supplier;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public enum CdnFileType {
-    CONFIG("config"),
-    DATA("data"),
-    PATCH("patch");
-
-    private final String path;
-
-    CdnFileType(String path) {
-        this.path = path;
-    }
-
-    public String getPath() {
-        return path;
-    }
+public interface DataReaderProvider<T> {
+    Supplier<DataReader> getDataReader(T uri);
 }

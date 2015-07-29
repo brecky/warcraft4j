@@ -91,13 +91,13 @@ public class BlteFileParser implements DataParser<BlteFile> {
     }
 
     private int parseMultiChunkCount(DataReader reader) throws IOException, DataParsingException {
-        byte leadingByte = reader.readNext(DataTypeFactory.getByte());
+        short leadingByte = reader.readNext(DataTypeFactory.getUnsignedByte());
         if (leadingByte != 0x0F) {
             throw new DataParsingException("Blte chunk count value is not lead by 0x0F");
         }
-        byte b1 = reader.readNext(DataTypeFactory.getByte());
-        byte b2 = reader.readNext(DataTypeFactory.getByte());
-        byte b3 = reader.readNext(DataTypeFactory.getByte());
+        short b1 = reader.readNext(DataTypeFactory.getUnsignedByte());
+        short b2 = reader.readNext(DataTypeFactory.getUnsignedByte());
+        short b3 = reader.readNext(DataTypeFactory.getUnsignedByte());
         return b1 << 16 | b2 << 8 | b3 << 0;
     }
 }

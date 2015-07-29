@@ -16,39 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc;
-
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+package nl.salp.warcraft4j.clientdata.casc.config;
 
 /**
- * TODO Add description.
+ * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public enum Branch {
-    EU("eu"),
-    US("us");
+public enum CdnVersion {
+    WOW_LIVE("wow"),
+    WOW_PTR("wowt"),
+    WOW_BETA("wow_beta");
 
-    private final String key;
+    private final String productCode;
 
-    Branch(String key) {
-        this.key = key;
+    CdnVersion(String productCode) {
+        this.productCode = productCode;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public static Branch getForKey(String key) {
-        Branch branch = null;
-        if (isNotEmpty(key)) {
-            for (Branch b : Branch.values()) {
-                if (key.equals(b.getKey())) {
-                    branch = b;
-                    break;
-                }
-            }
-        }
-        return branch;
+    public String getProductCode() {
+        return productCode;
     }
 }

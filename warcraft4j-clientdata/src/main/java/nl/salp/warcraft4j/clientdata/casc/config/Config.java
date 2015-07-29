@@ -16,8 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc;
+package nl.salp.warcraft4j.clientdata.casc.config;
 
+import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -28,12 +29,14 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 /**
  * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public class Config {
+class Config {
     private final ConfigParser configParser;
     private final Supplier<DataReader> dataReaderSupplier;
     private Map<String, List<String>> values;
@@ -66,8 +69,34 @@ public class Config {
 
     public Optional<List<String>> getValues(String key) {
         return Optional.ofNullable(values())
-                .map(m -> m.get(key))
-                .filter(l -> !l.isEmpty());
+                .map(m -> m.get(key));
+        //.filter(l -> !l.isEmpty()); // TODO Leave this empty check in? Will screw up the indices of the values...
+    }
+
+    public Optional<String> getValue(String key, String idKey, String idValue) {
+        return getIndex(idKey, idValue)
+                .filter(i -> values().containsKey(key) && values().get(key).size() > i)
+                .map(i -> values().get(key).get(i));
+    }
+
+    public Optional<String> getValue(String key, int index) {
+        return Optional.ofNullable(values().get(key))
+                .filter(values -> values.size() > index)
+                .map(values -> values.get(index));
+    }
+
+    public Optional<Integer> getIndex(String idKey, String idValue) {
+        Optional<Integer> idx = Optional.empty();
+        if (isNotEmpty(idKey) && isNotEmpty(idValue)) {
+            List<String> vals = values().getOrDefault(idKey, Collections.emptyList());
+            for (int i = 0; i < vals.size(); i++) {
+                if (idValue.equals(vals.get(i))) {
+                    idx = Optional.of(i);
+                    break;
+                }
+            }
+        }
+        return idx;
     }
 
     public Optional<String> getFirstValue(String key) {
