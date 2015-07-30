@@ -79,6 +79,7 @@
         <dependency.commons-lang.version>3.3.2</dependency.commons-lang.version>
         <dependency.commons-codec.version>1.10</dependency.commons-codec.version>
         <dependency.commons-collections.version>4.0</dependency.commons-collections.version>
+        <dependency.commons-configuration.version>1.10</dependency.commons-configuration.version>
         <dependency.httpclient.version>4.4</dependency.httpclient.version>
         <dependency.jackson.version>2.5.1</dependency.jackson.version>
     </properties>
@@ -164,6 +165,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
                 <version>${dependency.commons-collections.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>${dependency.commons-configuration.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>

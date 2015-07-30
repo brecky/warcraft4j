@@ -59,4 +59,11 @@ public enum Locale {
                 .filter(l -> (l.flag & flag) == flag)
                 .findFirst();
     }
+
+
+    public static Optional<Locale> getLocale(String name) {
+        return Stream.of(Locale.values())
+                .filter(l -> l.name().equalsIgnoreCase(name))
+                .findFirst();
+    }
 }

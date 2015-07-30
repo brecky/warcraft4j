@@ -16,42 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc.config;
+package nl.salp.warcraft4j.clientdata;
 
-import nl.salp.warcraft4j.clientdata.Branch;
-
-import static java.lang.String.format;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public enum CdnVersion {
-    WOW_LIVE("wow"),
-    WOW_PTR("wowt"),
-    WOW_BETA("wow_beta");
+public enum Region {
+    UNITED_STATES("us"),
+    XX("xx"),
+    EUROPE("eu"),
+    KOREA("kr"),
+    TAIWAN("tw"),
+    CHINA("cn"),
+    SINGAPORE("sg");
 
-    private final String productCode;
+    private final String regionCode;
 
-    CdnVersion(String productCode) {
-        this.productCode = productCode;
+    Region(String regionCode) {
+        this.regionCode = regionCode;
     }
 
-    public String getProductCode() {
-        return productCode;
+    public String getRegionCode() {
+        return regionCode;
     }
 
-    public static CdnVersion getFrom(Branch branch) throws IllegalArgumentException {
-        switch (branch) {
-            case BETA:
-                return WOW_BETA;
-            case LIVE:
-                return WOW_LIVE;
-            case PTR:
-                return WOW_PTR;
-            default:
-                throw new IllegalArgumentException(format("Unable to find a CDN version for branch %s", branch));
-        }
+    public static Optional<Region> getRegion(String region) {
+        return Stream.of(Region.values())
+                .filter(r -> r.getRegionCode().equalsIgnoreCase(region) || r.name().equalsIgnoreCase(region))
+                .findFirst();
     }
 }

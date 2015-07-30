@@ -18,9 +18,9 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.config;
 
+import nl.salp.warcraft4j.clientdata.ClientDataConfiguration;
 import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.casc.DataReaderProvider;
-import nl.salp.warcraft4j.clientdata.casc.Region;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.file.FileDataReader;
 
@@ -52,22 +52,15 @@ public class LocalCascConfig extends BaseCascConfig<Path> implements CascConfig 
     private static final String KEY_BUILDINFO_TAGS = "Tags";
     private static final String KEY_BUILDINFO_VERSION = "Version";
 
-    private final Path installationDirectory;
     private Config buildInfo;
 
-    public LocalCascConfig(Path installationDirectory, DataReaderProvider<Path> dataReaderProvider) {
-        super(dataReaderProvider);
-        this.installationDirectory = installationDirectory;
-    }
-
-    public LocalCascConfig(Region region, Path installationDirectory, DataReaderProvider<Path> dataReaderProvider) {
-        super(region, dataReaderProvider);
-        this.installationDirectory = installationDirectory;
+    public LocalCascConfig(ClientDataConfiguration clientDataConfiguration, DataReaderProvider<Path> dataReaderProvider) {
+        super(clientDataConfiguration, dataReaderProvider);
     }
 
     private Config getBuildInfo() {
         if (buildInfo == null) {
-            buildInfo = Config.tableConfig(getDataReader(installationDirectory.resolve(FILENAME_BUILDINFO)));
+            buildInfo = Config.tableConfig(getDataReader(getClientDataConfiguration().getWowInstallationDirectory().resolve(FILENAME_BUILDINFO)));
         }
         return buildInfo;
     }
@@ -88,7 +81,7 @@ public class LocalCascConfig extends BaseCascConfig<Path> implements CascConfig 
 
     @Override
     protected Supplier<DataReader> getConfigDataReader(String checksum) {
-        Path path = installationDirectory.resolve(Paths.get("Data", "config", checksum.substring(0, 2), checksum.substring(2, 4), checksum));
+        Path path = getClientDataConfiguration().getWowInstallationDirectory().resolve(Paths.get("Data", "config", checksum.substring(0, 2), checksum.substring(2, 4), checksum));
         return () -> new FileDataReader(path);
     }
 

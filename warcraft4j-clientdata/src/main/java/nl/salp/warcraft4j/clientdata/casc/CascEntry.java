@@ -18,36 +18,11 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import java.util.Optional;
-import java.util.stream.Stream;
-
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public enum Region {
-    UNITED_STATES("us"),
-    XX("xx"),
-    EUROPE("eu"),
-    KOREA("kr"),
-    TAIWAN("tw"),
-    CHINA("cn"),
-    SINGAPORE("sg");
+public class CascEntry {
 
-    private final String regionCode;
-
-    Region(String regionCode) {
-        this.regionCode = regionCode;
-    }
-
-    public String getRegionCode() {
-        return regionCode;
-    }
-
-    public static Optional<Region> getRegion(String regionCode) {
-        return Stream.of(Region.values())
-                .filter(r -> r.getRegionCode().equals(regionCode))
-                .findFirst();
-    }
 }

@@ -18,7 +18,6 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.clientdata.casc.DataReaderProvider;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.file.FileDataReader;
 
@@ -34,5 +33,10 @@ public class FileDataReaderProvider implements DataReaderProvider<Path> {
     @Override
     public Supplier<DataReader> getDataReader(Path uri) {
         return () -> new FileDataReader(uri);
+    }
+
+    @Override
+    public Supplier<DataReader> getDataReader(Path uri, long offset, long length) {
+        return () -> new FileDataReader(uri, offset, length);
     }
 }

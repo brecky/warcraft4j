@@ -16,42 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc.config;
+package nl.salp.warcraft4j.clientdata;
 
-import nl.salp.warcraft4j.clientdata.Branch;
-
-import static java.lang.String.format;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public enum CdnVersion {
-    WOW_LIVE("wow"),
-    WOW_PTR("wowt"),
-    WOW_BETA("wow_beta");
+public enum Branch {
+    LIVE,
+    PTR,
+    BETA;
 
-    private final String productCode;
-
-    CdnVersion(String productCode) {
-        this.productCode = productCode;
-    }
-
-    public String getProductCode() {
-        return productCode;
-    }
-
-    public static CdnVersion getFrom(Branch branch) throws IllegalArgumentException {
-        switch (branch) {
-            case BETA:
-                return WOW_BETA;
-            case LIVE:
-                return WOW_LIVE;
-            case PTR:
-                return WOW_PTR;
-            default:
-                throw new IllegalArgumentException(format("Unable to find a CDN version for branch %s", branch));
-        }
+    public static Optional<Branch> getBranch(String branch) {
+        return Stream.of(Branch.values())
+                .filter(b -> b.name().equalsIgnoreCase(branch))
+                .findFirst();
     }
 }

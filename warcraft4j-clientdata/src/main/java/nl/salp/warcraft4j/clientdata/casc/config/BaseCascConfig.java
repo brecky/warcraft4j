@@ -18,10 +18,11 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.config;
 
+import nl.salp.warcraft4j.clientdata.ClientDataConfiguration;
+import nl.salp.warcraft4j.clientdata.Region;
 import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.casc.Checksum;
 import nl.salp.warcraft4j.clientdata.casc.DataReaderProvider;
-import nl.salp.warcraft4j.clientdata.casc.Region;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeUtil;
 
@@ -34,7 +35,6 @@ import java.util.function.Supplier;
  * @author Barre Dijkstra
  */
 abstract class BaseCascConfig<T> implements CascConfig {
-    public static Region REGION_DEFAULT = Region.EUROPE;
     protected static final String KEY_BUILD_DOWNLOAD = "download";
     protected static final String KEY_BUILD_ENCODING = "encoding";
     protected static final String KEY_BUILD_ENCODING_SIZE = "encoding-size";
@@ -55,17 +55,12 @@ abstract class BaseCascConfig<T> implements CascConfig {
     protected static final String KEY_CDN_PATCH_ARCHIVE_GROUP = "patch-achive-group";
 
     private final DataReaderProvider<T> dataReaderProvider;
-    private final Region region;
+    private final ClientDataConfiguration clientDataConfiguration;
     private Config buildConfig;
     private Config cdnConfig;
 
-
-    protected BaseCascConfig(DataReaderProvider<T> dataReaderProvider) {
-        this(REGION_DEFAULT, dataReaderProvider);
-    }
-
-    protected BaseCascConfig(Region region, DataReaderProvider<T> dataReaderProvider) {
-        this.region = region;
+    protected BaseCascConfig(ClientDataConfiguration clientDataConfiguration, DataReaderProvider<T> dataReaderProvider) {
+        this.clientDataConfiguration = clientDataConfiguration;
         this.dataReaderProvider = dataReaderProvider;
     }
 
@@ -118,12 +113,16 @@ abstract class BaseCascConfig<T> implements CascConfig {
     @Override
     public abstract String getCdnUrl();
 
-    public final Region getRegion() {
-        return region;
+    protected final ClientDataConfiguration getClientDataConfiguration() {
+        return clientDataConfiguration;
+    }
+
+    protected final Region getRegion() {
+        return getClientDataConfiguration().getRegion();
     }
 
     protected final String getRegionCode() {
-        return region.getRegionCode();
+        return getRegion().getRegionCode();
     }
 
     protected final Optional<String> getIndexedValue(Config config, String key, String indexKey, String indexValue) {

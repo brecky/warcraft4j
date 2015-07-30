@@ -16,42 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc.config;
+package nl.salp.warcraft4j.clientdata;
 
-import nl.salp.warcraft4j.clientdata.Branch;
-
-import static java.lang.String.format;
+import java.nio.file.Path;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public enum CdnVersion {
-    WOW_LIVE("wow"),
-    WOW_PTR("wowt"),
-    WOW_BETA("wow_beta");
+public interface ClientDataConfiguration {
+    boolean isOnline();
 
-    private final String productCode;
+    Path getWowInstallationDirectory();
 
-    CdnVersion(String productCode) {
-        this.productCode = productCode;
-    }
+    boolean isCaching();
 
-    public String getProductCode() {
-        return productCode;
-    }
+    Path getCacheDirectory();
 
-    public static CdnVersion getFrom(Branch branch) throws IllegalArgumentException {
-        switch (branch) {
-            case BETA:
-                return WOW_BETA;
-            case LIVE:
-                return WOW_LIVE;
-            case PTR:
-                return WOW_PTR;
-            default:
-                throw new IllegalArgumentException(format("Unable to find a CDN version for branch %s", branch));
-        }
-    }
+    Locale getLocale();
+
+    Region getRegion();
+
+    Branch getBranch();
 }

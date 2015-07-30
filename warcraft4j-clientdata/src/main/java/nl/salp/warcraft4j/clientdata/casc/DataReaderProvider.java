@@ -29,4 +29,6 @@ import java.util.function.Supplier;
  */
 public interface DataReaderProvider<T> {
     Supplier<DataReader> getDataReader(T uri);
+
+    Supplier<DataReader> getDataReader(T uri, long offset, long length);
 }

@@ -18,9 +18,10 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.config;
 
+import nl.salp.warcraft4j.clientdata.ClientDataConfiguration;
 import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.casc.CdnDataReaderProvider;
-import nl.salp.warcraft4j.clientdata.casc.Region;
+import nl.salp.warcraft4j.clientdata.Region;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 
 import java.util.ArrayList;
@@ -52,24 +53,10 @@ public class CdnCascConfig extends BaseCascConfig<String> {
     private Config cdns;
     private Config versions;
 
-    public CdnCascConfig(CdnDataReaderProvider dataReaderProvider) {
-        this(CdnVersion.WOW_LIVE, dataReaderProvider);
-    }
 
-    public CdnCascConfig(CdnVersion cdnVersion, CdnDataReaderProvider dataReaderProvider) {
-        super(dataReaderProvider);
-        this.cdnVersion = cdnVersion;
-    }
-
-
-    public CdnCascConfig(Region region, CdnDataReaderProvider dataReaderProvider) {
-        super(region, dataReaderProvider);
-        this.cdnVersion = CdnVersion.WOW_LIVE;
-    }
-
-    public CdnCascConfig(Region region, CdnVersion cdnVersion, CdnDataReaderProvider dataReaderProvider) {
-        super(region, dataReaderProvider);
-        this.cdnVersion = cdnVersion;
+    public CdnCascConfig(ClientDataConfiguration clientDataConfiguration, CdnDataReaderProvider dataReaderProvider) {
+        super(clientDataConfiguration, dataReaderProvider);
+        this.cdnVersion = CdnVersion.getFrom(clientDataConfiguration.getBranch());
     }
 
     private String getDirectUrl(String file) {
