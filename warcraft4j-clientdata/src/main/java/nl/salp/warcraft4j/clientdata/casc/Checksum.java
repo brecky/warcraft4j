@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeUtil;
+import nl.salp.warcraft4j.util.DataTypeUtil;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;

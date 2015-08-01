@@ -20,8 +20,8 @@ package nl.salp.warcraft4j.clientdata.casc;
 
 import nl.salp.warcraft4j.clientdata.ClientDataConfiguration;
 import nl.salp.warcraft4j.clientdata.Region;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeUtil;
+import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.util.DataTypeUtil;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -31,7 +31,7 @@ import java.util.function.Supplier;
  *
  * @author Barre Dijkstra
  */
-public abstract class BaseCascConfig<T> implements CascConfig {
+public abstract class BaseCascConfig implements CascConfig {
     protected static final String KEY_BUILD_DOWNLOAD = "download";
     protected static final String KEY_BUILD_ENCODING = "encoding";
     protected static final String KEY_BUILD_ENCODING_SIZE = "encoding-size";
@@ -51,12 +51,12 @@ public abstract class BaseCascConfig<T> implements CascConfig {
     protected static final String KEY_CDN_PATCH_ARCHIVES = "patch-archives";
     protected static final String KEY_CDN_PATCH_ARCHIVE_GROUP = "patch-achive-group";
 
-    private final DataReaderProvider<T> dataReaderProvider;
+    private final DataReaderProvider dataReaderProvider;
     private final ClientDataConfiguration clientDataConfiguration;
     private Config buildConfig;
     private Config cdnConfig;
 
-    protected BaseCascConfig(ClientDataConfiguration clientDataConfiguration, DataReaderProvider<T> dataReaderProvider) {
+    protected BaseCascConfig(ClientDataConfiguration clientDataConfiguration, DataReaderProvider dataReaderProvider) {
         this.clientDataConfiguration = clientDataConfiguration;
         this.dataReaderProvider = dataReaderProvider;
     }
@@ -65,7 +65,7 @@ public abstract class BaseCascConfig<T> implements CascConfig {
 
     protected abstract Optional<String> getCdnConfigKey();
 
-    protected final Supplier<DataReader> getDataReader(T uri) {
+    protected final Supplier<DataReader> getDataReader(String uri) {
         return dataReaderProvider.getDataReader(uri);
     }
 

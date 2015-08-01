@@ -19,8 +19,8 @@
 
 package nl.salp.warcraft4j.clientdata.dbc.mapping;
 
-import nl.salp.warcraft4j.clientdata.io.datatype.DataType;
-import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
+import nl.salp.warcraft4j.io.datatype.DataType;
+import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 
 import java.util.function.Function;
 import java.util.function.Supplier;

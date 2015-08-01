@@ -23,9 +23,9 @@ import java.io.IOException;
 import nl.salp.warcraft4j.clientdata.dbc.DbcEntry;
 import nl.salp.warcraft4j.clientdata.dbc.DbcHeader;
 import nl.salp.warcraft4j.clientdata.dbc.DbcStringTable;
-import nl.salp.warcraft4j.clientdata.io.parser.DataParsingException;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.parser.RandomAccessDataParser;
+import nl.salp.warcraft4j.io.parser.DataParsingException;
+import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.io.parser.RandomAccessDataParser;
 
 /**
  * TODO Document!

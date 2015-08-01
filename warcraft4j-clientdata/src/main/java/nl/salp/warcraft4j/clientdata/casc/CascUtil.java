@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.clientdata.util.hash.JenkinsHash;
+import nl.salp.warcraft4j.hash.JenkinsHash;
 
 import java.nio.charset.StandardCharsets;
 

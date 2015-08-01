@@ -20,9 +20,9 @@
 package nl.salp.warcraft4j.clientdata.dbc;
 
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcMapping;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.RandomAccessDataReader;
-import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
+import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.io.reader.RandomAccessDataReader;
+import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -34,9 +34,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
-import static nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory.getByte;
-import static nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory.getTerminatedString;
-import static nl.salp.warcraft4j.clientdata.io.datatype.DataTypeUtil.getAverageBytesPerCharacter;
+import static nl.salp.warcraft4j.io.datatype.DataTypeFactory.getByte;
+import static nl.salp.warcraft4j.io.datatype.DataTypeFactory.getTerminatedString;
+import static nl.salp.warcraft4j.util.DataTypeUtil.getAverageBytesPerCharacter;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 

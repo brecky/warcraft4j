@@ -22,7 +22,7 @@ import nl.salp.warcraft4j.clientdata.ClientDataConfiguration;
 import nl.salp.warcraft4j.clientdata.casc.BaseCascConfig;
 import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.casc.Config;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
+import nl.salp.warcraft4j.io.reader.DataReader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ import static java.lang.String.format;
  *
  * @author Barre Dijkstra
  */
-public class CdnCascConfig extends BaseCascConfig<String> {
+public class CdnCascConfig extends BaseCascConfig {
     private static final String KEY_VERSIONS_REGION = "Region";
     private static final String KEY_VERSIONS_BUILDID = "BuildId";
     private static final String KEY_VERSIONS_VERSION = "VersionsName";

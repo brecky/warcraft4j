@@ -18,16 +18,16 @@
  */
 package nl.salp.warcraft4j.clientdata.dbc;
 
-import nl.salp.warcraft4j.clientdata.io.*;
-import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
-import nl.salp.warcraft4j.clientdata.io.parser.DataParser;
-import nl.salp.warcraft4j.clientdata.io.parser.DataParsingException;
-import nl.salp.warcraft4j.clientdata.io.parser.RandomAccessDataParser;
+import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
+import nl.salp.warcraft4j.io.parser.DataParser;
+import nl.salp.warcraft4j.io.parser.DataParsingException;
+import nl.salp.warcraft4j.io.parser.RandomAccessDataParser;
+import nl.salp.warcraft4j.io.reader.DataReader;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
 
-import static nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory.getFixedLengthString;
+import static nl.salp.warcraft4j.io.datatype.DataTypeFactory.getFixedLengthString;
 import static org.apache.commons.lang3.ArrayUtils.toPrimitive;
 
 /**

@@ -20,9 +20,9 @@ package nl.salp.warcraft4j.clientdata.casc;
 
 import nl.salp.warcraft4j.clientdata.casc.blte.BlteFile;
 import nl.salp.warcraft4j.clientdata.casc.blte.BlteFileParser;
-import nl.salp.warcraft4j.clientdata.io.RandomAccessDataReader;
-import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
-import nl.salp.warcraft4j.clientdata.io.file.FileDataReader;
+import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
+import nl.salp.warcraft4j.io.reader.RandomAccessDataReader;
+import nl.salp.warcraft4j.io.reader.file.FileDataReader;
 
 import java.io.IOException;
 import java.nio.ByteOrder;

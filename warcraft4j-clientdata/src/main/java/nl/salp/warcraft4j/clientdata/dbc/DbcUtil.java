@@ -19,8 +19,8 @@
 package nl.salp.warcraft4j.clientdata.dbc;
 
 import nl.salp.warcraft4j.clientdata.dbc.mapping.*;
-import nl.salp.warcraft4j.clientdata.io.RandomAccessDataReader;
-import nl.salp.warcraft4j.clientdata.io.file.FileDataReader;
+import nl.salp.warcraft4j.io.reader.RandomAccessDataReader;
+import nl.salp.warcraft4j.io.reader.file.FileDataReader;
 
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -326,7 +326,7 @@ public final class DbcUtil {
      * Get a supplier for a {@link RandomAccessDataReader} for a file.
      *
      * @param directory The directory the file is located in.
-     * @param file  The file.
+     * @param file      The file.
      *
      * @return The supplier.
      */

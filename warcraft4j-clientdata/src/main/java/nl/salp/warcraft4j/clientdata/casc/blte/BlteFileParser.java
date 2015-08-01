@@ -20,10 +20,10 @@ package nl.salp.warcraft4j.clientdata.casc.blte;
 
 import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
-import nl.salp.warcraft4j.clientdata.io.parser.DataParser;
-import nl.salp.warcraft4j.clientdata.io.parser.DataParsingException;
+import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
+import nl.salp.warcraft4j.io.parser.DataParser;
+import nl.salp.warcraft4j.io.parser.DataParsingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -20,8 +20,8 @@ package nl.salp.warcraft4j.clientdata.casc.local;
 
 import nl.salp.warcraft4j.clientdata.ClientDataConfiguration;
 import nl.salp.warcraft4j.clientdata.casc.*;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.file.FileDataReader;
+import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.io.reader.file.FileDataReader;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,7 +35,7 @@ import java.util.function.Supplier;
  *
  * @author Barre Dijkstra
  */
-public class LocalCascConfig extends BaseCascConfig<Path> implements CascConfig {
+public class LocalCascConfig extends BaseCascConfig implements CascConfig {
     private static final String FILENAME_BUILDINFO = ".build.info";
     private static final String KEY_BUILDINFO_ACTIVE = "Active";
     private static final String KEY_BUILDINFO_ARMADILLO = "Armadillo";
@@ -53,13 +53,13 @@ public class LocalCascConfig extends BaseCascConfig<Path> implements CascConfig 
 
     private Config buildInfo;
 
-    public LocalCascConfig(ClientDataConfiguration clientDataConfiguration, DataReaderProvider<Path> dataReaderProvider) {
+    public LocalCascConfig(ClientDataConfiguration clientDataConfiguration, DataReaderProvider dataReaderProvider) {
         super(clientDataConfiguration, dataReaderProvider);
     }
 
     private Config getBuildInfo() {
         if (buildInfo == null) {
-            buildInfo = Config.tableConfig(getDataReader(getClientDataConfiguration().getWowInstallationDirectory().resolve(FILENAME_BUILDINFO)));
+            buildInfo = Config.tableConfig(getDataReader(getClientDataConfiguration().getWowInstallationDirectory().resolve(FILENAME_BUILDINFO).toString()));
         }
         return buildInfo;
     }

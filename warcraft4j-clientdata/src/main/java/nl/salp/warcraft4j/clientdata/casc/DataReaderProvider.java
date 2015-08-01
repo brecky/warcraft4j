@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.clientdata.io.DataReader;
+import nl.salp.warcraft4j.io.reader.DataReader;
 
 import java.util.function.Supplier;
 
@@ -27,8 +27,8 @@ import java.util.function.Supplier;
  *
  * @author Barre Dijkstra
  */
-public interface DataReaderProvider<T> {
-    Supplier<DataReader> getDataReader(T uri);
+public interface DataReaderProvider {
+    Supplier<DataReader> getDataReader(String uri) throws CascParsingException;
 
-    Supplier<DataReader> getDataReader(T uri, long offset, long length);
+    Supplier<DataReader> getDataReader(String uri, long offset, long length) throws CascParsingException;
 }

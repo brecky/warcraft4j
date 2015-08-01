@@ -20,9 +20,9 @@ package nl.salp.warcraft4j.clientdata.casc.blte;
 
 import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.casc.Checksum;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
-import nl.salp.warcraft4j.clientdata.io.parser.DataParsingException;
+import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
+import nl.salp.warcraft4j.io.parser.DataParsingException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.nio.ByteOrder;
 
 import static java.lang.String.format;
-import static nl.salp.warcraft4j.clientdata.util.hash.Hashes.MD5;
+import static nl.salp.warcraft4j.hash.Hashes.MD5;
 
 /**
  * TODO Document class.

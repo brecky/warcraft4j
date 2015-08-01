@@ -19,8 +19,8 @@
 package nl.salp.warcraft4j.clientdata.casc.cdn;
 
 import nl.salp.warcraft4j.clientdata.casc.DataReaderProvider;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.http.CachedHttpDataReader;
+import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.io.reader.http.CachedHttpDataReader;
 
 import java.util.function.Supplier;
 
@@ -29,7 +29,7 @@ import java.util.function.Supplier;
  *
  * @author Barre Dijkstra
  */
-public class CdnDataReaderProvider implements DataReaderProvider<String> {
+public class CdnDataReaderProvider implements DataReaderProvider {
     public Supplier<DataReader> getDataReader(String url) {
         return () -> new CachedHttpDataReader(url);
     }

@@ -42,7 +42,19 @@
     <dependencies>
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
-            <artifactId>warcraft4j-core</artifactId>
+            <artifactId>warcraft4j-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.salp.warcraft4j</groupId>
+            <artifactId>warcraft4j-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.salp.warcraft4j</groupId>
+            <artifactId>warcraft4j-io-file</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.salp.warcraft4j</groupId>
+            <artifactId>warcraft4j-io-http</artifactId>
         </dependency>
         <dependency>
             <!-- TODO Move dependency -->
@@ -73,14 +85,6 @@
         <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>fluent-hc</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -18,12 +18,12 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.datatype.DataType;
-import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
-import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeUtil;
-import nl.salp.warcraft4j.clientdata.io.parser.DataParser;
-import nl.salp.warcraft4j.clientdata.io.parser.DataParsingException;
+import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.io.datatype.DataType;
+import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
+import nl.salp.warcraft4j.util.DataTypeUtil;
+import nl.salp.warcraft4j.io.parser.DataParser;
+import nl.salp.warcraft4j.io.parser.DataParsingException;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -38,7 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-import static nl.salp.warcraft4j.clientdata.util.hash.Hashes.MD5;
+import static nl.salp.warcraft4j.hash.Hashes.MD5;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**

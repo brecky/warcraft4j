@@ -19,8 +19,8 @@
 package nl.salp.warcraft4j.clientdata.casc.blte;
 
 import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
-import nl.salp.warcraft4j.clientdata.io.ByteArrayDataReader;
-import nl.salp.warcraft4j.clientdata.io.RandomAccessDataReader;
+import nl.salp.warcraft4j.io.reader.ByteArrayDataReader;
+import nl.salp.warcraft4j.io.reader.RandomAccessDataReader;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.ByteArrayOutputStream;

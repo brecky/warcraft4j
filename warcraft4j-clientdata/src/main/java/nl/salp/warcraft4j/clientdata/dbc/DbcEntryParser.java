@@ -21,8 +21,8 @@ package nl.salp.warcraft4j.clientdata.dbc;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcDataType;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldMapping;
 import nl.salp.warcraft4j.clientdata.dbc.mapping.DbcFieldType;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.parser.RandomAccessDataParser;
+import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.io.parser.RandomAccessDataParser;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.IOException;

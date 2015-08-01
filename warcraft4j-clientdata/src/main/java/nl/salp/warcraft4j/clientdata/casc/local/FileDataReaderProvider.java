@@ -18,27 +18,46 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.local;
 
+import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.casc.DataReaderProvider;
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.file.FileDataReader;
-import nl.salp.warcraft4j.clientdata.io.file.MemMapFileDataReader;
+import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.io.reader.file.MemMapFileDataReader;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.function.Supplier;
+
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public class FileDataReaderProvider implements DataReaderProvider<Path> {
+public class FileDataReaderProvider implements DataReaderProvider {
     @Override
-    public Supplier<DataReader> getDataReader(Path uri) {
-        return () -> new MemMapFileDataReader(uri);
+    public Supplier<DataReader> getDataReader(String uri) throws CascParsingException {
+        return () -> new MemMapFileDataReader(toPath(uri));
     }
 
     @Override
-    public Supplier<DataReader> getDataReader(Path uri, long offset, long length) {
-        return () -> new MemMapFileDataReader(uri, offset, length);
+    public Supplier<DataReader> getDataReader(String uri, long offset, long length) throws CascParsingException{
+        return () -> new MemMapFileDataReader(toPath(uri), offset, length);
+    }
+
+    private Path toPath(String uri) {
+        if (isEmpty(uri)) {
+            throw new CascParsingException("Can't create a file reader for an empty path.");
+        }
+        Path path = Paths.get(uri);
+        if (Files.notExists(path) || !Files.isRegularFile(path)) {
+            throw new CascParsingException(format("Can't create a file reader for %s, file either doesn't exist or is not a file.", uri));
+        }
+        if (Files.isReadable(path)) {
+            throw new CascParsingException(format("Can't create a file reader for non-readable file %s", uri));
+        }
+        return path;
     }
 }
