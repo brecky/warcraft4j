@@ -16,11 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc.config;
+package nl.salp.warcraft4j.clientdata.casc.local;
 
 import nl.salp.warcraft4j.clientdata.ClientDataConfiguration;
-import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
-import nl.salp.warcraft4j.clientdata.casc.DataReaderProvider;
+import nl.salp.warcraft4j.clientdata.casc.*;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.file.FileDataReader;
 

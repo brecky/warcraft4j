@@ -16,8 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc;
+package nl.salp.warcraft4j.clientdata.casc.local;
 
+import nl.salp.warcraft4j.clientdata.casc.Checksum;
+import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -30,7 +32,7 @@ import java.util.*;
  *
  * @author Barre Dijkstra
  */
-public class IndexFile {
+public class LocalIndexFile {
     /** The path to the index file. */
     private final Path file;
     /** The file number. */
@@ -40,8 +42,8 @@ public class IndexFile {
     /** The parsed index entries. */
     private final Map<Checksum, IndexEntry> entries;
 
-    public IndexFile(Path file, int fileNumber, int fileVersion, List<IndexEntry> entries) {
-        this.file = Optional.ofNullable(file).orElseThrow(() -> new IllegalArgumentException("Can't create an IndexFile instance for an empty file path."));
+    public LocalIndexFile(Path file, int fileNumber, int fileVersion, List<IndexEntry> entries) {
+        this.file = Optional.ofNullable(file).orElseThrow(() -> new IllegalArgumentException("Can't create an LocalIndexFile instance for an empty file path."));
         this.fileNumber = fileNumber;
         this.fileVersion = fileVersion;
         this.entries = new HashMap<>();

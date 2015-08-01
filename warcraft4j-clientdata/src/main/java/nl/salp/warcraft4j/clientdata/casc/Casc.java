@@ -22,9 +22,12 @@ package nl.salp.warcraft4j.clientdata.casc;
 import nl.salp.warcraft4j.clientdata.ClientDataConfiguration;
 import nl.salp.warcraft4j.clientdata.Region;
 import nl.salp.warcraft4j.clientdata.casc.blte.BlteFile;
-import nl.salp.warcraft4j.clientdata.casc.config.CascConfig;
-import nl.salp.warcraft4j.clientdata.casc.config.CdnCascConfig;
-import nl.salp.warcraft4j.clientdata.casc.config.LocalCascConfig;
+import nl.salp.warcraft4j.clientdata.casc.cdn.CdnCascConfig;
+import nl.salp.warcraft4j.clientdata.casc.local.LocalCascConfig;
+import nl.salp.warcraft4j.clientdata.casc.local.FileDataReaderProvider;
+import nl.salp.warcraft4j.clientdata.casc.local.LocalIndexFile;
+import nl.salp.warcraft4j.clientdata.casc.local.LocalIndexParser;
+import nl.salp.warcraft4j.clientdata.casc.cdn.CdnDataReaderProvider;
 import nl.salp.warcraft4j.clientdata.io.CompositeDataReader;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.RandomAccessDataReader;
@@ -319,7 +322,7 @@ public class Casc {
     }
 
     /**
-     * Get loaded the CASC {@link IndexFile} instances.
+     * Get loaded the CASC {@link LocalIndexFile} instances.
      *
      * @return The index files.
      */
@@ -328,7 +331,7 @@ public class Casc {
             LOGGER.debug("Initialising index files");
             parseLock.lock();
             try {
-                index = new IndexParser(clientDataConfiguration.getWowInstallationDirectory()).parse();
+                index = new LocalIndexParser(clientDataConfiguration.getWowInstallationDirectory()).parse();
             } finally {
                 parseLock.unlock();
             }

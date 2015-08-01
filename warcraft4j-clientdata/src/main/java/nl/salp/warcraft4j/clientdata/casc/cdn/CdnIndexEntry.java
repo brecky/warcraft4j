@@ -16,57 +16,46 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc.config;
+package nl.salp.warcraft4j.clientdata.casc.cdn;
 
 import nl.salp.warcraft4j.clientdata.casc.Checksum;
-
-import java.util.List;
+import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
 
 /**
- * TODO Add description.
+ * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public interface CascConfig {
-    /**
-     * Get the available regions.
-     *
-     * @return The regions.
-     */
-    List<String> getAvailableRegions();
+public class CdnIndexEntry implements IndexEntry {
+    private final Checksum fileKey;
+    private final long fileSize;
+    private final int fileNumber;
+    private final int fileOffset;
 
-    /**
-     * Get the content checksum of the root file.
-     *
-     * @return The content checksum.
-     */
-    Checksum getRootContentChecksum();
+    public CdnIndexEntry(Checksum fileKey, int fileNumber, int fileOffset, long fileSize) {
+        this.fileKey = fileKey;
+        this.fileNumber = fileNumber;
+        this.fileOffset = fileOffset;
+        this.fileSize = fileSize;
+    }
 
-    /**
-     * Get the file key of the encoding file.
-     *
-     * @return The file key.
-     */
-    Checksum getEncodingFileChecksum();
+    @Override
+    public Checksum getFileKey() {
+        return fileKey;
+    }
 
-    /**
-     * Get the size of the encoding file.
-     *
-     * @return The size in bytes.
-     */
-    long getEncodingFileSize();
+    @Override
+    public long getFileSize() {
+        return fileSize;
+    }
 
-    /**
-     * Get the CDN URL.
-     *
-     * @return The CDN URL.
-     */
-    String getCdnUrl();
+    @Override
+    public int getFileNumber() {
+        return fileNumber;
+    }
 
-    /**
-     * Get the build version.
-     *
-     * @return The version.
-     */
-    String getVersion();
+    @Override
+    public int getDataFileOffset() {
+        return fileOffset;
+    }
 }

@@ -16,25 +16,48 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc;
+package nl.salp.warcraft4j.clientdata.casc.cdn;
 
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.http.CachedHttpDataReader;
+import nl.salp.warcraft4j.clientdata.casc.Checksum;
+import nl.salp.warcraft4j.clientdata.casc.Index;
+import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
 
-import java.util.function.Supplier;
+import java.util.Collection;
+import java.util.Optional;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public class CdnDataReaderProvider implements DataReaderProvider<String> {
-    public Supplier<DataReader> getDataReader(String url) {
-        return () -> new CachedHttpDataReader(url);
+public class CdnIndex implements Index {
+    @Override
+    public Optional<IndexEntry> getEntry(Checksum fileKey) {
+        return null;
     }
 
     @Override
-    public Supplier<DataReader> getDataReader(String url, long offset, long length) {
-        return () -> new CachedHttpDataReader(url, offset, length);
+    public Optional<Integer> getDataFileNumber(Checksum fileKey) {
+        return null;
+    }
+
+    @Override
+    public Optional<Integer> getDataOffset(Checksum fileKey) {
+        return null;
+    }
+
+    @Override
+    public Optional<Long> getDataSize(Checksum fileKey) {
+        return null;
+    }
+
+    @Override
+    public Collection<Checksum> getFileKeys() {
+        return null;
+    }
+
+    @Override
+    public int getEntryCount() {
+        return 0;
     }
 }

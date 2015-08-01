@@ -16,19 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc;
+package nl.salp.warcraft4j.clientdata.casc.local;
+
+import nl.salp.warcraft4j.clientdata.casc.DataReaderProvider;
+import nl.salp.warcraft4j.clientdata.io.DataReader;
+import nl.salp.warcraft4j.clientdata.io.file.FileDataReader;
+import nl.salp.warcraft4j.clientdata.io.file.MemMapFileDataReader;
+
+import java.nio.file.Path;
+import java.util.function.Supplier;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public interface IndexEntry {
-    Checksum getFileKey();
+public class FileDataReaderProvider implements DataReaderProvider<Path> {
+    @Override
+    public Supplier<DataReader> getDataReader(Path uri) {
+        return () -> new MemMapFileDataReader(uri);
+    }
 
-    long getFileSize();
-
-    int getFileNumber();
-
-    int getDataFileOffset();
+    @Override
+    public Supplier<DataReader> getDataReader(Path uri, long offset, long length) {
+        return () -> new MemMapFileDataReader(uri, offset, length);
+    }
 }

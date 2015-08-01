@@ -16,13 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc.config;
+package nl.salp.warcraft4j.clientdata.casc;
 
 import nl.salp.warcraft4j.clientdata.ClientDataConfiguration;
 import nl.salp.warcraft4j.clientdata.Region;
-import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
-import nl.salp.warcraft4j.clientdata.casc.Checksum;
-import nl.salp.warcraft4j.clientdata.casc.DataReaderProvider;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeUtil;
 
@@ -34,7 +31,7 @@ import java.util.function.Supplier;
  *
  * @author Barre Dijkstra
  */
-abstract class BaseCascConfig<T> implements CascConfig {
+public abstract class BaseCascConfig<T> implements CascConfig {
     protected static final String KEY_BUILD_DOWNLOAD = "download";
     protected static final String KEY_BUILD_ENCODING = "encoding";
     protected static final String KEY_BUILD_ENCODING_SIZE = "encoding-size";

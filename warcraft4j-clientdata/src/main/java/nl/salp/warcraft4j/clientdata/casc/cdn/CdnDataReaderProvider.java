@@ -16,42 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc.config;
+package nl.salp.warcraft4j.clientdata.casc.cdn;
 
-import nl.salp.warcraft4j.clientdata.Branch;
+import nl.salp.warcraft4j.clientdata.casc.DataReaderProvider;
+import nl.salp.warcraft4j.clientdata.io.DataReader;
+import nl.salp.warcraft4j.clientdata.io.http.CachedHttpDataReader;
 
-import static java.lang.String.format;
+import java.util.function.Supplier;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public enum CdnVersion {
-    WOW_LIVE("wow"),
-    WOW_PTR("wowt"),
-    WOW_BETA("wow_beta");
-
-    private final String productCode;
-
-    CdnVersion(String productCode) {
-        this.productCode = productCode;
+public class CdnDataReaderProvider implements DataReaderProvider<String> {
+    public Supplier<DataReader> getDataReader(String url) {
+        return () -> new CachedHttpDataReader(url);
     }
 
-    public String getProductCode() {
-        return productCode;
-    }
-
-    public static CdnVersion getFrom(Branch branch) throws IllegalArgumentException {
-        switch (branch) {
-            case BETA:
-                return WOW_BETA;
-            case LIVE:
-                return WOW_LIVE;
-            case PTR:
-                return WOW_PTR;
-            default:
-                throw new IllegalArgumentException(format("Unable to find a CDN version for branch %s", branch));
-        }
+    @Override
+    public Supplier<DataReader> getDataReader(String url, long offset, long length) {
+        return () -> new CachedHttpDataReader(url, offset, length);
     }
 }

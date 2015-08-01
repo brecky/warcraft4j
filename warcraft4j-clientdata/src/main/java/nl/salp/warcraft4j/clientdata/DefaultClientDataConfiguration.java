@@ -159,6 +159,11 @@ public class DefaultClientDataConfiguration implements ClientDataConfiguration {
             return this;
         }
 
+        public Builder withWowDir(Path wowDir) {
+            this.wowDir = wowDir == null ? null : wowDir.toString();
+            return this;
+        }
+
         public Builder caching(boolean caching) {
             this.caching = caching;
             return this;
@@ -168,6 +173,12 @@ public class DefaultClientDataConfiguration implements ClientDataConfiguration {
             this.cacheDir = cacheDir;
             return this;
         }
+
+        public Builder withCacheDir(Path cacheDir) {
+            this.cacheDir = cacheDir == null ? null : cacheDir.toString();
+            return this;
+        }
+
 
         public Builder withLocale(String locale) {
             this.locale = locale;

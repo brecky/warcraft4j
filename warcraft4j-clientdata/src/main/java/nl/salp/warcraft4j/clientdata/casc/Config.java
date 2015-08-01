@@ -16,9 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc.config;
+package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +35,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  *
  * @author Barre Dijkstra
  */
-class Config {
+public class Config {
     private final ConfigParser configParser;
     private final Supplier<DataReader> dataReaderSupplier;
     private Map<String, List<String>> values;

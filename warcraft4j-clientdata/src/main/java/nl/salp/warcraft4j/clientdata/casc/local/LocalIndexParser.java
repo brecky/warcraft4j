@@ -16,8 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc;
+package nl.salp.warcraft4j.clientdata.casc.local;
 
+import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
+import nl.salp.warcraft4j.clientdata.casc.Index;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.file.FileDataReader;
 import org.apache.commons.codec.DecoderException;
@@ -40,41 +42,41 @@ import static java.lang.String.format;
  *
  * @author Barre Dijkstra
  */
-public class IndexParser {
+public class LocalIndexParser {
     /** The logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(IndexParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocalIndexParser.class);
 
     private final Path installationDirectory;
 
-    public IndexParser(Path installationDirectory) {
+    public LocalIndexParser(Path installationDirectory) {
         this.installationDirectory = installationDirectory;
     }
 
     public Index parse() {
         Collection<Path> latestIndexFilePaths = getLatestIndexFilePaths();
-        List<IndexFile> latestIndexFiles = latestIndexFilePaths.stream()
-                .map(IndexParser::parse)
+        List<LocalIndexFile> latestIndexFiles = latestIndexFilePaths.stream()
+                .map(LocalIndexParser::parse)
                 .collect(Collectors.toList());
-        return new Index(latestIndexFiles);
+        return new LocalIndex(latestIndexFiles);
 
         /*
         Collection<Path> olderIndexFilePaths = getIndexFilePathsExcluding(latestIndexFilePaths);
-        List<IndexFile> olderIndexFiles = olderIndexFilePaths.stream()
-                .map(IndexParser::parse)
+        List<LocalIndexFile> olderIndexFiles = olderIndexFilePaths.stream()
+                .map(LocalIndexParser::parse)
                 .collect(Collectors.toList());
         return new Index(latestIndexFiles, olderIndexFiles);
         */
     }
 
     /**
-     * Get loaded the CASC {@link IndexFile} instances.
+     * Get loaded the CASC {@link LocalIndexFile} instances.
      *
      * @return The index files.
      */
-    private static IndexFile parse(Path path) {
+    private static LocalIndexFile parse(Path path) {
         try (DataReader reader = new FileDataReader(path)) {
             LOGGER.debug("Parsing index file {}", path);
-            return reader.readNext(new IndexFileParser(path, IndexParser::parseFileNumber, IndexParser::parseFileVersion));
+            return reader.readNext(new LocalIndexFileParser(path, LocalIndexParser::parseFileNumber, LocalIndexParser::parseFileVersion));
         } catch (IOException e) {
             throw new CascParsingException(format("Error parsing index file %s", path), e);
         }

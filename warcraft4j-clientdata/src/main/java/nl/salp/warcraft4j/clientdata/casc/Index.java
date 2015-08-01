@@ -18,101 +18,24 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
+import java.util.Collection;
+import java.util.Optional;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public class Index {
-    /** The logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Index.class);
-    private final Map<Checksum, IndexEntry> entries;
+public interface Index {
+    Optional<IndexEntry> getEntry(Checksum fileKey);
 
-    public Index(Collection<IndexFile> indexFiles) {
-        this.entries = new HashMap<>();
-        LOGGER.trace("Creating index from {} index files", indexFiles.size());
-        addFiles(indexFiles);
-        LOGGER.trace("Creating index with {} entries", entries.size());
-    }
+    Optional<Integer> getDataFileNumber(Checksum fileKey);
 
-    public Index(Collection<IndexFile> latestIndexFiles, Collection<IndexFile> olderFiles) {
-        this.entries = new HashMap<>();
-        LOGGER.trace("Creating index from {} index files, appending with {} older index file versions", latestIndexFiles.size(), olderFiles.size());
-        addFiles(latestIndexFiles);
-        addFiles(olderFiles);
-        LOGGER.trace("Creating index with {} entries", entries.size());
-    }
+    Optional<Integer> getDataOffset(Checksum fileKey);
 
-    private void addFiles(Collection<IndexFile> indexFiles) {
-        long failCnt = indexFiles.stream().map(IndexFile::getEntries).flatMap(Collection::stream)
-                .mapToInt(IndexEntry::getFileNumber)
-                .filter(i -> i < 0 || i > 32)
-                .count();
-        if (failCnt > 0) {
-            throw new CascParsingException(String.format("Got %d entries with negative keys...", failCnt));
-        }
-        indexFiles.stream()
-                .map(IndexFile::getEntries)
-                .flatMap(Collection::stream)
-                .forEach(this::addEntry);
-    }
+    Optional<Long> getDataSize(Checksum fileKey);
 
-    private void addEntry(IndexEntry entry) {
-        if (!entries.containsKey(entry.getFileKey())) {
-            entries.put(entry.getFileKey(), entry);
-        }
-    }
+    Collection<Checksum> getFileKeys();
 
-    public Optional<IndexEntry> getEntry(Checksum fileKey) {
-        Checksum cs = fileKey;
-        if (cs.length() > 9) {
-            cs = fileKey.trim(9);
-        }
-        return Optional.ofNullable(entries.get(cs));
-    }
-
-    public Optional<Integer> getDataFileNumber(Checksum fileKey) {
-        return getEntry(fileKey).map(IndexEntry::getFileNumber);
-    }
-
-    public Optional<Integer> getDataOffset(Checksum fileKey) {
-        return getEntry(fileKey).map(IndexEntry::getDataFileOffset);
-    }
-
-    public Optional<Long> getDataSize(Checksum fileKey) {
-        return getEntry(fileKey).map(IndexEntry::getFileSize);
-    }
-
-    public Collection<IndexEntry> getEntries() {
-        return Collections.unmodifiableCollection(entries.values());
-    }
-
-    public int getEntryCount() {
-        return entries.size();
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("entries", entries.size())
-                .build();
-    }
+    int getEntryCount();
 }

@@ -18,25 +18,55 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.clientdata.io.DataReader;
-import nl.salp.warcraft4j.clientdata.io.file.FileDataReader;
+import nl.salp.warcraft4j.clientdata.casc.Checksum;
 
-import java.nio.file.Path;
-import java.util.function.Supplier;
+import java.util.List;
 
 /**
- * TODO Document class.
+ * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public class FileDataReaderProvider implements DataReaderProvider<Path> {
-    @Override
-    public Supplier<DataReader> getDataReader(Path uri) {
-        return () -> new FileDataReader(uri);
-    }
+public interface CascConfig {
+    /**
+     * Get the available regions.
+     *
+     * @return The regions.
+     */
+    List<String> getAvailableRegions();
 
-    @Override
-    public Supplier<DataReader> getDataReader(Path uri, long offset, long length) {
-        return () -> new FileDataReader(uri, offset, length);
-    }
+    /**
+     * Get the content checksum of the root file.
+     *
+     * @return The content checksum.
+     */
+    Checksum getRootContentChecksum();
+
+    /**
+     * Get the file key of the encoding file.
+     *
+     * @return The file key.
+     */
+    Checksum getEncodingFileChecksum();
+
+    /**
+     * Get the size of the encoding file.
+     *
+     * @return The size in bytes.
+     */
+    long getEncodingFileSize();
+
+    /**
+     * Get the CDN URL.
+     *
+     * @return The CDN URL.
+     */
+    String getCdnUrl();
+
+    /**
+     * Get the build version.
+     *
+     * @return The version.
+     */
+    String getVersion();
 }

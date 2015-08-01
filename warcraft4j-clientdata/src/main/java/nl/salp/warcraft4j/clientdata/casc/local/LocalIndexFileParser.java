@@ -16,8 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc;
+package nl.salp.warcraft4j.clientdata.casc.local;
 
+import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
+import nl.salp.warcraft4j.clientdata.casc.Checksum;
+import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
 import nl.salp.warcraft4j.clientdata.io.DataReader;
 import nl.salp.warcraft4j.clientdata.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.clientdata.io.parser.DataParser;
@@ -43,23 +46,23 @@ import static java.lang.String.format;
  *
  * @author Barre Dijkstra
  */
-public class IndexFileParser implements DataParser<IndexFile> {
+public class LocalIndexFileParser implements DataParser<LocalIndexFile> {
     /** The logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(IndexFileParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocalIndexFileParser.class);
     public static final int ENTRY_SIZE = 18;
 
     private final Path file;
     private final Function<Path, Integer> fileNumberFunction;
     private final Function<Path, Integer> fileVersionFunction;
 
-    public IndexFileParser(Path file, Function<Path, Integer> fileNumberFunction, Function<Path, Integer> fileVersionFunction) {
+    public LocalIndexFileParser(Path file, Function<Path, Integer> fileNumberFunction, Function<Path, Integer> fileVersionFunction) {
         this.file = file;
         this.fileNumberFunction = fileNumberFunction;
         this.fileVersionFunction = fileVersionFunction;
     }
 
     @Override
-    public IndexFile parse(DataReader reader) throws IOException, DataParsingException {
+    public LocalIndexFile parse(DataReader reader) throws IOException, DataParsingException {
         LOGGER.trace("Parsing index file {}", file);
         validateHeader(reader);
         int dataHeaderLength = reader.readNext(DataTypeFactory.getInteger(), ByteOrder.LITTLE_ENDIAN);
@@ -77,7 +80,7 @@ public class IndexFileParser implements DataParser<IndexFile> {
         int fileNumber = fileNumberFunction.apply(file);
         int fileVersion = fileVersionFunction.apply(file);
         LOGGER.trace("Parsed index file {}, version {} with {} entries, expecting {} entries", fileNumber, fileVersion, entries.size(), entryCount);
-        return new IndexFile(file, fileNumber, fileVersion, entries);
+        return new LocalIndexFile(file, fileNumber, fileVersion, entries);
     }
 
     private void validateHeader(DataReader reader) throws CascParsingException, IOException {
@@ -133,7 +136,7 @@ public class IndexFileParser implements DataParser<IndexFile> {
         short indexInfoHigh = reader.readNext(DataTypeFactory.getUnsignedByte());
         long indexInfoLow = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.BIG_ENDIAN);
         long fileSize = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.LITTLE_ENDIAN) & 0xFFFFFFFF;
-        IndexEntry entry = new IndexEntry(new Checksum(fileKey), indexInfoHigh, indexInfoLow, fileSize);
+        IndexEntry entry = new LocalIndexEntry(new Checksum(fileKey), indexInfoHigh, indexInfoLow, fileSize);
         return entry;
     }
 
