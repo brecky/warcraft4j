@@ -16,29 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc.cdn;
+package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
-import nl.salp.warcraft4j.clientdata.casc.DataReaderProvider;
-import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
-import nl.salp.warcraft4j.io.reader.DataReader;
-import nl.salp.warcraft4j.io.reader.http.CachedHttpDataReader;
-
-import java.util.function.Supplier;
+import static java.lang.String.format;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public class CdnDataReaderProvider implements DataReaderProvider {
-    @Override
-    public Supplier<DataReader> getDataReader(String url) {
-        return () -> new CachedHttpDataReader(url);
-    }
+public class ContentChecksum extends Checksum {
+    private static final int CONTENTCHECKSUM_LENGTH = 16;
 
-    @Override
-    public Supplier<DataReader> getDataReader(String url, long offset, long length) {
-        return () -> new CachedHttpDataReader(url, offset, length);
+    public ContentChecksum(byte[] checksum) {
+        super(checksum);
+        if (checksum.length != CONTENTCHECKSUM_LENGTH) {
+            throw new IllegalArgumentException(format("Unable to create a 16 byte content checksum from a %d byte array."));
+        }
     }
 }

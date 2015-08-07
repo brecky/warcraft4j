@@ -28,6 +28,9 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -115,17 +118,36 @@ public class HttpDataReader extends DataReader {
 
     @Override
     public final <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException, DataParsingException {
+        byte[] data;
         ByteBuffer buffer;
         if (dataType.isVariableLength()) {
-            buffer = getVarLenBuffer(dataType, byteOrder);
+            data = getVarLenData(dataType);
         } else {
-            byte[] data = new byte[dataType.getLength()];
+            data = new byte[dataType.getLength()];
             responseStream.read(data);
-            buffer = ByteBuffer.wrap(data).order(byteOrder);
         }
-        position += buffer.limit();
-        buffer.rewind();
-        return dataType.readNext(buffer, byteOrder);
+        position += data.length;
+        return dataType.readNext(ByteBuffer.wrap(data).order(byteOrder), byteOrder);
+    }
+
+    /**
+     * Get a buffer for a variable length data type.
+     *
+     * @param dataType The data type.
+     * @param <T>      The data type.
+     *
+     * @return The byte buffer.
+     *
+     * @throws IOException When creating the buffer failed.
+     */
+    private <T> byte[] getVarLenData(DataType<T> dataType) throws IOException {
+        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream()) {
+            byte value;
+            while (responseStream.available() > 0 && !dataType.isVariableLengthTerminator((value = (byte) responseStream.read())) && value != -1) {
+                byteOut.write(value);
+            }
+            return byteOut.toByteArray();
+        }
     }
 
     /**

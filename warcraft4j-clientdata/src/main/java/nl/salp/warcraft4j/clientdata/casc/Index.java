@@ -18,24 +18,87 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import java.util.Collection;
-import java.util.Optional;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+
+import java.util.*;
+
+import java.util.*;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public interface Index {
-    Optional<IndexEntry> getEntry(Checksum fileKey);
+public class Index {
+    /** The logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Index.class);
+    private final Map<FileKey, IndexEntry> entries;
 
-    Optional<Integer> getDataFileNumber(Checksum fileKey);
+    public Index(Collection<IndexEntry> indexEntries) {
+        this.entries = new HashMap<>();
+        Optional.ofNullable(indexEntries)
+                .orElseThrow(() -> new CascParsingException("Can't create a file index from null index entries."))
+                .forEach(this::addEntry);
+    }
 
-    Optional<Integer> getDataOffset(Checksum fileKey);
+    private void addEntry(IndexEntry entry) {
+        if (!entries.containsKey(entry.getFileKey())) {
+            entries.put(entry.getFileKey(), entry);
+        }
+    }
 
-    Optional<Long> getDataSize(Checksum fileKey);
+    public Optional<IndexEntry> getEntry(FileKey fileKey) {
+        Checksum cs = fileKey;
+        if (cs.length() > 9) {
+            cs = fileKey.trim(9);
+        }
+        return Optional.ofNullable(entries.get(cs));
+    }
 
-    Collection<Checksum> getFileKeys();
+    public Collection<IndexEntry> getEntries() {
+        return Collections.unmodifiableCollection(entries.values());
+    }
 
-    int getEntryCount();
+    public Optional<Integer> getDataFileNumber(FileKey fileKey) {
+        return getEntry(fileKey).map(IndexEntry::getFileNumber);
+    }
+
+    public Optional<Integer> getDataOffset(FileKey fileKey) {
+        return getEntry(fileKey).map(IndexEntry::getDataFileOffset);
+    }
+
+    public Optional<Long> getDataSize(FileKey fileKey) {
+        return getEntry(fileKey).map(IndexEntry::getFileSize);
+    }
+
+    public Collection<FileKey> getFileKeys() {
+        return Collections.unmodifiableSet(entries.keySet());
+    }
+
+    public int getEntryCount() {
+        return entries.size();
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("entries", entries.size())
+                .build();
+    }
 }

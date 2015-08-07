@@ -18,12 +18,19 @@
  */
 package nl.salp.warcraft4j.io.reader.http;
 
-import nl.salp.warcraft4j.io.reader.ByteArrayDataReader;
-import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.parser.DataParsingException;
+import nl.salp.warcraft4j.io.reader.ByteArrayDataReader;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
 
 import static java.lang.String.format;
 
@@ -33,7 +40,6 @@ import static java.lang.String.format;
  * @author Barre Dijkstra
  */
 public class CachedHttpDataReader extends ByteArrayDataReader {
-    private static final int READ_CHUNK_SIZE = 8192;
 
     public CachedHttpDataReader(String url) throws DataParsingException {
         super(getData(url));
@@ -43,57 +49,37 @@ public class CachedHttpDataReader extends ByteArrayDataReader {
         super(getData(url, offset, length));
     }
 
+    private static byte[] getData(String url) throws DataParsingException {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(new HttpGet(URI.create(url)))) {
+            StatusLine statusLine = response.getStatusLine();
+            if (statusLine.getStatusCode() > 300) {
+                throw new DataParsingException(String.format("Error opening HTTP data reader for %s: error %d: %s", url, statusLine.getStatusCode(), statusLine.getReasonPhrase()));
+            }
+            HttpEntity entity = response.getEntity();
+            if (entity == null) {
+                throw new DataParsingException(format("HTTP data reader received no response from for %s", url));
+            }
+            byte[] data = EntityUtils.toByteArray(entity);
+            EntityUtils.consume(entity);
+            return data;
+        } catch (IOException e) {
+            throw new DataParsingException(e);
+        }
+    }
+
     private static byte[] getData(String url, long offset, long length) throws DataParsingException {
-        byte[] data;
         if (offset < 0) {
             throw new DataParsingException(format("Can't create a http reader for %s with negative data block offset %d.", url, offset));
         }
         if (length < 0) {
             throw new DataParsingException(format("Can't create a http reader for %s with negative data block length %d.", url, length));
         }
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); HttpDataReader dataReader = new HttpDataReader(url)) {
-            if (offset + length > dataReader.size()) {
-                throw new DataParsingException(format("Can't create a http reader for %s with %d bytes of data from offset %d with length %d.",
-                        url, dataReader.size(), offset, length));
-            }
-            long read = 0;
-            long dataSize;
-            if (offset > 0) {
-                dataReader.skip(offset);
-            }
-            if (length == 0) {
-                dataSize = dataReader.size() - offset;
-            } else {
-                dataSize = length;
-            }
-            while (read < dataSize) {
-                int chunkSize = (int) Math.min(READ_CHUNK_SIZE, dataReader.remaining());
-                outputStream.write(dataReader.readNext(DataTypeFactory.getByteArray(chunkSize)));
-                read += chunkSize;
-            }
-            data = outputStream.toByteArray();
-        } catch (IOException e) {
-            throw new DataParsingException(format("Error caching the data from %s", url), e);
+        byte[] data = getData(url);
+        if (offset + length > data.length) {
+            throw new DataParsingException(format("Can't create a http reader for %s with %d bytes of data from offset %d with length %d.",
+                    url, data.length, offset, length));
         }
-
-        return data;
-    }
-
-    private static byte[] getData(String url) throws DataParsingException {
-        byte[] data;
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); HttpDataReader dataReader = new HttpDataReader(url)) {
-            long read = 0;
-            long dataSize = dataReader.size();
-            while (read < dataSize) {
-                int chunkSize = (int) Math.min(READ_CHUNK_SIZE, dataReader.remaining());
-                outputStream.write(dataReader.readNext(DataTypeFactory.getByteArray(chunkSize)));
-                read += chunkSize;
-            }
-            data = outputStream.toByteArray();
-        } catch (IOException e) {
-            throw new DataParsingException(format("Error caching the data from %s", url), e);
-        }
-
-        return data;
+        return ArrayUtils.subarray(data, (int) offset, (int) length);
     }
 }

@@ -16,29 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc.cdn;
+package nl.salp.warcraft4j.clientdata;
 
-import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
-import nl.salp.warcraft4j.clientdata.casc.DataReaderProvider;
-import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
-import nl.salp.warcraft4j.io.reader.DataReader;
-import nl.salp.warcraft4j.io.reader.http.CachedHttpDataReader;
-
-import java.util.function.Supplier;
+import nl.salp.warcraft4j.clientdata.casc.CascException;
 
 /**
- * TODO Document class.
+ * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public class CdnDataReaderProvider implements DataReaderProvider {
-    @Override
-    public Supplier<DataReader> getDataReader(String url) {
-        return () -> new CachedHttpDataReader(url);
+public class CascEntryNotFoundException extends CascException {
+    public CascEntryNotFoundException(String message) {
+        super(message);
     }
 
-    @Override
-    public Supplier<DataReader> getDataReader(String url, long offset, long length) {
-        return () -> new CachedHttpDataReader(url, offset, length);
+    public CascEntryNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public CascEntryNotFoundException(Throwable cause) {
+        super(cause);
     }
 }

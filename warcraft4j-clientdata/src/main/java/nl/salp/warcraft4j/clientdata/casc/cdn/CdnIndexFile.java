@@ -18,46 +18,38 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.cdn;
 
-import nl.salp.warcraft4j.clientdata.casc.Checksum;
-import nl.salp.warcraft4j.clientdata.casc.Index;
+import nl.salp.warcraft4j.clientdata.casc.FileKey;
 import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
 
 import java.util.Collection;
-import java.util.Optional;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * TODO Document class.
+ * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public class CdnIndex implements Index {
-    @Override
-    public Optional<IndexEntry> getEntry(Checksum fileKey) {
-        return null;
+class CdnIndexFile {
+    private final int index;
+    private final FileKey fileKey;
+    private final Collection<IndexEntry> indexEntries;
+
+    public CdnIndexFile(int index, FileKey fileKey, Collection<IndexEntry> indexEntries) {
+        this.index = index;
+        this.fileKey = fileKey;
+        this.indexEntries = indexEntries;
     }
 
-    @Override
-    public Optional<Integer> getDataFileNumber(Checksum fileKey) {
-        return null;
+    public int getIndex() {
+        return index;
     }
 
-    @Override
-    public Optional<Integer> getDataOffset(Checksum fileKey) {
-        return null;
+    public FileKey getFileKey() {
+        return fileKey;
     }
 
-    @Override
-    public Optional<Long> getDataSize(Checksum fileKey) {
-        return null;
-    }
-
-    @Override
-    public Collection<Checksum> getFileKeys() {
-        return null;
-    }
-
-    @Override
-    public int getEntryCount() {
-        return 0;
+    public Collection<IndexEntry> getIndexEntries() {
+        return Collections.unmodifiableCollection(indexEntries);
     }
 }

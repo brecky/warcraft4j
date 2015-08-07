@@ -21,6 +21,7 @@ package nl.salp.warcraft4j.clientdata.casc;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -50,16 +51,17 @@ public class EncodingFile {
         return locale;
     }
 
-    protected Optional<EncodingEntry> getEncodingEntry(Checksum contentChecksum) {
+    protected Optional<EncodingEntry> getEncodingEntry(ContentChecksum contentChecksum) {
         return Optional.ofNullable(entries.get(contentChecksum));
     }
 
-    public Optional<Long> getFileSize(Checksum contentChecksum) {
+    public Optional<Long> getFileSize(ContentChecksum contentChecksum) {
         return getEncodingEntry(contentChecksum).map(EncodingEntry::getFileSize);
     }
 
-    public Optional<Checksum> getFileKey(Checksum contentChecksum) {
-        return getEncodingEntry(contentChecksum).map(EncodingEntry::getFileKey);
+    public Optional<FileKey> getFileKey(ContentChecksum contentChecksum) {
+        // FIXME Return first only or return (potentially) all?
+        return getEncodingEntry(contentChecksum).map(EncodingEntry::getFirstFileKey);
     }
 
     protected Collection<EncodingEntry> getEntries() {
@@ -85,7 +87,7 @@ public class EncodingFile {
         return new ToStringBuilder(this)
                 .append("locale", new String(locale))
                 .append("entries", entries.size())
-                .append("checksums", entries.values().stream().map(EncodingEntry::getFileChecksums).mapToInt(List::size).sum())
+                .append("checksums", entries.values().stream().map(EncodingEntry::getFileKeys).mapToInt(List::size).sum())
                 .toString();
     }
 }

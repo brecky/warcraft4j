@@ -18,12 +18,12 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.datatype.DataType;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
-import nl.salp.warcraft4j.util.DataTypeUtil;
 import nl.salp.warcraft4j.io.parser.DataParser;
 import nl.salp.warcraft4j.io.parser.DataParsingException;
+import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.util.DataTypeUtil;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -98,18 +98,19 @@ public class EncodingFileParser implements DataParser<EncodingFile> {
                 long fileSize = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.BIG_ENDIAN);
                 byte[] md5 = reader.readNext(DataTypeFactory.getByteArray(16));
 
+                // FIXME Only reading 1 key now instead of multiple keys.
                 /*
-                List<Checksum> keys = new ArrayList<>();
+                List<FileKey> keys = new ArrayList<>();
                 for (int ki = 0; ki < keysCount && reader.remaining() >= 16; ++ki) {
                     byte[] key = reader.readNext(DataTypeFactory.getByteArray(16));
-                    keys.add(new Checksum(key));
+                    keys.add(new FileKey(key));
                 }
-                entries.add(new EncodingEntry(fileSize, new Checksum(md5), keys));
+                entries.add(new EncodingEntry(fileSize, new ContentChecksum(md5), keys));
                 LOGGER.trace("Added encoding entry {} with {} keys of {} expected keys", DataTypeUtil.byteArrayToHexString(md5), keys.size(), keysCount);
                 */
 
                 byte[] key = reader.readNext(DataTypeFactory.getByteArray(16));
-                entries.add(new EncodingEntry(fileSize, new Checksum(md5), Arrays.asList(new Checksum(key))));
+                entries.add(new EncodingEntry(fileSize, new ContentChecksum(md5), Arrays.asList(new FileKey(key))));
             }
 
             while (reader.hasRemaining() && peek(DataTypeFactory.getByte(), reader) == 0) {
@@ -201,7 +202,7 @@ public class EncodingFileParser implements DataParser<EncodingFile> {
             long fileSize = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.BIG_ENDIAN);
             byte[] fileContentChecksum = reader.readNext(DataTypeFactory.getByteArray(16));
             byte[] fileChecksum = reader.readNext(DataTypeFactory.getByteArray(16));
-            entry = new EncodingEntry(fileSize, new Checksum(fileContentChecksum), Arrays.asList(new Checksum(fileChecksum)));
+            entry = new EncodingEntry(fileSize, new ContentChecksum(fileContentChecksum), Arrays.asList(new FileKey(fileChecksum)));
         }
         return entry;
     }

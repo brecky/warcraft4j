@@ -20,6 +20,7 @@ package nl.salp.warcraft4j.clientdata.casc.local;
 
 import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.casc.Index;
+import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.reader.file.FileDataReader;
 import org.apache.commons.codec.DecoderException;
@@ -53,12 +54,18 @@ public class LocalIndexParser {
     }
 
     public Index parse() {
+        LOGGER.debug("Parsing local index entries from {}.", installationDirectory);
         Collection<Path> latestIndexFilePaths = getLatestIndexFilePaths();
         List<LocalIndexFile> latestIndexFiles = latestIndexFilePaths.stream()
                 .map(LocalIndexParser::parse)
                 .collect(Collectors.toList());
-        return new LocalIndex(latestIndexFiles);
-
+        List<IndexEntry> entries = latestIndexFiles.stream()
+                .map(LocalIndexFile::getEntries)
+                .flatMap(Collection::stream)
+                .distinct()
+                .collect(Collectors.toList());
+        LOGGER.debug("Parsed {} index entries from {} index files.", entries.size(), latestIndexFiles.size());
+        return new Index(entries);
         /*
         Collection<Path> olderIndexFilePaths = getIndexFilePathsExcluding(latestIndexFilePaths);
         List<LocalIndexFile> olderIndexFiles = olderIndexFilePaths.stream()

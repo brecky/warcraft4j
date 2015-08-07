@@ -54,6 +54,10 @@ public class Checksum {
         return new Checksum(trimmed);
     }
 
+    public String toHexString() {
+        return DataTypeUtil.byteArrayToHexString(checksum);
+    }
+
     @Override
     public int hashCode() {
         return hash;

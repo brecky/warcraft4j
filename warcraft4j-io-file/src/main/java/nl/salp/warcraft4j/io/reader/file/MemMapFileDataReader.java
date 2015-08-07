@@ -102,7 +102,7 @@ public class MemMapFileDataReader extends RandomAccessDataReader {
         try {
             this.channel = FileChannel.open(file, READ);
             this.offset = offset > 0 ? offset : 0;
-            this.maxLength = maxLength < 1 ? Files.size(file) : maxLength;
+            this.maxLength = maxLength < 1 ? Files.size(file) - this.offset : maxLength;
             this.mappedBuffer = channel.map(FileChannel.MapMode.READ_ONLY, this.offset, this.maxLength);
         } catch (IOException e) {
             throw new IllegalArgumentException(format("Error creating memory mapped FileDataReader instance for file %s", file), e);
@@ -183,7 +183,7 @@ public class MemMapFileDataReader extends RandomAccessDataReader {
     private <T> ByteBuffer getVarLenBuffer(DataType<T> dataType, ByteOrder byteOrder) throws IOException {
         try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream()) {
             byte b;
-            while (!dataType.isVariableLengthTerminator((b = getMappedBuffer().get()))) {
+            while (getMappedBuffer().hasRemaining() && !dataType.isVariableLengthTerminator((b = getMappedBuffer().get()))) {
                 byteOut.write(b);
             }
             return ByteBuffer.wrap(byteOut.toByteArray()).order(byteOrder);
@@ -210,7 +210,7 @@ public class MemMapFileDataReader extends RandomAccessDataReader {
      * @return The supplier.
      */
     public static Supplier<RandomAccessDataReader> supplier(Path file) {
-        return () -> new FileDataReader(file);
+        return () -> new MemMapFileDataReader(file);
     }
 
     /**
@@ -222,6 +222,6 @@ public class MemMapFileDataReader extends RandomAccessDataReader {
      * @return The supplier.
      */
     public static Supplier<RandomAccessDataReader> supplier(String directory, String filename) {
-        return () -> new FileDataReader(Paths.get(directory, filename));
+        return () -> new MemMapFileDataReader(Paths.get(directory, filename));
     }
 }

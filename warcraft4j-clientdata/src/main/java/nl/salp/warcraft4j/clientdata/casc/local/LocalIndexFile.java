@@ -19,6 +19,7 @@
 package nl.salp.warcraft4j.clientdata.casc.local;
 
 import nl.salp.warcraft4j.clientdata.casc.Checksum;
+import nl.salp.warcraft4j.clientdata.casc.FileKey;
 import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -40,7 +41,7 @@ public class LocalIndexFile {
     /** The file version. */
     private final int fileVersion;
     /** The parsed index entries. */
-    private final Map<Checksum, IndexEntry> entries;
+    private final Map<FileKey, IndexEntry> entries;
 
     public LocalIndexFile(Path file, int fileNumber, int fileVersion, List<IndexEntry> entries) {
         this.file = Optional.ofNullable(file).orElseThrow(() -> new IllegalArgumentException("Can't create an LocalIndexFile instance for an empty file path."));
@@ -79,19 +80,19 @@ public class LocalIndexFile {
         return file;
     }
 
-    public Optional<IndexEntry> getEntry(Checksum fileKey) {
+    public Optional<IndexEntry> getEntry(FileKey fileKey) {
         return Optional.ofNullable(entries.get(fileKey));
     }
 
-    public Optional<Integer> getDataFileNumber(Checksum fileKey) {
+    public Optional<Integer> getDataFileNumber(FileKey fileKey) {
         return getEntry(fileKey).map(e -> (int) e.getFileNumber());
     }
 
-    public Optional<Integer> getDataOffset(Checksum fileKey) {
+    public Optional<Integer> getDataOffset(FileKey fileKey) {
         return getEntry(fileKey).map(e -> e.getDataFileOffset());
     }
 
-    public Optional<Long> getDataSize(Checksum fileKey) {
+    public Optional<Long> getDataSize(FileKey fileKey) {
         return getEntry(fileKey).map(e -> e.getFileSize());
     }
 

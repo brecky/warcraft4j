@@ -32,45 +32,39 @@ import java.util.Optional;
  * @author Barre Dijkstra
  */
 public class EncodingEntry {
-    private long fileSize; // BE
-    private Checksum contentChecksum; // 16 Byte content MD5
-    private List<Checksum> fileChecksums; // 16 Byte
+    private final long fileSize;
+    private final ContentChecksum contentChecksum;
+    private final List<FileKey> fileChecksums;
+    private final int hash;
 
-    public EncodingEntry(long fileSize, Checksum contentChecksum, List<Checksum> fileChecksums) {
+    public EncodingEntry(long fileSize, ContentChecksum contentChecksum, List<FileKey> fileChecksums) {
         this.fileSize = fileSize;
         this.contentChecksum = Optional.ofNullable(contentChecksum).orElseThrow(() -> new IllegalArgumentException("Can't create an encoding file entry with no content checksum"));
         this.fileChecksums = Optional.ofNullable(fileChecksums)
                 .filter(f -> !f.isEmpty())
                 .orElseThrow(() -> new IllegalArgumentException("Can't create an encoding file entry with no file checksums"));
+        this.hash = contentChecksum.hashCode();
     }
 
     public long getFileSize() {
         return fileSize;
     }
 
-    public Checksum getContentChecksum() {
+    public ContentChecksum getContentChecksum() {
         return contentChecksum;
     }
 
-    public Checksum getFileChecksum() {
+    public FileKey getFirstFileKey() {
         return fileChecksums.get(0);
     }
 
-    public List<Checksum> getFileChecksums() {
+    public List<FileKey> getFileKeys() {
         return fileChecksums;
-    }
-
-    public Checksum getFileKey() {
-        Checksum cs = getFileChecksum();
-        if (cs.length() > 9) {
-            cs = cs.trim(9);
-        }
-        return cs;
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return hash;
     }
 
     @Override

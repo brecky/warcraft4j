@@ -105,15 +105,9 @@ public class ByteArrayDataReader extends RandomAccessDataReader {
      */
     private <T> byte[] getVarLenData(DataType<T> dataType) throws IOException {
         try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream()) {
-            boolean done = false;
-            while (!done) {
-                byte value;
-                if ((value = buffer.get()) > 0) {
-                    byteOut.write(value);
-                    done = dataType.isVariableLengthTerminator(value);
-                } else {
-                    done = true;
-                }
+            byte value;
+            while (buffer.hasRemaining() && !dataType.isVariableLengthTerminator((value = buffer.get()))) {
+                byteOut.write(value);
             }
             return byteOut.toByteArray();
         }

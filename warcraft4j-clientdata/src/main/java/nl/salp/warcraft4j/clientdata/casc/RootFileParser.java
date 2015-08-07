@@ -19,10 +19,10 @@
 package nl.salp.warcraft4j.clientdata.casc;
 
 import nl.salp.warcraft4j.clientdata.Locale;
-import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.parser.DataParser;
 import nl.salp.warcraft4j.io.parser.DataParsingException;
+import nl.salp.warcraft4j.io.reader.DataReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +79,7 @@ public class RootFileParser implements DataParser<Root> {
                     if (!entries.containsKey(filenameHash)) {
                         entries.put(filenameHash, new ArrayList<>());
                     }
-                    entries.get(filenameHash).add(new RootEntry(filenameHash, new Checksum(contentChecksum), blockFlags, blockUnknown, entryUnknown.get((int) i)));
+                    entries.get(filenameHash).add(new RootEntry(filenameHash, new ContentChecksum(contentChecksum), blockFlags, blockUnknown, entryUnknown.get((int) i)));
                     totalReadEntries++;
                 }
                 LOGGER.trace("Read {} entries from {} calculated, on position {}", totalReadEntries, totalEntries, reader.position());

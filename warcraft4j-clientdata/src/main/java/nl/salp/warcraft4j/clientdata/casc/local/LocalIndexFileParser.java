@@ -20,6 +20,7 @@ package nl.salp.warcraft4j.clientdata.casc.local;
 
 import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.casc.Checksum;
+import nl.salp.warcraft4j.clientdata.casc.FileKey;
 import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
@@ -136,7 +137,7 @@ public class LocalIndexFileParser implements DataParser<LocalIndexFile> {
         short indexInfoHigh = reader.readNext(DataTypeFactory.getUnsignedByte());
         long indexInfoLow = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.BIG_ENDIAN);
         long fileSize = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.LITTLE_ENDIAN) & 0xFFFFFFFF;
-        IndexEntry entry = new LocalIndexEntry(new Checksum(fileKey), indexInfoHigh, indexInfoLow, fileSize);
+        IndexEntry entry = new LocalIndexEntry(new FileKey(fileKey), indexInfoHigh, indexInfoLow, fileSize);
         return entry;
     }
 

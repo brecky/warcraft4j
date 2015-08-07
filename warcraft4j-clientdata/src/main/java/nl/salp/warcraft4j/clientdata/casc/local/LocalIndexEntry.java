@@ -18,58 +18,37 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.local;
 
-import nl.salp.warcraft4j.clientdata.casc.Checksum;
+import nl.salp.warcraft4j.clientdata.casc.FileKey;
 import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public class LocalIndexEntry implements IndexEntry {
-    private Checksum fileKey; // 9b First 9 bytes of file key.
-    private short indexInfoHigh; // 1b High byte of index information
-    private long indexInfoLow; // 4b BE Low bytes of index information
-    private long fileSize; // 4b LE File size in bytes
+public class LocalIndexEntry extends IndexEntry {
+    private final short indexInfoHigh;
+    private final long indexInfoLow;
 
-    public LocalIndexEntry(Checksum fileKey, short indexInfoHigh, long indexInfoLow, long fileSize) {
-        this.fileKey = fileKey;
+    public LocalIndexEntry(FileKey fileKey, short indexInfoHigh, long indexInfoLow, long fileSize) {
+        super(fileKey, getFileNumber(indexInfoHigh, indexInfoLow), getDataFileOffset(indexInfoHigh, indexInfoLow), fileSize);
         this.indexInfoHigh = indexInfoHigh;
         this.indexInfoLow = indexInfoLow;
-        this.fileSize = fileSize;
     }
 
-    @Override public Checksum getFileKey() {
-        return fileKey;
+    public short getIndexInfoHigh() {
+        return indexInfoHigh;
     }
 
-    @Override public long getFileSize() {
-        return fileSize;
+    public long getIndexInfoLow() {
+        return indexInfoLow;
     }
 
-    @Override public int getFileNumber() {
+    private static int getFileNumber(short indexInfoHigh, long indexInfoLow) {
         return ((byte) (indexInfoHigh << 2) | (((int) indexInfoLow & 0xC0000000) >>> 30));
     }
 
-    @Override public int getDataFileOffset() {
-        return (int) ( indexInfoLow & 0x3FFFFFFF);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+    private static int getDataFileOffset(short indexInfoHigh, long indexInfoLow) {
+        return (int) (indexInfoLow & 0x3FFFFFFF);
     }
 }

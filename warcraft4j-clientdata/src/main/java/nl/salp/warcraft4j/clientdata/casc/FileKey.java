@@ -18,44 +18,37 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import nl.salp.warcraft4j.util.DataTypeUtil;
+
+import java.util.Arrays;
+
+import static java.lang.String.format;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public class IndexEntry {
-    private final FileKey fileKey;
-    private final int fileNumber;
-    private final int dataFileOffset;
-    private final long fileSize;
+public class FileKey extends Checksum {
+    private static final int FILEKEY_LENGTH = 9;
+    private final byte[] fileKey;
     private final int hash;
 
-    public IndexEntry(FileKey fileKey, int fileNumber, int dataFileOffset, long fileSize) {
-        this.fileKey = fileKey;
-        this.fileSize = fileSize;
-        this.fileNumber = fileNumber;
-        this.dataFileOffset = dataFileOffset;
-        this.hash = fileKey.hashCode();
+
+    public FileKey(byte[] checksum) {
+        super(checksum);
+        if (getChecksum().length > FILEKEY_LENGTH) {
+            fileKey = trim(FILEKEY_LENGTH).getChecksum();
+        } else if (getChecksum().length == FILEKEY_LENGTH) {
+            fileKey = checksum;
+        } else {
+            throw new IllegalArgumentException(format("Unable to create a 9 byte filekey from a %d byte array.", checksum.length));
+        }
+        hash = CascUtil.hash(fileKey);
     }
 
-    public FileKey getFileKey() {
+    public byte[] getFileKey() {
         return fileKey;
-    }
-
-    public long getFileSize() {
-        return fileSize;
-    }
-
-    public int getFileNumber() {
-        return fileNumber;
-    }
-
-    public int getDataFileOffset() {
-        return dataFileOffset;
     }
 
     @Override
@@ -65,11 +58,15 @@ public class IndexEntry {
 
     @Override
     public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
+        boolean eq = false;
+        if (obj != null && FileKey.class.isAssignableFrom(obj.getClass())) {
+            eq = Arrays.equals(fileKey, ((FileKey) obj).fileKey);
+        }
+        return eq;
     }
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return DataTypeUtil.byteArrayToHexString(fileKey);
     }
 }

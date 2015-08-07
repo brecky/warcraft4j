@@ -4,7 +4,7 @@
  * distributed with this work for additional information
  * regarding copyright ownership.  The Warcraft4J Project licenses
  * this file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License") throws CascParsingException; you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -18,12 +18,10 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.clientdata.casc.Checksum;
-
 import java.util.List;
 
 /**
- * TODO Add description.
+ * CASC configuration.
  *
  * @author Barre Dijkstra
  */
@@ -32,41 +30,89 @@ public interface CascConfig {
      * Get the available regions.
      *
      * @return The regions.
+     *
+     * @throws CascParsingException When the available regions can't be retrieved.
      */
-    List<String> getAvailableRegions();
+    List<String> getAvailableRegions() throws CascParsingException;
 
     /**
      * Get the content checksum of the root file.
      *
-     * @return The content checksum.
+     * @return The content checksum for the root file.
+     *
+     * @throws CascParsingException When the root content checksum is not available.
      */
-    Checksum getRootContentChecksum();
+    ContentChecksum getRootContentChecksum() throws CascParsingException;
 
     /**
      * Get the file key of the encoding file.
      *
-     * @return The file key.
+     * @return The file key for the encoding file.
+     *
+     * @throws CascParsingException When the encoding file key is not available.
      */
-    Checksum getEncodingFileChecksum();
+    FileKey getEncodingFileChecksum() throws CascParsingException;
 
     /**
      * Get the size of the encoding file.
      *
      * @return The size in bytes.
+     *
+     * @throws CascParsingException When the encoding file size is not available.
      */
-    long getEncodingFileSize();
+    long getEncodingFileSize() throws CascParsingException;
+
+    /**
+     * Get the file keys for the archive files.
+     *
+     * @return The file keys.
+     *
+     * @throws CascParsingException When the archive file keys are not available.
+     */
+    List<FileKey> getArchiveChecksums() throws CascParsingException;
+
+    /**
+     * Get the file key for the archive group file.
+     *
+     * @return The file key.
+     *
+     * @throws CascParsingException When the archive group file key is not available.
+     */
+    FileKey getArchiveGroupChecksum() throws CascParsingException;
+
+    /**
+     * Get the file keys for the patch archive files.
+     *
+     * @return The file keys.
+     *
+     * @throws CascParsingException When the patch archive file keys are not available.
+     */
+    List<FileKey> getPatchArchiveChecksums() throws CascParsingException;
+
+    /**
+     * Get the file key for the patch archive group file.
+     *
+     * @return The file key.
+     *
+     * @throws CascParsingException When the patch archive group file key is not available.
+     */
+    FileKey getPatchArchiveGroupChecksum() throws CascParsingException;
 
     /**
      * Get the CDN URL.
      *
      * @return The CDN URL.
+     *
+     * @throws CascParsingException When the CDN URL is not available.
      */
-    String getCdnUrl();
+    String getCdnUrl() throws CascParsingException;
 
     /**
      * Get the build version.
      *
      * @return The version.
+     *
+     * @throws CascParsingException When the version is not available.
      */
-    String getVersion();
+    String getVersion() throws CascParsingException;
 }

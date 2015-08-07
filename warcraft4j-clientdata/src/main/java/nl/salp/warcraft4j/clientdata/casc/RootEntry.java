@@ -32,12 +32,12 @@ import java.util.Optional;
  */
 public class RootEntry {
     private final long filenameHash;
-    private final Checksum contentChecksum;
+    private final ContentChecksum contentChecksum;
     private final long blockFlags;
     private final long blockUnknown;
     private final long entryUnknown;
 
-    public RootEntry(long filenameHash, Checksum contentChecksum, long blockFlags, long blockUnknown, long entryUnknown) {
+    public RootEntry(long filenameHash, ContentChecksum contentChecksum, long blockFlags, long blockUnknown, long entryUnknown) {
         this.filenameHash = filenameHash;
         this.contentChecksum = Optional.ofNullable(contentChecksum).orElseThrow(() -> new IllegalArgumentException("Unable to create a root file entry with a null content checksum"));
 
@@ -46,7 +46,7 @@ public class RootEntry {
         this.entryUnknown = entryUnknown;
     }
 
-    public Checksum getContentChecksum() {
+    public ContentChecksum getContentChecksum() {
         return contentChecksum;
     }
 

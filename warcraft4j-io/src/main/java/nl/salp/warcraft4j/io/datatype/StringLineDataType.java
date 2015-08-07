@@ -18,14 +18,14 @@
  */
 package nl.salp.warcraft4j.io.datatype;
 
+import nl.salp.warcraft4j.io.parser.DataParsingException;
 import nl.salp.warcraft4j.util.DataTypeUtil;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
-
-import static nl.salp.warcraft4j.util.DataTypeUtil.getAverageBytesPerCharacter;
 
 /**
  * {@link DataType} implementation for a string line or the end of the buffer.
@@ -72,20 +72,23 @@ class StringLineDataType extends DataType<String> {
 
     @Override
     public String readNext(ByteBuffer buffer) {
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        byte c;
-        boolean done = false;
-        while (buffer.hasRemaining() && !done) { // Double loop to accommodate for previously reading a \r within a \r\n.
-            while (buffer.hasRemaining() && !isVariableLengthTerminator(c = buffer.get())) {
-                byteStream.write(c);
-                done = true;
+        try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream()) {
+            byte c;
+            boolean done = false;
+            while (buffer.hasRemaining() && !done) { // Double loop to accommodate for previously reading a \r within a \r\n.
+                while (buffer.hasRemaining() && !isVariableLengthTerminator(c = buffer.get())) {
+                    byteStream.write(c);
+                    done = true;
+                }
             }
+            return new String(byteStream.toByteArray(), charset);
+        } catch (IOException e) {
+            throw new DataParsingException(e);
         }
-        return new String(byteStream.toByteArray(), charset);
     }
 
     @Override
     public boolean isVariableLengthTerminator(byte b) {
-        return b == 0 || b == '\n' || b == '\r';
+        return b == '\n' || b == '\r';
     }
 }

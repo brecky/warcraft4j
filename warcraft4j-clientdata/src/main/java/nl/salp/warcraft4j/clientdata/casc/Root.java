@@ -53,7 +53,7 @@ public class Root {
         return entries.getOrDefault(hash, Collections.emptyList());
     }
 
-    public List<Checksum> getContentChecksums(long hash) {
+    public List<ContentChecksum> getContentChecksums(long hash) {
         return getEntries(hash).stream()
                 .map(RootEntry::getContentChecksum)
                 .collect(Collectors.toList());

@@ -21,6 +21,7 @@ package nl.salp.warcraft4j.clientdata.casc.local;
 import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.casc.DataReaderProvider;
 import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.io.reader.file.FileDataReader;
 import nl.salp.warcraft4j.io.reader.file.MemMapFileDataReader;
 
 import java.nio.file.Files;
@@ -39,12 +40,12 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 public class FileDataReaderProvider implements DataReaderProvider {
     @Override
     public Supplier<DataReader> getDataReader(String uri) throws CascParsingException {
-        return () -> new MemMapFileDataReader(toPath(uri));
+        return () -> new FileDataReader(toPath(uri));
     }
 
     @Override
     public Supplier<DataReader> getDataReader(String uri, long offset, long length) throws CascParsingException{
-        return () -> new MemMapFileDataReader(toPath(uri), offset, length);
+        return () -> new FileDataReader(toPath(uri), offset, length);
     }
 
     private Path toPath(String uri) {
@@ -55,7 +56,7 @@ public class FileDataReaderProvider implements DataReaderProvider {
         if (Files.notExists(path) || !Files.isRegularFile(path)) {
             throw new CascParsingException(format("Can't create a file reader for %s, file either doesn't exist or is not a file.", uri));
         }
-        if (Files.isReadable(path)) {
+        if (!Files.isReadable(path)) {
             throw new CascParsingException(format("Can't create a file reader for non-readable file %s", uri));
         }
         return path;

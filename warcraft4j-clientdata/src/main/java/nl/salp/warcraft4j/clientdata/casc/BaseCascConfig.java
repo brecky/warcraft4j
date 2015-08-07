@@ -22,7 +22,10 @@ import nl.salp.warcraft4j.clientdata.ClientDataConfiguration;
 import nl.salp.warcraft4j.clientdata.Region;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.util.DataTypeUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -32,6 +35,7 @@ import java.util.function.Supplier;
  * @author Barre Dijkstra
  */
 public abstract class BaseCascConfig implements CascConfig {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseCascConfig.class);
     protected static final String KEY_BUILD_DOWNLOAD = "download";
     protected static final String KEY_BUILD_ENCODING = "encoding";
     protected static final String KEY_BUILD_ENCODING_SIZE = "encoding-size";
@@ -49,7 +53,7 @@ public abstract class BaseCascConfig implements CascConfig {
     protected static final String KEY_CDN_ARCHIVES = "archives";
     protected static final String KEY_CDN_ARCHIVE_GROUP = "archive-group";
     protected static final String KEY_CDN_PATCH_ARCHIVES = "patch-archives";
-    protected static final String KEY_CDN_PATCH_ARCHIVE_GROUP = "patch-achive-group";
+    protected static final String KEY_CDN_PATCH_ARCHIVE_GROUP = "patch-archive-group";
 
     private final DataReaderProvider dataReaderProvider;
     private final ClientDataConfiguration clientDataConfiguration;
@@ -57,6 +61,9 @@ public abstract class BaseCascConfig implements CascConfig {
     private Config cdnConfig;
 
     protected BaseCascConfig(ClientDataConfiguration clientDataConfiguration, DataReaderProvider dataReaderProvider) {
+        LOGGER.trace("Created {} config instance for installation {}, region {}, branch {} and locale {} with data reader provider {}",
+                getClass().getName(), clientDataConfiguration.getWowInstallationDirectory(), clientDataConfiguration.getRegion(),
+                clientDataConfiguration.getBranch(), clientDataConfiguration.getLocale(), dataReaderProvider.getClass().getName());
         this.clientDataConfiguration = clientDataConfiguration;
         this.dataReaderProvider = dataReaderProvider;
     }
@@ -75,6 +82,7 @@ public abstract class BaseCascConfig implements CascConfig {
         if (buildConfig == null) {
             String buildConfigKey = getBuildConfigKey()
                     .orElseThrow(() -> new CascParsingException("No build configuration file checksum available."));
+            LOGGER.debug("Initialising build config with key {}", buildConfigKey);
             buildConfig = Config.keyValueConfig(getConfigDataReader(buildConfigKey));
         }
         return buildConfig;
@@ -84,27 +92,66 @@ public abstract class BaseCascConfig implements CascConfig {
         if (cdnConfig == null) {
             String cdnConfigKey = getCdnConfigKey()
                     .orElseThrow(() -> new CascParsingException("No CDN configuration file checksum available."));
-            buildConfig = Config.keyValueConfig(getConfigDataReader(cdnConfigKey));
+            LOGGER.debug("Initialising CDN config with key {}", cdnConfigKey);
+            cdnConfig = Config.keyValueConfig(getConfigDataReader(cdnConfigKey));
         }
         return cdnConfig;
     }
 
     @Override
-    public Checksum getRootContentChecksum() {
-        return getBuildConfig().getLastValue(KEY_BUILD_ROOT, (s) -> new Checksum(DataTypeUtil.hexStringToByteArray(s)))
+    public ContentChecksum getRootContentChecksum() {
+        ContentChecksum checksum = getBuildConfig().getLastValue(KEY_BUILD_ROOT, (s) -> new ContentChecksum(DataTypeUtil.hexStringToByteArray(s)))
                 .orElseThrow(() -> new CascParsingException("No root content checksum available."));
+        LOGGER.trace("Retrieved root file content checksum {}", checksum.toHexString());
+        return checksum;
     }
 
     @Override
-    public Checksum getEncodingFileChecksum() {
-        return getBuildConfig().getLastValue(KEY_BUILD_ENCODING, (s) -> new Checksum(DataTypeUtil.hexStringToByteArray(s)))
+    public FileKey getEncodingFileChecksum() {
+        FileKey fileKey = getBuildConfig().getLastValue(KEY_BUILD_ENCODING, (s) -> new FileKey(DataTypeUtil.hexStringToByteArray(s)))
                 .orElseThrow(() -> new CascParsingException("No encoding file checksum available."));
+        LOGGER.trace("Retrieved encoding file checksum {}", fileKey.toHexString());
+        return fileKey;
     }
 
     @Override
     public long getEncodingFileSize() {
-        return getBuildConfig().getLastValue(KEY_BUILD_ENCODING_SIZE, Long::valueOf)
+        long size = getBuildConfig().getLastValue(KEY_BUILD_ENCODING_SIZE, Long::valueOf)
                 .orElseThrow(() -> new CascParsingException("No encoding file size available."));
+        LOGGER.trace("Retrieved encoding file size {}", size);
+        return size;
+    }
+
+    @Override
+    public List<FileKey> getArchiveChecksums() {
+        List<FileKey> checksums = getCdnConfig().getValues(KEY_CDN_ARCHIVES, (s) -> new FileKey(DataTypeUtil.hexStringToByteArray(s)))
+                .orElseThrow(() -> new CascParsingException("No archive file checksums available."));
+        LOGGER.trace("Retrieved {} archive checksums {}", checksums.size(), checksums);
+        return checksums;
+    }
+
+    @Override
+    public FileKey getArchiveGroupChecksum() {
+        FileKey checksum = getCdnConfig().getLastValue(KEY_CDN_ARCHIVE_GROUP, (s) -> new FileKey(DataTypeUtil.hexStringToByteArray(s)))
+                .orElseThrow(() -> new CascParsingException("No archive group file checksum available."));
+        LOGGER.trace("Retrieved archive group checksum {}", checksum);
+        return checksum;
+    }
+
+    @Override
+    public List<FileKey> getPatchArchiveChecksums() {
+        List<FileKey> checksums = getCdnConfig().getValues(KEY_CDN_PATCH_ARCHIVES, (s) -> new FileKey(DataTypeUtil.hexStringToByteArray(s)))
+                .orElseThrow(() -> new CascParsingException("No patch archive file checksums available."));
+        LOGGER.trace("Retrieved {} patch archive checksums {}", checksums.size(), checksums);
+        return checksums;
+    }
+
+    @Override
+    public FileKey getPatchArchiveGroupChecksum() {
+        FileKey checksum = getCdnConfig().getLastValue(KEY_CDN_PATCH_ARCHIVE_GROUP, (s) -> new FileKey(DataTypeUtil.hexStringToByteArray(s)))
+                .orElseThrow(() -> new CascParsingException("No patch archive group file checksum available."));
+        LOGGER.trace("Retrieved patch archive group checksum {}", checksum);
+        return checksum;
     }
 
     @Override

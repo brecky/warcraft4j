@@ -23,16 +23,16 @@ import nl.salp.warcraft4j.clientdata.ClientDataConfiguration;
 import nl.salp.warcraft4j.clientdata.Region;
 import nl.salp.warcraft4j.clientdata.casc.blte.BlteFile;
 import nl.salp.warcraft4j.clientdata.casc.cdn.CdnCascConfig;
-import nl.salp.warcraft4j.clientdata.casc.local.LocalCascConfig;
+import nl.salp.warcraft4j.clientdata.casc.cdn.CdnDataReaderProvider;
 import nl.salp.warcraft4j.clientdata.casc.local.FileDataReaderProvider;
+import nl.salp.warcraft4j.clientdata.casc.local.LocalCascConfig;
 import nl.salp.warcraft4j.clientdata.casc.local.LocalIndexFile;
 import nl.salp.warcraft4j.clientdata.casc.local.LocalIndexParser;
-import nl.salp.warcraft4j.clientdata.casc.cdn.CdnDataReaderProvider;
+import nl.salp.warcraft4j.hash.JenkinsHash;
+import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.reader.CompositeDataReader;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.reader.RandomAccessDataReader;
-import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
-import nl.salp.warcraft4j.hash.JenkinsHash;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +54,35 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * TODO Document class.
+ *
+ * CASC
+ *  + getFileReader(path | hash)
+ *  + getFileSize(path | hash)
+ *  - map[path,hash]
+ *  - casccontext (local | cdn | extracted)
+ *      + getCascEntry(hash): CascEntry
+ *          + getHash(): long
+ *          + getPath(): String
+ *          + getFileReader(): Supplier(DataReader)  <- might be composite for multiple content checksums (also for extracted files without name)
+ *          + getFileSize(): long
+ *      + getContentChecksums(hash): ContentChecksum[]
+ *      + getFileKey(ContentChecksum): FileKey
+ *      * local (local wow installation, CASC structure)
+ *          - root (BLTE)
+ *          - encoding (BLTE)
+ *          - local indices (.idx)
+ *      * cdn (online, CASC structure)
+ *          - root (BLTE)
+ *          - encoding (BLTE)
+ *          - local indices (.index)
+ *      * extracted (local files, ./filepath or ./unknown/filekey)
+ *          - fallback casccontext   <- cdn | local, for extracting files that haven't been extracted yet
+ *          - root (extracted)
+ *          - encoding (extracted)
+ *
+ *
+ *
+ *
  *
  * @author Barre Dijkstra
  */
@@ -140,24 +169,16 @@ public class Casc {
                 .map(e -> parser.apply(getDataFile(e).getEntry(e)));
     }
 
-    public List<Checksum> getContentChecksumForFilenameHash(long filenameHash) {
+    public List<ContentChecksum> getContentChecksumForFilenameHash(long filenameHash) {
         return getRoot().getContentChecksums(filenameHash);
     }
 
-    public Optional<Checksum> getFileKeyForContentChecksum(Checksum contentChecksum) {
+    public Optional<FileKey> getFileKeyForContentChecksum(ContentChecksum contentChecksum) {
         return getEncodingFile().getFileKey(contentChecksum);
     }
 
-    protected Optional<IndexEntry> getIndexEntryForFileKey(Checksum fileKey) {
+    protected Optional<IndexEntry> getIndexEntryForFileKey(FileKey fileKey) {
         return getIndex().getEntry(fileKey);
-    }
-
-    protected Optional<IndexEntry> getIndexEntryForFileChecksum(Checksum fileChecksum) {
-        Checksum cs = fileChecksum;
-        if (fileChecksum.length() > 9) {
-            cs = fileChecksum.trim(9);
-        }
-        return getIndexEntryForFileKey(cs);
     }
 
     protected List<IndexEntry> getIndexEntry(String path) {
@@ -215,7 +236,7 @@ public class Casc {
     protected EncodingFile getEncodingFile() {
         if (encodingFile == null) {
             IndexEntry indexEntry = Optional.ofNullable(getConfig().getEncodingFileChecksum())
-                    .flatMap(this::getIndexEntryForFileChecksum)
+                    .flatMap(this::getIndexEntryForFileKey)
                     .orElseThrow(() -> new CascParsingException(format("No entry found for encoding file entry %s", getConfig().getEncodingFileChecksum())));
             LOGGER.debug("Parsing encoding file from {} bytes of data in data.{} at offset {}",
                     indexEntry.getFileSize(),
@@ -247,9 +268,9 @@ public class Casc {
      */
     protected Root getRoot() {
         if (root == null) {
-            Checksum contentChecksum = Optional.of(config.getRootContentChecksum())
+            ContentChecksum contentChecksum = Optional.of(config.getRootContentChecksum())
                     .orElseThrow(() -> new CascParsingException(format("No checksum found for root file")));
-            Checksum fileKey = getFileKeyForContentChecksum(contentChecksum)
+            FileKey fileKey = getFileKeyForContentChecksum(contentChecksum)
                     .orElseThrow(() -> new CascParsingException(format("No file key found for root file entry %s", contentChecksum)));
             IndexEntry indexEntry = getIndexEntryForFileKey(fileKey)
                     .orElseThrow(() -> new CascParsingException(format("No index entry found for root file entry %s with key %s", contentChecksum, fileKey)));
@@ -304,7 +325,7 @@ public class Casc {
     public Supplier<RandomAccessDataReader> getFileReader(long hash, long offset, long length) {
         List<IndexEntry> indexEntries = getRoot().getContentChecksums(hash).stream()
                 .map(h -> {
-                    Optional<Checksum> c = getFileKeyForContentChecksum(h);
+                    Optional<FileKey> c = getFileKeyForContentChecksum(h);
                     if (!c.isPresent()) {
                         throw new CascParsingException(format("No file key found for file with hash %s", hash));
                     }

@@ -21,6 +21,9 @@ package nl.salp.warcraft4j.clientdata.casc;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -36,6 +39,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  * @author Barre Dijkstra
  */
 public class Config {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseCascConfig.class);
     private final ConfigParser configParser;
     private final Supplier<DataReader> dataReaderSupplier;
     private Map<String, List<String>> values;
@@ -120,6 +124,11 @@ public class Config {
                 .map(transformer);
     }
 
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
     public <T> Optional<List<T>> getValues(String key, Function<String, T> transformer) {
         return getValues(key)
                 .map(v -> transform(v, transformer));
@@ -129,7 +138,6 @@ public class Config {
         return Optional.ofNullable(list)
                 .filter(l -> !l.isEmpty())
                 .map(l -> l.get(0));
-
     }
 
     private static <T> Optional<T> getLastEntry(List<T> list) {
@@ -168,6 +176,7 @@ public class Config {
                     String key = tokens[0].trim();
                     String value = tokens[1].trim();
                     values.put(key, Arrays.asList(value.split(" ")));
+LOGGER.trace("Parsed line {} to [key: {}, values: {}]", line, key, values.get(key));
                 }
             }
             return values;
