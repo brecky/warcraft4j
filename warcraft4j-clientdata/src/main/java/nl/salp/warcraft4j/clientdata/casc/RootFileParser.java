@@ -59,11 +59,11 @@ public class RootFileParser implements DataParser<Root> {
         Map<Long, List<RootEntry>> entries = new HashMap<>();
         long totalEntries = 0;
         long totalReadEntries = 0;
-        LOGGER.trace("Reading entries from position {} ({} remaining)", reader.position(), reader.remaining());
+        LOGGER.trace("Reading entries from position {} ({} bytes remaining)", reader.position(), reader.remaining());
         while (reader.remaining() > 4) {
             long entryCount = reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN);
             if (entryCount > 0) {
-                LOGGER.trace("Reading {} entries from position {} ({} remaining)", entryCount, reader.position(), reader.remaining());
+                LOGGER.trace("Reading {} entries from position {} ({} bytes remaining)", entryCount, reader.position(), reader.remaining());
                 totalEntries += entryCount;
                 long blockUnknown = reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN);
                 long blockFlags = reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN);

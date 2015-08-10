@@ -52,7 +52,7 @@ public class LocalCascContext extends CascContext {
 
     @Override
     protected Supplier<DataReader> getEncodingReader() {
-        FileKey encodingFileChecksum = getCascConfig().getEncodingFileChecksum();
+        FileKey encodingFileChecksum = getCascConfig().getStorageEncodingFileChecksum();
         IndexEntry indexEntry = Optional.ofNullable(encodingFileChecksum)
                 .flatMap(this::getIndexEntry)
                 .orElseThrow(() -> new CascParsingException(format("No entry found for encoding file entry %s", encodingFileChecksum.toHexString())));
@@ -72,6 +72,7 @@ public class LocalCascContext extends CascContext {
 
     @Override
     protected Supplier<DataReader> getDataReader(String dataFile, long dataFileOffset, long fileSize) throws CascParsingException {
+        LOGGER.trace("Getting local file data reader for {} (offset: {}, size: {})", dataFile, dataFileOffset + 30, fileSize - 30);
         return getDataReaderProvider().getDataReader(dataFile, dataFileOffset + 30, fileSize - 30);
     }
 

@@ -219,7 +219,7 @@ public class Casc {
                 }
                 LOGGER.debug("Successfully parsed config file with CDN url {}, encoding file {} and root {}",
                         config.getCdnUrl(),
-                        config.getEncodingFileChecksum(),
+                        config.getStorageEncodingFileChecksum(),
                         config.getRootContentChecksum());
             } finally {
                 parseLock.unlock();
@@ -235,9 +235,9 @@ public class Casc {
      */
     protected EncodingFile getEncodingFile() {
         if (encodingFile == null) {
-            IndexEntry indexEntry = Optional.ofNullable(getConfig().getEncodingFileChecksum())
+            IndexEntry indexEntry = Optional.ofNullable(getConfig().getStorageEncodingFileChecksum())
                     .flatMap(this::getIndexEntryForFileKey)
-                    .orElseThrow(() -> new CascParsingException(format("No entry found for encoding file entry %s", getConfig().getEncodingFileChecksum())));
+                    .orElseThrow(() -> new CascParsingException(format("No entry found for encoding file entry %s", getConfig().getStorageEncodingFileChecksum())));
             LOGGER.debug("Parsing encoding file from {} bytes of data in data.{} at offset {}",
                     indexEntry.getFileSize(),
                     format("%03d", indexEntry.getFileNumber()),
@@ -246,9 +246,9 @@ public class Casc {
             Supplier<RandomAccessDataReader> readerSupplier = getBlteDataReader(indexEntry);
             parseLock.lock();
             try (RandomAccessDataReader reader = readerSupplier.get()) {
-                encodingFile = reader.readNext(new EncodingFileParser());
+                encodingFile = reader.readNext(new EncodingFileParser(indexEntry.getFileSize()));
             } catch (IOException e) {
-                throw new CascParsingException(format("Error parsing encoding file %s", getConfig().getEncodingFileChecksum()), e);
+                throw new CascParsingException(format("Error parsing encoding file %s", getConfig().getStorageEncodingFileChecksum()), e);
             } finally {
                 parseLock.unlock();
             }

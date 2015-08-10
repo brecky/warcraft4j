@@ -58,10 +58,10 @@ public class BlteFileParser implements DataParser<BlteFile> {
 
     @Override
     public BlteFile parse(DataReader reader) throws IOException, DataParsingException {
-        LOGGER.trace("Parsing {}B BLTE file from data file at offset {}", fileSize, reader.position());
+        LOGGER.trace("Parsing {}-byte BLTE file from data file at offset {}", fileSize, reader.position());
         long readerPos = reader.position();
         String magicString = reader.readNext(DataTypeFactory.getFixedLengthString(MAGIC_STRING.length(), US_ASCII));
-        LOGGER.trace("Parsed {}B magic string {}", reader.position() - readerPos, magicString);
+        LOGGER.trace("Parsed {}-byte magic string {}", reader.position() - readerPos, magicString);
         if (!MAGIC_STRING.equals(magicString)) {
             throw new DataParsingException(format("BLTE file has the magic string '%s' while '%s' was required.", magicString, MAGIC_STRING));
         }
@@ -71,11 +71,11 @@ public class BlteFileParser implements DataParser<BlteFile> {
         int chunkCount;
         if (multiChunk) {
             chunkCount = parseMultiChunkCount(reader);
-            LOGGER.trace("Parsing {} byte BLTE multi-chunk file with {} chunks", fileSize, chunkCount);
+            LOGGER.trace("Parsing {}-byte BLTE multi-chunk file with {} chunks", fileSize, chunkCount);
             parser = new BlteMultiChunkParser(chunkCount);
         } else {
             chunkCount = 1;
-            LOGGER.trace("Parsing {} byte BLTE single chunk file", fileSize );
+            LOGGER.trace("Parsing {}-byte BLTE single chunk file", fileSize );
             parser = new BlteSingleChunkParser(fileSize);
         }
 

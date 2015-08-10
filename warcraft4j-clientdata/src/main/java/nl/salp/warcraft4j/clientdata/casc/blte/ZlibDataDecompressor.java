@@ -33,6 +33,7 @@ import java.util.zip.Inflater;
  * @author Barre Dijkstra
  */
 class ZlibDataDecompressor implements DataDecompressor {
+    private static final int BLOCK_SIZE = 4096;
     /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ZlibDataDecompressor.class);
 
@@ -44,25 +45,24 @@ class ZlibDataDecompressor implements DataDecompressor {
     @Override
     public byte[] decompress(byte[] data, long offset, long compressedSize, long decompressedSize) throws CascParsingException {
         try {
-            // CASCExplorer uses eq of ArrayUtils.subarray(data, 2, data.length - 2) instead of full array size, which is the 2 byte zip header
             Inflater decompresser = new Inflater(false);
-            LOGGER.trace("Decompressing {}B of gzip'd chunk data to {}B.", compressedSize, compressedSize);
             decompresser.setInput(data, (int) offset, data.length);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             long resultLength = 0;
             while (!decompresser.finished()) {
-                byte[] result = new byte[4096];
-                resultLength += decompresser.inflate(result);
-                out.write(result);
+                byte[] result = new byte[BLOCK_SIZE];
+                int blockLength = decompresser.inflate(result);
+                out.write(result, 0, blockLength);
+                resultLength += blockLength;
             }
             byte[] result = out.toByteArray();
             decompresser.end();
             if (resultLength != decompressedSize && (compressedSize != decompressedSize)) {
-                throw new CascParsingException(String.format("Decompressed BLTE chunk to a %dB output while %dB was specified.", resultLength, decompressedSize));
+                throw new CascParsingException(String.format("Decompressed BLTE chunk to a %d bytes output while %d bytes were specified.", resultLength, decompressedSize));
             }
-            LOGGER.trace("Succesfully decompressed gzip'd chunk data to {}B of data.", result.length);
+            LOGGER.trace("Decompressed {} byte gzip'd BLTE file chunk to {} bytes of data.", compressedSize, result.length);
             return result;
-        } catch (DataFormatException | IOException e) {
+        } catch (DataFormatException e) {
             throw new CascParsingException(e);
         }
     }

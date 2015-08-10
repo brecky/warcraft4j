@@ -31,11 +31,9 @@ import java.util.*;
  * @author Barre Dijkstra
  */
 public class EncodingFile {
-    private final byte[] locale;
     private final Map<Checksum, EncodingEntry> entries;
 
-    public EncodingFile(byte[] locale, List<EncodingEntry> entries) {
-        this.locale = locale;
+    public EncodingFile(List<EncodingEntry> entries) {
         this.entries = new HashMap<>();
         entries.stream()
                 .filter(e -> e != null)
@@ -45,10 +43,6 @@ public class EncodingFile {
                         this.entries.put(e.getContentChecksum(), e);
                     }
                 });
-    }
-
-    public byte[] getLocale() {
-        return locale;
     }
 
     protected Optional<EncodingEntry> getEncodingEntry(ContentChecksum contentChecksum) {
@@ -85,7 +79,6 @@ public class EncodingFile {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("locale", new String(locale))
                 .append("entries", entries.size())
                 .append("checksums", entries.values().stream().map(EncodingEntry::getFileKeys).mapToInt(List::size).sum())
                 .toString();

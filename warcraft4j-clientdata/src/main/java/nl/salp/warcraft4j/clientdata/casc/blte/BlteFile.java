@@ -22,6 +22,8 @@ import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.io.reader.ByteArrayDataReader;
 import nl.salp.warcraft4j.io.reader.RandomAccessDataReader;
 import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,6 +39,8 @@ import static java.lang.String.format;
  * @author Barre Dijkstra
  */
 public class BlteFile {
+    /** The logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(BlteFileParser.class);
     private final List<BlteChunk> chunks;
 
     public BlteFile(List<BlteChunk> chunks) {
@@ -78,20 +82,51 @@ public class BlteFile {
     }
 
     public byte[] decompress() {
-        return merge((chunk) -> chunk.decompress());
+        long decompressedSize = getDecompressedSize();
+        if (decompressedSize > Integer.MAX_VALUE) {
+            throw new CascParsingException(format("Unable to decompress %d bytes of BLTE data into a single byte array.", decompressedSize));
+        }
+        int size = (int) decompressedSize;
+        ByteArrayOutputStream out = new ByteArrayOutputStream(size);
+        for (int i = 0; i < chunks.size(); i++) {
+            try {
+                BlteChunk chunk = chunks.get(i);
+                byte[] chunkData = chunk.decompress();
+                LOGGER.trace("Writing chunk {} with {} bytes of decompressed data ({} bytes expected, {} bytes compressed)", i, chunkData.length,
+                        chunk.getDecompressedSize(), chunk.getCompressedSize());
+                if (chunkData.length != chunk.getDecompressedSize()) {
+//                    throw new CascParsingException(format("BLTE file chunk %d was decompressed to %d bytes of data while %d were expected.", i, chunkData.length, chunk.getDecompressedSize()));
+                }
+                out.write(chunkData);
+            } catch (IOException e) {
+                throw new CascParsingException(format("Unable to concatenate BLTE chunk data for chunk %d", i), e);
+            }
+        }
+        byte[] data = out.toByteArray();
+        LOGGER.trace("Decompressed BLTE file to {} bytes of data ({} bytes expected, {} bytes compressed)", data.length, getDecompressedSize(), getCompressedSize());
+        return data;
     }
 
     private byte[] merge(Function<BlteChunk, byte[]> dataFunction) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        chunks.stream()
-                .map(dataFunction)
-                .forEachOrdered(data -> writeByteArray(data, out));
+        for (int i = 0; i < chunks.size(); i++) {
+            writeChunk(i, chunks.get(i), out, dataFunction);
+        }
         return out.toByteArray();
+    }
+
+    private static void writeChunk(int index, BlteChunk chunk, ByteArrayOutputStream out, Function<BlteChunk, byte[]> dataFunction) {
+        byte[] data = dataFunction.apply(chunk);
+        LOGGER.trace("Writing chunk {} with {} bytes of decompressed data ({} bytes expected, {} bytes compressed)", index + 1, data.length,
+                chunk.getDecompressedSize(), chunk.getCompressedSize());
+        writeByteArray(data, out);
+
     }
 
     private static void writeByteArray(byte[] byteArray, ByteArrayOutputStream out) {
         try {
             out.write(byteArray);
+            out.flush();
         } catch (IOException e) {
             throw new CascParsingException("Unable to concatenate chunk data", e);
         }

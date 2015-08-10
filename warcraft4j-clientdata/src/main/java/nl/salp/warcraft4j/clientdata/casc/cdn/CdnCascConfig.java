@@ -92,12 +92,12 @@ public class CdnCascConfig extends BaseCascConfig {
     }
 
     @Override
-    protected Optional<String> getBuildConfigKey() {
+    public Optional<String> getBuildConfigKey() {
         return getVersionValue(KEY_VERSIONS_BUILD_CONFIG);
     }
 
     @Override
-    protected Optional<String> getCdnConfigKey() {
+    public Optional<String> getCdnConfigKey() {
         return getVersionValue(KEY_VERSIONS_CDN_CONFIG);
     }
 

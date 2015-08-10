@@ -19,6 +19,7 @@
 package nl.salp.warcraft4j.io.datatype;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * {@link DataType} implementation for a 32-bit unsigned integer wrapped in a 64-bit signed long.
@@ -41,6 +42,11 @@ class UnsignedShortDataType extends DataType<Integer> {
 
     @Override
     public Integer readNext(ByteBuffer buffer) {
+        return readNext(buffer, getDefaultByteOrder());
+    }
+
+    @Override
+    public Integer readNext(ByteBuffer buffer, ByteOrder byteOrder) {
         return buffer.getShort() & SHORT_MASK;
     }
 }

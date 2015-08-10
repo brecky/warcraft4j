@@ -23,22 +23,24 @@ import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.parser.DataParser;
 import nl.salp.warcraft4j.io.parser.DataParsingException;
 import nl.salp.warcraft4j.io.reader.DataReader;
-import nl.salp.warcraft4j.util.DataTypeUtil;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import static java.lang.String.format;
 import static nl.salp.warcraft4j.hash.Hashes.MD5;
+import static nl.salp.warcraft4j.util.DataTypeUtil.byteArrayToHexString;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
@@ -49,76 +51,183 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 public class EncodingFileParser implements DataParser<EncodingFile> {
     /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(EncodingFileParser.class);
-    private static final int CHECKSUM_BLOCK_SIZE = 32;
-    private static final int CHECKSUM_SIZE = 16;
+    private static final String MAGIC_STRING = "EN";
+    private static final int SEGMENT_CHECKSUMS_SIZE = 32;
+    private static final int MAGIC_STRING_SIZE = 2;
+    private static final int CHECKSUM_SIZE = 0x10;
+    private static final int HEADER_SIZE = 22;
+    private static final int SEGMENT_ENTRY_SIZE = 22;
+    private static final int SEGMENT_SIZE = 0x1000;
+
+    private final long encodingFileSize;
+
+    public EncodingFileParser(long encodingFileSize) {
+        this.encodingFileSize = encodingFileSize;
+    }
+
+    @Override
+    public int getInstanceDataSize() {
+        return 0;
+    }
 
     @Override
     public EncodingFile parse(DataReader reader) throws IOException, DataParsingException {
-        LOGGER.trace("Parsing encoding file");
-        byte[] locale = reader.readNext(DataTypeFactory.getByteArray(2));
+        LOGGER.trace("Parsing {}-byte encoding file", encodingFileSize);
+        if (reader.remaining() < encodingFileSize) {
+            throw new CascParsingException(format("Tried to read a %d-byte encoding file from a stream with %d-bytes remaining.", encodingFileSize, reader.remaining()));
+        }
+
+        long startOffset = reader.position();
+        LOGGER.trace("Parsing encoding header from offset {}", startOffset);
+        EncodingFileHeader header = parseHeader(reader);
+        long segmentStartPosition = startOffset + header.getSegmentOffset() + HEADER_SIZE;
+        LOGGER.trace("Parsed {} byte encoding header from position {} to {}: {}", HEADER_SIZE, startOffset, reader.position(), header);
+        LOGGER.trace("Encoding file segments: {}", header.getSegmentCount());
+        LOGGER.trace("Encoding file segment offset: {}", header.getSegmentOffset());
+        LOGGER.trace("Encoding file requires {} bytes of data with a file size of {} bytes.", getEncodingFileSize(header), encodingFileSize);
+        if (reader.position() != startOffset + HEADER_SIZE) {
+            throw new CascParsingException(format("Error reading header segment, ended up on offset %d instead of %d", reader.position(), startOffset + HEADER_SIZE));
+        }
+        if (getEncodingFileSize(header) > encodingFileSize) {
+            throw new CascParsingException(format("Invalid encoding file size: %d segments require %d bytes of data with %d bytes of data provided",
+                    header.getSegmentCount(), getEncodingFileSize(header), encodingFileSize));
+        }
+
+        long stringsStartPosition = reader.position();
+        LOGGER.trace("Parsing encoding string segment from offset {}", (stringsStartPosition - startOffset));
+        List<String> strings = parseStrings(segmentStartPosition, reader);
+        LOGGER.trace("Read {} strings from position {} to {} ({} bytes)",
+                strings.size(), stringsStartPosition, segmentStartPosition, segmentStartPosition - stringsStartPosition);
+        if (reader.position() != segmentStartPosition) {
+            throw new CascParsingException(format("Error reading string segment, ended up on offset %d instead of %d", reader.position(), segmentStartPosition));
+        }
+
+        LOGGER.trace("Parsing {} encoding file segment checksums from offset {}", header.getSegmentCount(), segmentStartPosition - startOffset);
+        List<EncodingFileSegmentChecksum> segmentChecksums = parseSegmentChecksums(header.getSegmentCount(), reader);
+        LOGGER.trace("Read {} {}-byte segment checksums from position {} to {} ({} bytes)",
+                segmentChecksums.size(), SEGMENT_CHECKSUMS_SIZE, segmentStartPosition, reader.position(), reader.position() - segmentStartPosition);
+        if (reader.position() != (segmentStartPosition + (header.getSegmentCount() * SEGMENT_CHECKSUMS_SIZE))) {
+            throw new CascParsingException(format("Error reading segment checksums, ended up on offset %d instead of %d", reader.position(), segmentStartPosition));
+        }
+
+        long entryStartPosition = reader.position();
+        LOGGER.trace("Parsing {} encoding file entry segments from offset {}", header.getSegmentCount(), entryStartPosition - startOffset);
+        List<EncodingFileSegment> segments = parseSegments(header.getSegmentCount(), reader);
+        LOGGER.trace("Parsed {} encoding file entry segments from position {} to {} ({} bytes)",
+                header.getSegmentCount(), entryStartPosition, reader.position(), reader.position() - entryStartPosition);
+        if (segments.size() != segmentChecksums.size()) {
+            throw new CascParsingException(format("Retrieved %d encoding file segments and %d segment checksums with %d segments expected.",
+                    segments.size(), segmentChecksums.size(), header.getSegmentCount()));
+        }
+
+        LOGGER.trace("Validating data integrity of {} segments", segments.size());
+        List<Boolean> segmentValidity = IntStream.range(0, segments.size())
+                .mapToObj(i -> validateSegment(segments.get(i), segmentChecksums.get(i)))
+                .collect(Collectors.toList());
+        if (segmentValidity.stream().anyMatch(valid -> valid == false)) {
+            IntStream.range(0, segments.size())
+                    .filter(index -> segmentValidity.get(index) == false)
+                    .forEach(i -> LOGGER.trace("segment {} has checksum {} calculated with {} expected",
+                                    i, byteArrayToHexString(segments.get(i).getChecksum()), byteArrayToHexString(segmentChecksums.get(i).getSegmentChecksum()))
+                    );
+            long invalidSegments = IntStream.range(0, segmentValidity.size()).filter(index -> segmentValidity.get(index) == false).count();
+            throw new CascParsingException(format("Encoding file has %d invalid segments out of %d segments.", invalidSegments, segments.size()));
+        }
+        LOGGER.trace("Validated data integrity of {} segments", segments.size());
+
+        List<EncodingEntry> entries = segments.stream()
+                .map(EncodingFileSegment::getEntries)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+        LOGGER.trace("Successfully parsed encoding file with {} entries from {} segments", entries.size(), header.getSegmentCount());
+        return new EncodingFile(entries);
+    }
+
+    private EncodingFileHeader parseHeader(DataReader reader) throws CascParsingException, IOException, DataParsingException {
+        String magicString = reader.readNext(DataTypeFactory.getFixedLengthString(2, StandardCharsets.US_ASCII));
+        if (!MAGIC_STRING.equals(magicString)) {
+            throw new CascParsingException(format("Encoding file starts with magic string %s instead of %s", magicString, MAGIC_STRING));
+        }
         byte[] unknown1 = reader.readNext(DataTypeFactory.getByteArray(3));
         int unknown2 = reader.readNext(DataTypeFactory.getUnsignedShort(), ByteOrder.LITTLE_ENDIAN);
         int unknown3 = reader.readNext(DataTypeFactory.getUnsignedShort(), ByteOrder.LITTLE_ENDIAN);
-        long entryCount = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.BIG_ENDIAN);
+        long segmentCount = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.BIG_ENDIAN);
         long unknown4 = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.BIG_ENDIAN);
         byte unknown5 = reader.readNext(DataTypeFactory.getByte());
-        long entriesOffset = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.BIG_ENDIAN);
-
-        // List<String> strings = parseStrings(entriesOffset, reader);
-        long posStr = reader.position();
-        reader.skip(entriesOffset);
-        LOGGER.trace("Skipped strings from position {} to {} with offset {}", posStr, reader.position(), entriesOffset);
-
-        // LOGGER.trace("Parsing {} encoding file block checksums", entryCount);
-        // List<EncodingFileBlockChecksum> blockChecksums = parseBlocks(entryCount, EncodingFileParser::parseChecksum, reader);
-        long posCsm = reader.position();
-        reader.skip(entryCount * CHECKSUM_BLOCK_SIZE);
-        LOGGER.trace("Skipped checksums from position {} to {} with offset {}", posCsm, reader.position(), entryCount * CHECKSUM_BLOCK_SIZE);
-
-        LOGGER.trace("Parsing {} encoding file entry blocks for locale {} at offset {}", entryCount, locale, reader.position());
-        /*
-        List<EncodingFileBlock> blocks = parseBlocks(entryCount, EncodingFileParser::parseBlock, reader);
-
-        List<EncodingEntry> entries = blocks.stream()
-                .map(EncodingFileBlock::getEntries)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-        */
-        List<EncodingEntry> entries = parseEntries(entryCount, reader);
-        LOGGER.trace("Successfully parsed encoding file for locale {} with {} entries from {} blocks", locale, entries.size(), entryCount);
-        return new EncodingFile(locale, entries);
+        long segmentOffset = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.BIG_ENDIAN);
+        return new EncodingFileHeader(magicString, unknown1, unknown2, unknown3, segmentCount, unknown4, unknown5, segmentOffset);
     }
 
-    private List<EncodingEntry> parseEntries(long entryCount, DataReader reader) throws IOException {
-        List<EncodingEntry> entries = new ArrayList<>();
-        for (int i = 0; i < entryCount; i++) {
-            int blockStartCount = entries.size();
-            int keysCount;
-            while (reader.remaining() > 2 && (keysCount = reader.readNext(DataTypeFactory.getUnsignedShort())) != 0 && reader.remaining() >= (20 + (keysCount * 16))) {
-                long fileSize = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.BIG_ENDIAN);
-                byte[] md5 = reader.readNext(DataTypeFactory.getByteArray(16));
-
-                // FIXME Only reading 1 key now instead of multiple keys.
-                /*
-                List<FileKey> keys = new ArrayList<>();
-                for (int ki = 0; ki < keysCount && reader.remaining() >= 16; ++ki) {
-                    byte[] key = reader.readNext(DataTypeFactory.getByteArray(16));
-                    keys.add(new FileKey(key));
-                }
-                entries.add(new EncodingEntry(fileSize, new ContentChecksum(md5), keys));
-                LOGGER.trace("Added encoding entry {} with {} keys of {} expected keys", DataTypeUtil.byteArrayToHexString(md5), keys.size(), keysCount);
-                */
-
-                byte[] key = reader.readNext(DataTypeFactory.getByteArray(16));
-                entries.add(new EncodingEntry(fileSize, new ContentChecksum(md5), Arrays.asList(new FileKey(key))));
-            }
-
-            while (reader.hasRemaining() && peek(DataTypeFactory.getByte(), reader) == 0) {
-                reader.skip(1);
-            }
-            LOGGER.trace("Added encoding block with {} entries", entries.size() - blockStartCount);
+    private long getEncodingFileSize(EncodingFileHeader header) {
+        long fileSize = 0;
+        if (header != null) {
+            fileSize += HEADER_SIZE;
+            fileSize += header.getSegmentOffset();
+            fileSize += (header.getSegmentCount() * SEGMENT_CHECKSUMS_SIZE);
+            fileSize += (header.getSegmentCount() * SEGMENT_SIZE);
         }
-        return entries;
+        return fileSize;
+    }
+
+    private List<String> parseStrings(long segmentStartPosition, DataReader reader) throws IOException {
+        List<String> strings = new ArrayList<>();
+        while (reader.hasRemaining() && reader.position() < segmentStartPosition) {
+            String str = reader.readNext(DataTypeFactory.getTerminatedString());
+            if (isNotEmpty(str)) {
+                strings.add(str);
+            }
+        }
+        return strings;
+    }
+
+    private List<EncodingFileSegmentChecksum> parseSegmentChecksums(long segmentCount, DataReader reader) throws CascParsingException, IOException, DataParsingException {
+        List<EncodingFileSegmentChecksum> segmentChecksums = new ArrayList<>((int) segmentCount);
+        for (int i = 0; i < segmentCount; i++) {
+            byte[] contentChecksum = reader.readNext(DataTypeFactory.getByteArray(CHECKSUM_SIZE));
+            byte[] checksum = reader.readNext(DataTypeFactory.getByteArray(CHECKSUM_SIZE));
+            segmentChecksums.add(new EncodingFileSegmentChecksum(contentChecksum, checksum));
+        }
+        return segmentChecksums;
+    }
+
+    private List<EncodingFileSegment> parseSegments(long segmentCount, DataReader reader) throws CascParsingException, IOException, DataParsingException {
+        List<EncodingFileSegment> segments = new ArrayList<>((int) segmentCount);
+        for (int i = 0; i < segmentCount; i++) {
+            long segmentStart = reader.position();
+            EncodingFileSegment segment = parseSegment(reader);
+            LOGGER.trace("Parsed encoding file segment {} with checksum {} and {} entries from position {} to {} ({} bytes)",
+                    i, byteArrayToHexString(segment.getChecksum()), segment.getEntries().size(), segmentStart, reader.position(), reader.position() - segmentStart);
+            segments.add(segment);
+        }
+        return segments;
+    }
+
+    private EncodingFileSegment parseSegment(DataReader reader) throws CascParsingException, IOException, DataParsingException {
+        long segmentStart = reader.position();
+        byte[] segmentChecksum = MD5.hash(reader.readNext(DataTypeFactory.getByteArray(SEGMENT_SIZE)));
+        LOGGER.trace("Calculated checksum {} over {} byte segment from position {} to {}, reading entries from position {}",
+                byteArrayToHexString(segmentChecksum), SEGMENT_SIZE, segmentStart, reader.position(), segmentStart);
+        reader.position(segmentStart);
+        List<EncodingEntry> entries = new ArrayList<>();
+
+        int keyCount;
+
+        while ((keyCount = reader.readNext(DataTypeFactory.getUnsignedShort(), ByteOrder.LITTLE_ENDIAN)) != 0) {
+            long fileSize = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.BIG_ENDIAN);
+            byte[] checksum = reader.readNext(DataTypeFactory.getByteArray(CHECKSUM_SIZE));
+
+            List<FileKey> keys = new ArrayList<>();
+            for (int keyIndex = 0; keyIndex < keyCount; keyIndex++) {
+                byte[] key = reader.readNext(DataTypeFactory.getByteArray(CHECKSUM_SIZE));
+                keys.add(new FileKey(key));
+            }
+            EncodingEntry entry = new EncodingEntry(fileSize, new ContentChecksum(checksum), keys);
+            entries.add(entry);
+        }
+        while (reader.hasRemaining() && peek(DataTypeFactory.getByte(), reader) == 0) {
+            reader.skip(1);
+        }
+        return new EncodingFileSegment(entries, segmentChecksum);
     }
 
     private <T> T peek(DataType<T> dataType, DataReader reader) throws IOException {
@@ -128,83 +237,80 @@ public class EncodingFileParser implements DataParser<EncodingFile> {
         return value;
     }
 
-
-    private <T> List<T> parseBlocks(long entryCount, Function<DataReader, T> parser, DataReader reader) throws IOException {
-        List<T> blocks = new ArrayList<>((int) entryCount);
-        for (int i = 0; i < entryCount; i++) {
-            blocks.add(parser.apply(reader));
-        }
-        return blocks;
+    private boolean validateSegment(EncodingFileSegment segment, EncodingFileSegmentChecksum segmentChecksum) {
+        return ((segment != null) && (segmentChecksum != null))
+                && (Arrays.equals(segment.getChecksum(), segmentChecksum.getSegmentChecksum())
+                && ((segment.getEntries().size() == 0) || Arrays.equals(segment.getEntries().get(0).getContentChecksum().getChecksum(), segmentChecksum.getFirstFileChecksum()))
+        );
     }
 
-    @Override
-    public int getInstanceDataSize() {
-        return 0;
-    }
+    private static class EncodingFileHeader {
+        private final String magicString;
+        private final byte[] unknown1;
+        private final int unknown2;
+        private final int unknown3;
+        private final long segmentCount;
+        private final long unknown4;
+        private final byte unknown5;
+        private final long segmentOffset;
 
-
-    private static boolean isDataValid(EncodingFileBlockChecksum checksum, EncodingFileBlock block) {
-        boolean valid = false;
-        if (block != null && checksum != null) {
-            valid = Arrays.equals(block.getChecksum(), checksum.getBlockChecksum());
-            valid = valid && !block.getEntries().isEmpty();
-            valid = valid && checksum.getFirstFileChecksum().equals(block.getEntries().get(0).getContentChecksum());
+        public EncodingFileHeader(String magicString, byte[] unknown1, int unknown2, int unknown3, long segmentCount, long unknown4, byte unknown5, long segmentOffset) {
+            this.magicString = magicString;
+            this.unknown1 = unknown1;
+            this.unknown2 = unknown2;
+            this.unknown3 = unknown3;
+            this.segmentCount = segmentCount;
+            this.unknown4 = unknown4;
+            this.unknown5 = unknown5;
+            this.segmentOffset = segmentOffset;
         }
-        return valid;
-    }
 
-    private static List<String> parseStrings(long entriesOffset, DataReader reader) throws IOException {
-        List<String> strings = new ArrayList<>();
-        long entriesStart = reader.position() + entriesOffset;
-        while (reader.hasRemaining() && reader.position() < entriesStart) {
-            String str = reader.readNext(DataTypeFactory.getTerminatedString());
-            if (isNotEmpty(str)) {
-                strings.add(str);
-            }
+        public String getMagicString() {
+            return magicString;
         }
-        return strings;
-    }
 
-    private static EncodingFileBlockChecksum parseChecksum(DataReader reader) {
-        try {
-            byte[] contentChecksum = reader.readNext(DataTypeFactory.getByteArray(CHECKSUM_SIZE));
-            byte[] checksum = reader.readNext(DataTypeFactory.getByteArray(CHECKSUM_SIZE));
-            return new EncodingFileBlockChecksum(contentChecksum, checksum);
-        } catch (IOException e) {
-            throw new CascParsingException(e);
+        public byte[] getUnknown1() {
+            return unknown1;
         }
-    }
 
-    private static EncodingFileBlock parseBlock(DataReader reader) {
-        try (ByteArrayOutputStream blockDataStream = new ByteArrayOutputStream()) {
-            List<EncodingEntry> entries = new ArrayList<>();
-            EncodingEntry entry;
-            byte[] checksum;
-            while (reader.hasRemaining() && (entry = parseEntry(reader, blockDataStream)) != null) {
-                entries.add(entry);
-            }
-            checksum = MD5.hash(blockDataStream.toByteArray());
-            LOGGER.trace("Successfully parsed encoding file block with {} entries and MD5 checksum {}", entries.size(), DataTypeUtil.byteArrayToHexString(checksum));
-            return new EncodingFileBlock(entries, checksum);
-        } catch (IOException e) {
-            throw new CascParsingException(e);
+        public int getUnknown2() {
+            return unknown2;
         }
-    }
 
-    private static EncodingEntry parseEntry(DataReader reader, ByteArrayOutputStream blockDataStream) throws IOException {
-        EncodingEntry entry;
-        byte[] marker = reader.readNext(DataTypeFactory.getByteArray(2));
-        blockDataStream.write(marker);
-        if (marker[0] == 0x0 && marker[1] == 0x0) {
-            blockDataStream.write(reader.readNext(DataTypeFactory.getByteArray(26)));
-            entry = null;
-        } else {
-            long fileSize = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.BIG_ENDIAN);
-            byte[] fileContentChecksum = reader.readNext(DataTypeFactory.getByteArray(16));
-            byte[] fileChecksum = reader.readNext(DataTypeFactory.getByteArray(16));
-            entry = new EncodingEntry(fileSize, new ContentChecksum(fileContentChecksum), Arrays.asList(new FileKey(fileChecksum)));
+        public int getUnknown3() {
+            return unknown3;
         }
-        return entry;
+
+        public long getSegmentCount() {
+            return segmentCount;
+        }
+
+        public long getUnknown4() {
+            return unknown4;
+        }
+
+        public byte getUnknown5() {
+            return unknown5;
+        }
+
+        public long getSegmentOffset() {
+            return segmentOffset;
+        }
+
+        @Override
+        public int hashCode() {
+            return HashCodeBuilder.reflectionHashCode(this);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return EqualsBuilder.reflectionEquals(this, obj);
+        }
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.reflectionToString(this);
+        }
     }
 
     /**
@@ -212,11 +318,11 @@ public class EncodingFileParser implements DataParser<EncodingFile> {
      *
      * @author Barre Dijkstra
      */
-    private static class EncodingFileBlock {
+    private static class EncodingFileSegment {
         private final byte[] checksum;
         private final List<EncodingEntry> entries;
 
-        public EncodingFileBlock(List<EncodingEntry> entries, byte[] checksum) {
+        public EncodingFileSegment(List<EncodingEntry> entries, byte[] checksum) {
             this.entries = entries;
             this.checksum = checksum;
         }
@@ -228,6 +334,21 @@ public class EncodingFileParser implements DataParser<EncodingFile> {
         public List<EncodingEntry> getEntries() {
             return entries;
         }
+
+        @Override
+        public int hashCode() {
+            return HashCodeBuilder.reflectionHashCode(this);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return EqualsBuilder.reflectionEquals(this, obj);
+        }
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.reflectionToString(this);
+        }
     }
 
     /**
@@ -235,21 +356,21 @@ public class EncodingFileParser implements DataParser<EncodingFile> {
      *
      * @author Barre Dijkstra
      */
-    private static class EncodingFileBlockChecksum {
+    private static class EncodingFileSegmentChecksum {
         private byte[] firstFileChecksum;
-        private byte[] blockChecksum;
+        private byte[] segmentChecksum;
 
-        public EncodingFileBlockChecksum(byte[] firstFileChecksum, byte[] blockChecksum) {
+        public EncodingFileSegmentChecksum(byte[] firstFileChecksum, byte[] segmentChecksum) {
             this.firstFileChecksum = firstFileChecksum;
-            this.blockChecksum = blockChecksum;
+            this.segmentChecksum = segmentChecksum;
         }
 
         public byte[] getFirstFileChecksum() {
             return firstFileChecksum;
         }
 
-        public byte[] getBlockChecksum() {
-            return blockChecksum;
+        public byte[] getSegmentChecksum() {
+            return segmentChecksum;
         }
 
         @Override

@@ -68,10 +68,6 @@ public abstract class BaseCascConfig implements CascConfig {
         this.dataReaderProvider = dataReaderProvider;
     }
 
-    protected abstract Optional<String> getBuildConfigKey();
-
-    protected abstract Optional<String> getCdnConfigKey();
-
     protected final Supplier<DataReader> getDataReader(String uri) {
         return dataReaderProvider.getDataReader(uri);
     }
@@ -107,19 +103,34 @@ public abstract class BaseCascConfig implements CascConfig {
     }
 
     @Override
-    public FileKey getEncodingFileChecksum() {
+    public FileKey getStorageEncodingFileChecksum() {
         FileKey fileKey = getBuildConfig().getLastValue(KEY_BUILD_ENCODING, (s) -> new FileKey(DataTypeUtil.hexStringToByteArray(s)))
-                .orElseThrow(() -> new CascParsingException("No encoding file checksum available."));
-        LOGGER.trace("Retrieved encoding file checksum {}", fileKey.toHexString());
+                .orElseThrow(() -> new CascParsingException("No storage encoding file checksum available."));
+        LOGGER.trace("Retrieved storage encoding file checksum {}", fileKey.toHexString());
         return fileKey;
     }
 
     @Override
-    public long getEncodingFileSize() {
+    public long getStorageEncodingFileSize() {
         long size = getBuildConfig().getLastValue(KEY_BUILD_ENCODING_SIZE, Long::valueOf)
-                .orElseThrow(() -> new CascParsingException("No encoding file size available."));
-        LOGGER.trace("Retrieved encoding file size {}", size);
+                .orElseThrow(() -> new CascParsingException("No storage encoding file size available."));
+        LOGGER.trace("Retrieved storage encoding file size {}", size);
         return size;
+    }
+
+    @Override
+    public long getExtractedEncodingFileSize() {
+        long size = getBuildConfig().getFirstValue(KEY_BUILD_ENCODING_SIZE, Long::valueOf)
+                .orElseThrow(() -> new CascParsingException("No extracted encoding file size available."));
+        LOGGER.trace("Retrieved extracted encoding file size {}", size);
+        return size;
+    }
+    @Override
+    public FileKey getExtractedEncodingFileChecksum() {
+        FileKey fileKey = getBuildConfig().getFirstValue(KEY_BUILD_ENCODING, (s) -> new FileKey(DataTypeUtil.hexStringToByteArray(s)))
+                .orElseThrow(() -> new CascParsingException("No extracted encoding file checksum available."));
+        LOGGER.trace("Retrieved extracted encoding file checksum {}", fileKey.toHexString());
+        return fileKey;
     }
 
     @Override
@@ -161,11 +172,13 @@ public abstract class BaseCascConfig implements CascConfig {
         return clientDataConfiguration;
     }
 
-    protected final Region getRegion() {
+    @Override
+    public final Region getRegion() {
         return getClientDataConfiguration().getRegion();
     }
 
-    protected final String getRegionCode() {
+    @Override
+    public final String getRegionCode() {
         return getRegion().getRegionCode();
     }
 

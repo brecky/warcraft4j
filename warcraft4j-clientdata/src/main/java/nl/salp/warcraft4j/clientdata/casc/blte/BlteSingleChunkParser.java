@@ -67,7 +67,7 @@ class BlteSingleChunkParser extends BlteChunkParser {
             if (data.length != compressedSize - 1) {
                 throw new CascParsingException(format("Error parsing BLTE chunk, got %d bytes of compressed data instead of %d", data.length, compressedSize));
             }
-            return new BlteChunk(compressedSize, decompressedSize, data, getDecompressor(compressionType));
+            return new BlteChunk(data.length, decompressedSize, data, getDecompressor(compressionType));
         } catch (IOException e) {
             throw new DataParsingException("Error parsing BLTE chunk", e);
         }

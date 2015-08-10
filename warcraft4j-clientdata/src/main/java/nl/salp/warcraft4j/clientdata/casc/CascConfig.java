@@ -18,7 +18,10 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
+import nl.salp.warcraft4j.clientdata.Region;
+
 import java.util.List;
+import java.util.Optional;
 
 /**
  * CASC configuration.
@@ -34,6 +37,10 @@ public interface CascConfig {
      * @throws CascParsingException When the available regions can't be retrieved.
      */
     List<String> getAvailableRegions() throws CascParsingException;
+
+    Optional<String> getBuildConfigKey();
+
+    Optional<String> getCdnConfigKey();
 
     /**
      * Get the content checksum of the root file.
@@ -51,7 +58,11 @@ public interface CascConfig {
      *
      * @throws CascParsingException When the encoding file key is not available.
      */
-    FileKey getEncodingFileChecksum() throws CascParsingException;
+    FileKey getExtractedEncodingFileChecksum() throws CascParsingException;
+
+    FileKey getStorageEncodingFileChecksum();
+
+    long getStorageEncodingFileSize();
 
     /**
      * Get the size of the encoding file.
@@ -60,7 +71,7 @@ public interface CascConfig {
      *
      * @throws CascParsingException When the encoding file size is not available.
      */
-    long getEncodingFileSize() throws CascParsingException;
+    long getExtractedEncodingFileSize() throws CascParsingException;
 
     /**
      * Get the file keys for the archive files.
@@ -115,4 +126,8 @@ public interface CascConfig {
      * @throws CascParsingException When the version is not available.
      */
     String getVersion() throws CascParsingException;
+
+    Region getRegion();
+
+    String getRegionCode();
 }

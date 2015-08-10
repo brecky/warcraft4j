@@ -74,11 +74,7 @@ class BlteMultiChunkParser extends BlteChunkParser {
             Checksum checksum = header.getChecksum();
             Checksum dataChecksum = new Checksum(MD5.hash(chunkData));
             LOGGER.trace("Comparing data checksum MD5[{}] from {} ({}) bytes of data with expected checksum MD5[{}]",
-                    dataChecksum,
-                    chunkData.length,
-                    compressedSize,
-                    checksum
-                    );
+                    dataChecksum, chunkData.length, compressedSize, checksum);
             if (!checksum.equals(dataChecksum)) {
                 throw new CascParsingException(format("Error parsing BLTE chunk with compression %s, mismatching checksum (got %s, expected %s)", compressionType, dataChecksum, checksum));
             }

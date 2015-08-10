@@ -51,11 +51,11 @@ public class CdnCascContext extends CascContext {
 
     @Override
     protected Supplier<DataReader> getEncodingReader() {
-        FileKey encodingFileChecksum = getCascConfig().getEncodingFileChecksum();
+        FileKey encodingFileChecksum = getCascConfig().getStorageEncodingFileChecksum();
         String uri = getDataFileUri(encodingFileChecksum)
                 .orElseThrow(() -> new CascParsingException(format("Unable to get the URl for the encoding file with checksum %s", encodingFileChecksum.toHexString())));
-        LOGGER.trace("Creating data supplier for {} byte encoding file {} from {}", getCascConfig().getEncodingFileSize(), encodingFileChecksum, uri);
-        return () -> new BlteDataReader(getDataReaderProvider().getDataReader(uri), getCascConfig().getEncodingFileSize());
+        LOGGER.trace("Creating data supplier for {} byte encoding file {} from {}", getCascConfig().getStorageEncodingFileSize(), encodingFileChecksum, uri);
+        return () -> new BlteDataReader(getDataReaderProvider().getDataReader(uri), getCascConfig().getStorageEncodingFileSize());
     }
 
     @Override

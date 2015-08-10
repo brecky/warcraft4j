@@ -83,14 +83,14 @@ public abstract class CascContext {
 
     protected EncodingFile parseEncoding() throws CascParsingException {
         Supplier<DataReader> readerSupplier = getEncodingReader();
-        LOGGER.debug("Initialising encoding file.");
+        LOGGER.debug("Initialising encoding file (fileKey: {}, fileSize: {}).", getCascConfig().getStorageEncodingFileChecksum(), getCascConfig().getStorageEncodingFileSize());
         parseLock.lock();
         try (DataReader reader = readerSupplier.get()) {
-            EncodingFile encodingFile = reader.readNext(new EncodingFileParser());
+            EncodingFile encodingFile = reader.readNext(new EncodingFileParser(getCascConfig().getExtractedEncodingFileSize()));
             LOGGER.debug("Successfully parsed encoding file with {} entries", encodingFile.getEntryCount());
             return encodingFile;
         } catch (IOException e) {
-            throw new CascParsingException(format("Error parsing encoding file %s", getCascConfig().getEncodingFileChecksum().toHexString()), e);
+            throw new CascParsingException(format("Error parsing encoding file %s", getCascConfig().getExtractedEncodingFileChecksum().toHexString()), e);
         } finally {
             parseLock.unlock();
         }
@@ -104,10 +104,8 @@ public abstract class CascContext {
         IndexEntry indexEntry = getIndexEntry(fileKey)
                 .orElseThrow(() -> new CascParsingException(format("No index entry found for root file entry %s with key %s", contentChecksum.toHexString(), fileKey
                         .toHexString())));
-        LOGGER.debug("Initialising root file from {} bytes of data in data.{} at offset {}",
-                indexEntry.getFileSize(),
-                format("%03d", indexEntry.getFileNumber()),
-                indexEntry.getDataFileOffset());
+        LOGGER.debug("Initialising root file (contentChecksum: {}, fileKey: {}) from {} bytes of data in data.{} at offset {}",
+                contentChecksum.toHexString(), fileKey.toHexString(), indexEntry.getFileSize(), format("%03d", indexEntry.getFileNumber()), indexEntry.getDataFileOffset());
 
         parseLock.lock();
         try (DataReader reader = getFileDataReader(indexEntry)) {
@@ -275,7 +273,7 @@ public abstract class CascContext {
      * @throws CascParsingException When the data reader could not be created.
      */
     protected Supplier<DataReader> getDataReader(IndexEntry entry) throws CascParsingException {
-        LOGGER.trace("Getting data reader for {} (uri: {}, datafile: {}, offset: {}, size: {})",
+        LOGGER.trace("Getting data reader for file key {} (uri: {}, datafile: {}, offset: {}, size: {})",
                 entry.getFileKey().toHexString(), getDataFileUri(entry).orElse("#error#"), entry.getFileNumber(), entry.getDataFileOffset(), entry.getFileSize());
         return Optional.ofNullable(entry)
                 .flatMap(this::getDataFileUri)
@@ -284,6 +282,7 @@ public abstract class CascContext {
     }
 
     protected Supplier<DataReader> getDataReader(String dataFile, long dataFileOffset, long fileSize) throws CascParsingException {
+        LOGGER.trace("Getting data reader for file key {} (offset: {}, size: {})", dataFile, dataFileOffset, fileSize);
         return getDataReaderProvider().getDataReader(dataFile, dataFileOffset, fileSize);
     }
 

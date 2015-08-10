@@ -19,9 +19,9 @@
 package nl.salp.warcraft4j.clientdata.casc.blte;
 
 import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
-import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.parser.DataParser;
 import nl.salp.warcraft4j.io.parser.DataParsingException;
+import nl.salp.warcraft4j.io.reader.DataReader;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -61,7 +61,7 @@ abstract class BlteChunkParser implements DataParser<List<BlteChunk>> {
         for (int i = 0; i < chunkCount; i++) {
             logger().trace("Parsing chunk header {} out of {}", i + 1, chunkCount);
             headers.add(parseChunkHeader(reader));
-            logger().trace("Successfully parsed header {} [{}]", i + 1, headers.get(i).getChecksum());
+            logger().trace("Successfully parsed header {} [checksum: {}]", i + 1, headers.get(i).getChecksum());
         }
         return headers;
     }
@@ -71,10 +71,10 @@ abstract class BlteChunkParser implements DataParser<List<BlteChunk>> {
     private final List<BlteChunk> parseChunks(List<BlteChunkHeader> headers, DataReader reader) throws DataParsingException {
         List<BlteChunk> chunks = new ArrayList<>();
         for (int i = 0; i < chunkCount; i++) {
-            logger().trace("Parsing chunk {} out of {}", i + 1, chunkCount);
             BlteChunk chunk = parseChunk(reader, headers.get(i));
             chunks.add(chunk);
-            logger().trace("Successfully parsed chunk {}", i + 1);
+            logger().trace("Parsed BLTE file chunk {} ({} bytes of chunk data, {} bytes uncompressed)", i,
+                    chunk.getCompressedSize(), chunk.getDecompressedSize());
         }
         return chunks;
     }

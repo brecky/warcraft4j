@@ -74,12 +74,12 @@ public class LocalCascConfig extends BaseCascConfig implements CascConfig {
     }
 
     @Override
-    protected Optional<String> getBuildConfigKey() {
+    public Optional<String> getBuildConfigKey() {
         return getBuildInfoValue(KEY_BUILDINFO_BUILD);
     }
 
     @Override
-    protected Optional<String> getCdnConfigKey() {
+    public Optional<String> getCdnConfigKey() {
         return getBuildInfoValue(KEY_BUILDINFO_CDN);
     }
 
