@@ -1,0 +1,27 @@
+###
+# Warcraft4J configuration.
+#
+# This configuration file can either be present as a separate file containing the full configuration or as part of a larger (overall) configuration file.
+###
+
+# The World of Warcraft installation directory, may be empty (or left out) if w4j.online is true.
+w4j.wow.directory=C:\\Program Files (x86)\\World of Warcraft
+
+# Flag that tells the Warcraft4J that it's allowed to retrieve data from the internet.
+# Please keep in mind that online usage of things like the CDN will use a lot of bandwidth/data (can go into the gigabytes depending on usage/configuration).
+w4j.online=false
+
+# Flag that tells the implementation to cache (the most frequently accessed) files on the harddrive.
+w4j.data.cache=true
+
+# The directory to cache files, may be empty (or left out) if w4j.data.cache is false.
+w4j.data.cache.directory=C:\\temp\\warcaft4j\\cache
+
+# The World of Warcraft branch to use when multiple branches are available. (see nl.salp.warcraft4j.Branch for possible values)
+w4j.data.branch=LIVE
+
+# The region to use if multiple regions are available. (see nl.salp.warcraft4j.Region for possible values)
+w4j.data.region=EUROPE
+
+# The preferred locale for data to use if multiple locales are available. (see nl.salp.warcraft4j.Locale for possible values)
+w4j.data.locale=EN_US

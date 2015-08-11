@@ -18,7 +18,6 @@
  */
 package nl.salp.warcraft4j.data.casc;
 
-import nl.salp.warcraft4j.data.Locale;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -58,8 +57,8 @@ public class RootEntry {
         return blockFlags;
     }
 
-    public Optional<Locale> getLocale() {
-        return Locale.getLocale(blockFlags);
+    public Optional<CascLocale> getLocale() {
+        return CascLocale.getLocale(blockFlags);
     }
 
     @Override

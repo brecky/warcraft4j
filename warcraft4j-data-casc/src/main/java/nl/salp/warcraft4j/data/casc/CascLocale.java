@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.data;
+package nl.salp.warcraft4j.data.casc;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  *
  * @author Barre Dijkstra
  */
-public enum Locale {
+enum CascLocale {
     ALL(-1),
     NONE(0),
     UNKNOWN_1(0x1),
@@ -50,19 +50,19 @@ public enum Locale {
 
     private final long flag;
 
-    Locale(long flag) {
+    CascLocale(long flag) {
         this.flag = flag;
     }
 
-    public static Optional<Locale> getLocale(long flag) {
-        return Stream.of(Locale.values())
+    public static Optional<CascLocale> getLocale(long flag) {
+        return Stream.of(CascLocale.values())
                 .filter(l -> (l.flag & flag) == flag)
                 .findFirst();
     }
 
 
-    public static Optional<Locale> getLocale(String name) {
-        return Stream.of(Locale.values())
+    public static Optional<CascLocale> getLocale(String name) {
+        return Stream.of(CascLocale.values())
                 .filter(l -> l.name().equalsIgnoreCase(name))
                 .findFirst();
     }

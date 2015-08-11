@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.data.casc.cdn;
 
-import nl.salp.warcraft4j.data.ClientDataConfiguration;
+import nl.salp.warcraft4j.config.W4jConfig;
 import nl.salp.warcraft4j.data.casc.BaseCascConfig;
 import nl.salp.warcraft4j.data.casc.CascParsingException;
 import nl.salp.warcraft4j.data.casc.Config;
@@ -58,9 +58,9 @@ public class CdnCascConfig extends BaseCascConfig {
     private Config versions;
 
 
-    public CdnCascConfig(ClientDataConfiguration clientDataConfiguration, DataReaderProvider dataReaderProvider) {
-        super(clientDataConfiguration, dataReaderProvider);
-        this.cdnVersion = CdnVersion.getFrom(clientDataConfiguration.getBranch());
+    public CdnCascConfig(W4jConfig w4jConfig, DataReaderProvider dataReaderProvider) {
+        super(w4jConfig, dataReaderProvider);
+        this.cdnVersion = CdnVersion.getFrom(w4jConfig.getBranch());
     }
 
     private String getDirectUrl(String file) {

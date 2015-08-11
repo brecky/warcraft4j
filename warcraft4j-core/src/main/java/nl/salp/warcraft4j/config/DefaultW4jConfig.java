@@ -16,8 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.data;
+package nl.salp.warcraft4j.config;
 
+import nl.salp.warcraft4j.Branch;
+import nl.salp.warcraft4j.Locale;
+import nl.salp.warcraft4j.Region;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -35,8 +38,8 @@ import static java.lang.String.format;
  *
  * @author Barre Dijkstra
  */
-public class DefaultClientDataConfiguration implements ClientDataConfiguration {
-    private static final String ONLINE_KEY = "w4j.casc.online";
+public class DefaultW4jConfig implements W4jConfig {
+    private static final String ONLINE_KEY = "w4j.online";
     private static final boolean ONLINE_DEFAULT = false;
     private static final String WOW_DIR_KEY = "w4j.wow.directory";
     private static final String WOW_DIR_DEFAULT = "C:\\Program Files (x86)\\World of Warcraft";
@@ -44,9 +47,9 @@ public class DefaultClientDataConfiguration implements ClientDataConfiguration {
     private static final boolean CACHE_DEFAULT = true;
     private static final String CACHE_DIR_KEY = "w4j.data.cache.directory";
     private static final String CACHE_DIR_DEFAULT = "C:\\temp\\w4j\\data\\cache";
-    private static final String LOCALE_KEY = "w4j.wow.locale";
-    private static final String REGION_KEY = "w4j.wow.region";
-    private static final String BRANCH_KEY = "w4j.wow.branch";
+    private static final String LOCALE_KEY = "w4j.data.locale";
+    private static final String REGION_KEY = "w4j.data.region";
+    private static final String BRANCH_KEY = "w4j.data.branch";
 
     private boolean online;
     private Path wowDir;
@@ -56,19 +59,19 @@ public class DefaultClientDataConfiguration implements ClientDataConfiguration {
     private Region region;
     private Branch branch;
 
-    public DefaultClientDataConfiguration(Configuration configuration) {
+    public DefaultW4jConfig(Configuration configuration) {
         initialise(configuration);
     }
 
     private void initialise(Configuration configuration) {
         if (configuration == null || configuration.isEmpty()) {
-            throw new ClientDataConfigurationException("Can't create a client data configuration from an empty configuration.");
+            throw new W4jConfigException("Can't create a Warcraft4J configuration from an empty configuration.");
         }
         online = configuration.getBoolean(ONLINE_KEY, ONLINE_DEFAULT);
 
         wowDir = Paths.get(configuration.getString(WOW_DIR_KEY, WOW_DIR_DEFAULT));
         if (Files.notExists(wowDir) || !Files.isDirectory(wowDir) || !Files.isReadable(wowDir)) {
-            throw new ClientDataConfigurationException(format("WoW installation directory %s does not exist or can't be read.", wowDir));
+            throw new W4jConfigException(format("WoW installation directory %s does not exist or can't be read.", wowDir));
         }
 
         cache = configuration.getBoolean(CACHE_KEY, CACHE_DEFAULT);
@@ -78,19 +81,18 @@ public class DefaultClientDataConfiguration implements ClientDataConfiguration {
                 try {
                     Files.createDirectories(cacheDir);
                 } catch (IOException e) {
-                    throw new ClientDataConfigurationException(format("Unable to create cache directory %s.", cacheDir), e);
+                    throw new W4jConfigException(format("Unable to create cache directory %s.", cacheDir), e);
                 }
             } else if (!Files.isDirectory(cacheDir) || !Files.isReadable(cacheDir) || !Files.isWritable(cacheDir)) {
-                throw new ClientDataConfigurationException(format("Cache directory %s is either not a directory or not accessible.", cacheDir));
+                throw new W4jConfigException(format("Cache directory %s is either not a directory or not accessible.", cacheDir));
             }
         }
-
         locale = Locale.getLocale(configuration.getString(LOCALE_KEY))
-                .orElseThrow(() -> new ClientDataConfigurationException(format("Locale %s is not a valid locale.", configuration.getString(LOCALE_KEY))));
+                .orElseThrow(() -> new W4jConfigException(format("Locale %s is not a valid locale.", configuration.getString(LOCALE_KEY))));
         region = Region.getRegion(configuration.getString(REGION_KEY))
-                .orElseThrow(() -> new ClientDataConfigurationException(format("Region %s is not a valid region.", configuration.getString(REGION_KEY))));
+                .orElseThrow(() -> new W4jConfigException(format("Region %s is not a valid region.", configuration.getString(REGION_KEY))));
         branch = Branch.getBranch(configuration.getString(BRANCH_KEY))
-                .orElseThrow(() -> new ClientDataConfigurationException(format("Branch %s is not a valid branch.", configuration.getString(BRANCH_KEY))));
+                .orElseThrow(() -> new W4jConfigException(format("Branch %s is not a valid branch.", configuration.getString(BRANCH_KEY))));
     }
 
     @Override
@@ -128,11 +130,11 @@ public class DefaultClientDataConfiguration implements ClientDataConfiguration {
         return branch;
     }
 
-    public static DefaultClientDataConfiguration fromFile(String configFile) throws ClientDataConfigurationException {
+    public static DefaultW4jConfig fromFile(String configFile) throws W4jConfigException {
         try {
-            return new DefaultClientDataConfiguration(new DefaultConfigurationBuilder(configFile).getConfiguration());
+            return new DefaultW4jConfig(new DefaultConfigurationBuilder(configFile).getConfiguration());
         } catch (ConfigurationException e) {
-            throw new ClientDataConfigurationException(format("Error creating client data configuration from %s", configFile), e);
+            throw new W4jConfigException(format("Error creating client data configuration from %s", configFile), e);
         }
     }
 
@@ -210,7 +212,7 @@ public class DefaultClientDataConfiguration implements ClientDataConfiguration {
             return this;
         }
 
-        public DefaultClientDataConfiguration build() {
+        public DefaultW4jConfig build() {
             Configuration config = new BaseConfiguration();
             config.addProperty(ONLINE_KEY, online);
             config.addProperty(WOW_DIR_KEY, wowDir);
@@ -219,7 +221,7 @@ public class DefaultClientDataConfiguration implements ClientDataConfiguration {
             config.addProperty(LOCALE_KEY, locale);
             config.addProperty(REGION_KEY, region);
             config.addProperty(BRANCH_KEY, branch);
-            return new DefaultClientDataConfiguration(config);
+            return new DefaultW4jConfig(config);
         }
     }
 }

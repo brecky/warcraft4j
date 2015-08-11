@@ -18,10 +18,10 @@
  */
 package nl.salp.warcraft4j.data.casc;
 
-import nl.salp.warcraft4j.data.Branch;
-import nl.salp.warcraft4j.data.ClientDataConfiguration;
-import nl.salp.warcraft4j.data.Locale;
-import nl.salp.warcraft4j.data.Region;
+import nl.salp.warcraft4j.Branch;
+import nl.salp.warcraft4j.Locale;
+import nl.salp.warcraft4j.Region;
+import nl.salp.warcraft4j.config.W4jConfig;
 import nl.salp.warcraft4j.data.casc.blte.BlteDataReader;
 import nl.salp.warcraft4j.hash.JenkinsHash;
 import nl.salp.warcraft4j.io.reader.CompositeDataReader;
@@ -47,24 +47,24 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 public abstract class CascContext {
     /** The logger. */
     protected static final Logger LOGGER = LoggerFactory.getLogger(CascContext.class);
-    private final ClientDataConfiguration clientDataConfig;
+    private final W4jConfig w4jConfig;
     private final Map<String, Long> hashes;
     private final Map<Long, String> filenames;
     private Index index;
     private EncodingFile encoding;
     private Root root;
 
-    public CascContext(ClientDataConfiguration clientDataConfig) {
+    public CascContext(W4jConfig w4jConfig) {
         LOGGER.debug("Created CASC context for branch {}, region {} and locale {} (wow directory: {}, online: {}, caching: {})",
-                clientDataConfig.getBranch(), clientDataConfig.getRegion(), clientDataConfig.getLocale(), clientDataConfig.getWowInstallationDirectory(),
-                clientDataConfig.isOnline(), clientDataConfig.isCaching());
-        this.clientDataConfig = clientDataConfig;
+                w4jConfig.getBranch(), w4jConfig.getRegion(), w4jConfig.getLocale(), w4jConfig.getWowInstallationDirectory(),
+                w4jConfig.isOnline(), w4jConfig.isCaching());
+        this.w4jConfig = w4jConfig;
         this.hashes = new HashMap<>();
         this.filenames = new HashMap<>();
     }
 
-    protected final ClientDataConfiguration getClientDataConfig() {
-        return clientDataConfig;
+    protected final W4jConfig getW4jConfig() {
+        return w4jConfig;
     }
 
     protected abstract CascConfig getCascConfig();
@@ -141,7 +141,7 @@ public abstract class CascContext {
      * @return The {@link Branch}.
      */
     public Branch getBranch() {
-        return clientDataConfig.getBranch();
+        return w4jConfig.getBranch();
     }
 
     /**
@@ -150,7 +150,7 @@ public abstract class CascContext {
      * @return The {@link Region}.
      */
     public Region getRegion() {
-        return clientDataConfig.getRegion();
+        return w4jConfig.getRegion();
     }
 
     /**
@@ -159,7 +159,7 @@ public abstract class CascContext {
      * @return The {@link Locale}.
      */
     public Locale getLocale() {
-        return clientDataConfig.getLocale();
+        return w4jConfig.getLocale();
     }
 
     /**

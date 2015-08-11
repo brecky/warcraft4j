@@ -16,24 +16,41 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package nl.salp.warcraft4j.config;
 
-package nl.salp.warcraft4j.service;
+import nl.salp.warcraft4j.W4jException;
 
 /**
- * TODO Document.
+ * Exception for configuration related problems.
  *
  * @author Barre Dijkstra
  */
-public class NotFoundException extends RuntimeException {
-    public NotFoundException(String message) {
+public class W4jConfigException extends W4jException {
+    /**
+     * Create a new instance with an exception message.
+     *
+     * @param message The exception message.
+     */
+    public W4jConfigException(String message) {
         super(message);
     }
 
-    public NotFoundException(String message, Throwable cause) {
+    /**
+     * Create a new instance with an exception message and a cause.
+     *
+     * @param message The exception message.
+     * @param cause   The cause exception.
+     */
+    public W4jConfigException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public NotFoundException(Throwable cause) {
+    /**
+     * Create a new instance with a cause.
+     *
+     * @param cause The cause exception.
+     */
+    public W4jConfigException(Throwable cause) {
         super(cause);
     }
 }

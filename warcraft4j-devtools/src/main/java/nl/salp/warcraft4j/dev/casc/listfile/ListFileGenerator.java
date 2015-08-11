@@ -18,7 +18,11 @@
  */
 package nl.salp.warcraft4j.dev.casc.listfile;
 
-import nl.salp.warcraft4j.data.*;
+import nl.salp.warcraft4j.Branch;
+import nl.salp.warcraft4j.Locale;
+import nl.salp.warcraft4j.Region;
+import nl.salp.warcraft4j.config.DefaultW4jConfig;
+import nl.salp.warcraft4j.config.W4jConfig;
 import nl.salp.warcraft4j.data.casc.CascContext;
 import nl.salp.warcraft4j.data.casc.cdn.CdnCascContext;
 import nl.salp.warcraft4j.data.casc.local.LocalCascContext;
@@ -51,7 +55,7 @@ public class ListFileGenerator {
     private static final String FILE_OUT_LISTFILE_INVALID = "w4j-listfile-invalid-%s.txt";
     private static final String FILE_OUT_CASC_INVALID = "w4j-casc-invalid-%s.txt";
     private static final String FILE_OUT_LISTFILE = "w4j-listfile-%s.txt";
-    private final ClientDataConfiguration clientDataConfig;
+    private final W4jConfig w4jConfig;
     private final Path outputPath;
     private final Path fileListfile;
     private final Path fileCascInvalidEntries;
@@ -64,10 +68,10 @@ public class ListFileGenerator {
     public ListFileGenerator(Path wowPath, Path outputPath, Path cachePath) throws IOException {
         LOGGER.debug("Initialising listfile generator for installation path {}, cache path {} and using ouput directory {}", wowPath, outputPath,
                 cachePath);
-        this.clientDataConfig = initialiseConfig(wowPath, cachePath);
+        this.w4jConfig = initialiseConfig(wowPath, cachePath);
         LOGGER.debug("Initialising casc context (branch: {}, region: {}, locale: {}, online: {}, caching: {})",
-                clientDataConfig.getBranch(), clientDataConfig.getRegion(), clientDataConfig.getLocale(), clientDataConfig.isOnline(), clientDataConfig.isCaching());
-        this.cascContext = initialiseCascContext(clientDataConfig);
+                w4jConfig.getBranch(), w4jConfig.getRegion(), w4jConfig.getLocale(), w4jConfig.isOnline(), w4jConfig.isCaching());
+        this.cascContext = initialiseCascContext(w4jConfig);
 
         this.outputPath = outputPath;
         String version = cascContext.getVersion().replace('.', '_');
@@ -80,13 +84,13 @@ public class ListFileGenerator {
         this.entryStore = new EntryStore(listFile, cascContext);
     }
 
-    private ClientDataConfiguration initialiseConfig(Path wowPath, Path cachePath) {
+    private W4jConfig initialiseConfig(Path wowPath, Path cachePath) {
         boolean online = wowPath == null;
         boolean caching = cachePath != null;
         Region region = Region.EUROPE;
         Branch branch = Branch.LIVE;
         Locale locale = Locale.EN_US;
-        DefaultClientDataConfiguration.Builder builder = DefaultClientDataConfiguration.builder()
+        DefaultW4jConfig.Builder builder = DefaultW4jConfig.builder()
                 .online(online)
                 .caching(caching)
                 .withRegion(region)
@@ -102,19 +106,19 @@ public class ListFileGenerator {
 
     }
 
-    private CascContext initialiseCascContext(ClientDataConfiguration clientDataConfig) throws IOException, IllegalArgumentException {
-        if (Files.exists(clientDataConfig.getWowInstallationDirectory())
-                && Files.isDirectory(clientDataConfig.getWowInstallationDirectory()) && Files.isReadable(clientDataConfig.getWowInstallationDirectory())) {
+    private CascContext initialiseCascContext(W4jConfig w4jConfig) throws IOException, IllegalArgumentException {
+        if (Files.exists(w4jConfig.getWowInstallationDirectory())
+                && Files.isDirectory(w4jConfig.getWowInstallationDirectory()) && Files.isReadable(w4jConfig.getWowInstallationDirectory())) {
             CascContext cascContext;
-            if (clientDataConfig.isOnline()) {
-                cascContext = new CdnCascContext(clientDataConfig);
+            if (w4jConfig.isOnline()) {
+                cascContext = new CdnCascContext(w4jConfig);
             } else {
-                cascContext = new LocalCascContext(clientDataConfig);
+                cascContext = new LocalCascContext(w4jConfig);
             }
             return cascContext;
         } else {
             throw new IllegalArgumentException(format("WoW installation directory %s is either not a directory or not readable and writable.",
-                    clientDataConfig.getWowInstallationDirectory()));
+                    w4jConfig.getWowInstallationDirectory()));
         }
     }
 

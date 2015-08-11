@@ -19,6 +19,8 @@
 
 package nl.salp.warcraft4j;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -83,4 +85,20 @@ public enum Region {
                 .map(this.supportedLocales::contains)
                 .orElse(false);
     }
+
+    /**
+     * Get a region by its name.
+     *
+     * @param name The name of the region.
+     *
+     * @return Optional of the region.
+     */
+    public static Optional<Region> getRegion(String name) {
+        return Optional.ofNullable(name)
+                .filter(StringUtils::isNotEmpty)
+                .map(String::trim)
+                .map(String::toUpperCase)
+                .flatMap(n -> Stream.of(Region.values()).filter(l -> l.name().equals(n)).findFirst());
+    }
+
 }

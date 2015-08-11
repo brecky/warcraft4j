@@ -18,7 +18,6 @@
  */
 package nl.salp.warcraft4j.data.casc;
 
-import nl.salp.warcraft4j.data.Locale;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.parser.DataParser;
 import nl.salp.warcraft4j.io.parser.DataParsingException;
@@ -67,7 +66,7 @@ class RootFileParser implements DataParser<Root> {
                 totalEntries += entryCount;
                 long blockUnknown = reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN);
                 long blockFlags = reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN);
-                Locale.getLocale(blockFlags).orElseThrow(() -> new CascParsingException(format("Unable to find a locale for flag %d", blockFlags)));
+                CascLocale.getLocale(blockFlags).orElseThrow(() -> new CascParsingException(format("Unable to find a locale for flag %d", blockFlags)));
 
                 List<Long> entryUnknown = new ArrayList<>();
                 for (long i = 0; i < entryCount; i++) {

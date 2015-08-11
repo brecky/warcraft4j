@@ -18,10 +18,10 @@
  */
 package nl.salp.warcraft4j.data.casc;
 
-import nl.salp.warcraft4j.data.ClientDataConfiguration;
-import nl.salp.warcraft4j.data.Region;
-import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.DataTypeUtil;
+import nl.salp.warcraft4j.Region;
+import nl.salp.warcraft4j.config.W4jConfig;
+import nl.salp.warcraft4j.io.reader.DataReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,15 +56,15 @@ public abstract class BaseCascConfig implements CascConfig {
     protected static final String KEY_CDN_PATCH_ARCHIVE_GROUP = "patch-archive-group";
 
     private final DataReaderProvider dataReaderProvider;
-    private final ClientDataConfiguration clientDataConfiguration;
+    private final W4jConfig w4jConfig;
     private Config buildConfig;
     private Config cdnConfig;
 
-    protected BaseCascConfig(ClientDataConfiguration clientDataConfiguration, DataReaderProvider dataReaderProvider) {
+    protected BaseCascConfig(W4jConfig w4jConfig, DataReaderProvider dataReaderProvider) {
         LOGGER.trace("Created {} config instance for installation {}, region {}, branch {} and locale {} with data reader provider {}",
-                getClass().getName(), clientDataConfiguration.getWowInstallationDirectory(), clientDataConfiguration.getRegion(),
-                clientDataConfiguration.getBranch(), clientDataConfiguration.getLocale(), dataReaderProvider.getClass().getName());
-        this.clientDataConfiguration = clientDataConfiguration;
+                getClass().getName(), w4jConfig.getWowInstallationDirectory(), w4jConfig.getRegion(),
+                w4jConfig.getBranch(), w4jConfig.getLocale(), dataReaderProvider.getClass().getName());
+        this.w4jConfig = w4jConfig;
         this.dataReaderProvider = dataReaderProvider;
     }
 
@@ -125,6 +125,7 @@ public abstract class BaseCascConfig implements CascConfig {
         LOGGER.trace("Retrieved extracted encoding file size {}", size);
         return size;
     }
+
     @Override
     public FileKey getExtractedEncodingFileChecksum() {
         FileKey fileKey = getBuildConfig().getFirstValue(KEY_BUILD_ENCODING, (s) -> new FileKey(DataTypeUtil.hexStringToByteArray(s)))
@@ -168,18 +169,42 @@ public abstract class BaseCascConfig implements CascConfig {
     @Override
     public abstract String getCdnUrl();
 
-    protected final ClientDataConfiguration getClientDataConfiguration() {
-        return clientDataConfiguration;
+    protected final W4jConfig getW4jConfig() {
+        return w4jConfig;
     }
 
     @Override
     public final Region getRegion() {
-        return getClientDataConfiguration().getRegion();
+        return getW4jConfig().getRegion();
     }
 
     @Override
     public final String getRegionCode() {
-        return getRegion().getRegionCode();
+        String region;
+        switch (getRegion()) {
+            case AMERICAS:
+                region = "us";
+                break;
+            case CHINA:
+                region = "cn";
+                break;
+            case EUROPE:
+                region = "eu";
+                break;
+            case KOREA:
+                region = "kr";
+                break;
+            case SEA_AUSTRALASIA:
+                region = "sg";
+                break;
+            case TAIWAN:
+                region = "tw";
+                break;
+            default:
+                region = "xx";
+                break;
+        }
+        return region;
     }
 
     protected final Optional<String> getIndexedValue(Config config, String key, String indexKey, String indexValue) {

@@ -18,6 +18,11 @@
  */
 package nl.salp.warcraft4j;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Optional;
+import java.util.stream.Stream;
+
 /**
  * World of Warcraft development branch.
  *
@@ -29,5 +34,21 @@ public enum Branch {
     /** Testing development branch, often referenced as PTR or Public Test Realm. */
     TESTING,
     /** Beta development branch, mostly used for new expansions. */
-    BETA
+    BETA;
+
+    /**
+     * Get a branch by its name.
+     *
+     * @param name The name of the branch.
+     *
+     * @return Optional of the branch.
+     */
+    public static Optional<Branch> getBranch(String name) {
+        return Optional.ofNullable(name)
+                .filter(StringUtils::isNotEmpty)
+                .map(String::trim)
+                .map(String::toUpperCase)
+                .flatMap(n -> Stream.of(Branch.values()).filter(l -> l.name().equals(n)).findFirst());
+    }
+
 }

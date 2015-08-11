@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.data.casc.local;
 
-import nl.salp.warcraft4j.data.ClientDataConfiguration;
+import nl.salp.warcraft4j.config.W4jConfig;
 import nl.salp.warcraft4j.data.casc.*;
 import nl.salp.warcraft4j.io.reader.DataReader;
 
@@ -38,14 +38,14 @@ import static java.lang.String.format;
 public class LocalCascContext extends CascContext {
     private CascConfig cascConfig;
 
-    public LocalCascContext(ClientDataConfiguration clientDataConfig) {
-        super(clientDataConfig);
+    public LocalCascContext(W4jConfig w4jConfig) {
+        super(w4jConfig);
     }
 
     @Override
     protected CascConfig getCascConfig() {
         if (cascConfig == null) {
-            cascConfig = new LocalCascConfig(getClientDataConfig(), getDataReaderProvider());
+            cascConfig = new LocalCascConfig(getW4jConfig(), getDataReaderProvider());
         }
         return cascConfig;
     }
@@ -78,7 +78,7 @@ public class LocalCascContext extends CascContext {
 
     @Override
     protected Index parseIndex() throws CascParsingException {
-        return new LocalIndexParser(getClientDataConfig().getWowInstallationDirectory()).parse();
+        return new LocalIndexParser(getW4jConfig().getWowInstallationDirectory()).parse();
     }
 
     @Override
@@ -86,7 +86,7 @@ public class LocalCascContext extends CascContext {
         Optional<String> uri;
         if (entry != null) {
             String filename = format("data.%03d", entry.getFileNumber());
-            Path file = getClientDataConfig().getWowInstallationDirectory().resolve(Paths.get("Data", "data", filename));
+            Path file = getW4jConfig().getWowInstallationDirectory().resolve(Paths.get("Data", "data", filename));
             if (Files.exists(file) && Files.isReadable(file) && Files.isRegularFile(file)) {
                 uri = Optional.of(file.toString());
             } else {

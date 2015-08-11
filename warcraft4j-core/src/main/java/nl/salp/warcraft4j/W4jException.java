@@ -16,38 +16,39 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.data;
-
-import java.util.Optional;
-import java.util.stream.Stream;
+package nl.salp.warcraft4j;
 
 /**
- * TODO Document class.
+ * Base exception for Warcraft4J exceptions.
  *
  * @author Barre Dijkstra
  */
-public enum Region {
-    UNITED_STATES("us"),
-    XX("xx"),
-    EUROPE("eu"),
-    KOREA("kr"),
-    TAIWAN("tw"),
-    CHINA("cn"),
-    SINGAPORE("sg");
-
-    private final String regionCode;
-
-    Region(String regionCode) {
-        this.regionCode = regionCode;
+public class W4jException extends RuntimeException {
+    /**
+     * Create a new instance with an exception message.
+     *
+     * @param message The exception message.
+     */
+    public W4jException(String message) {
+        super(message);
     }
 
-    public String getRegionCode() {
-        return regionCode;
+    /**
+     * Create a new instance with an exception message and a cause.
+     *
+     * @param message The exception message.
+     * @param cause   The cause exception.
+     */
+    public W4jException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public static Optional<Region> getRegion(String region) {
-        return Stream.of(Region.values())
-                .filter(r -> r.getRegionCode().equalsIgnoreCase(region) || r.name().equalsIgnoreCase(region))
-                .findFirst();
+    /**
+     * Create a new instance with a cause.
+     *
+     * @param cause The cause exception.
+     */
+    public W4jException(Throwable cause) {
+        super(cause);
     }
 }

@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.data.casc.cdn;
 
-import nl.salp.warcraft4j.data.Branch;
+import nl.salp.warcraft4j.Branch;
 
 import static java.lang.String.format;
 
@@ -48,7 +48,7 @@ public enum CdnVersion {
                 return WOW_BETA;
             case LIVE:
                 return WOW_LIVE;
-            case PTR:
+            case TESTING:
                 return WOW_PTR;
             default:
                 throw new IllegalArgumentException(format("Unable to find a CDN version for branch %s", branch));

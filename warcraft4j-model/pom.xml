@@ -33,10 +33,19 @@
     <name>Warcraft4J Model</name>
     <description>Warcraft4J domain model</description>
 
+    <properties>
+        <dependency.javassist.version>3.19.0-GA</dependency.javassist.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
             <artifactId>warcraft4j-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>${dependency.javassist.version}</version>
         </dependency>
     </dependencies>
 </project>

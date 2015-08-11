@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.data.casc;
 
-import nl.salp.warcraft4j.data.Region;
+import nl.salp.warcraft4j.Region;
 
 import java.util.List;
 import java.util.Optional;

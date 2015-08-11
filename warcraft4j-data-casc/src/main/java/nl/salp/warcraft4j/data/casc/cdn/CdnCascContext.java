@@ -19,7 +19,7 @@
 package nl.salp.warcraft4j.data.casc.cdn;
 
 import nl.salp.warcraft4j.Checksum;
-import nl.salp.warcraft4j.data.ClientDataConfiguration;
+import nl.salp.warcraft4j.config.W4jConfig;
 import nl.salp.warcraft4j.data.casc.*;
 import nl.salp.warcraft4j.data.casc.blte.BlteDataReader;
 import nl.salp.warcraft4j.io.reader.DataReader;
@@ -38,14 +38,14 @@ public class CdnCascContext extends CascContext {
     private static final String MASK_FILES_DATA = "%s/data/%s/%s/%s";
     private CascConfig cascConfig;
 
-    public CdnCascContext(ClientDataConfiguration clientDataConfig) {
-        super(clientDataConfig);
+    public CdnCascContext(W4jConfig w4jConfig) {
+        super(w4jConfig);
     }
 
     @Override
     protected CascConfig getCascConfig() {
         if (cascConfig == null) {
-            cascConfig = new CdnCascConfig(getClientDataConfig(), getDataReaderProvider());
+            cascConfig = new CdnCascConfig(getW4jConfig(), getDataReaderProvider());
         }
         return cascConfig;
     }
@@ -66,8 +66,8 @@ public class CdnCascContext extends CascContext {
 
     @Override
     protected DataReaderProvider getDataReaderProvider() {
-        if (getClientDataConfig().isCaching() && cascConfig != null) {
-            return new CachingCdnDataReaderProvider(cascConfig, getClientDataConfig().getCacheDirectory());
+        if (getW4jConfig().isCaching() && cascConfig != null) {
+            return new CachingCdnDataReaderProvider(cascConfig, getW4jConfig().getCacheDirectory());
         } else {
             return new CdnDataReaderProvider();
         }

@@ -176,4 +176,19 @@ public enum Locale {
                         .collect(Collectors.toSet()))
                 .orElse(Collections.emptySet());
     }
+
+    /**
+     * Get a locale by its name.
+     *
+     * @param name The name of the locale.
+     *
+     * @return Optional of the locale.
+     */
+    public static Optional<Locale> getLocale(String name) {
+        return Optional.ofNullable(name)
+                .filter(StringUtils::isNotEmpty)
+                .map(String::trim)
+                .map(String::toUpperCase)
+                .flatMap(n -> Stream.of(Locale.values()).filter(l -> l.name().equals(n)).findFirst());
+    }
 }
