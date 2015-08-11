@@ -18,10 +18,10 @@
  */
 package nl.salp.warcraft4j.dev.casc.listfile;
 
-import nl.salp.warcraft4j.clientdata.*;
-import nl.salp.warcraft4j.clientdata.casc.CascContext;
-import nl.salp.warcraft4j.clientdata.casc.cdn.CdnCascContext;
-import nl.salp.warcraft4j.clientdata.casc.local.LocalCascContext;
+import nl.salp.warcraft4j.data.*;
+import nl.salp.warcraft4j.data.casc.CascContext;
+import nl.salp.warcraft4j.data.casc.cdn.CdnCascContext;
+import nl.salp.warcraft4j.data.casc.local.LocalCascContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

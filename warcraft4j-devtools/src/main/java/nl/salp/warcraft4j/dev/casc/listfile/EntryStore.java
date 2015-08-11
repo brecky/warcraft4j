@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.dev.casc.listfile;
 
-import nl.salp.warcraft4j.clientdata.casc.CascContext;
+import nl.salp.warcraft4j.data.casc.CascContext;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;

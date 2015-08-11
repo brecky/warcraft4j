@@ -17,7 +17,6 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -62,8 +61,8 @@
         <!-- Warcraft4J core modules -->
         <module>warcraft4j-core</module>
         <!-- Warcraft4J data modules -->
-        <module>warcraft4j-clientdata</module>
-        <module>warcraft4j-battlenet</module>
+        <module>warcraft4j-data-casc</module>
+        <module>warcraft4j-data-battlenet</module>
         <!-- Warcraft4J application modules -->
         <module>warcraft4j-devtools</module>
     </modules>
@@ -157,12 +156,12 @@
             </dependency>
             <dependency>
                 <groupId>nl.salp.warcraft4j</groupId>
-                <artifactId>warcraft4j-battlenet</artifactId>
+                <artifactId>warcraft4j-data-battlenet</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>nl.salp.warcraft4j</groupId>
-                <artifactId>warcraft4j-clientdata</artifactId>
+                <artifactId>warcraft4j-data-casc</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- Dependency injection dependencies -->

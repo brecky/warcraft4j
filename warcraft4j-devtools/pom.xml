@@ -55,11 +55,11 @@
         </dependency>
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
-            <artifactId>warcraft4j-battlenet</artifactId>
+            <artifactId>warcraft4j-data-battlenet</artifactId>
         </dependency>
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
-            <artifactId>warcraft4j-clientdata</artifactId>
+            <artifactId>warcraft4j-data-casc</artifactId>
         </dependency>
         <!-- Utility dependencies -->
         <dependency>
