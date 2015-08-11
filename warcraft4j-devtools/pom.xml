@@ -35,6 +35,22 @@
         <!-- Module dependencies -->
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
+            <artifactId>warcraft4j-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.salp.warcraft4j</groupId>
+            <artifactId>warcraft4j-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.salp.warcraft4j</groupId>
+            <artifactId>warcraft4j-io-file</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.salp.warcraft4j</groupId>
+            <artifactId>warcraft4j-io-http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.salp.warcraft4j</groupId>
             <artifactId>warcraft4j-core</artifactId>
         </dependency>
         <dependency>
