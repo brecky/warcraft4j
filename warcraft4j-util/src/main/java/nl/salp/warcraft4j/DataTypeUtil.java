@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.util;
+package nl.salp.warcraft4j;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.ArrayUtils;
@@ -105,6 +105,18 @@ public class DataTypeUtil {
         };
     }
 
+    public static int hash(byte[] data) {
+        if (data == null || data.length == 0) {
+            return 0;
+        }
+        long hash = 2166136261L;
+        for (byte b : data) {
+            hash ^= b;
+            hash *= 16777619L;
+        }
+        return (int) hash;
+    }
+
     /**
      * Create a dynamic size byte[] from the given long value.
      *
@@ -164,34 +176,6 @@ public class DataTypeUtil {
         int a = toInt(ArrayUtils.subarray(value, value.length / 2, value.length));
 
         return ((((long) b) << 32) | ((long) a & 0xFFFFFFFFL));
-/*
-        long val = 0;
-        if (value.length >= 1) {
-            val |= ((value[0] & 0xFF) << 56);
-        }
-        if (value.length >= 2) {
-            val |= ((value[1] & 0xFF) << 48);
-        }
-        if (value.length >= 3) {
-            val |= ((value[2] & 0xFF) << 40);
-        }
-        if (value.length >= 4) {
-            val |= ((value[3] & 0xFF) << 32);
-        }
-        if (value.length >= 5) {
-            val |= ((value[4] & 0xFF) << 24);
-        }
-        if (value.length >= 6) {
-            val |= ((value[5] & 0xFF) << 16);
-        }
-        if (value.length >= 7) {
-            val |= ((value[6] & 0xFF) << 8);
-        }
-        if (value.length >= 8) {
-            val |= ((value[7] & 0xFF));
-        }
-        return val;
-*/
     }
 
     public static int toInt(byte[] value, ByteOrder byteOrder) {

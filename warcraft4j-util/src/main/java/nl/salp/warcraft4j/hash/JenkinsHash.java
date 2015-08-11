@@ -3,7 +3,7 @@ package nl.salp.warcraft4j.hash;
  * @(#) JenkinsHash.java 2011-08-18
  */
 
-import nl.salp.warcraft4j.util.DataTypeUtil;
+import nl.salp.warcraft4j.DataTypeUtil;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;

@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.blte;
 
-import nl.salp.warcraft4j.clientdata.casc.Checksum;
+import nl.salp.warcraft4j.Checksum;
 
 import java.util.Optional;
 

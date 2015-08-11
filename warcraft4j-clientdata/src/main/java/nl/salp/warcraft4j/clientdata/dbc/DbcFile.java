@@ -36,7 +36,7 @@ import java.util.function.Supplier;
 import static java.lang.String.format;
 import static nl.salp.warcraft4j.io.datatype.DataTypeFactory.getByte;
 import static nl.salp.warcraft4j.io.datatype.DataTypeFactory.getTerminatedString;
-import static nl.salp.warcraft4j.util.DataTypeUtil.getAverageBytesPerCharacter;
+import static nl.salp.warcraft4j.DataTypeUtil.getAverageBytesPerCharacter;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 

@@ -18,6 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.cdn;
 
+import nl.salp.warcraft4j.Checksum;
 import nl.salp.warcraft4j.clientdata.ClientDataConfiguration;
 import nl.salp.warcraft4j.clientdata.casc.*;
 import nl.salp.warcraft4j.clientdata.casc.blte.BlteDataReader;

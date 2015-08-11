@@ -40,7 +40,7 @@ import java.util.stream.IntStream;
 
 import static java.lang.String.format;
 import static nl.salp.warcraft4j.hash.Hashes.MD5;
-import static nl.salp.warcraft4j.util.DataTypeUtil.byteArrayToHexString;
+import static nl.salp.warcraft4j.DataTypeUtil.byteArrayToHexString;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
@@ -48,7 +48,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  *
  * @author Barre Dijkstra
  */
-public class EncodingFileParser implements DataParser<EncodingFile> {
+class EncodingFileParser implements DataParser<EncodingFile> {
     /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(EncodingFileParser.class);
     private static final String MAGIC_STRING = "EN";

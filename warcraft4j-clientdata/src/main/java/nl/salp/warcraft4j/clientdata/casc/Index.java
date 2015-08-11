@@ -18,15 +18,12 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
+import nl.salp.warcraft4j.Checksum;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
-
-import java.util.*;
 
 import java.util.*;
 

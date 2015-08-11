@@ -19,7 +19,7 @@
 package nl.salp.warcraft4j.io.datatype;
 
 import nl.salp.warcraft4j.io.parser.DataParsingException;
-import nl.salp.warcraft4j.util.DataTypeUtil;
+import nl.salp.warcraft4j.DataTypeUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -18,11 +18,13 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.util.DataTypeUtil;
+import nl.salp.warcraft4j.Checksum;
+import nl.salp.warcraft4j.DataTypeUtil;
 
 import java.util.Arrays;
 
 import static java.lang.String.format;
+import static nl.salp.warcraft4j.DataTypeUtil.byteArrayToHexString;
 
 /**
  * TODO Document class.
@@ -44,7 +46,7 @@ public class FileKey extends Checksum {
         } else {
             throw new IllegalArgumentException(format("Unable to create a 9 byte filekey from a %d byte array.", checksum.length));
         }
-        hash = CascUtil.hash(fileKey);
+        hash = DataTypeUtil.hash(fileKey);
     }
 
     public byte[] getFileKey() {
@@ -67,6 +69,6 @@ public class FileKey extends Checksum {
 
     @Override
     public String toString() {
-        return DataTypeUtil.byteArrayToHexString(fileKey);
+        return byteArrayToHexString(fileKey);
     }
 }

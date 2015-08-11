@@ -18,15 +18,16 @@
  */
 package nl.salp.warcraft4j.dev.casc.listfile;
 
-import nl.salp.warcraft4j.clientdata.casc.CascUtil;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.reader.DataReader;
-import nl.salp.warcraft4j.util.DataTypeUtil;
+import nl.salp.warcraft4j.DataTypeUtil;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.function.Supplier;
+
+import static nl.salp.warcraft4j.DataTypeUtil.byteArrayToHexString;
 
 /**
  * TODO Add description.
@@ -39,7 +40,7 @@ class FileHeader {
 
     public FileHeader(byte[] header) {
         this.header = header;
-        this.hash = CascUtil.hash(header);
+        this.hash = DataTypeUtil.hash(header);
     }
 
     public byte[] getHeader() {
@@ -61,7 +62,7 @@ class FileHeader {
     }
 
     public String toHexString() {
-        return DataTypeUtil.byteArrayToHexString(header);
+        return byteArrayToHexString(header);
     }
 
     @Override

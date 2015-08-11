@@ -40,7 +40,7 @@ import static java.nio.ByteOrder.LITTLE_ENDIAN;
  *
  * @author Barre Dijkstra
  */
-public class RootFileParser implements DataParser<Root> {
+class RootFileParser implements DataParser<Root> {
     /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(RootFileParser.class);
 

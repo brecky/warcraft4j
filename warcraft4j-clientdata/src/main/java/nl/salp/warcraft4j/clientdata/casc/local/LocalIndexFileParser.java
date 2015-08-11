@@ -19,7 +19,7 @@
 package nl.salp.warcraft4j.clientdata.casc.local;
 
 import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
-import nl.salp.warcraft4j.clientdata.casc.Checksum;
+import nl.salp.warcraft4j.Checksum;
 import nl.salp.warcraft4j.clientdata.casc.FileKey;
 import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
 import nl.salp.warcraft4j.hash.JenkinsHash;

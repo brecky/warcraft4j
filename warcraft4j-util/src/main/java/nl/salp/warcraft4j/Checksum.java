@@ -16,13 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata.casc;
-
-import nl.salp.warcraft4j.util.DataTypeUtil;
-import org.apache.commons.lang3.ArrayUtils;
+package nl.salp.warcraft4j;
 
 import java.util.Arrays;
 import java.util.Optional;
+
+import static nl.salp.warcraft4j.DataTypeUtil.byteArrayToHexString;
+import static org.apache.commons.lang3.ArrayUtils.subarray;
 
 /**
  * TODO Add description.
@@ -35,7 +35,7 @@ public class Checksum {
 
     public Checksum(byte[] checksum) {
         this.checksum = Optional.ofNullable(checksum).filter(c -> c.length > 0).orElseThrow(() -> new IllegalArgumentException("Can't create a checksum from an empty array"));
-        this.hash = CascUtil.hash(checksum);
+        this.hash = DataTypeUtil.hash(checksum);
     }
 
     public byte[] getChecksum() {
@@ -49,13 +49,13 @@ public class Checksum {
     public Checksum trim(int length) {
         byte[] trimmed = checksum;
         if (length < checksum.length) {
-            trimmed = ArrayUtils.subarray(checksum, 0, length);
+            trimmed = subarray(checksum, 0, length);
         }
         return new Checksum(trimmed);
     }
 
     public String toHexString() {
-        return DataTypeUtil.byteArrayToHexString(checksum);
+        return byteArrayToHexString(checksum);
     }
 
     @Override
@@ -74,6 +74,6 @@ public class Checksum {
 
     @Override
     public String toString() {
-        return DataTypeUtil.byteArrayToHexString(checksum);
+        return byteArrayToHexString(checksum);
     }
 }

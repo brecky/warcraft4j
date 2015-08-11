@@ -18,6 +18,8 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
+import nl.salp.warcraft4j.Checksum;
+
 import static java.lang.String.format;
 
 /**

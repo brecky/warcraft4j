@@ -21,7 +21,7 @@ package nl.salp.warcraft4j.clientdata.casc;
 import nl.salp.warcraft4j.clientdata.ClientDataConfiguration;
 import nl.salp.warcraft4j.clientdata.Region;
 import nl.salp.warcraft4j.io.reader.DataReader;
-import nl.salp.warcraft4j.util.DataTypeUtil;
+import nl.salp.warcraft4j.DataTypeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
