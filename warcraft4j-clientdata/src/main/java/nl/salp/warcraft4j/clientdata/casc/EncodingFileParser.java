@@ -357,8 +357,8 @@ public class EncodingFileParser implements DataParser<EncodingFile> {
      * @author Barre Dijkstra
      */
     private static class EncodingFileSegmentChecksum {
-        private byte[] firstFileChecksum;
-        private byte[] segmentChecksum;
+        private final byte[] firstFileChecksum;
+        private final byte[] segmentChecksum;
 
         public EncodingFileSegmentChecksum(byte[] firstFileChecksum, byte[] segmentChecksum) {
             this.firstFileChecksum = firstFileChecksum;

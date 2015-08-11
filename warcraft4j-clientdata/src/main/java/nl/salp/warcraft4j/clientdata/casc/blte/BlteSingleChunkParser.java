@@ -53,21 +53,20 @@ class BlteSingleChunkParser extends BlteChunkParser {
 
     @Override
     protected BlteChunkHeader parseChunkHeader(DataReader reader) {
-        return new BlteChunkHeader(fileSize, fileSize - 1);
+        return new BlteChunkHeader(fileSize);
     }
 
     @Override
     protected BlteChunk parseChunk(DataReader reader, BlteChunkHeader header) throws DataParsingException {
         try {
             long compressedSize = header.getCompressedSize();
-            long decompressedSize = header.getDecompressedSize();
             byte[] chunkData = reader.readNext(DataTypeFactory.getByteArray((int) compressedSize));
             char compressionType = (char) chunkData[0];
             byte[] data = ArrayUtils.subarray(chunkData, 1, chunkData.length);
             if (data.length != compressedSize - 1) {
-                throw new CascParsingException(format("Error parsing BLTE chunk, got %d bytes of compressed data instead of %d", data.length, compressedSize));
+                throw new CascParsingException(format("Error parsing BLTE chunk, got %d bytes of compressed data instead of %d bytes", data.length, compressedSize));
             }
-            return new BlteChunk(data.length, decompressedSize, data, getDecompressor(compressionType));
+            return new BlteChunk(data.length, data, getDecompressor(compressionType));
         } catch (IOException e) {
             throw new DataParsingException("Error parsing BLTE chunk", e);
         }

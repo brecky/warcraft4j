@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.clientdata;
+package nl.salp.warcraft4j.clientdata.casc;
 
 import nl.salp.warcraft4j.clientdata.casc.CascException;
 

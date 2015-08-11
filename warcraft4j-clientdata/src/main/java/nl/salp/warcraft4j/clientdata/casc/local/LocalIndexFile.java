@@ -18,7 +18,6 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.local;
 
-import nl.salp.warcraft4j.clientdata.casc.Checksum;
 import nl.salp.warcraft4j.clientdata.casc.FileKey;
 import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -85,15 +84,15 @@ public class LocalIndexFile {
     }
 
     public Optional<Integer> getDataFileNumber(FileKey fileKey) {
-        return getEntry(fileKey).map(e -> (int) e.getFileNumber());
+        return getEntry(fileKey).map(IndexEntry::getFileNumber);
     }
 
     public Optional<Integer> getDataOffset(FileKey fileKey) {
-        return getEntry(fileKey).map(e -> e.getDataFileOffset());
+        return getEntry(fileKey).map(IndexEntry::getDataFileOffset);
     }
 
     public Optional<Long> getDataSize(FileKey fileKey) {
-        return getEntry(fileKey).map(e -> e.getFileSize());
+        return getEntry(fileKey).map(IndexEntry::getFileSize);
     }
 
     public Collection<IndexEntry> getEntries() {

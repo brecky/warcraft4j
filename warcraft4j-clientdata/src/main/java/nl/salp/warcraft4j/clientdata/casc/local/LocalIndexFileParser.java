@@ -22,11 +22,11 @@ import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.casc.Checksum;
 import nl.salp.warcraft4j.clientdata.casc.FileKey;
 import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
-import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.hash.JenkinsHash;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.parser.DataParser;
 import nl.salp.warcraft4j.io.parser.DataParsingException;
-import nl.salp.warcraft4j.hash.JenkinsHash;
+import nl.salp.warcraft4j.io.reader.DataReader;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,12 +68,14 @@ public class LocalIndexFileParser implements DataParser<LocalIndexFile> {
         validateHeader(reader);
         int dataHeaderLength = reader.readNext(DataTypeFactory.getInteger(), ByteOrder.LITTLE_ENDIAN);
         Checksum dataHeaderChecksum = new Checksum(reader.readNext(DataTypeFactory.getByteArray(4))); // ByteOrder.LITTLE_ENDIAN
+        // TODO Validate header based on the checksum.
         IndexHeaderV2 header = parseHeader(reader);
         LOGGER.trace("Parsed header {}", header);
         reader.position((8 + dataHeaderLength + 0x0F) & 0xFFFFFFF0);
 
         int dataLength = reader.readNext(DataTypeFactory.getInteger(), ByteOrder.LITTLE_ENDIAN);
         Checksum dataChecksum = new Checksum(reader.readNext(DataTypeFactory.getByteArray(4))); // ByteOrder.LITTLE_ENDIAN
+        // TODO Validate data based on the checksum.
         int entryCount = (dataLength / ENTRY_SIZE);
         LOGGER.trace("Parsing {} index file entries from {} bytes at position {}", entryCount, dataLength, reader.position());
         List<IndexEntry> entries = parseEntries(reader, entryCount);
@@ -87,7 +89,7 @@ public class LocalIndexFileParser implements DataParser<LocalIndexFile> {
     private void validateHeader(DataReader reader) throws CascParsingException, IOException {
         long position = reader.position();
 
-        int headerLen = (int) (reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.LITTLE_ENDIAN).longValue() & (Integer.MAX_VALUE | Integer.MIN_VALUE));
+        int headerLen = (int) reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.LITTLE_ENDIAN).longValue();
         int hash = reader.readNext(DataTypeFactory.getInteger(), ByteOrder.LITTLE_ENDIAN);
 
         byte[] data = reader.readNext(DataTypeFactory.getByteArray(headerLen));
@@ -125,7 +127,7 @@ public class LocalIndexFileParser implements DataParser<LocalIndexFile> {
             IndexEntry entry = parseEntry(reader);
             if (entry != null && entry.getFileKey() != null && keys.add(entry.getFileKey())) {
                 entries.add(entry);
-            } else {
+            } else if (entry != null && entry.getFileKey() != null) {
                 LOGGER.trace("Skipping index entry for duplicate file key {}", entry.getFileKey());
             }
         }
@@ -136,7 +138,7 @@ public class LocalIndexFileParser implements DataParser<LocalIndexFile> {
         byte[] fileKey = reader.readNext(DataTypeFactory.getByteArray(9));
         short indexInfoHigh = reader.readNext(DataTypeFactory.getUnsignedByte());
         long indexInfoLow = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.BIG_ENDIAN);
-        long fileSize = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.LITTLE_ENDIAN) & 0xFFFFFFFF;
+        long fileSize = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.LITTLE_ENDIAN);
         IndexEntry entry = new LocalIndexEntry(new FileKey(fileKey), indexInfoHigh, indexInfoLow, fileSize);
         return entry;
     }

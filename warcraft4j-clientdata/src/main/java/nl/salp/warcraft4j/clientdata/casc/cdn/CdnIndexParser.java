@@ -39,7 +39,7 @@ import static java.lang.String.format;
  */
 public class CdnIndexParser {
     /** The logger. */
-    protected static final Logger LOGGER = LoggerFactory.getLogger(CascContext.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CdnIndexParser.class);
     private static final String MASK_FILES_INDEX = "%s/data/%s/%s/%s.index";
     private final CascConfig cascConfig;
     private final DataReaderProvider dataReaderProvider;
@@ -59,7 +59,6 @@ public class CdnIndexParser {
         Set<IndexEntry> indexEntries = indices.stream()
                 .map(CdnIndexFile::getIndexEntries)
                 .flatMap(Collection::stream)
-                .distinct()
                 .collect(Collectors.toSet());
         LOGGER.trace("Parsed {} index entries from {} index files.", indexEntries.size(), indices.size());
         return new Index(indexEntries);

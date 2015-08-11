@@ -230,7 +230,7 @@ public class DbcClasspathMappingScanner {
          * @throws DbcMappingScanningException When scanning failed.
          */
         private void scanDirectory(File directory, String directoryPrefix, Set<File> parents, ClassLoader classLoader) throws DbcMappingScanningException {
-            File canonical = null;
+            File canonical;
             try {
                 canonical = directory.getCanonicalFile();
             } catch (IOException e) {
@@ -343,7 +343,7 @@ public class DbcClasspathMappingScanner {
             boolean javaCore = false;
             if (name != null) {
                 String className = getClassName(name);
-                javaCore = javaCore || className.startsWith("com.sun");
+                javaCore = className.startsWith("com.sun");
                 javaCore = javaCore || className.startsWith("sun");
                 javaCore = javaCore || className.startsWith("javax");
                 javaCore = javaCore || className.startsWith("java");
@@ -394,7 +394,7 @@ public class DbcClasspathMappingScanner {
      * @throws DbcMappingScanningException When the constructed URI resulted in an invalid URI.
      */
     private static URI getClassPathEntry(File jarFile, String path) throws DbcMappingScanningException {
-        URI uri = null;
+        URI uri;
         try {
             uri = new URI(path);
         } catch (URISyntaxException e) {

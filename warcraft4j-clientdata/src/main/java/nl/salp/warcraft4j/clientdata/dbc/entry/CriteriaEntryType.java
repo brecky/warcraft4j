@@ -139,7 +139,7 @@ public enum CriteriaEntryType {
 
     private final int id;
 
-    private CriteriaEntryType(int id) {
+    CriteriaEntryType(int id) {
         this.id = id;
     }
 

@@ -57,10 +57,10 @@ class ZlibDataDecompressor implements DataDecompressor {
             }
             byte[] result = out.toByteArray();
             decompresser.end();
-            if (resultLength != decompressedSize && (compressedSize != decompressedSize)) {
+            if (decompressedSize != 0 && resultLength != decompressedSize && (compressedSize != decompressedSize)) {
                 throw new CascParsingException(String.format("Decompressed BLTE chunk to a %d bytes output while %d bytes were specified.", resultLength, decompressedSize));
             }
-            LOGGER.trace("Decompressed {} byte gzip'd BLTE file chunk to {} bytes of data.", compressedSize, result.length);
+            LOGGER.trace("Decompressed {} byte gzip'd BLTE file chunk to {} bytes of data.", data.length, result.length);
             return result;
         } catch (DataFormatException e) {
             throw new CascParsingException(e);

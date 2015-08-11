@@ -19,10 +19,9 @@
 package nl.salp.warcraft4j.clientdata.casc.blte;
 
 import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
 
 import static java.lang.String.format;
 
@@ -37,19 +36,19 @@ class RawDataDecompressor implements DataDecompressor {
 
     @Override
     public byte[] decompress(byte[] data, long compressedSize, long decompressedSize) throws CascParsingException {
-        if (data.length != decompressedSize) {
+        if (decompressedSize != 0 && data.length != decompressedSize) {
             throw new CascParsingException(format("Error parsing raw BLTE file chunk, got %d bytes of compressed data instead of %d", data.length, decompressedSize));
         }
-        LOGGER.trace("Returning {} bytes raw BLTE file chunk as {} bytes of data.", data.length, decompressedSize);
+        LOGGER.trace("Returning {} bytes raw BLTE file chunk as data.", data.length);
         return data;
     }
 
     @Override
     public byte[] decompress(byte[] data, long dataOffset, long dataLength, long decompressedSize) throws CascParsingException {
-        if (data.length != decompressedSize) {
+        if (decompressedSize != 0 && data.length != decompressedSize) {
             throw new CascParsingException(format("Error parsing raw BLTE file chunk, got %d bytes of compressed data instead of %d", data.length, decompressedSize));
         }
-        LOGGER.trace("Returning {} bytes raw BLTE file chunk as {} bytes of data.", data.length, decompressedSize);
-        return Arrays.copyOfRange(data, (int) dataOffset, (int) dataLength);
+        LOGGER.trace("Returning {} bytes raw BLTE file chunk as data.", data.length);
+        return ArrayUtils.subarray(data, (int) dataOffset, (int) dataLength);
     }
 }

@@ -31,7 +31,7 @@ public class ContentChecksum extends Checksum {
     public ContentChecksum(byte[] checksum) {
         super(checksum);
         if (checksum.length != CONTENTCHECKSUM_LENGTH) {
-            throw new IllegalArgumentException(format("Unable to create a 16 byte content checksum from a %d byte array."));
+            throw new IllegalArgumentException(format("Unable to create a %d-byte content checksum from a %d byte array.", CONTENTCHECKSUM_LENGTH, checksum.length));
         }
     }
 }

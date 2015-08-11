@@ -18,6 +18,7 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.cdn;
 
+import nl.salp.warcraft4j.clientdata.casc.CascContext;
 import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 import nl.salp.warcraft4j.clientdata.casc.FileKey;
 import nl.salp.warcraft4j.clientdata.casc.IndexEntry;
@@ -25,6 +26,8 @@ import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.parser.DataParser;
 import nl.salp.warcraft4j.io.parser.DataParsingException;
 import nl.salp.warcraft4j.io.reader.DataReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -32,12 +35,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.String.format;
+
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
 public class CdnIndexFileParser implements DataParser<CdnIndexFile> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CdnIndexFileParser.class);
     private static final byte[] EMPTY_CHECKSUM = createEmptyChecksum();
 
     private final int fileNumber;
@@ -61,10 +67,16 @@ public class CdnIndexFileParser implements DataParser<CdnIndexFile> {
                 checksum = reader.readNext(DataTypeFactory.getByteArray(16));
             }
             if (Arrays.equals(checksum, EMPTY_CHECKSUM)) {
-                throw new CascParsingException("Encountered empty checksum in index file.");
+                throw new CascParsingException(format("Encountered empty checksum for entry %d in index file %d with file key %s.", i, fileNumber, fileKey.toHexString()));
             }
             int size = reader.readNext(DataTypeFactory.getInteger(), ByteOrder.BIG_ENDIAN);
+            if (size < 0) {
+                throw new CascParsingException(format("CDN index file %d (%s) has a negative size of %d for entry %d", fileNumber, fileKey.toHexString(), size, i));
+            }
             int offset = reader.readNext(DataTypeFactory.getInteger(), ByteOrder.BIG_ENDIAN);
+            if (offset < 0) {
+                throw new CascParsingException(format("CDN index file %d (%s) has a negative offset of %d for entry %d", fileNumber, fileKey.toHexString(), offset, i));
+            }
 
             IndexEntry entry = new IndexEntry(new FileKey(checksum), fileNumber, size, offset);
             entries.add(entry);

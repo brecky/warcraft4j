@@ -67,7 +67,7 @@ public class CachingCdnDataReaderProvider implements DataReaderProvider {
         } else {
             LOGGER.trace("Using existing cache directory {}", cacheDirectory);
         }
-        LOGGER.debug("Created cached CDN data reader for CDN URL {}, using cache directory {}", cdnUrl, cacheDirectory);
+        LOGGER.trace("Created cached CDN data reader for CDN URL {}, using cache directory {}", cdnUrl, cacheDirectory);
     }
 
     @Override

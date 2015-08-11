@@ -49,9 +49,9 @@ public class RootFileParser implements DataParser<Root> {
 
     @Override
     public Root parse(DataReader reader) throws IOException, DataParsingException {
-        LOGGER.debug("Parsing root file");
+        LOGGER.trace("Parsing root file");
         Map<Long, List<RootEntry>> entries = parseEntryBlocks(reader);
-        LOGGER.debug("Parsed root with {} entries", entries.size());
+        LOGGER.trace("Parsed root with {} entries", entries.size());
         return new Root(entries);
     }
 

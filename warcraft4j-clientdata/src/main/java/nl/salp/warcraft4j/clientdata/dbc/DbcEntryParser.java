@@ -191,11 +191,11 @@ class DbcEntryParser<T extends DbcEntry> extends RandomAccessDataParser<T> {
      * Parse all mapped fields from the mapping type.
      *
      * @param template The mapping type.
-     * @param <T>      The type of the mapping type.
+     * @param <K>      The type of the mapping type.
      *
      * @return The mapped fields, indexed by the parsing order.
      */
-    private <T extends DbcEntry> SortedMap<Integer, Field> parseFields(Class<T> template) {
+    private <K extends DbcEntry> SortedMap<Integer, Field> parseFields(Class<K> template) {
         SortedMap<Integer, Field> fields = new TreeMap<>();
         for (Field f : template.getDeclaredFields()) {
             if (f.isAnnotationPresent(DbcFieldMapping.class)) {

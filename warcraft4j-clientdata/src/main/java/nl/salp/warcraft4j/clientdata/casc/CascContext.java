@@ -18,22 +18,21 @@
  */
 package nl.salp.warcraft4j.clientdata.casc;
 
-import nl.salp.warcraft4j.clientdata.*;
+import nl.salp.warcraft4j.clientdata.Branch;
+import nl.salp.warcraft4j.clientdata.ClientDataConfiguration;
+import nl.salp.warcraft4j.clientdata.Locale;
+import nl.salp.warcraft4j.clientdata.Region;
 import nl.salp.warcraft4j.clientdata.casc.blte.BlteDataReader;
 import nl.salp.warcraft4j.hash.JenkinsHash;
 import nl.salp.warcraft4j.io.reader.CompositeDataReader;
 import nl.salp.warcraft4j.io.reader.DataReader;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -49,14 +48,19 @@ public abstract class CascContext {
     /** The logger. */
     protected static final Logger LOGGER = LoggerFactory.getLogger(CascContext.class);
     private final ClientDataConfiguration clientDataConfig;
-    private final Lock parseLock;
+    private final Map<String, Long> hashes;
+    private final Map<Long, String> filenames;
     private Index index;
     private EncodingFile encoding;
     private Root root;
 
     public CascContext(ClientDataConfiguration clientDataConfig) {
+        LOGGER.debug("Created CASC context for branch {}, region {} and locale {} (wow directory: {}, online: {}, caching: {})",
+                clientDataConfig.getBranch(), clientDataConfig.getRegion(), clientDataConfig.getLocale(), clientDataConfig.getWowInstallationDirectory(),
+                clientDataConfig.isOnline(), clientDataConfig.isCaching());
         this.clientDataConfig = clientDataConfig;
-        this.parseLock = new ReentrantLock();
+        this.hashes = new HashMap<>();
+        this.filenames = new HashMap<>();
     }
 
     protected final ClientDataConfiguration getClientDataConfig() {
@@ -65,40 +69,22 @@ public abstract class CascContext {
 
     protected abstract CascConfig getCascConfig();
 
-    protected final EncodingFile getEncoding() {
-        if (encoding == null) {
-            parseLock.tryLock();
-            try {
-                if (encoding == null) {
-                    encoding = parseEncoding();
-                }
-            } finally {
-                parseLock.unlock();
-            }
-        }
-        return encoding;
-    }
-
     protected abstract Supplier<DataReader> getEncodingReader();
 
     protected EncodingFile parseEncoding() throws CascParsingException {
         Supplier<DataReader> readerSupplier = getEncodingReader();
         LOGGER.debug("Initialising encoding file (fileKey: {}, fileSize: {}).", getCascConfig().getStorageEncodingFileChecksum(), getCascConfig().getStorageEncodingFileSize());
-        parseLock.lock();
         try (DataReader reader = readerSupplier.get()) {
             EncodingFile encodingFile = reader.readNext(new EncodingFileParser(getCascConfig().getExtractedEncodingFileSize()));
-            LOGGER.debug("Successfully parsed encoding file with {} entries", encodingFile.getEntryCount());
             return encodingFile;
         } catch (IOException e) {
             throw new CascParsingException(format("Error parsing encoding file %s", getCascConfig().getExtractedEncodingFileChecksum().toHexString()), e);
-        } finally {
-            parseLock.unlock();
         }
     }
 
     protected Root parseRoot() throws CascParsingException {
         ContentChecksum contentChecksum = Optional.of(getCascConfig().getRootContentChecksum())
-                .orElseThrow(() -> new CascParsingException(format("No checksum found for root file")));
+                .orElseThrow(() -> new CascParsingException("No checksum found for root file"));
         FileKey fileKey = getFileKey(contentChecksum)
                 .orElseThrow(() -> new CascParsingException(format("No file key found for root file entry %s", contentChecksum.toHexString())));
         IndexEntry indexEntry = getIndexEntry(fileKey)
@@ -107,16 +93,20 @@ public abstract class CascContext {
         LOGGER.debug("Initialising root file (contentChecksum: {}, fileKey: {}) from {} bytes of data in data.{} at offset {}",
                 contentChecksum.toHexString(), fileKey.toHexString(), indexEntry.getFileSize(), format("%03d", indexEntry.getFileNumber()), indexEntry.getDataFileOffset());
 
-        parseLock.lock();
-        try (DataReader reader = getFileDataReader(indexEntry)) {
-            root = reader.readNext(new RootFileParser());
+        try (DataReader reader = getFileDataReader(indexEntry, contentChecksum)) {
+            return reader.readNext(new RootFileParser());
         } catch (IOException e) {
             throw new CascParsingException(format("Error parsing root file from data file %d at offset %d", indexEntry.getFileNumber(), indexEntry.getDataFileOffset()), e);
-        } finally {
-            parseLock.unlock();
         }
-        LOGGER.debug("Successfully parsed root file with {} entries", root.getHashCount());
-        return root;
+    }
+
+    protected final EncodingFile getEncoding() {
+        if (encoding == null) {
+            LOGGER.debug("Parsing encoding file");
+            encoding = parseEncoding();
+            LOGGER.debug("Successfully encoding file with {} entries", encoding.getEntryCount());
+        }
+        return encoding;
     }
 
     protected abstract Index parseIndex() throws CascParsingException;
@@ -124,15 +114,9 @@ public abstract class CascContext {
 
     protected final Index getIndex() {
         if (index == null) {
-            parseLock.tryLock();
-            try {
-                if (index == null) {
-                    LOGGER.debug("Parsing indices");
-                    index = parseIndex();
-                }
-            } finally {
-                parseLock.unlock();
-            }
+            LOGGER.debug("Parsing index files");
+            index = parseIndex();
+            LOGGER.debug("Successfully index files with {} entries", index.getEntryCount());
         }
         return index;
     }
@@ -144,15 +128,9 @@ public abstract class CascContext {
      */
     protected final Root getRoot() {
         if (root == null) {
-            parseLock.tryLock();
-            try {
-                if (root == null) {
-                    LOGGER.debug("Parsing root)");
-                    root = parseRoot();
-                }
-            } finally {
-                parseLock.unlock();
-            }
+            LOGGER.debug("Parsing root");
+            root = parseRoot();
+            LOGGER.debug("Successfully parsed root file with {} entries", root.getHashCount());
         }
         return root;
     }
@@ -193,6 +171,65 @@ public abstract class CascContext {
         return getCascConfig().getVersion();
     }
 
+    public boolean isRegisteredData(String filename) {
+        return getHash(filename)
+                .map(this::isRegisteredData)
+                .orElse(false);
+    }
+
+    public boolean isRegisteredData(long hash) {
+        List<ContentChecksum> contentChecksum = getContentChecksums(hash);
+        List<FileKey> fileKeys = contentChecksum.stream().map(this::getFileKey).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+        List<IndexEntry> indexEntries = fileKeys.stream().map(this::getIndexEntry).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+        return !contentChecksum.isEmpty() && contentChecksum.size() == fileKeys.size() && fileKeys.size() == indexEntries.size();
+    }
+
+    public boolean isRegistered(long hash) {
+        return getFilename(hash)
+                .map(StringUtils::isNotEmpty)
+                .orElse(getRoot().isEntryAvailable(hash));
+    }
+
+    public boolean isRegistered(String filename) {
+        return getHash(filename).isPresent();
+    }
+
+    public Optional<String> getFilename(long hash) {
+        return Optional.ofNullable(filenames.get(hash));
+    }
+
+    public Optional<Long> getHash(String filename) {
+        Optional<Long> hash;
+        String cleanedFilename = cleanFilename(filename);
+        if (isEmpty(cleanedFilename)) {
+            hash = Optional.empty();
+        } else if (hashes.containsKey(cleanedFilename)) {
+            hash = Optional.of(hashes.get(cleanedFilename));
+        } else {
+            long filenameHash = hashFilename(cleanedFilename);
+            if (getRoot().isEntryAvailable(filenameHash)) {
+                hashes.putIfAbsent(cleanedFilename, filenameHash);
+                filenames.putIfAbsent(filenameHash, cleanedFilename);
+                hash = Optional.of(filenameHash);
+            } else {
+                hash = Optional.empty();
+            }
+        }
+        return hash;
+    }
+
+    public Set<Long> getHashes() {
+        return getRoot().getHashes();
+    }
+
+    public Set<Long> getResolvedHashes() {
+        return Collections.unmodifiableSet(filenames.keySet());
+    }
+
+    public Set<String> getResolvedFilenames() {
+        return Collections.unmodifiableSet(hashes.keySet());
+    }
+
     /**
      * Get the content checksums associated for a hash.
      *
@@ -202,16 +239,6 @@ public abstract class CascContext {
      */
     public List<ContentChecksum> getContentChecksums(long filenameHash) {
         return getRoot().getContentChecksums(filenameHash);
-    }
-
-    /**
-     * TODO Remove me!
-     *
-     * @return
-     */
-    @Deprecated
-    public Collection<Long> getRootHashes() {
-        return getRoot().getHashes();
     }
 
     /**
@@ -226,16 +253,6 @@ public abstract class CascContext {
     }
 
     /**
-     * TODO Remove me!
-     *
-     * @return
-     */
-    @Deprecated
-    public Collection<ContentChecksum> getEncodingContentChecksums() {
-        return getEncoding().getEntries().stream().map(EncodingEntry::getContentChecksum).collect(Collectors.toSet());
-    }
-
-    /**
      * Get the index entry for a file key.
      *
      * @param fileKey The file key.
@@ -244,16 +261,6 @@ public abstract class CascContext {
      */
     public Optional<IndexEntry> getIndexEntry(FileKey fileKey) {
         return getIndex().getEntry(fileKey);
-    }
-
-    /**
-     * TODO Remove me!
-     *
-     * @return
-     */
-    @Deprecated
-    public Collection<FileKey> getIndexFileKeys() {
-        return getIndex().getFileKeys();
     }
 
     /**
@@ -324,8 +331,7 @@ public abstract class CascContext {
      * @throws CascParsingException       When there is a problem creating a data reader for the file.
      */
     public DataReader getFileDataReader(String filename) throws CascParsingException, CascEntryNotFoundException {
-        return Optional.ofNullable(filename)
-                .map(CascContext::hashFilename)
+        return getHash(filename)
                 .map(this::getFileDataReader)
                 .orElseThrow(() -> new CascEntryNotFoundException(format("No entry found for a file with filename %s", filename)));
     }
@@ -367,13 +373,23 @@ public abstract class CascContext {
         return new BlteDataReader(getDataReader(indexEntry), indexEntry.getFileSize());
     }
 
+    protected DataReader getFileDataReader(IndexEntry indexEntry, ContentChecksum contentChecksum) throws CascParsingException {
+        if (indexEntry == null) {
+            throw new CascParsingException("Cannot create a data reader with no index entries provided.");
+        }
+        LOGGER.trace("Getting BLTE data reader for {} with checksum {} (uri: {}, datafile: {}, offset: {}, datasize: {})", indexEntry.getFileKey().toHexString(),
+                contentChecksum.toHexString(), getDataFileUri(indexEntry).orElse("#error#"), indexEntry.getFileNumber(),
+                indexEntry.getDataFileOffset(), indexEntry.getFileSize());
+        return new BlteDataReader(getDataReader(indexEntry), indexEntry.getFileSize(), contentChecksum);
+    }
+
     protected Supplier<DataReader> getFileDataReaderSupplier(IndexEntry indexEntry) throws CascParsingException {
         return () -> getFileDataReader(indexEntry);
     }
 
     protected List<IndexEntry> getIndexEntries(String path) {
-        return Optional.ofNullable(path)
-                .map(CascContext::hashFilename)
+
+        return getHash(path)
                 .map(this::getIndexEntries)
                 .orElse(Collections.emptyList());
     }
@@ -385,12 +401,22 @@ public abstract class CascContext {
                 .orElse(Collections.emptyList());
     }
 
+    protected static String cleanFilename(String filename) {
+        String cleaned;
+        if (isEmpty(filename)) {
+            cleaned = filename;
+        } else {
+            cleaned = filename.replace('/', '\\').toUpperCase();
+        }
+        return cleaned;
+    }
+
     protected static long hashFilename(String filename) {
         long hash;
         if (isEmpty(filename)) {
             hash = 0;
         } else {
-            byte[] data = filename.replace('/', '\\').toUpperCase().getBytes(StandardCharsets.US_ASCII);
+            byte[] data = cleanFilename(filename).getBytes(StandardCharsets.US_ASCII);
             hash = JenkinsHash.hashLittle2(data, data.length);
         }
         return hash;

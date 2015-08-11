@@ -19,14 +19,20 @@
 package nl.salp.warcraft4j.clientdata.casc.blte;
 
 import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
+import nl.salp.warcraft4j.clientdata.casc.ContentChecksum;
+import nl.salp.warcraft4j.hash.Hashes;
 import nl.salp.warcraft4j.io.datatype.DataType;
 import nl.salp.warcraft4j.io.parser.DataParsingException;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.reader.RandomAccessDataReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.function.Supplier;
+
+import static java.lang.String.format;
 
 /**
  * TODO Add description.
@@ -34,14 +40,32 @@ import java.util.function.Supplier;
  * @author Barre Dijkstra
  */
 public class BlteDataReader extends RandomAccessDataReader {
-    private DataReader parsedDataReader;
+    /** The logger. */
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BlteDataReader.class);
+    private final ContentChecksum contentChecksum;
+    private final BlteFile blteFile;
+    private final DataReader parsedDataReader;
 
     public BlteDataReader(Supplier<DataReader> rawDataReader, long fileSize) {
-        parsedDataReader = parseBlteFile(rawDataReader, fileSize).getDataReader().get();
+        this(rawDataReader, fileSize, null);
     }
 
     public BlteDataReader(Supplier<DataReader> rawDataReader, long fileSize, long offset, long length) {
-        parsedDataReader = parseBlteFile(rawDataReader, fileSize).getDataReader(offset, length).get();
+        this(rawDataReader, fileSize, offset, length, null);
+    }
+
+    public BlteDataReader(Supplier<DataReader> rawDataReader, long fileSize, ContentChecksum contentChecksum) {
+        this.contentChecksum = contentChecksum;
+        this.blteFile = parseBlteFile(rawDataReader, fileSize);
+        validateData();
+        this.parsedDataReader = blteFile.getDataReader().get();
+    }
+
+    public BlteDataReader(Supplier<DataReader> rawDataReader, long fileSize, long offset, long length, ContentChecksum contentChecksum) {
+        this.contentChecksum = contentChecksum;
+        this.blteFile = parseBlteFile(rawDataReader, fileSize);
+        validateData();
+        this.parsedDataReader = blteFile.getDataReader(offset, length).get();
     }
 
     private BlteFile parseBlteFile(Supplier<DataReader> rawDataReader, long fileSize) throws CascParsingException {
@@ -50,6 +74,18 @@ public class BlteDataReader extends RandomAccessDataReader {
         } catch (IOException e) {
             throw new CascParsingException(e);
         }
+    }
+
+    private void validateData() throws CascParsingException {
+        if (contentChecksum != null) {
+            ContentChecksum decompressedChecksum = new ContentChecksum(Hashes.MD5.hash(blteFile.decompress()));
+            LOGGER.trace("Validating BLTE data with checksum {} against expected checksum {}", decompressedChecksum, contentChecksum.toHexString());
+            if (!contentChecksum.equals(decompressedChecksum)) {
+                throw new CascParsingException(format("Porbably corrupt BLTE data with checksum %s while %s was expected.",
+                        decompressedChecksum.toHexString(), contentChecksum.toHexString()));
+            }
+        }
+
     }
 
     @Override

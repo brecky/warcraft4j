@@ -56,7 +56,7 @@ abstract class BlteChunkParser implements DataParser<List<BlteChunk>> {
         return chunks;
     }
 
-    private final List<BlteChunkHeader> parseHeaders(DataReader reader) throws DataParsingException {
+    private List<BlteChunkHeader> parseHeaders(DataReader reader) throws DataParsingException {
         List<BlteChunkHeader> headers = new ArrayList<>();
         for (int i = 0; i < chunkCount; i++) {
             logger().trace("Parsing chunk header {} out of {}", i + 1, chunkCount);
@@ -68,7 +68,7 @@ abstract class BlteChunkParser implements DataParser<List<BlteChunk>> {
 
     protected abstract BlteChunkHeader parseChunkHeader(DataReader reader) throws CascParsingException;
 
-    private final List<BlteChunk> parseChunks(List<BlteChunkHeader> headers, DataReader reader) throws DataParsingException {
+    private List<BlteChunk> parseChunks(List<BlteChunkHeader> headers, DataReader reader) throws DataParsingException {
         List<BlteChunk> chunks = new ArrayList<>();
         for (int i = 0; i < chunkCount; i++) {
             BlteChunk chunk = parseChunk(reader, headers.get(i));
@@ -81,7 +81,7 @@ abstract class BlteChunkParser implements DataParser<List<BlteChunk>> {
 
     protected abstract BlteChunk parseChunk(DataReader reader, BlteChunkHeader header) throws CascParsingException;
 
-    protected static final DataDecompressor getDecompressor(char type) {
+    protected static DataDecompressor getDecompressor(char type) {
         DataDecompressor decompressor;
         switch (type) {
             case 'N':

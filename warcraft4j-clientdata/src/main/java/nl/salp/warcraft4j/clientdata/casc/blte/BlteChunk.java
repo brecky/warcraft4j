@@ -18,9 +18,9 @@
  */
 package nl.salp.warcraft4j.clientdata.casc.blte;
 
-import nl.salp.warcraft4j.clientdata.casc.Checksum;
+import nl.salp.warcraft4j.clientdata.casc.CascParsingException;
 
-import java.util.function.Supplier;
+import static java.lang.String.format;
 
 /**
  * TODO Add description.
@@ -28,15 +28,25 @@ import java.util.function.Supplier;
  * @author Barre Dijkstra
  */
 class BlteChunk {
+    public static final long VARIABLE_SIZE = 0;
     private final long compressedSize;
     private final long decompressedSize;
-    private final byte[] data;
     private final DataDecompressor decompressorSupplier;
+    private byte[] data;
+    private boolean compressed;
+
+    public BlteChunk(long compressedSize, byte[] data, DataDecompressor decompressorSupplier) {
+        this(compressedSize, VARIABLE_SIZE, data, decompressorSupplier);
+    }
 
     public BlteChunk(long compressedSize, long decompressedSize, byte[] data, DataDecompressor decompressorSupplier) {
+        if (data.length != compressedSize) {
+            throw new CascParsingException(format("Error creating BLTE chunk, compressed data is %d bytes with %d bytes expected", data.length, compressedSize));
+        }
         this.compressedSize = compressedSize;
         this.decompressedSize = decompressedSize;
         this.data = data;
+        this.compressed = true;
         this.decompressorSupplier = decompressorSupplier;
     }
 
@@ -48,11 +58,18 @@ class BlteChunk {
         return decompressedSize;
     }
 
-    public byte[] getCompressedData() {
-        return data;
+    public boolean isDecompressedSizeVariable() {
+        return decompressedSize == VARIABLE_SIZE;
     }
 
-    public byte[] decompress() {
-        return decompressorSupplier.decompress(data, 0, data.length, decompressedSize);
+    public byte[] getData() {
+        if (compressed) {
+            data = decompressorSupplier.decompress(data, 0, data.length, decompressedSize);
+            if (!isDecompressedSizeVariable() && data.length != decompressedSize) {
+                throw new CascParsingException(format("Error decompressing BLTE chunk, decompressed data is %d bytes with %d bytes expected", data.length, decompressedSize));
+            }
+            compressed = false;
+        }
+        return data;
     }
 }

@@ -98,6 +98,6 @@ public class BlteFileParser implements DataParser<BlteFile> {
         short b1 = reader.readNext(DataTypeFactory.getUnsignedByte());
         short b2 = reader.readNext(DataTypeFactory.getUnsignedByte());
         short b3 = reader.readNext(DataTypeFactory.getUnsignedByte());
-        return b1 << 16 | b2 << 8 | b3 << 0;
+        return b1 << 16 | b2 << 8 | b3;
     }
 }

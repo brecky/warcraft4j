@@ -54,7 +54,7 @@ public class LocalIndexParser {
     }
 
     public Index parse() {
-        LOGGER.debug("Parsing local index entries from {}.", installationDirectory);
+        LOGGER.trace("Parsing local index entries from {}.", installationDirectory);
         Collection<Path> latestIndexFilePaths = getLatestIndexFilePaths();
         List<LocalIndexFile> latestIndexFiles = latestIndexFilePaths.stream()
                 .map(LocalIndexParser::parse)
@@ -64,15 +64,8 @@ public class LocalIndexParser {
                 .flatMap(Collection::stream)
                 .distinct()
                 .collect(Collectors.toList());
-        LOGGER.debug("Parsed {} index entries from {} index files.", entries.size(), latestIndexFiles.size());
+        LOGGER.trace("Parsed {} index entries from {} index files.", entries.size(), latestIndexFiles.size());
         return new Index(entries);
-        /*
-        Collection<Path> olderIndexFilePaths = getIndexFilePathsExcluding(latestIndexFilePaths);
-        List<LocalIndexFile> olderIndexFiles = olderIndexFilePaths.stream()
-                .map(LocalIndexParser::parse)
-                .collect(Collectors.toList());
-        return new Index(latestIndexFiles, olderIndexFiles);
-        */
     }
 
     /**
@@ -112,36 +105,6 @@ public class LocalIndexParser {
             throw new CascParsingException("Error getting the latest index files", e);
         }
     }
-
-    private Collection<Path> getIndexFilePaths() {
-        try {
-            IndexFileScanner scanner = new IndexFileScanner();
-            Path path = installationDirectory.resolve(Paths.get("Data", "data"));
-            Files.walkFileTree(path, scanner);
-            LOGGER.trace("Found {} index files in {}", scanner.getIndexFiles().size(), path);
-            return scanner.getIndexFiles();
-        } catch (IOException e) {
-            throw new CascParsingException("Error getting all index files", e);
-        }
-    }
-
-    private Collection<Path> getIndexFilePathsExcluding(Collection<Path> excludedPaths) {
-        try {
-            IndexFileScanner scanner = new IndexFileScanner();
-            Path path = installationDirectory.resolve(Paths.get("Data", "data"));
-            Files.walkFileTree(path, scanner);
-            List<Path> files = scanner.getIndexFiles().stream()
-                    .filter(p -> p != null)
-                    .filter(p -> !excludedPaths.contains(p))
-                    .distinct()
-                    .collect(Collectors.toList());
-            LOGGER.trace("Found {} index files in {}, not in the {} element file list", files.size(), path, excludedPaths.size());
-            return files;
-        } catch (IOException e) {
-            throw new CascParsingException("Error getting all index files", e);
-        }
-    }
-
 
     private static int parseFileNumber(Path file) throws CascParsingException {
         try {

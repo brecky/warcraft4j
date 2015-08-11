@@ -32,6 +32,10 @@ class BlteChunkHeader {
     private final long decompressedSize;
     private final Checksum hash;
 
+    public BlteChunkHeader(long compressedSize) {
+        this(compressedSize, BlteChunk.VARIABLE_SIZE, null);
+    }
+
     public BlteChunkHeader(long compressedSize, long decompressedSize) {
         this(compressedSize, decompressedSize, null);
     }

@@ -52,7 +52,7 @@ public final class CascUtil {
             hash ^= b;
             hash *= FNV_PRIME32;
         }
-        return (int) (hash & 0xFFFFFFFF);
+        return (int) hash;
     }
 
     public static long hashFilename(String filename) {
