@@ -70,6 +70,7 @@
         <!-- Warcraft4J application modules -->
         <module>warcraft4j-webapp</module>
         <module>warcraft4j-devtools</module>
+        <module>warcraft4j-analysis</module>
     </modules>
 
     <!-- Project properties -->
