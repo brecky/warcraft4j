@@ -20,7 +20,7 @@
 package nl.salp.warcraft4j.data.battlenet.api;
 
 import com.google.inject.Inject;
-import nl.salp.warcraft4j.Language;
+import nl.salp.warcraft4j.Locale;
 import nl.salp.warcraft4j.Region;
 import nl.salp.warcraft4j.data.battlenet.BattlenetApiConfig;
 import nl.salp.warcraft4j.data.battlenet.BattlenetLocale;
@@ -60,7 +60,7 @@ public abstract class BattlenetApi {
      * @param region   The region to retrieve the data from.
      * @param language The language to get the data in.
      */
-    public BattlenetApi(Region region, Language language) {
+    public BattlenetApi(Region region, Locale language) {
         this.region = BattlenetRegion.getRegionForKey(region);
         this.locale = BattlenetLocale.getLocale(language);
     }

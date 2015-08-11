@@ -30,8 +30,8 @@
     <artifactId>warcraft4j-io-http</artifactId>
     <packaging>jar</packaging>
 
-    <name>warcraft4j-io-file</name>
-    <description>File I/O and data type library for Warcraft4J</description>
+    <name>Warcraft4j HTTP-based I/O and data type library</name>
+    <description>HTTP I/O and data type library for Warcraft4J</description>
 
     <dependencies>
         <dependency>

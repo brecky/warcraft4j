@@ -30,7 +30,7 @@ import nl.salp.warcraft4j.Region;
  */
 public enum BattlenetRegion {
     /** Americas. */
-    AMERICAS(Region.UNITED_STATES, "us", "us"),
+    AMERICAS(Region.AMERICAS, "us", "us"),
     /** Europe. */
     EUROPE(Region.EUROPE, "eu", "eu"),
     /** Korea. */
@@ -38,7 +38,7 @@ public enum BattlenetRegion {
     /** Taiwan. */
     TAIWAN(Region.TAIWAN, "tw", "tw"),
     /** South-East asia. */
-    SEA(Region.SOUTH_EAST_ASIA, "us", "us");
+    SEA(Region.SEA_AUSTRALASIA, "us", "us");
 
     /** The Battle.NET API URI prefix. */
     private final String apiUri;

@@ -16,10 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package nl.salp.warcraft4j;
 
 /**
- * TODO Add description.
+ * World of Warcraft development branch.
  *
  * @author Barre Dijkstra
  */
-package nl.salp.warcraft4j;
+public enum Branch {
+    /** Live development branch, default installation branch. */
+    LIVE,
+    /** Testing development branch, often referenced as PTR or Public Test Realm. */
+    TESTING,
+    /** Beta development branch, mostly used for new expansions. */
+    BETA
+}

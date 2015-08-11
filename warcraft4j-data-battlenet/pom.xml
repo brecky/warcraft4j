@@ -40,6 +40,10 @@
             <artifactId>warcraft4j-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>nl.salp.warcraft4j</groupId>
+            <artifactId>warcraft4j-model</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>

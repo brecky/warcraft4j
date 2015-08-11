@@ -20,11 +20,10 @@
 package nl.salp.warcraft4j.data.battlenet.api;
 
 import com.google.inject.Singleton;
-import nl.salp.warcraft4j.Language;
+import nl.salp.warcraft4j.Locale;
 import nl.salp.warcraft4j.Region;
 import nl.salp.warcraft4j.data.battlenet.BattlenetLocale;
 import nl.salp.warcraft4j.data.battlenet.BattlenetRegion;
-import nl.salp.warcraft4j.data.battlenet.api.BattlenetApi;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -75,7 +74,7 @@ public class BattlenetHttpApi extends BattlenetApi {
      * @param region   The region to retrieve the data from.
      * @param language The language to get the data in.
      */
-    public BattlenetHttpApi(Region region, Language language) {
+    public BattlenetHttpApi(Region region, Locale language) {
         super(region, language);
     }
 

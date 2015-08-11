@@ -28,7 +28,7 @@
     <packaging>pom</packaging>
 
     <!-- Project information. -->
-    <name>Warcraft4J</name>
+    <name>Warcraft4J parent module</name>
     <description>General parent module for all Warcraft4J modules.</description>
 
     <scm>
@@ -60,6 +60,7 @@
         <module>warcraft4j-io-http</module>
         <!-- Warcraft4J core modules -->
         <module>warcraft4j-core</module>
+        <module>warcraft4j-model</module>
         <!-- Warcraft4J data modules -->
         <module>warcraft4j-data-casc</module>
         <module>warcraft4j-data-battlenet</module>
@@ -152,6 +153,11 @@
             <dependency>
                 <groupId>nl.salp.warcraft4j</groupId>
                 <artifactId>warcraft4j-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nl.salp.warcraft4j</groupId>
+                <artifactId>warcraft4j-model</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

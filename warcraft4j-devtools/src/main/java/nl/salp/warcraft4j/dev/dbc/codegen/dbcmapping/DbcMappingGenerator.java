@@ -18,9 +18,9 @@
  */
 package nl.salp.warcraft4j.dev.dbc.codegen.dbcmapping;
 
-import nl.salp.warcraft4j.clientdata.dbc.DbcFile;
-import nl.salp.warcraft4j.clientdata.dbc.DbcStringTable;
-import nl.salp.warcraft4j.clientdata.dbc.DbcUtil;
+import nl.salp.warcraft4j.data.dbc.DbcFile;
+import nl.salp.warcraft4j.data.dbc.DbcStringTable;
+import nl.salp.warcraft4j.data.dbc.DbcUtil;
 import nl.salp.warcraft4j.dev.DevToolsConfig;
 import nl.salp.warcraft4j.dev.dbc.codegen.VelocityGenerator;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 import static java.lang.String.format;
 
 /**
- * Simple velocity template based file generator for generating DBC mapping entry classes ({@link nl.salp.warcraft4j.clientdata.dbc.DbcEntry}).
+ * Simple velocity template based file generator for generating DBC mapping entry classes ({@link nl.salp.warcraft4j.data.dbc.DbcEntry}).
  *
  * @author Barre Dijkstra
  */

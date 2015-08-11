@@ -28,8 +28,10 @@
     </parent>
 
     <artifactId>warcraft4j-devtools</artifactId>
-    <name>warcraft4j-devtools</name>
-    <description>Warcraft4J development tools</description>
+    <packaging>jar</packaging>
+
+    <name>Warcraft4J development tools and utilities</name>
+    <description>Collection of various development tools and utilities to support development of Warcraft4J and structural data analysis.</description>
 
     <dependencies>
         <!-- Module dependencies -->

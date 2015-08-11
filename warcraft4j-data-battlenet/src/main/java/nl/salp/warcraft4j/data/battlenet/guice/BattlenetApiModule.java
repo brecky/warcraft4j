@@ -26,8 +26,6 @@ import nl.salp.warcraft4j.data.battlenet.api.JacksonJsonApiResultParser;
 import nl.salp.warcraft4j.data.battlenet.api.JsonApiResultParser;
 import nl.salp.warcraft4j.data.battlenet.api.wow.WowBattlenetApi;
 import nl.salp.warcraft4j.data.battlenet.api.wow.WowBattlenetApiImpl;
-import nl.salp.warcraft4j.data.battlenet.service.BattlenetPlayerCharacterService;
-import nl.salp.warcraft4j.service.PlayerCharacterService;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -69,6 +67,5 @@ public class BattlenetApiModule extends AbstractModule {
         bind(BattlenetApi.class).to(BattlenetHttpApi.class);
         bind(JsonApiResultParser.class).to(JacksonJsonApiResultParser.class);
         bind(WowBattlenetApi.class).to(WowBattlenetApiImpl.class);
-        bind(PlayerCharacterService.class).annotatedWith(Battlenet.class).to(BattlenetPlayerCharacterService.class);
     }
 }

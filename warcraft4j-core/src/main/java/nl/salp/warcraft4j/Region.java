@@ -19,17 +19,68 @@
 
 package nl.salp.warcraft4j;
 
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.Collections.unmodifiableSet;
+import static nl.salp.warcraft4j.Locale.*;
+
 /**
- * TODO Add description.
+ * World of Warcraft regions.
+ * <p>
+ * Supported locale lists for the regions are based on <a href="https://us.battle.net/support/en/article/check-the-game-region">a battle.net support article</a>.
  *
  * @author Barre Dijkstra
  */
 public enum Region {
-    CHINA,
-    KOREA,
-    TAIWAN,
-    UNITED_STATES,
-    EUROPE,
-    RUSSIA,
-    SOUTH_EAST_ASIA;
+    /** American region (North-, Central-, South-America and Canada). */
+    AMERICAS(EN_US, ES_MX, PT_BR),
+    /** European region. */
+    EUROPE(EN_GB, DE_DE, ES_ES, FR_FR, IT_IT, PT_PT, RU_RU),
+    /** Korean region (probably South only due to export restrictions). */
+    KOREA(KO_KR),
+    /** Taiwanese region. */
+    TAIWAN(EN_TW, ZH_TW),
+    /** Chinese region. */
+    CHINA(EN_CN, ZH_CN),
+    /** SEA and Australasian region (Southeast Asia, Australia and New Zealand). */
+    SEA_AUSTRALASIA(EN_SG);
+
+    /** The supported locales for the region. */
+    private final Set<Locale> supportedLocales;
+
+    /**
+     * Create a new region instance.
+     *
+     * @param supportedLocales The supported locales for the region.
+     */
+    Region(Locale... supportedLocales) {
+        this.supportedLocales = Stream.of(supportedLocales)
+                .distinct()
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Get the supported locales for the region.
+     *
+     * @return The supported locales.
+     */
+    public Set<Locale> getSupportedLocales() {
+        return unmodifiableSet(supportedLocales);
+    }
+
+    /**
+     * Check if a locale is supported by the region.
+     *
+     * @param locale The locale.
+     *
+     * @return {@code true} if the locale is supported.
+     */
+    public boolean isSupported(Locale locale) {
+        return Optional.ofNullable(locale)
+                .map(this.supportedLocales::contains)
+                .orElse(false);
+    }
 }

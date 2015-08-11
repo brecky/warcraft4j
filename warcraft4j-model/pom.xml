@@ -27,16 +27,16 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>warcraft4j-io</artifactId>
+    <artifactId>warcraft4j-model</artifactId>
     <packaging>jar</packaging>
 
-    <name>Warcraft4j base I/O and data type library</name>
-    <description>Base I/O and data type library for Warcraft4J</description>
+    <name>Warcraft4J Model</name>
+    <description>Warcraft4J domain model</description>
 
     <dependencies>
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
-            <artifactId>warcraft4j-util</artifactId>
+            <artifactId>warcraft4j-core</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -19,34 +19,32 @@
 
 package nl.salp.warcraft4j.data.battlenet;
 
-import nl.salp.warcraft4j.Language;
+import nl.salp.warcraft4j.Locale;
 
 /**
  * Battle.NET language locale.
  *
  * @author Barre Dijkstra
- * @see nl.salp.warcraft4j.Language
+ * @see Locale
  */
 public enum BattlenetLocale {
     /** English language. */
-    ENGLISH(Language.ENGLISH, "en_GB"),
+    ENGLISH(Locale.EN_GB, "en_GB"),
     /** German language. */
-    GERMAN(Language.GERMAN, "de_DE"),
+    GERMAN(Locale.DE_DE, "de_DE"),
     /** Spanish language. */
-    SPANISH(Language.SPANISH, "es_ES"),
+    SPANISH(Locale.ES_ES, "es_ES"),
     /** French language. */
-    FRENCH(Language.FRENCH, "fr_FR"),
+    FRENCH(Locale.FR_FR, "fr_FR"),
     /** Italian language. */
-    ITALIAN(Language.ITALIAN, "it_IT"),
-    /** Polish language. */
-    POLISH(Language.POLISH, "pl_PL"),
+    ITALIAN(Locale.IT_IT, "it_IT"),
     /** Portuguese language. */
-    PORTUGUESE(Language.PORTUGUESE, "pt_PT"),
+    PORTUGUESE(Locale.PT_PT, "pt_PT"),
     /** Russian language. */
-    RUSSIAN(Language.RUSSIAN, "ru_RU");
+    RUSSIAN(Locale.RU_RU, "ru_RU");
 
     /** The language. */
-    private final Language language;
+    private final Locale language;
     /** The Battle.NET locale for the language. */
     private final String locale;
 
@@ -56,7 +54,7 @@ public enum BattlenetLocale {
      * @param language The language.
      * @param locale   The Battle.NET locale for the language.
      */
-    private BattlenetLocale(Language language, String locale) {
+    private BattlenetLocale(Locale language, String locale) {
         this.language = language;
         this.locale = locale;
     }
@@ -66,7 +64,7 @@ public enum BattlenetLocale {
      *
      * @return The language.
      */
-    public Language getLanguage() {
+    public Locale getLanguage() {
         return language;
     }
 
@@ -86,7 +84,7 @@ public enum BattlenetLocale {
      *
      * @return The locale or {@code null} if no locale was found for the given language.
      */
-    public static BattlenetLocale getLocale(Language language) {
+    public static BattlenetLocale getLocale(Locale language) {
         BattlenetLocale locale = null;
         for (BattlenetLocale l : BattlenetLocale.values()) {
             if (l.getLanguage() == language) {

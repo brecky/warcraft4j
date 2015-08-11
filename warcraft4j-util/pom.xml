@@ -30,7 +30,7 @@
     <artifactId>warcraft4j-util</artifactId>
     <packaging>jar</packaging>
 
-    <name>warcraft4j-util</name>
+    <name>Warcraft4J utility library</name>
     <description>Utility library for Warcraft4J modules</description>
 
     <dependencies>

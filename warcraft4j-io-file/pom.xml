@@ -30,7 +30,7 @@
     <artifactId>warcraft4j-io-file</artifactId>
     <packaging>jar</packaging>
 
-    <name>warcraft4j-io-file</name>
+    <name>Warcraft4j file-based I/O and data type library</name>
     <description>File I/O and data type library for Warcraft4J</description>
 
     <dependencies>
