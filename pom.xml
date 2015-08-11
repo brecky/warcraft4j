@@ -64,13 +64,8 @@
         <!-- Warcraft4J data modules -->
         <module>warcraft4j-clientdata</module>
         <module>warcraft4j-battlenet</module>
-        <module>warcraft4j-wowhead</module>
-        <module>warcraft4j-combatlog</module>
-        <module>warcraft4j-addon</module>
         <!-- Warcraft4J application modules -->
-        <module>warcraft4j-webapp</module>
         <module>warcraft4j-devtools</module>
-        <module>warcraft4j-analysis</module>
     </modules>
 
     <!-- Project properties -->
@@ -163,16 +158,6 @@
             <dependency>
                 <groupId>nl.salp.warcraft4j</groupId>
                 <artifactId>warcraft4j-battlenet</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.salp.warcraft4j</groupId>
-                <artifactId>warcraft4j-combatlog</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.salp.warcraft4j</groupId>
-                <artifactId>warcraft4j-wowhead</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

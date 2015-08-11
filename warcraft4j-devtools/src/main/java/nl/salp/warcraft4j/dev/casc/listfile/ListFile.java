@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.analysis.clientdata.casc.listfile;
+package nl.salp.warcraft4j.dev.casc.listfile;
 
 import nl.salp.warcraft4j.hash.JenkinsHash;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
@@ -36,7 +36,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  *
  * @author Barre Dijkstra
  */
-public class ListFile {
+class ListFile {
     private final Map<String, Long> files;
     private final Map<Long, String> hashes;
 

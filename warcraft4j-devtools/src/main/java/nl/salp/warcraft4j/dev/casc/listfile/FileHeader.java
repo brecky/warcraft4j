@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.analysis.clientdata.casc.listfile;
+package nl.salp.warcraft4j.dev.casc.listfile;
 
 import nl.salp.warcraft4j.clientdata.casc.CascUtil;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
@@ -33,7 +33,7 @@ import java.util.function.Supplier;
  *
  * @author Barre Dijkstra
  */
-public class FileHeader {
+class FileHeader {
     private final byte[] header;
     private final int hash;
 

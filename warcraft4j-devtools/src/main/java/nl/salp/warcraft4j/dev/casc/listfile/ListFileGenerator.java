@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.analysis.clientdata.casc.listfile;
+package nl.salp.warcraft4j.dev.casc.listfile;
 
 import nl.salp.warcraft4j.clientdata.*;
 import nl.salp.warcraft4j.clientdata.casc.CascContext;
