@@ -42,7 +42,7 @@ public enum DbcDataType {
     /** 32-bit signed integer {@code java.lang.Integer}. */
     INT32(() -> Integer.class, () -> Integer[].class, (field) -> DataTypeFactory.getInteger()),
     /** 32-bit unsigned integer wrapped in a 64-bit signed long. */
-    UINT32(() -> Long.class, () -> Long[].class, (field) -> DataTypeFactory.getUnsignedInteger()),
+    UINT32(() -> Integer.class, () -> Integer[].class, (field) -> DataTypeFactory.getInteger()),
     /** 64-bit signed integer {@code java.lang.Long}. */
     INT64(() -> Long.class, () -> Long[].class, (field) -> DataTypeFactory.getLong()),
     /**

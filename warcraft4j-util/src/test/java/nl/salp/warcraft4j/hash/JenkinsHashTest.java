@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 public class JenkinsHashTest {
     @Test
     public void testJenkinsHashLittle2WithEmptyValue() {
-        testJenkinsHashLittle2(0xdeadbeef_deadbeefL, "", 0, 0);
+        testJenkinsHashLittle2(JenkinsHash.HASH_EMPTY_VALUE_HASHLITTLE2, "", 0, 0);
     }
 
     @Test
@@ -58,6 +58,11 @@ public class JenkinsHashTest {
     @Test
     public void testJenkinsHashLittle2WithValueAndOffsetC() {
         testJenkinsHashLittle2(0xcd628161_6cbea4b3L, "Four score and seven years ago", 1, 0);
+    }
+
+    @Test
+    public void testJenkinsHashLittleWithEmptyValue() {
+        testJenkinsHashLittle(JenkinsHash.HASH_EMPTY_VALUE_HASHLITTLE, "", 0);
     }
 
     @Test

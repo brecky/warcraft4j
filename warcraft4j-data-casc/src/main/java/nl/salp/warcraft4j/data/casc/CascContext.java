@@ -411,12 +411,12 @@ public abstract class CascContext {
         return cleaned;
     }
 
-    protected static long hashFilename(String filename) {
+    public static long hashFilename(String filename) {
         long hash;
         if (isEmpty(filename)) {
             hash = 0;
         } else {
-            byte[] data = cleanFilename(filename).getBytes(StandardCharsets.US_ASCII);
+ ;           byte[] data = cleanFilename(filename).getBytes(StandardCharsets.US_ASCII);
             hash = JenkinsHash.hashLittle2(data, data.length);
         }
         return hash;

@@ -20,6 +20,8 @@ import java.util.Arrays;
  * @version $Revision: $
  */
 public class JenkinsHash {
+    public static final long HASH_EMPTY_VALUE_HASHLITTLE2 = 0xDEADBEEF_DEADBEEFL;
+    public static final int HASH_EMPTY_VALUE_HASHLITTLE = 0xDEADBEEF;
 
     /**
      * Default constructor.
