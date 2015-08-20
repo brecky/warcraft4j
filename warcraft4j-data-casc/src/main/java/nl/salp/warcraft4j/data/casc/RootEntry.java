@@ -18,61 +18,19 @@
  */
 package nl.salp.warcraft4j.data.casc;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.util.Optional;
 
 /**
- * TODO Add description.
+ * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public class RootEntry {
-    private final long filenameHash;
-    private final ContentChecksum contentChecksum;
-    private final long blockFlags;
-    private final long blockUnknown;
-    private final long entryUnknown;
+public interface RootEntry {
+    ContentChecksum getContentChecksum();
 
-    public RootEntry(long filenameHash, ContentChecksum contentChecksum, long blockFlags, long blockUnknown, long entryUnknown) {
-        this.filenameHash = filenameHash;
-        this.contentChecksum = Optional.ofNullable(contentChecksum).orElseThrow(() -> new IllegalArgumentException("Unable to create a root file entry with a null content checksum"));
+    long getFilenameHash();
 
-        this.blockFlags = blockFlags;
-        this.blockUnknown = blockUnknown;
-        this.entryUnknown = entryUnknown;
-    }
+    long getFlags();
 
-    public ContentChecksum getContentChecksum() {
-        return contentChecksum;
-    }
-
-    public long getFilenameHash() {
-        return filenameHash;
-    }
-
-    public long getFlags() {
-        return blockFlags;
-    }
-
-    public Optional<CascLocale> getLocale() {
-        return CascLocale.getLocale(blockFlags);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
+    Optional<CascLocale> getLocale();
 }

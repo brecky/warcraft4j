@@ -18,60 +18,19 @@
  */
 package nl.salp.warcraft4j.data.casc;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.util.List;
-import java.util.Optional;
 
 /**
- * TODO Add description.
+ * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public class EncodingEntry {
-    private final long fileSize;
-    private final ContentChecksum contentChecksum;
-    private final List<FileKey> fileChecksums;
-    private final int hash;
+public interface EncodingEntry {
+    long getFileSize();
 
-    public EncodingEntry(long fileSize, ContentChecksum contentChecksum, List<FileKey> fileChecksums) {
-        this.fileSize = fileSize;
-        this.contentChecksum = Optional.ofNullable(contentChecksum).orElseThrow(() -> new IllegalArgumentException("Can't create an encoding file entry with no content checksum"));
-        this.fileChecksums = Optional.ofNullable(fileChecksums)
-                .filter(f -> !f.isEmpty())
-                .orElseThrow(() -> new IllegalArgumentException("Can't create an encoding file entry with no file checksums"));
-        this.hash = contentChecksum.hashCode();
-    }
+    ContentChecksum getContentChecksum();
 
-    public long getFileSize() {
-        return fileSize;
-    }
+    FileKey getFirstFileKey();
 
-    public ContentChecksum getContentChecksum() {
-        return contentChecksum;
-    }
-
-    public FileKey getFirstFileKey() {
-        return fileChecksums.get(0);
-    }
-
-    public List<FileKey> getFileKeys() {
-        return fileChecksums;
-    }
-
-    @Override
-    public int hashCode() {
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
+    List<FileKey> getFileKeys();
 }

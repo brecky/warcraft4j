@@ -38,8 +38,18 @@ public interface CascConfig {
      */
     List<String> getAvailableRegions() throws CascParsingException;
 
+    /**
+     * Get the build configuration key if present.
+     *
+     * @return Optional of the build configuration key.
+     */
     Optional<String> getBuildConfigKey();
 
+    /**
+     * Get the build configuration key if present.
+     *
+     * @return Optional of the CDN configuration key.
+     */
     Optional<String> getCdnConfigKey();
 
     /**
@@ -60,8 +70,18 @@ public interface CascConfig {
      */
     FileKey getExtractedEncodingFileChecksum() throws CascParsingException;
 
+    /**
+     * Get the file key of the encoding file for the active encoding file.
+     *
+     * @return The file key for the encoding file.
+     */
     FileKey getStorageEncodingFileChecksum();
 
+    /**
+     * Get the size of the encoding file for the active encoding file.
+     *
+     * @return The file size of the encoding file.
+     */
     long getStorageEncodingFileSize();
 
     /**
@@ -127,7 +147,17 @@ public interface CascConfig {
      */
     String getVersion() throws CascParsingException;
 
+    /**
+     * Get the region for which the CASC config is configured.
+     *
+     * @return The region.
+     */
     Region getRegion();
 
+    /**
+     * Get the region code for the configured region.
+     *
+     * @return The region code.
+     */
     String getRegionCode();
 }

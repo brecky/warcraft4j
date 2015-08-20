@@ -104,9 +104,13 @@ public abstract class CascContext {
         if (encoding == null) {
             LOGGER.debug("Parsing encoding file");
             encoding = parseEncoding();
-            LOGGER.debug("Successfully encoding file with {} entries", encoding.getEntryCount());
+            LOGGER.debug("Successfully initialised encoding file with {} entries", encoding.getEntryCount());
         }
         return encoding;
+    }
+
+    public final Collection<EncodingEntry> getEncodingEntries() {
+        return Collections.unmodifiableCollection(getEncoding().getEntries());
     }
 
     protected abstract Index parseIndex() throws CascParsingException;
@@ -116,10 +120,15 @@ public abstract class CascContext {
         if (index == null) {
             LOGGER.debug("Parsing index files");
             index = parseIndex();
-            LOGGER.debug("Successfully index files with {} entries", index.getEntryCount());
+            LOGGER.debug("Successfully initialised index files with {} entries", index.getEntryCount());
         }
         return index;
     }
+
+    public final Collection<IndexEntry> getIndexEntries() {
+        return Collections.unmodifiableCollection(getIndex().getEntries());
+    }
+
 
     /**
      * Get the parsed root.
@@ -130,9 +139,13 @@ public abstract class CascContext {
         if (root == null) {
             LOGGER.debug("Parsing root");
             root = parseRoot();
-            LOGGER.debug("Successfully parsed root file with {} entries", root.getHashCount());
+            LOGGER.debug("Successfully initialised root file with {} entries", root.getHashCount());
         }
         return root;
+    }
+
+    public final Collection<RootEntry> getRootEntries() {
+        return Collections.unmodifiableCollection(getRoot().getEntries());
     }
 
     /**
@@ -388,7 +401,6 @@ public abstract class CascContext {
     }
 
     protected List<IndexEntry> getIndexEntries(String path) {
-
         return getHash(path)
                 .map(this::getIndexEntries)
                 .orElse(Collections.emptyList());
@@ -416,7 +428,8 @@ public abstract class CascContext {
         if (isEmpty(filename)) {
             hash = 0;
         } else {
- ;           byte[] data = cleanFilename(filename).getBytes(StandardCharsets.US_ASCII);
+            ;
+            byte[] data = cleanFilename(filename).getBytes(StandardCharsets.US_ASCII);
             hash = JenkinsHash.hashLittle2(data, data.length);
         }
         return hash;

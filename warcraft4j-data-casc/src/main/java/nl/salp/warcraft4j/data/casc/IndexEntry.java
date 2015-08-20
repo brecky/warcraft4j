@@ -18,57 +18,17 @@
  */
 package nl.salp.warcraft4j.data.casc;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public class IndexEntry {
-    private final FileKey fileKey;
-    private final int fileNumber;
-    private final int dataFileOffset;
-    private final long fileSize;
-    private final int hash;
+public interface IndexEntry {
+    FileKey getFileKey();
 
-    public IndexEntry(FileKey fileKey, int fileNumber, int dataFileOffset, long fileSize) {
-        this.fileKey = fileKey;
-        this.fileSize = fileSize;
-        this.fileNumber = fileNumber;
-        this.dataFileOffset = dataFileOffset;
-        this.hash = fileKey.hashCode();
-    }
+    long getFileSize();
 
-    public FileKey getFileKey() {
-        return fileKey;
-    }
+    int getFileNumber();
 
-    public long getFileSize() {
-        return fileSize;
-    }
-
-    public int getFileNumber() {
-        return fileNumber;
-    }
-
-    public int getDataFileOffset() {
-        return dataFileOffset;
-    }
-
-    @Override
-    public int hashCode() {
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
+    int getDataFileOffset();
 }

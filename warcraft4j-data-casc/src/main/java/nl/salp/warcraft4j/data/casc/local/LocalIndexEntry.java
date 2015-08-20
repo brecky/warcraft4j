@@ -18,15 +18,15 @@
  */
 package nl.salp.warcraft4j.data.casc.local;
 
+import nl.salp.warcraft4j.data.casc.CascIndexEntry;
 import nl.salp.warcraft4j.data.casc.FileKey;
-import nl.salp.warcraft4j.data.casc.IndexEntry;
 
 /**
  * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public class LocalIndexEntry extends IndexEntry {
+public class LocalIndexEntry extends CascIndexEntry {
     private final short indexInfoHigh;
     private final long indexInfoLow;
 

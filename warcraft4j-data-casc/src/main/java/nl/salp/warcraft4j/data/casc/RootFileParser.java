@@ -78,7 +78,7 @@ class RootFileParser implements DataParser<Root> {
                     if (!entries.containsKey(filenameHash)) {
                         entries.put(filenameHash, new ArrayList<>());
                     }
-                    entries.get(filenameHash).add(new RootEntry(filenameHash, new ContentChecksum(contentChecksum), blockFlags, blockUnknown, entryUnknown.get((int) i)));
+                    entries.get(filenameHash).add(new CascRootEntry(filenameHash, new ContentChecksum(contentChecksum), blockFlags, blockUnknown, entryUnknown.get((int) i)));
                     totalReadEntries++;
                 }
                 LOGGER.trace("Read {} entries from {} calculated, on position {}", totalReadEntries, totalEntries, reader.position());

@@ -18,6 +18,8 @@
  */
 package nl.salp.warcraft4j.data.casc;
 
+import nl.salp.warcraft4j.Locale;
+
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -26,7 +28,7 @@ import java.util.stream.Stream;
  *
  * @author Barre Dijkstra
  */
-enum CascLocale {
+public enum CascLocale {
     ALL(-1),
     NONE(0),
     UNKNOWN_1(0x1),
@@ -52,6 +54,14 @@ enum CascLocale {
 
     CascLocale(long flag) {
         this.flag = flag;
+    }
+
+    public long getFlag() {
+        return flag;
+    }
+
+    public Optional<Locale> toLocale() {
+        return Locale.getLocale(name());
     }
 
     public static Optional<CascLocale> getLocale(long flag) {

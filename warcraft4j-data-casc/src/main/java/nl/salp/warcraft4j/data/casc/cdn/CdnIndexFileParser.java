@@ -18,6 +18,7 @@
  */
 package nl.salp.warcraft4j.data.casc.cdn;
 
+import nl.salp.warcraft4j.data.casc.CascIndexEntry;
 import nl.salp.warcraft4j.data.casc.CascParsingException;
 import nl.salp.warcraft4j.data.casc.FileKey;
 import nl.salp.warcraft4j.data.casc.IndexEntry;
@@ -77,7 +78,7 @@ public class CdnIndexFileParser implements DataParser<CdnIndexFile> {
                 throw new CascParsingException(format("CDN index file %d (%s) has a negative offset of %d for entry %d", fileNumber, fileKey.toHexString(), offset, i));
             }
 
-            IndexEntry entry = new IndexEntry(new FileKey(checksum), fileNumber, size, offset);
+            IndexEntry entry = new CascIndexEntry(new FileKey(checksum), fileNumber, size, offset);
             entries.add(entry);
         }
         return new CdnIndexFile(fileNumber, fileKey, entries);

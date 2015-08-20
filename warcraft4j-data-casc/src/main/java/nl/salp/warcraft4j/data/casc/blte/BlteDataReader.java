@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
@@ -86,6 +87,14 @@ public class BlteDataReader extends RandomAccessDataReader {
             }
         }
 
+    }
+
+    public Optional<ContentChecksum> getContentChecksum() {
+        return Optional.ofNullable(contentChecksum);
+    }
+
+    public BlteFile getBlteFile() {
+        return blteFile;
     }
 
     @Override

@@ -221,7 +221,7 @@ class EncodingFileParser implements DataParser<EncodingFile> {
                 byte[] key = reader.readNext(DataTypeFactory.getByteArray(CHECKSUM_SIZE));
                 keys.add(new FileKey(key));
             }
-            EncodingEntry entry = new EncodingEntry(fileSize, new ContentChecksum(checksum), keys);
+            EncodingEntry entry = new CascEncodingEntry(fileSize, new ContentChecksum(checksum), keys);
             entries.add(entry);
         }
         while (reader.hasRemaining() && peek(DataTypeFactory.getByte(), reader) == 0) {
