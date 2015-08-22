@@ -29,7 +29,9 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -121,5 +123,20 @@ public class Neo4jEncodingEntry extends Neo4jCascEntry implements EncodingEntry 
                 .map(FileKey::getFileKey)
                 .map(DataTypeUtil::byteArrayToHexString)
                 .toArray(String[]::new));
+    }
+
+    public static Map<String, Object> toNodeProperties(EncodingEntry encodingEntry, CascContext cascContext) {
+        Map<String, Object> props = new HashMap<>();
+        props.put(WOW_VERSION.getName(), cascContext.getVersion());
+        props.put(WOW_REGION.getName(), cascContext.getRegion());
+        props.put(WOW_LOCALE.getName(), cascContext.getLocale());
+        props.put(WOW_BRANCH.getName(), cascContext.getBranch());
+        props.put(CONTENT_CHECKSUM.getName(), encodingEntry.getContentChecksum().toHexString());
+        props.put(FILE_KEYS.getName(), encodingEntry.getFileKeys().stream()
+                .map(FileKey::toHexString)
+                .toArray(String[]::new));
+        props.put(FILE_KEY.getName(), encodingEntry.getFirstFileKey().toHexString());
+        props.put(FILE_SIZE.getName(), encodingEntry.getFileSize());
+        return props;
     }
 }

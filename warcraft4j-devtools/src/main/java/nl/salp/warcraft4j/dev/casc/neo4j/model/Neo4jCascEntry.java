@@ -34,7 +34,7 @@ import java.util.Optional;
  *
  * @author Barre Dijkstra
  */
-abstract class Neo4jCascEntry extends Neo4jEntry {
+public abstract class Neo4jCascEntry extends Neo4jEntry {
     protected Neo4jCascEntry(Node node, Label label) throws IllegalArgumentException {
         super(node, label);
     }

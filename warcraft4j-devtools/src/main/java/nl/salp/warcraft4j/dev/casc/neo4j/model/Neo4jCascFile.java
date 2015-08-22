@@ -19,12 +19,16 @@
 package nl.salp.warcraft4j.dev.casc.neo4j.model;
 
 import nl.salp.warcraft4j.data.casc.CascContext;
+import nl.salp.warcraft4j.dev.casc.FileHeader;
 import nl.salp.warcraft4j.dev.casc.neo4j.Neo4jCascException;
 import nl.salp.warcraft4j.hash.JenkinsHash;
+import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static nl.salp.warcraft4j.dev.casc.neo4j.model.CascProperty.*;
@@ -41,7 +45,7 @@ public class Neo4jCascFile extends Neo4jCascEntry {
         super(node, LABEL);
     }
 
-    public Neo4jCascFile(String filename, long hash, byte[] header, CascContext cascContext, GraphDatabaseService graphDb, Transaction tx) throws IllegalArgumentException {
+    public Neo4jCascFile(String filename, long hash, FileHeader fileHeader, CascContext cascContext, GraphDatabaseService graphDb, Transaction tx) throws IllegalArgumentException {
         super(graphDb.createNode(LABEL), LABEL);
         if (hash == 0 || hash == JenkinsHash.HASH_EMPTY_VALUE_HASHLITTLE2) {
             throw new IllegalArgumentException("Can't create a Neo4jCascFile from a non-initialised filename hash.");
@@ -55,7 +59,7 @@ public class Neo4jCascFile extends Neo4jCascEntry {
         setWowBranch(cascContext.getBranch());
         setFilenameHash(hash);
         setFilename(filename);
-        setHeader(header);
+        setHeader(fileHeader);
     }
 
     public Optional<String> getFilename() {
@@ -78,11 +82,31 @@ public class Neo4jCascFile extends Neo4jCascEntry {
         setLong(FILENAME_HASH, hash);
     }
 
-    public Optional<byte[]> getHeader() {
-        return getByteArray(FILE_HEADER);
+    public Optional<FileHeader> getHeader() {
+        return getByteArray(FILE_HEADER)
+                .map(FileHeader::new);
     }
 
-    public void setHeader(byte[] header) {
-        setByteArray(FILE_HEADER, header);
+    public void setHeader(FileHeader header) {
+        Optional.ofNullable(header)
+                .map(FileHeader::getHeader)
+                .ifPresent(h -> setByteArray(FILE_HEADER, h));
+    }
+
+    public static Map<String, Object> toNodeProperties(String filename, long hash, FileHeader fileHeader, CascContext cascContext) {
+        Map<String, Object> props = new HashMap<>();
+        props.put(WOW_VERSION.getName(), cascContext.getVersion());
+        props.put(WOW_REGION.getName(), cascContext.getRegion());
+        props.put(WOW_LOCALE.getName(), cascContext.getLocale());
+        props.put(WOW_BRANCH.getName(), cascContext.getBranch());
+        Optional.ofNullable(filename)
+                .filter(StringUtils::isNotEmpty)
+                .ifPresent(file -> props.put(FILENAME.getName(), file));
+        props.put(FILENAME_HASH.getName(), hash);
+        Optional.ofNullable(fileHeader)
+                .map(FileHeader::toHexString)
+                .filter(StringUtils::isNotEmpty)
+                .ifPresent(h -> props.put(FILE_HEADER.getName(), h));
+        return props;
     }
 }

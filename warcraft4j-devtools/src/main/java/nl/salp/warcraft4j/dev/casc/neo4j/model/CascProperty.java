@@ -23,7 +23,7 @@ package nl.salp.warcraft4j.dev.casc.neo4j.model;
  *
  * @author Barre Dijkstra
  */
-enum CascProperty {
+public enum CascProperty {
     WOW_VERSION("wowVersion"),
     WOW_BRANCH("wowBranch"),
     WOW_REGION("wowRegion"),

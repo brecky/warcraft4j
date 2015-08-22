@@ -37,7 +37,7 @@ import java.util.function.Function;
  *
  * @author Barre Dijkstra
  */
-abstract class Neo4jEntry {
+public abstract class Neo4jEntry {
     private final Node node;
     private final Label label;
 

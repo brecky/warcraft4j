@@ -18,10 +18,7 @@
  */
 package nl.salp.warcraft4j.dev.casc.neo4j.model;
 
-import nl.salp.warcraft4j.data.casc.CascLocale;
-import nl.salp.warcraft4j.data.casc.ContentChecksum;
-import nl.salp.warcraft4j.data.casc.EncodingEntry;
-import nl.salp.warcraft4j.data.casc.RootEntry;
+import nl.salp.warcraft4j.data.casc.*;
 import nl.salp.warcraft4j.dev.casc.neo4j.Neo4jCascException;
 import nl.salp.warcraft4j.dev.casc.neo4j.ReferenceEvaluator;
 import org.neo4j.graphdb.Direction;
@@ -29,8 +26,11 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
+import static nl.salp.warcraft4j.dev.casc.neo4j.model.CascLabel.CASC_FILE;
 import static nl.salp.warcraft4j.dev.casc.neo4j.model.CascLabel.ENCODING_ENTRY;
 import static nl.salp.warcraft4j.dev.casc.neo4j.model.CascProperty.*;
 
@@ -41,7 +41,7 @@ import static nl.salp.warcraft4j.dev.casc.neo4j.model.CascProperty.*;
  */
 public class Neo4jRootEntry extends Neo4jCascEntry implements RootEntry {
     public Neo4jRootEntry(Node node) {
-        super(node, CascLabel.ROOT_ENTRY.getLabel());
+        super(node, CascLabel.ROOT_ENTRY);
     }
 
     @Override
@@ -76,10 +76,22 @@ public class Neo4jRootEntry extends Neo4jCascEntry implements RootEntry {
     }
 
     public Collection<EncodingEntry> getReferencedEncodingEntries(GraphDatabaseService service) {
-        return getReferencedEntries(Neo4jEncodingEntry::new, Direction.OUTGOING, new ReferenceEvaluator(1, ENCODING_ENTRY.getLabel()), service);
+        return getReferencedEntries(Neo4jEncodingEntry::new, Direction.OUTGOING, new ReferenceEvaluator(1, ENCODING_ENTRY), service);
     }
 
-    public Collection<EncodingEntry> getReferencingCascFiles(GraphDatabaseService service) {
-        return getReferencedEntries(Neo4jEncodingEntry::new, Direction.OUTGOING, new ReferenceEvaluator(1, ENCODING_ENTRY.getLabel()), service);
+    public Collection<Neo4jCascFile> getReferencingCascFiles(GraphDatabaseService service) {
+        return getReferencedEntries(Neo4jCascFile::new, Direction.OUTGOING, new ReferenceEvaluator(1, CASC_FILE), service);
+    }
+
+    public static Map<String, Object> toNodeProperties(RootEntry rootEntry, CascContext cascContext) {
+        Map<String, Object> props = new HashMap<>();
+        props.put(WOW_VERSION.getName(), cascContext.getVersion());
+        props.put(WOW_REGION.getName(), cascContext.getRegion());
+        props.put(WOW_LOCALE.getName(), cascContext.getLocale());
+        props.put(WOW_BRANCH.getName(), cascContext.getBranch());
+        props.put(FILE_KEY.getName(), rootEntry.getContentChecksum());
+        props.put(DATAFILE_SIZE.getName(), rootEntry.getFilenameHash());
+        props.put(DATAFILE_NUMBER.getName(), rootEntry.getFlags());
+        return props;
     }
 }

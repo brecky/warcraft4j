@@ -26,6 +26,9 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static nl.salp.warcraft4j.dev.casc.neo4j.model.CascProperty.*;
 
 /**
@@ -96,5 +99,18 @@ public class Neo4jIndexEntry extends Neo4jCascEntry implements IndexEntry {
 
     public void setDataFileOffset(int dataFileOffset) {
         setInt(DATAFILE_OFFSET, dataFileOffset);
+    }
+
+    public static Map<String, Object> toNodeProperties(IndexEntry indexEntry, CascContext cascContext) {
+        Map<String, Object> props = new HashMap<>();
+        props.put(WOW_VERSION.getName(), cascContext.getVersion());
+        props.put(WOW_REGION.getName(), cascContext.getRegion());
+        props.put(WOW_LOCALE.getName(), cascContext.getLocale());
+        props.put(WOW_BRANCH.getName(), cascContext.getBranch());
+        props.put(FILE_KEY.getName(), indexEntry.getFileKey());
+        props.put(DATAFILE_SIZE.getName(), indexEntry.getFileSize());
+        props.put(DATAFILE_NUMBER.getName(), indexEntry.getFileNumber());
+        props.put(DATAFILE_OFFSET.getName(), indexEntry.getDataFileOffset());
+        return props;
     }
 }
