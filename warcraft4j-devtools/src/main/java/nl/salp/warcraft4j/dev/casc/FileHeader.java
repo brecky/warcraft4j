@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.dev.casc.listfile;
+package nl.salp.warcraft4j.dev.casc;
 
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.reader.DataReader;
@@ -34,7 +34,7 @@ import static nl.salp.warcraft4j.DataTypeUtil.byteArrayToHexString;
  *
  * @author Barre Dijkstra
  */
-class FileHeader {
+public class FileHeader {
     private final byte[] header;
     private final int hash;
 

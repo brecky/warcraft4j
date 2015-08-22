@@ -16,17 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.dev.casc.listfile;
+package nl.salp.warcraft4j.dev.casc;
 
 import nl.salp.warcraft4j.hash.JenkinsHash;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.reader.file.FileDataReader;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -36,18 +38,35 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  *
  * @author Barre Dijkstra
  */
-class ListFile {
+public class ListFile {
     private final Map<String, Long> files;
     private final Map<Long, String> hashes;
+    private final Set<Long> calculated;
 
     private ListFile(Map<String, Long> files) throws IOException {
         this.files = files;
         this.hashes = files.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        this.calculated = new HashSet<>();
     }
 
-    public Optional<Long> getHash(String filename) {
-        return Optional.ofNullable(files.get(filename));
+    public long getHash(String filename) {
+        return Optional.ofNullable(filename)
+                .filter(StringUtils::isNotEmpty)
+                .map(f -> files.getOrDefault(f, ((Supplier<Long>) () -> {
+                    byte[] data = f.replace('/', '\\').toUpperCase().getBytes(StandardCharsets.US_ASCII);
+                    long hash = JenkinsHash.hashLittle2(data, data.length);
+                    files.put(f, hash);
+                    hashes.put(hash, f);
+                    calculated.add(hash);
+                    return hash;
+                }).get()))
+                .orElse(0L);
+    }
+
+    public boolean isFileKnown(String filename) {
+        long hash = getHash(filename);
+        return hash == 0 || calculated.contains(hash);
     }
 
     public Optional<String> getFilename(long hash) {

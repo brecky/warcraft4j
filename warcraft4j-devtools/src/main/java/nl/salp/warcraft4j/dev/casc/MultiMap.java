@@ -16,9 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.dev.casc.listfile;
+package nl.salp.warcraft4j.dev.casc;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
@@ -28,7 +29,7 @@ import static java.util.Collections.unmodifiableSet;
  *
  * @author Barre Dijkstra
  */
-class MultiMap<K, E> {
+public class MultiMap<K, E> {
     private final Map<K, Set<E>> keyMapping;
     private final Map<E, Set<K>> valueMapping;
 
@@ -66,27 +67,34 @@ class MultiMap<K, E> {
     }
 
     public boolean add(K key, E value) {
-        if (!keyMapping.containsKey(key)) {
-            keyMapping.put(key, new HashSet<>());
+        boolean added;
+        if (key == null || value == null) {
+            added = false;
+        } else {
+            keyMapping.putIfAbsent(key, new HashSet<>());
+            valueMapping.putIfAbsent(value, new HashSet<>());
+            added = valueMapping.get(value).add(key);
+            added = keyMapping.get(key).add(value) || added;
         }
-        if (!valueMapping.containsKey(value)) {
-            valueMapping.put(value, new HashSet<>());
-        }
-        valueMapping.get(value).add(key);
-        return keyMapping.get(key).add(value);
+        return added;
     }
 
     public boolean addAll(K key, Set<E> value) {
-        if (!keyMapping.containsKey(key)) {
-            keyMapping.put(key, new HashSet<>());
-        }
-        value.stream()
-                .filter(v -> !valueMapping.containsKey(v))
-                .forEach(v -> valueMapping.put(v, new HashSet<>()));
+        boolean added;
+        if (key == null || value == null || value.isEmpty()) {
+            added = false;
+        } else {
+            keyMapping.putIfAbsent(key, new HashSet<>());
+            value.forEach(v -> valueMapping.putIfAbsent(v, new HashSet<>()));
 
-        value.stream()
-                .forEach(v -> valueMapping.get(v).add(key));
-        return keyMapping.get(key).addAll(value);
+            // Forces full execution of stream instead of using .anyMatch which will break on first hit.
+            added = value.stream()
+                    .map(v -> valueMapping.get(v).add(key))
+                    .collect(Collectors.toSet())
+                    .contains(true);
+            added = keyMapping.get(key).addAll(value) || added;
+        }
+        return added;
     }
 
     public void remove(K key) {

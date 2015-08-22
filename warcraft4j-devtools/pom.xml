@@ -63,6 +63,17 @@
             <groupId>nl.salp.warcraft4j</groupId>
             <artifactId>warcraft4j-data-casc</artifactId>
         </dependency>
+        <!-- Database dependencies -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.0.0-beta1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j</artifactId>
+            <version>2.2.4</version>
+        </dependency>
         <!-- Utility dependencies -->
         <dependency>
             <groupId>org.apache.velocity</groupId>

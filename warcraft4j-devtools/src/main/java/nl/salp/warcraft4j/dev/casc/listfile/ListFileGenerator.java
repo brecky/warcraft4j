@@ -26,6 +26,8 @@ import nl.salp.warcraft4j.config.W4jConfig;
 import nl.salp.warcraft4j.data.casc.CascContext;
 import nl.salp.warcraft4j.data.casc.cdn.CdnCascContext;
 import nl.salp.warcraft4j.data.casc.local.LocalCascContext;
+import nl.salp.warcraft4j.dev.casc.EntryStore;
+import nl.salp.warcraft4j.dev.casc.ListFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +83,9 @@ public class ListFileGenerator {
         this.fileCascInvalidEntries = outputPath.resolve(format(FILE_OUT_CASC_INVALID, version));
         this.fileCascUnknownEntries = outputPath.resolve(format(FILE_OUT_CASC_MISSING, version));
         this.listFile = initialiseFiles(outputPath);
+        LOGGER.debug("Initialising entry store from CASC and listfile entries");
         this.entryStore = new EntryStore(listFile, cascContext);
+        LOGGER.debug("Listfile generator initialised");
     }
 
     private W4jConfig initialiseConfig(Path wowPath, Path cachePath) {
@@ -164,14 +168,14 @@ public class ListFileGenerator {
     }
 
     private Predicate<String> filterListfileKnownFilename() {
-        return (filename) -> listFile.getHash(filename).isPresent();
+        return listFile::isFileKnown;
     }
 
     protected List<String> toSortedFilenames(Collection<Long> hashes, String unknownValue) {
         return hashes.stream()
                 .filter(h -> h != null)
                 .filter(h -> h != 0)
-                .map(entryStore::resolve)
+                .map(entryStore::getFilename)
                 .map(f -> f.orElse(unknownValue))
                 .sorted()
                 .collect(Collectors.toList());
@@ -254,8 +258,13 @@ public class ListFileGenerator {
         // TODO Implement me!
     }
 
+    public void print() throws IOException {
+        entryStore.getExtensions().stream()
+                .forEach(ext -> System.out.println(format(" - [%s] : %d", ext, entryStore.getExtensionCount(ext))));
+    }
+
     public static void main(String... args) throws IOException {
         ListFileGenerator generator = new ListFileGenerator(Paths.get(args[0]), Paths.get(args[1]), Paths.get(args[2]));
-        generator.generate();
+        generator.print();
     }
 }

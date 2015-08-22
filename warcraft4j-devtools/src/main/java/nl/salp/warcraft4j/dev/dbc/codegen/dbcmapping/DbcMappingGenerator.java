@@ -66,7 +66,7 @@ public class DbcMappingGenerator extends VelocityGenerator<DbcFile> {
      * @throws IllegalArgumentException When the generator could not be initialised.
      */
     public DbcMappingGenerator() throws IOException, IllegalArgumentException {
-        this(new DevToolsConfig(), new DbcMappingGeneratorConfig());
+        this(DevToolsConfig.fromFile("w4j_devtools.config"), new DbcMappingGeneratorConfig());
     }
 
     /**
@@ -93,8 +93,8 @@ public class DbcMappingGenerator extends VelocityGenerator<DbcFile> {
         if (!targetDir.exists() && !targetDir.mkdirs()) {
             throw new IllegalArgumentException(format("Unable to create output directory %s", targetDir.getPath()));
         }
-        Collection<DbcFile> files = Stream.of(DbcUtil.getAllClientDatabaseFiles(generalConfig.getDbcDirectoryPath()))
-                .map(f -> new DbcFile(f, DbcUtil.getFileDataReaderSupplier(generalConfig.getDbcDirectoryPath(), f)))
+        Collection<DbcFile> files = Stream.of(DbcUtil.getAllClientDatabaseFiles(generalConfig.getExtractDataDirectory().toString()))
+                .map(f -> new DbcFile(f, DbcUtil.getFileDataReaderSupplier(generalConfig.getExtractDataDirectory(), f)))
                 .collect(Collectors.toSet());
         LOGGER.debug("Attempting to generate {} mappings (overriding: {}) to directory {}", files.size(), config.overrideEntries(), targetDir.getPath());
         generate(files);
@@ -170,7 +170,7 @@ public class DbcMappingGenerator extends VelocityGenerator<DbcFile> {
      */
     private void validateConfigurationPaths() throws IOException {
         LOGGER.debug("Generating entries from .DBC and .DB2 files in {} based on template {}.",
-                generalConfig.getDbcDirectoryPath(),
+                generalConfig.getExtractDataDirectory(),
                 config.getTemplateFilePath()
         );
         LOGGER.debug("Placing generated entries in directory {} and package {} ({}),{} overriding existing file.",
