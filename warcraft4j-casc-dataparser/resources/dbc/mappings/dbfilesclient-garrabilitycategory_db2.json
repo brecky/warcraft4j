@@ -1,0 +1,36 @@
+{
+  "fields" : [ {
+    "length" : 4,
+    "fieldSize" : 4,
+    "index" : 1,
+    "fieldName" : "id",
+    "padding" : false,
+    "javaDataType" : "int",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 1,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  }, {
+    "length" : 4,
+    "fieldSize" : 4,
+    "index" : 2,
+    "fieldName" : "unknown2",
+    "padding" : false,
+    "javaDataType" : "int",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : false,
+    "numberOfEntries" : 1,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  } ],
+  "entrySize" : 8,
+  "filename" : "DBFilesClient\\GarrAbilityCategory.db2",
+  "dbcType" : "GARRISON_ABILITY_CATEGORY",
+  "fieldsPerEntry" : 2,
+  "filenameHash" : -3715030555837782257
+}

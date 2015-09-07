@@ -1,0 +1,50 @@
+{
+  "fields" : [ {
+    "length" : 4,
+    "fieldSize" : 4,
+    "index" : 1,
+    "fieldName" : "id",
+    "padding" : false,
+    "javaDataType" : "int",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 1,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  }, {
+    "length" : 4,
+    "fieldSize" : 28,
+    "index" : 2,
+    "fieldName" : "dps",
+    "padding" : false,
+    "javaDataType" : "[F",
+    "dbcDataType" : "FLOAT",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 7,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  }, {
+    "length" : 4,
+    "fieldSize" : 4,
+    "index" : 3,
+    "fieldName" : "itemLevel",
+    "padding" : false,
+    "javaDataType" : "int",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 1,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  } ],
+  "entrySize" : 36,
+  "filename" : "DBFilesClient\\ItemDamageRanged.dbc",
+  "dbcType" : "ITEM_DAMAGE_RANGED",
+  "fieldsPerEntry" : 9,
+  "filenameHash" : 8969928499146656196
+}

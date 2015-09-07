@@ -1,0 +1,36 @@
+{
+  "fields" : [ {
+    "length" : 4,
+    "fieldSize" : 4,
+    "index" : 1,
+    "fieldName" : "id",
+    "padding" : false,
+    "javaDataType" : "int",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 1,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  }, {
+    "length" : 4,
+    "fieldSize" : 64,
+    "index" : 2,
+    "fieldName" : "skillLevelCaps",
+    "padding" : false,
+    "javaDataType" : "[I",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 16,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  } ],
+  "entrySize" : 68,
+  "filename" : "DBFilesClient\\SkillTiers.dbc",
+  "dbcType" : "SKILL_TIER",
+  "fieldsPerEntry" : 17,
+  "filenameHash" : -5341407340403502739
+}

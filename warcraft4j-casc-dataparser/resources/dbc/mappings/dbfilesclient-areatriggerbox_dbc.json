@@ -1,0 +1,36 @@
+{
+  "fields" : [ {
+    "length" : 4,
+    "fieldSize" : 4,
+    "index" : 1,
+    "fieldName" : "id",
+    "padding" : false,
+    "javaDataType" : "int",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 1,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  }, {
+    "length" : 4,
+    "fieldSize" : 12,
+    "index" : 2,
+    "fieldName" : "extents",
+    "padding" : false,
+    "javaDataType" : "[F",
+    "dbcDataType" : "FLOAT",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 3,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  } ],
+  "entrySize" : 16,
+  "filename" : "DBFilesClient\\AreaTriggerBox.dbc",
+  "dbcType" : "AREA_TRIGGER_BOX",
+  "fieldsPerEntry" : 4,
+  "filenameHash" : -4798420716141658688
+}

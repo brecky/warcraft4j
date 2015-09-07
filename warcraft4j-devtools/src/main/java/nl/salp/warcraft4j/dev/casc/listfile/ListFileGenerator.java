@@ -23,11 +23,11 @@ import nl.salp.warcraft4j.Locale;
 import nl.salp.warcraft4j.Region;
 import nl.salp.warcraft4j.config.DefaultW4jConfig;
 import nl.salp.warcraft4j.config.W4jConfig;
-import nl.salp.warcraft4j.data.casc.CascContext;
-import nl.salp.warcraft4j.data.casc.cdn.CdnCascContext;
-import nl.salp.warcraft4j.data.casc.local.LocalCascContext;
+import nl.salp.warcraft4j.casc.CascContext;
+import nl.salp.warcraft4j.casc.cdn.CdnCascContext;
+import nl.salp.warcraft4j.casc.local.LocalCascContext;
 import nl.salp.warcraft4j.dev.casc.EntryStore;
-import nl.salp.warcraft4j.dev.casc.ListFile;
+import nl.salp.warcraft4j.dev.casc.model.ListFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,7 +164,7 @@ public class ListFileGenerator {
     }
 
     private Predicate<Long> filterListfileKnownHash() {
-        return (hash) -> listFile.getFilename(hash).isPresent();
+        return (hash) -> listFile.getFilenames(hash).isPresent();
     }
 
     private Predicate<String> filterListfileKnownFilename() {

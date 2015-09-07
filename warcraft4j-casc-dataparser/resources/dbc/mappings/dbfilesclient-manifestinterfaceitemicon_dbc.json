@@ -1,0 +1,22 @@
+{
+  "fields" : [ {
+    "length" : 4,
+    "fieldSize" : 4,
+    "index" : 1,
+    "fieldName" : "id",
+    "padding" : false,
+    "javaDataType" : "int",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 1,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  } ],
+  "entrySize" : 4,
+  "filename" : "DBFilesClient\\ManifestInterfaceItemIcon.dbc",
+  "dbcType" : "MANIFEST_INTERFACE_ITEM_ICON",
+  "fieldsPerEntry" : 1,
+  "filenameHash" : -5618377876770118848
+}

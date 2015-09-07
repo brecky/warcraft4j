@@ -37,6 +37,7 @@
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
             <artifactId>warcraft4j-util</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

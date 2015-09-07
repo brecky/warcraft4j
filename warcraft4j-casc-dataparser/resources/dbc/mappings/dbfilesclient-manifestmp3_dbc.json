@@ -1,0 +1,22 @@
+{
+  "fields" : [ {
+    "length" : 4,
+    "fieldSize" : 4,
+    "index" : 1,
+    "fieldName" : "id",
+    "padding" : false,
+    "javaDataType" : "int",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 1,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  } ],
+  "entrySize" : 4,
+  "filename" : "DBFilesClient\\ManifestMP3.dbc",
+  "dbcType" : "MANIFEST_MP3",
+  "fieldsPerEntry" : 1,
+  "filenameHash" : 1574641874393994853
+}

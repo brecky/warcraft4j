@@ -1,0 +1,36 @@
+{
+  "fields" : [ {
+    "length" : 4,
+    "fieldSize" : 4,
+    "index" : 1,
+    "fieldName" : "id",
+    "padding" : false,
+    "javaDataType" : "int",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 1,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  }, {
+    "length" : 4,
+    "fieldSize" : 20,
+    "index" : 2,
+    "fieldName" : "modifiers",
+    "padding" : false,
+    "javaDataType" : "[F",
+    "dbcDataType" : "FLOAT",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 5,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  } ],
+  "entrySize" : 24,
+  "filename" : "DBFilesClient\\ArmorLocation.dbc",
+  "dbcType" : "ARMOR_LOCATION",
+  "fieldsPerEntry" : 6,
+  "filenameHash" : 7199637919671045636
+}

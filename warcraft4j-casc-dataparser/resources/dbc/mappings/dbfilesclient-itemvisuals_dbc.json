@@ -1,0 +1,36 @@
+{
+  "fields" : [ {
+    "length" : 4,
+    "fieldSize" : 4,
+    "index" : 1,
+    "fieldName" : "id",
+    "padding" : false,
+    "javaDataType" : "int",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 1,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  }, {
+    "length" : 4,
+    "fieldSize" : 20,
+    "index" : 2,
+    "fieldName" : "weaponAttachmentPoints",
+    "padding" : false,
+    "javaDataType" : "[I",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 5,
+    "referencedType" : "ITEM_VISUAL_EFFECT",
+    "byteOrder" : "BIG_ENDIAN"
+  } ],
+  "entrySize" : 24,
+  "filename" : "DBFilesClient\\ItemVisuals.dbc",
+  "dbcType" : "ITEM_VISUAL",
+  "fieldsPerEntry" : 6,
+  "filenameHash" : -6587778277525119337
+}

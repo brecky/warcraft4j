@@ -18,7 +18,11 @@
  */
 package nl.salp.warcraft4j.dev.casc;
 
-import nl.salp.warcraft4j.data.casc.CascContext;
+import nl.salp.warcraft4j.casc.CascContext;
+import nl.salp.warcraft4j.dev.casc.model.CascEntry;
+import nl.salp.warcraft4j.dev.casc.model.FileHeader;
+import nl.salp.warcraft4j.dev.casc.model.ListFile;
+import nl.salp.warcraft4j.dev.casc.model.MultiMap;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -55,7 +59,7 @@ public class EntryStore {
     }
 
     public void populate(ListFile listFile, CascContext cascContext) {
-        listFile.getFilename().stream()
+        listFile.getFilenames().stream()
                 .map(EntryStore::cleanFilename)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
