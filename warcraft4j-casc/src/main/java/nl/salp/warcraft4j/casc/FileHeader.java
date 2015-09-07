@@ -30,19 +30,31 @@ import java.util.function.Supplier;
 import static nl.salp.warcraft4j.DataTypeUtil.byteArrayToHexString;
 
 /**
- * TODO Add description.
+ * Header of a file (first X bytes, containing the magic string).
  *
  * @author Barre Dijkstra
  */
 public class FileHeader {
+    /** The file header. */
     private final byte[] header;
+    /** The hash of the file header. */
     private final int hash;
 
+    /**
+     * Create a new file header.
+     *
+     * @param header The file header data.
+     */
     public FileHeader(byte[] header) {
         this.header = header;
         this.hash = DataTypeUtil.hash(header);
     }
 
+    /**
+     * Get the file header data.
+     *
+     * @return The header data.
+     */
     public byte[] getHeader() {
         return header;
     }
@@ -61,6 +73,11 @@ public class FileHeader {
         return eq;
     }
 
+    /**
+     * Get the file header data as hexadecimal string.
+     *
+     * @return The hexadecimal string of the header data.
+     */
     public String toHexString() {
         return byteArrayToHexString(header);
     }
@@ -70,13 +87,22 @@ public class FileHeader {
         return new String(header, StandardCharsets.UTF_8);
     }
 
-    public static FileHeader parse(Supplier<DataReader> dataReaderSupplier) {
+    /**
+     * Get the file header from a data reader for a file.
+     *
+     * @param dataReaderSupplier The supplier for the data reader for the file.
+     *
+     * @return The file header.
+     *
+     * @throws CascParsingException When parsing the header failed.
+     */
+    public static FileHeader parse(Supplier<DataReader> dataReaderSupplier) throws CascParsingException {
         try (DataReader dataReader = dataReaderSupplier.get()) {
             int headerSize = (int) Math.min(dataReader.remaining(), 4);
             byte[] header = dataReader.readNext(DataTypeFactory.getByteArray(headerSize));
             return new FileHeader(header);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new CascParsingException(e);
         }
     }
 }

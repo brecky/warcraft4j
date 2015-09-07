@@ -21,18 +21,48 @@ package nl.salp.warcraft4j.casc;
 import java.util.Optional;
 
 /**
- * TODO Document class.
+ * Representation of a file stored in CASC.
  *
  * @author Barre Dijkstra
  */
 public interface CascFile {
+    /**
+     * Get the hash of the filename.
+     * <p>
+     * The filename hash is used as primary resolution entry point for a CASC file through a corresponding {@link RootEntry}.
+     *
+     * @return The hash.
+     *
+     * @see RootEntry
+     */
     long getFilenameHash();
 
+    /**
+     * Get the relative filename of the file in the CASC.
+     *
+     * @return Optional containing the filename if it's known.
+     */
     Optional<String> getFilename();
 
+
+    /**
+     * Set the filename for the CASC file.
+     *
+     * @param filename The filename of the file in the CASC.
+     */
     void setFilename(String filename);
 
+    /**
+     * Get the header of the file.
+     *
+     * @return Optional containing the header of the file if available.
+     */
     Optional<FileHeader> getHeader();
 
+    /**
+     * Set the header for the file.
+     *
+     * @param header The header.
+     */
     void setHeader(FileHeader header);
 }

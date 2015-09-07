@@ -23,14 +23,22 @@ import nl.salp.warcraft4j.Checksum;
 import static java.lang.String.format;
 
 /**
- * TODO Document class.
+ * {@link Checksum} implementation for the contents of a CASC file.
  *
  * @author Barre Dijkstra
  */
 public class ContentChecksum extends Checksum {
+    /** The length of the checksum in bytes. */
     private static final int CONTENTCHECKSUM_LENGTH = 16;
 
-    public ContentChecksum(byte[] checksum) {
+    /**
+     * Create a new checksum instance.
+     *
+     * @param checksum The checksum.
+     *
+     * @throws IllegalArgumentException When the checksum is invalid.
+     */
+    public ContentChecksum(byte[] checksum) throws IllegalArgumentException {
         super(checksum);
         if (checksum.length != CONTENTCHECKSUM_LENGTH) {
             throw new IllegalArgumentException(format("Unable to create a %d-byte content checksum from a %d byte array.", CONTENTCHECKSUM_LENGTH, checksum.length));

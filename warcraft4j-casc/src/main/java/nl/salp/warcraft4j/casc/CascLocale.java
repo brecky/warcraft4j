@@ -24,7 +24,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * TODO Document class.
+ * TODO These locales are CASC specific and contain flags that are only used in the CDN files.
  *
  * @author Barre Dijkstra
  */

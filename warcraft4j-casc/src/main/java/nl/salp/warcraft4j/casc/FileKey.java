@@ -27,17 +27,29 @@ import static java.lang.String.format;
 import static nl.salp.warcraft4j.DataTypeUtil.byteArrayToHexString;
 
 /**
- * TODO Document class.
+ * {@link Checksum} for file data segment keys.
  *
  * @author Barre Dijkstra
+ * @see IndexEntry
+ * @see EncodingEntry
  */
 public class FileKey extends Checksum {
+    /** The length of the checksum in bytes. */
     private static final int FILEKEY_LENGTH = 9;
+    /** File key. */
     private final byte[] fileKey;
+    /** The hash of the file key. */
     private final int hash;
 
 
-    public FileKey(byte[] checksum) {
+    /**
+     * Create a new file key instance.
+     *
+     * @param checksum The checksum to create the key from (can also be a 16-byte checksum).
+     *
+     * @throws IllegalArgumentException When the checksum is invalid.
+     */
+    public FileKey(byte[] checksum) throws IllegalArgumentException {
         super(checksum);
         if (getChecksum().length > FILEKEY_LENGTH) {
             fileKey = trim(FILEKEY_LENGTH).getChecksum();
@@ -49,6 +61,11 @@ public class FileKey extends Checksum {
         hash = DataTypeUtil.hash(fileKey);
     }
 
+    /**
+     * Get the 9-byte file key.
+     *
+     * @return The file key.
+     */
     public byte[] getFileKey() {
         return fileKey;
     }

@@ -19,16 +19,39 @@
 package nl.salp.warcraft4j.casc;
 
 /**
- * TODO Document class.
+ * Index entry, linking a file key to a data segment in a CASC datafile.
+ * <p/>
+ * File keys can be retrieved from the {@link EncodingEntry} for a file and a file may consist of multiple data segments.
  *
  * @author Barre Dijkstra
+ * @see EncodingEntry
  */
 public interface IndexEntry {
+    /**
+     * Get the file key for the data segment.
+     *
+     * @return The file key.
+     */
     FileKey getFileKey();
 
+    /**
+     * Get the size of the data segment.
+     *
+     * @return The size.
+     */
     long getFileSize();
 
+    /**
+     * Get the CASC datafile number the data is in.
+     *
+     * @return The file number.
+     */
     int getFileNumber();
 
+    /**
+     * Get the offset the datasegment in the CASC data file.
+     *
+     * @return The offset.
+     */
     int getDataFileOffset();
 }

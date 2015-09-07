@@ -20,19 +20,35 @@
 package nl.salp.warcraft4j.casc;
 
 /**
- * TODO Document class.
+ * Exception for errors encountered during the parsing of a CASC.
  *
  * @author Barre Dijkstra
  */
 public class CascParsingException extends CascException {
+    /**
+     * Create  a new instance with an exception message.
+     *
+     * @param message The message.
+     */
     public CascParsingException(String message) {
         super(message);
     }
 
+    /**
+     * Create  a new instance with an exception message and cause.
+     *
+     * @param message The message.
+     * @param cause   The cause.
+     */
     public CascParsingException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * Create  a new instance with a cause.
+     *
+     * @param cause The cause.
+     */
     public CascParsingException(Throwable cause) {
         super(cause);
     }

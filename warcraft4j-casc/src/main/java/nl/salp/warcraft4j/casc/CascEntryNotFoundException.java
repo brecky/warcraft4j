@@ -25,7 +25,7 @@ package nl.salp.warcraft4j.casc;
  */
 public class CascEntryNotFoundException extends CascException {
     /**
-     * Create  a new instance with an exception message and cause.
+     * Create  a new instance with an exception message.
      *
      * @param message The message.
      */

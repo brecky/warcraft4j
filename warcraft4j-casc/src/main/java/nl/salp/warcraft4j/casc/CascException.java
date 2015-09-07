@@ -19,19 +19,35 @@
 package nl.salp.warcraft4j.casc;
 
 /**
- * TODO Add description.
+ * General exception for all CASC related errors.
  *
  * @author Barre Dijkstra
  */
 public class CascException extends RuntimeException {
+    /**
+     * Create  a new instance with an exception message.
+     *
+     * @param message The message.
+     */
     public CascException(String message) {
         super(message);
     }
 
+    /**
+     * Create  a new instance with an exception message and cause.
+     *
+     * @param message The message.
+     * @param cause   The cause.
+     */
     public CascException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * Create  a new instance with a cause.
+     *
+     * @param cause The cause.
+     */
     public CascException(Throwable cause) {
         super(cause);
     }
