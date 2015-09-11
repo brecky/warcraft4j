@@ -16,23 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.dataparser.dbc.mapping;
+package nl.salp.warcraft4j;
+
+import java.util.function.Supplier;
 
 /**
- * TODO Document class.
+ * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public class DbcMappingScanningException extends RuntimeException {
-    public DbcMappingScanningException(String message) {
-        super(message);
+public class LazyInstance<T> {
+    private T instance;
+    private boolean resolved;
+    private Supplier<T> supplier;
+
+    public LazyInstance(Supplier<T> supplier) throws IllegalArgumentException {
+        if (supplier == null) {
+            throw new IllegalArgumentException("Unable to create a lazy instance with a null supplier");
+        }
+        this.supplier = supplier;
     }
 
-    public DbcMappingScanningException(String message, Throwable cause) {
-        super(message, cause);
+    public LazyInstance(T instance) throws IllegalArgumentException {
+        this.instance = instance;
+        this.resolved = true;
     }
 
-    public DbcMappingScanningException(Throwable cause) {
-        super(cause);
+    public T get() {
+        if (!resolved) {
+            instance = supplier.get();
+            resolved = true;
+            supplier = null;
+        }
+        return instance;
+    }
+
+    public boolean isResolved() {
+        return resolved;
     }
 }

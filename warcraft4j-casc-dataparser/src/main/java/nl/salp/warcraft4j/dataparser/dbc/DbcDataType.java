@@ -16,23 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package nl.salp.warcraft4j.dataparser.dbc.mapping;
-
-import nl.salp.warcraft4j.dataparser.dbc.DbcType;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package nl.salp.warcraft4j.dataparser.dbc;
 
 /**
- * TODO Document.
+ * DBC data type.
  *
  * @author Barre Dijkstra
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
-public @interface DbcReference {
-    DbcType type();
+public enum DbcDataType {
+    /** 8-bit signed byte. */
+    BYTE,
+    /** 8-bit unsigned integer. */
+    UINT8,
+    /** 16-bit signed integer. */
+    INT16,
+    /** 16-bit unsigned integer. */
+    UINT16,
+    /** 32-bit signed integer. */
+    INT32,
+    /** 32-bit unsigned integer. */
+    UINT32,
+    /** 64-bit signed integer. */
+    INT64,
+    /** 64-bit unsigned integer. */
+    UINT64,
+    /** 32-bit signed floating point. */
+    FLOAT,
+    /** 64-bit signed floating point. */
+    DOUBLE,
+    /** String. */
+    STRING,
+    /** StringTable reference. */
+    STRINGTABLE_REFERENCE,
+    /** Boolean (TODO 8-bit or 32-bit??). */
+    BOOLEAN;
 }

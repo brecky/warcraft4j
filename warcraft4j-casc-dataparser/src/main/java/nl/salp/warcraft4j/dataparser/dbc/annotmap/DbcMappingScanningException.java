@@ -16,35 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.dataparser.dbc.mapper;
-
-import nl.salp.warcraft4j.dataparser.dbc.DbcType;
-import nl.salp.warcraft4j.dataparser.dbc.mapping.DbcDataType;
-
-import java.nio.ByteOrder;
+package nl.salp.warcraft4j.dataparser.dbc.annotmap;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public interface DbcFieldMapping {
+public class DbcMappingScanningException extends RuntimeException {
+    public DbcMappingScanningException(String message) {
+        super(message);
+    }
 
-    String getName();
+    public DbcMappingScanningException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    int getDbcColumn();
-
-    DbcDataType getDataType();
-
-    int getEntryCount();
-
-    int getEntryLength();
-
-    boolean isPadding();
-
-    ByteOrder getByteOrder();
-
-    DbcType getReferencedType();
-
-    boolean isMeaningKnown();
+    public DbcMappingScanningException(Throwable cause) {
+        super(cause);
+    }
 }

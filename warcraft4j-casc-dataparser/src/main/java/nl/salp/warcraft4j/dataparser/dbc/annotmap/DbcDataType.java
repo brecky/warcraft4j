@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.dataparser.dbc.mapping;
+package nl.salp.warcraft4j.dataparser.dbc.annotmap;
 
 import nl.salp.warcraft4j.io.datatype.DataType;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
@@ -47,7 +47,7 @@ public enum DbcDataType {
     INT64(() -> Long.class, () -> Long[].class, (field) -> DataTypeFactory.getLong()),
     /**
      * 64-bit unsigned natural number (long).
-     * <p/>
+     * <p>
      * TODO {@link DataType} has data type available for unsigned longs at the moment, change this to use a datatype based on BigDecimal at a later stage.
      */
     UINT64(() -> Long.class, () -> Long[].class, (field) -> DataTypeFactory.getLong()),
@@ -56,7 +56,8 @@ public enum DbcDataType {
     /** 64-bit signed floating point. */
     DOUBLE(() -> Double.class, () -> Double[].class, (field) -> DataTypeFactory.getDouble()),
     /** String (either 0-terminated or fixed-length). */
-    STRING(() -> String.class, () -> String[].class, (field) -> (field.length() > 0) ? DataTypeFactory.getFixedLengthString(field.length()) : DataTypeFactory.getTerminatedString()),
+    STRING(() -> String.class, () -> String[].class, (field) -> (field.length() > 0) ? DataTypeFactory.getFixedLengthString(field.length()) :
+            DataTypeFactory.getTerminatedString()),
     /** StringTable reference. */
     STRINGTABLE_REFERENCE(() -> Integer.class, () -> Integer[].class, (field) -> DataTypeFactory.getInteger()),
     /** 8-bit Boolean. */
@@ -64,17 +65,18 @@ public enum DbcDataType {
 
     private final Supplier<Class<?>> baseJavaTypeSupplier;
     private final Supplier<Class<?>> arrayJavaTypeSupplier;
-    private final Function<DbcFieldMapping, DataType<?>> baseDataTypeFactory;
-    private final Function<DbcFieldMapping, DataType<?>> arrayDataTypeFactory;
+    private final Function<nl.salp.warcraft4j.dataparser.dbc.annotmap.DbcFieldMapping, DataType<?>> baseDataTypeFactory;
+    private final Function<nl.salp.warcraft4j.dataparser.dbc.annotmap.DbcFieldMapping, DataType<?>> arrayDataTypeFactory;
 
     /**
      * Create a new DbcDataType instance.
      *
      * @param baseJavaTypeSupplier  Supplier for the base Java type of the DbcDataType.
      * @param arrayJavaTypeSupplier Supplier for the array Java type of the DbcDataType.
-     * @param baseDataTypeFactory       The function for creating the {@link DataType} instance of the DbcDataType.
+     * @param baseDataTypeFactory   The function for creating the {@link DataType} instance of the DbcDataType.
      */
-    DbcDataType(Supplier<Class<?>> baseJavaTypeSupplier, Supplier<Class<?>> arrayJavaTypeSupplier, Function<DbcFieldMapping, DataType<?>> baseDataTypeFactory) {
+    DbcDataType(Supplier<Class<?>> baseJavaTypeSupplier, Supplier<Class<?>> arrayJavaTypeSupplier,
+            Function<nl.salp.warcraft4j.dataparser.dbc.annotmap.DbcFieldMapping, DataType<?>> baseDataTypeFactory) {
         this(baseJavaTypeSupplier, arrayJavaTypeSupplier, baseDataTypeFactory, (field) -> baseDataTypeFactory.apply(field).asArrayType(field.numberOfEntries()));
     }
 
@@ -83,9 +85,11 @@ public enum DbcDataType {
      *
      * @param baseJavaTypeSupplier  Supplier for the base Java type of the DbcDataType.
      * @param arrayJavaTypeSupplier Supplier for the array Java type of the DbcDataType.
-     * @param baseDataTypeFactory       The function for creating the {@link DataType} instance of the DbcDataType.
+     * @param baseDataTypeFactory   The function for creating the {@link DataType} instance of the DbcDataType.
      */
-    DbcDataType(Supplier<Class<?>> baseJavaTypeSupplier, Supplier<Class<?>> arrayJavaTypeSupplier, Function<DbcFieldMapping, DataType<?>> baseDataTypeFactory, Function<DbcFieldMapping, DataType<?>> arrayDataTypeFactory) {
+    DbcDataType(Supplier<Class<?>> baseJavaTypeSupplier, Supplier<Class<?>> arrayJavaTypeSupplier,
+            Function<nl.salp.warcraft4j.dataparser.dbc.annotmap.DbcFieldMapping, DataType<?>> baseDataTypeFactory,
+            Function<nl.salp.warcraft4j.dataparser.dbc.annotmap.DbcFieldMapping, DataType<?>> arrayDataTypeFactory) {
         this.baseJavaTypeSupplier = baseJavaTypeSupplier;
         this.arrayJavaTypeSupplier = arrayJavaTypeSupplier;
         this.baseDataTypeFactory = baseDataTypeFactory;
@@ -117,7 +121,7 @@ public enum DbcDataType {
      *
      * @return The data type.
      */
-    public DataType<?> getBaseDataType(DbcFieldMapping field) {
+    public DataType<?> getBaseDataType(nl.salp.warcraft4j.dataparser.dbc.annotmap.DbcFieldMapping field) {
         return baseDataTypeFactory.apply(field);
     }
 
@@ -128,7 +132,7 @@ public enum DbcDataType {
      *
      * @return The data type.
      */
-    public DataType<?> getArrayData(DbcFieldMapping field) {
+    public DataType<?> getArrayData(nl.salp.warcraft4j.dataparser.dbc.annotmap.DbcFieldMapping field) {
         return arrayDataTypeFactory.apply(field);
     }
 }

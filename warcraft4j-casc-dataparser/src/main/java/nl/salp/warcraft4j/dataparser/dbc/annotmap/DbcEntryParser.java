@@ -16,13 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.dataparser.dbc;
+package nl.salp.warcraft4j.dataparser.dbc.annotmap;
 
-import nl.salp.warcraft4j.dataparser.dbc.mapping.DbcDataType;
-import nl.salp.warcraft4j.dataparser.dbc.mapping.DbcFieldMapping;
-import nl.salp.warcraft4j.dataparser.dbc.mapping.DbcFieldType;
-import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.dataparser.dbc.DbcHeader;
+import nl.salp.warcraft4j.dataparser.dbc.DbcParsingException;
+import nl.salp.warcraft4j.dataparser.dbc.DbcStringTable;
 import nl.salp.warcraft4j.io.parser.RandomAccessDataParser;
+import nl.salp.warcraft4j.io.reader.DataReader;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ import java.util.TreeMap;
  *
  * @author Barre Dijkstra
  */
-class DbcEntryParser<T extends DbcEntry> extends RandomAccessDataParser<T> {
+public class DbcEntryParser<T extends DbcEntry> extends RandomAccessDataParser<T> {
     /** The mapping type to create the entries for. */
     private final Class<T> mappingType;
     /** The parsed DBC file header. */
@@ -102,10 +102,9 @@ class DbcEntryParser<T extends DbcEntry> extends RandomAccessDataParser<T> {
      */
     private String getStringTableReference(int value, DbcStringTable stringTable) {
         String stringValue;
-        if (stringTable.isEntryAvailableForPosition(value)) {
-            stringValue = stringTable.getEntry(value);
-        } else if (value > 0) {
-            stringValue = String.valueOf(value);
+        if (value > 0) {
+            stringValue = stringTable.getEntry(value)
+                    .orElse(String.valueOf(value));
         } else {
             stringValue = null;
         }

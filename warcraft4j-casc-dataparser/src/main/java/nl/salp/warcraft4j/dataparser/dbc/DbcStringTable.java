@@ -23,6 +23,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -65,8 +66,8 @@ public class DbcStringTable {
      *
      * @return The entry or {@code null} if no entry is available for the given position.
      */
-    public String getEntry(int position) {
-        return strings.get(position);
+    public Optional<String> getEntry(int position) {
+        return Optional.ofNullable(strings.get(position));
     }
 
     /**

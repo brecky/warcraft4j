@@ -16,21 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.dataparser.dbc.mapper.mappings;
-
-import nl.salp.warcraft4j.dataparser.dbc.DbcEntry;
-import nl.salp.warcraft4j.dataparser.dbc.DbcType;
-import nl.salp.warcraft4j.dataparser.dbc.mapper.DbcFileMapping;
+package nl.salp.warcraft4j.dataparser.dbc;
 
 /**
- * TODO Document!
+ * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public interface DbcMappings {
-    DbcFileMapping getForDbcFile(String filename);
+public interface DbcMapping<T> {
 
-    DbcFileMapping getForDbcType(DbcType dbcType);
+    T map(DbcEntry entry) throws DbcMappingException, DbcParsingException;
 
-    DbcFileMapping getForDbcEntryType(Class<? extends DbcEntry> filename);
+    long getDbcFilenameHash();
+
+    int getFieldCount() throws DbcMappingException;
+
+    Class<?> getFieldJavaType(int field) throws DbcMappingException;
+
+    int getFieldSize(int field) throws DbcMappingException;
+
+    int getFieldEntryLength(int field) throws DbcMappingException;
+
+    String getFieldName(int field) throws DbcMappingException;
+
+    boolean isArray(int field) throws DbcMappingException;
+
+    int getFieldNumberOfEntries(int field) throws DbcMappingException;
 }

@@ -19,7 +19,8 @@
 
 package nl.salp.warcraft4j.dataparser.dbc;
 
-import nl.salp.warcraft4j.dataparser.dbc.mapping.DbcMapping;
+import nl.salp.warcraft4j.dataparser.dbc.annotmap.DbcEntry;
+import nl.salp.warcraft4j.dataparser.dbc.annotmap.DbcMapping;
 
 import static java.lang.String.format;
 
@@ -28,7 +29,7 @@ import static java.lang.String.format;
  *
  * @author Barre Dijkstra
  */
-public class DbcEntryNotFoundException extends RuntimeException {
+public class DbcEntryNotFoundException extends DbcException {
     /** The exception mesasge to use. */
     private static final String MESSAGE = "Could not find entry %d in dbc file %s with mapping type %s";
     /** The id of the entry that was not found. */

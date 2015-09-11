@@ -16,13 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.dataparser.dbc.mapper;
+
+package nl.salp.warcraft4j.dataparser.dbc.annotmap;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * TODO Document!
+ * TODO Document.
  *
  * @author Barre Dijkstra
  */
-public interface DbcMappingParser {
-    DbcFileMapping[] parse();
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD})
+public @interface DbcReference {
+    DbcType type();
 }

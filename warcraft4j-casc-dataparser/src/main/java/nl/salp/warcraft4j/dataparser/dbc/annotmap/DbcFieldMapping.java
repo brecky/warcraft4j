@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.dataparser.dbc.mapping;
+package nl.salp.warcraft4j.dataparser.dbc.annotmap;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package nl.salp.warcraft4j.dataparser.dbc;
+package nl.salp.warcraft4j.dataparser.dbc.annotmap;
 
 /**
  * TODO Document.

@@ -16,9 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.dataparser.dbc;
+package nl.salp.warcraft4j.dataparser.dbc.annotmap;
 
-import nl.salp.warcraft4j.dataparser.dbc.mapping.*;
+import nl.salp.warcraft4j.DataTypeUtil;
+import nl.salp.warcraft4j.dataparser.dbc.DbcFile;
+import nl.salp.warcraft4j.hash.JenkinsHash;
 import nl.salp.warcraft4j.io.reader.RandomAccessDataReader;
 import nl.salp.warcraft4j.io.reader.file.FileDataReader;
 
@@ -88,7 +90,7 @@ public final class DbcUtil {
      * @return The optional of the filename, being empty if no filename could be retrieved.
      */
     public static Optional<String> getFilename(DbcFile dbcFile) {
-        return dbcFile == null ? Optional.empty() : Optional.ofNullable(dbcFile.getDbcName());
+        return dbcFile == null ? Optional.empty() : Optional.ofNullable(dbcFile.getFilename());
     }
 
     /**
@@ -129,7 +131,7 @@ public final class DbcUtil {
      */
     public static <T extends DbcEntry> Optional<DbcFile> getDbcFile(Class<T> entryType, Supplier<RandomAccessDataReader> dataReaderSupplier) {
         Optional<String> file = getMappedFile(entryType);
-        return file.isPresent() ? Optional.of(new DbcFile(file.get(), dataReaderSupplier)) : Optional.empty();
+        return file.isPresent() ? Optional.of(new DbcFile(DataTypeUtil.toLong(JenkinsHash.hashLittle2File(file.get())), dataReaderSupplier)) : Optional.empty();
     }
 
     /**

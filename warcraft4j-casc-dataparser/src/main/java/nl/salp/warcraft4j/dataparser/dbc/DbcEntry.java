@@ -16,26 +16,110 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package nl.salp.warcraft4j.dataparser.dbc;
 
+import nl.salp.warcraft4j.LazyInstance;
+import nl.salp.warcraft4j.io.datatype.DataType;
+import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.nio.ByteBuffer;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import static java.lang.String.format;
+
 /**
- * Parsed client database entry.
+ * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public interface DbcEntry {
-    /**
-     * Get the entry type.
-     *
-     * @return The entry type.
-     */
-    DbcType getEntryType();
+public class DbcEntry {
+    private static final DataType<Integer> STRINGTABLE_REF_DATATYPE = DataTypeFactory.getInteger();
+    private static final DataType<Long> ID_DATATYPE = DataTypeFactory.getUnsignedInteger();
+    private static final int ID_OFFSET = 0;
+    private final long filenameHash;
+    private final int fieldCount;
+    private transient final LazyInstance<byte[]> entryData;
 
-    /**
-     * Get the id.
-     *
-     * @return The id.
-     */
-    int getId();
+    public DbcEntry(long filenameHash, int fieldCount, byte[] entryData) throws IllegalArgumentException {
+        this(filenameHash, fieldCount, new LazyInstance(entryData));
+        if (entryData == null || entryData.length == 0) {
+            throw new IllegalArgumentException("Can't create a DBC entry with no data.");
+        }
+    }
+
+    public DbcEntry(long filenameHash, int fieldCount, Supplier<byte[]> entryDataSupplier) throws IllegalArgumentException {
+        this(filenameHash, fieldCount, new LazyInstance(entryDataSupplier));
+        if (entryDataSupplier == null) {
+            throw new IllegalArgumentException("Can't create a DBC entry without a data supplier.");
+        }
+    }
+
+    public DbcEntry(long filenameHash, int fieldCount, LazyInstance<byte[]> entryData) throws IllegalArgumentException {
+        if (entryData == null) {
+            throw new IllegalArgumentException("Can't create a DBC entry with no data.");
+        }
+        this.filenameHash = filenameHash;
+        this.fieldCount = fieldCount;
+        this.entryData = entryData;
+    }
+
+    public long getFilenameHash() {
+        return filenameHash;
+    }
+
+    public int getFieldCount() {
+        return fieldCount;
+    }
+
+    public int getEntrySize() {
+        return entryData.get().length;
+    }
+
+    public long getId() throws DbcParsingException {
+        return read(ID_OFFSET, ID_DATATYPE);
+    }
+
+    public <T> T getValue(int offset, DataType<T> dataType) throws DbcParsingException {
+        return read(offset, dataType);
+    }
+
+    public Optional<String> getStringTableValue(int offset, DbcStringTable stringTable) throws DbcParsingException {
+        if (stringTable == null) {
+            throw new DbcParsingException("Unable to get a StringTable value from a null StringTable.");
+        }
+        int stringTableOffset = read(offset, STRINGTABLE_REF_DATATYPE);
+        return stringTable.getEntry(stringTableOffset);
+    }
+
+    public byte[] getRawEntryData() {
+        return entryData.get();
+    }
+
+    private <T> T read(int offset, DataType<T> dataType) {
+        if (dataType == null) {
+            throw new DbcParsingException("Unable to get a value for a null data type.");
+        }
+        if (offset < 0 || offset >= (getEntrySize() - dataType.getLength())) {
+            throw new DbcParsingException(format("Unable to get a %d byte value from a %d byte entry from offset %d", dataType.getLength(), getEntrySize(), offset));
+        }
+        return dataType.readNext(ByteBuffer.wrap(entryData.get(), offset, dataType.getLength()));
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) filenameHash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }

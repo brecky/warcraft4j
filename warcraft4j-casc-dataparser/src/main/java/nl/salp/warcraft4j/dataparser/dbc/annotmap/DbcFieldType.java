@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.dataparser.dbc.mapping;
+package nl.salp.warcraft4j.dataparser.dbc.annotmap;
 
 import nl.salp.warcraft4j.io.datatype.DataType;
 

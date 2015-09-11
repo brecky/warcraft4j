@@ -16,21 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package nl.salp.warcraft4j.dataparser.dbc;
 
 /**
- * Data parsing exception for DBC related parsing.
+ * General exception for DBC related errors.
  *
  * @author Barre Dijkstra
  */
-public class DbcParsingException extends DbcException {
+public class DbcException extends RuntimeException {
     /**
      * Create a new instance.
      *
      * @param message The error message.
      */
-    public DbcParsingException(String message) {
+    public DbcException(String message) {
         super(message);
     }
 
@@ -40,7 +39,7 @@ public class DbcParsingException extends DbcException {
      * @param message The error message.
      * @param cause   The exception that caused this exception.
      */
-    public DbcParsingException(String message, Throwable cause) {
+    public DbcException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -49,7 +48,7 @@ public class DbcParsingException extends DbcException {
      *
      * @param cause The exception that caused this exception.
      */
-    public DbcParsingException(Throwable cause) {
+    public DbcException(Throwable cause) {
         super(cause);
     }
 }

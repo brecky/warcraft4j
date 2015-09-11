@@ -16,21 +16,41 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package nl.salp.warcraft4j.dataparser.dbc.mapping;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package nl.salp.warcraft4j.dataparser.dbc;
 
 /**
- * TODO Document.
+ * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-public @interface DbcMapping {
-    String file();
+public interface DbcFieldMapping<T> extends Comparable<DbcFieldMapping<T>> {
+    boolean DEFAULT_PADDING = false;
+    int DEFAULT_ENTRY_LENGTH = 0;
+    int DEFAULT_NUMBER_ENTRIES = 1;
+    String DEFAULT_FIELD_NAME_MASK = "unknownField%d";
+
+    int getIndex();
+
+    String getFieldName();
+
+    Class<T> getJavaDataType();
+
+    DbcDataType getDbcDataType();
+
+    boolean isPadding();
+
+    int getEntryLength();
+
+    int getNumberOfEntries();
+
+    int getFieldSize();
+
+    @Override
+    default int compareTo(DbcFieldMapping<T> other) {
+        if (other == null) {
+            return -1;
+        } else {
+            return Integer.valueOf(getIndex()).compareTo(other.getIndex());
+        }
+    }
 }

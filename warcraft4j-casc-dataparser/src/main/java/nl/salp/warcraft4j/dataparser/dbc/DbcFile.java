@@ -19,10 +19,9 @@
 
 package nl.salp.warcraft4j.dataparser.dbc;
 
-import nl.salp.warcraft4j.dataparser.dbc.mapping.DbcMapping;
+import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.reader.RandomAccessDataReader;
-import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -32,12 +31,12 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.lang.String.format;
-import static nl.salp.warcraft4j.io.datatype.DataTypeFactory.getByte;
-import static nl.salp.warcraft4j.io.datatype.DataTypeFactory.getTerminatedString;
 import static nl.salp.warcraft4j.DataTypeUtil.getAverageBytesPerCharacter;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static nl.salp.warcraft4j.io.datatype.DataTypeFactory.getByte;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
@@ -48,8 +47,10 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 public class DbcFile {
     /** The character set used in DBC files for the DBC string table. */
     private static final Charset STRINGTABLE_CHARSET = StandardCharsets.US_ASCII;
+    /** The hash of the filename. */
+    private final long filenameHash;
     /** The name of the DBC file. */
-    private final String dbcName;
+    private final String filename;
     /** The lock for synchronize on when parsing the DBC file. */
     private final Lock parseLock;
     /** Supplier for the reader to be used for parsing the DBC file. */
@@ -60,21 +61,30 @@ public class DbcFile {
     /**
      * Create a new DBC file instance.
      *
-     * @param dbcName            The name of the DBC file.
+     * @param filenameHash       The hash of the DBC filename.
      * @param dataReaderSupplier Supplier for the data reader to be used for parsing the DBC file.
      *
      * @throws IllegalArgumentException When the name is invalid.
      */
-    public DbcFile(String dbcName, Supplier<RandomAccessDataReader> dataReaderSupplier) throws IllegalArgumentException {
-        if (isEmpty(dbcName)) {
-            throw new IllegalArgumentException("Can't create a DbcFile instance without no file name.");
+    public DbcFile(long filenameHash, Supplier<RandomAccessDataReader> dataReaderSupplier) throws IllegalArgumentException {
+        this(filenameHash, null, dataReaderSupplier);
+    }
+
+    /**
+     * Create a new DBC file instance.
+     *
+     * @param filenameHash       The hash of the DBC filename.
+     * @param filename           The name of the DBC file.
+     * @param dataReaderSupplier Supplier for the data reader to be used for parsing the DBC file.
+     *
+     * @throws IllegalArgumentException When the name is invalid.
+     */
+    public DbcFile(long filenameHash, String filename, Supplier<RandomAccessDataReader> dataReaderSupplier) throws IllegalArgumentException {
+        if (dataReaderSupplier == null) {
+            throw new IllegalArgumentException(format("Can't create a DbcFile instance for file %d (%s) without a data reader supplier.", filenameHash, filename));
         }
-        try (RandomAccessDataReader reader = dataReaderSupplier.get()) {
-            // no-op
-        } catch (IOException e) {
-            throw new IllegalArgumentException(format("Error opening DbcFile %s", dbcName), e);
-        }
-        this.dbcName = dbcName;
+        this.filenameHash = filenameHash;
+        this.filename = filename;
         this.dataReaderSupplier = dataReaderSupplier;
         this.parseLock = new ReentrantLock();
     }
@@ -89,16 +99,25 @@ public class DbcFile {
     }
 
     /**
-     * Get the name of the DBC file.
+     * Get the hash of the filename.
      *
-     * @return The name of the file.
+     * @return The filename hash.
      */
-    public String getDbcName() {
-        return dbcName;
+    public long getFilenameHash() {
+        return filenameHash;
     }
 
     /**
-     * Parse the header of the DBC file.
+     * Get the name of the DBC file.
+     *
+     * @return The filename.
+     */
+    public String getFilename() {
+        return filename;
+    }
+
+    /**
+     * Get the header of the DBC file.
      *
      * @return The parsed header.
      *
@@ -119,31 +138,65 @@ public class DbcFile {
     }
 
     /**
-     * Parse all entries in the DBC file.
-     *
-     * @param mappingType The entry mapping type to parse the entries to.
-     * @param <T>         The type of the entries.
+     * Get all entries from the DBC file.
      *
      * @return The parsed entries.
      *
-     * @throws IllegalArgumentException When the mapping type is invalid for the DBC file.
-     * @throws DbcParsingException      When the entries could not be parsed.
+     * @throws DbcParsingException When the entries could not be parsed.
      */
-    public <T extends DbcEntry> Collection<T> parseEntries(Class<T> mappingType) throws IllegalArgumentException, DbcParsingException {
-        if (!isValidMappingForFile(mappingType)) {
-            throw new IllegalArgumentException(format("Can't parse the entries of dbc file %s with the mapping type %s", dbcName, mappingType.getName()));
-        }
+    public Collection<DbcEntry> getEntries() throws DbcParsingException {
         DbcHeader header = getHeader();
-        DbcStringTable stringTable = parseStringTable();
         try (RandomAccessDataReader reader = getDataReader()) {
-            Collection<T> entries = new HashSet<>(header.getEntryCount());
-            reader.position(header.getEntryBlockStartingOffset());
-            for (int i = 0; i < header.getEntryCount(); i++) {
-                entries.add(reader.readNext(new DbcEntryParser<>(mappingType, header, stringTable)));
-            }
-            return entries;
+            return IntStream.range(0, header.getEntryCount())
+                    .mapToObj(i -> getEntry(i, reader))
+                    .collect(Collectors.toSet());
         } catch (IOException e) {
-            throw new DbcParsingException(format("Error parsing entries of mapping type %s", mappingType.getName()), e);
+            throw new DbcParsingException(format("Error parsing entries for DBC file %d (%s)", filenameHash, filename), e);
+        }
+    }
+
+    /**
+     * Get the entry at a specific index.
+     *
+     * @param index The index of the entry (counting from 0).
+     *
+     * @return Optional of the entry or empty when no entry was available at the given index.
+     *
+     * @throws DbcParsingException When parsing of the entry failed.
+     */
+    public Optional<DbcEntry> getEntry(int index) throws DbcParsingException {
+        Optional<DbcEntry> entry;
+        DbcHeader header = getHeader();
+        if (index < 0 || index >= header.getEntryCount()) {
+            entry = Optional.empty();
+        } else {
+            try (RandomAccessDataReader reader = getDataReader()) {
+                entry = Optional.of(getEntry(index, reader));
+            } catch (IOException e) {
+                throw new DbcParsingException(format("Error parsing entry %d for DBC file %d (%s)", index, filenameHash, filename), e);
+            }
+        }
+        return entry;
+    }
+
+    /**
+     * Read the entry with an index from a reader.
+     *
+     * @param index  The index of the entry.
+     * @param reader The reader to read the entry from.
+     *
+     * @return The entry.
+     *
+     * @throws DbcParsingException When reading the entry failed.
+     */
+    private DbcEntry getEntry(int index, RandomAccessDataReader reader) throws DbcParsingException {
+        try {
+            DbcHeader header = getHeader();
+            int entryOffset = header.getEntryBlockStartingOffset() + (index * header.getEntrySize());
+            byte[] entryData = reader.read(DataTypeFactory.getByteArray(header.getEntrySize()), entryOffset);
+            return new DbcEntry(filenameHash, header.getEntryFieldCount(), entryData);
+        } catch (IOException e) {
+            throw new DbcParsingException(format("Error parsing entry %d for DBC file %d (%s)", index, filenameHash, filename), e);
         }
     }
 
@@ -157,45 +210,55 @@ public class DbcFile {
     public int[] getEntryIds() throws DbcParsingException {
         DbcHeader header = getHeader();
         try (RandomAccessDataReader reader = getDataReader()) {
-            int[] ids = new int[header.getEntryCount()];
-            reader.position(header.getEntryBlockStartingOffset());
-            for (int i = 0; i < header.getEntryCount(); i++) {
-                long offset = header.getEntryBlockStartingOffset() + (i * header.getEntrySize());
-                ids[i] = reader.read(DataTypeFactory.getInteger(), offset, ByteOrder.LITTLE_ENDIAN);
-            }
-            return ids;
+            return IntStream.range(0, header.getEntryCount())
+                    .map(i -> getEntryId(i, reader))
+                    .toArray();
         } catch (IOException e) {
-            throw new DbcParsingException("Error parsing entry identifiers", e);
+            throw new DbcParsingException(format("Error parsing entry IDs for DBC file %d (%s)", filenameHash, filename), e);
         }
     }
 
     /**
-     * Parse a single entry from the DBC file.
+     * Get the ID of an entry at a specific index.
      *
-     * @param index       The index of the entry (counting from 0, must be {@code 0 >= index < number of entries}).
-     * @param mappingType The entry mapping type to parse the entry to.
-     * @param <T>         The type of the entry.
+     * @param index The index of the entry (counting from 0).
      *
-     * @return The parsed entry.
+     * @return Optional of the id of the entry or empty when no entry was available at the given index.
      *
-     * @throws IllegalArgumentException When the index or mapping type are invalid for the DBC file.
-     * @throws DbcParsingException      When the entry could not be parsed.
+     * @throws DbcParsingException When parsing of the entry failed.
      */
-    public <T extends DbcEntry> T parseEntryWithIndex(int index, Class<T> mappingType) throws IllegalArgumentException, DbcParsingException {
-        if (index < 0 || index >= getNumberOfEntries()) {
-            throw new DbcEntryNotFoundException(index, mappingType);
-        }
-        if (!isValidMappingForFile(mappingType)) {
-            throw new IllegalArgumentException(format("Can't parse entry %d of dbc file %s with the mapping type %s", index, dbcName, mappingType.getName()));
-        }
+    public OptionalInt getEntryId(int index) throws DbcParsingException {
+        OptionalInt id;
         DbcHeader header = getHeader();
-        DbcStringTable stringTable = parseStringTable();
-        try (RandomAccessDataReader reader = getDataReader()) {
-            int offset = header.getEntrySize() * index;
-            reader.position(header.getEntryBlockStartingOffset() + offset);
-            return reader.readNext(new DbcEntryParser<>(mappingType, header, stringTable));
+        if (index < 0 || index >= header.getEntryCount()) {
+            id = OptionalInt.empty();
+        } else {
+            try (RandomAccessDataReader reader = getDataReader()) {
+                id = OptionalInt.of(getEntryId(index, reader));
+            } catch (IOException e) {
+                throw new DbcParsingException(format("Error parsing entry id %d for DBC file %d (%s)", index, filenameHash, filename), e);
+            }
+        }
+        return id;
+    }
+
+    /**
+     * Read the id from an entry with an index from a reader.
+     *
+     * @param index  The index of the entry.
+     * @param reader The reader to read the entry from.
+     *
+     * @return The entry id.
+     *
+     * @throws DbcParsingException When reading the entry id failed.
+     */
+    private int getEntryId(int index, RandomAccessDataReader reader) throws DbcParsingException {
+        try {
+            DbcHeader header = getHeader();
+            int entryOffset = header.getEntryBlockStartingOffset() + (index * header.getEntrySize());
+            return reader.read(DataTypeFactory.getInteger(), entryOffset, ByteOrder.LITTLE_ENDIAN);
         } catch (IOException e) {
-            throw new DbcParsingException(format("Error parsing entry with index %d of mapping type %s", index, mappingType.getName()), e);
+            throw new DbcParsingException(format("Error parsing entry id %d for DBC file %d (%s)", index, filenameHash, filename), e);
         }
     }
 
@@ -206,7 +269,7 @@ public class DbcFile {
      *
      * @throws DbcParsingException When the string table data could not be parsed.
      */
-    public DbcStringTable parseStringTable() throws DbcParsingException {
+    public DbcStringTable getStringTable() throws DbcParsingException {
         Map<Integer, String> stringTable;
         if (isStringTableEntriesPresent()) {
             stringTable = new HashMap<>();
@@ -247,9 +310,10 @@ public class DbcFile {
      * @throws IllegalArgumentException When the id is invalid.
      * @throws DbcParsingException      When a problem occurred parsing the DBC file.
      */
-    public String parseStringTableValue(int stringTableId) throws IllegalArgumentException, DbcParsingException {
+    public String getStringTableValue(int stringTableId) throws IllegalArgumentException, DbcParsingException {
         if (stringTableId < 0 || stringTableId >= getHeader().getStringTableBlockSize()) {
-            throw new IllegalArgumentException(format("The id %d is invalid for the string table of %s, which is %d bytes long.", stringTableId, dbcName, getHeader().getStringTableBlockSize()));
+            throw new IllegalArgumentException(format("The id %d is invalid for the string table of %s, which is %d bytes long.", stringTableId, filename, getHeader()
+                    .getStringTableBlockSize()));
         }
         String value = null;
         try (RandomAccessDataReader reader = getDataReader()) {
@@ -319,17 +383,5 @@ public class DbcFile {
      */
     public boolean isStringTableEntriesPresent() throws DbcParsingException {
         return getHeader().getStringTableBlockSize() > 2;
-    }
-
-    /**
-     * Check if the entry mapping type is valid for the DBC file.
-     *
-     * @param mappingType The entry mapping type.
-     * @param <T>         The type of the mapping.
-     *
-     * @return {@code true} if the type is valid for the DBC file, {@code false} if not.
-     */
-    public <T extends DbcEntry> boolean isValidMappingForFile(Class<T> mappingType) {
-        return (mappingType != null) && (mappingType.isAnnotationPresent(DbcMapping.class)) && (dbcName.equals(mappingType.getAnnotation(DbcMapping.class).file()));
     }
 }

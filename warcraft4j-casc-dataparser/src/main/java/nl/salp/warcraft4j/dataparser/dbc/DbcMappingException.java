@@ -16,40 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package nl.salp.warcraft4j.dataparser.dbc;
 
 /**
- * Data parsing exception for DBC related parsing.
+ * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public class DbcParsingException extends DbcException {
-    /**
-     * Create a new instance.
-     *
-     * @param message The error message.
-     */
-    public DbcParsingException(String message) {
+public class DbcMappingException extends DbcException {
+    public DbcMappingException(Throwable cause) {
+        super(cause);
+    }
+
+    public DbcMappingException(String message) {
         super(message);
     }
 
-    /**
-     * Create a new instance.
-     *
-     * @param message The error message.
-     * @param cause   The exception that caused this exception.
-     */
-    public DbcParsingException(String message, Throwable cause) {
+    public DbcMappingException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    /**
-     * Create a new instance.
-     *
-     * @param cause The exception that caused this exception.
-     */
-    public DbcParsingException(Throwable cause) {
-        super(cause);
     }
 }

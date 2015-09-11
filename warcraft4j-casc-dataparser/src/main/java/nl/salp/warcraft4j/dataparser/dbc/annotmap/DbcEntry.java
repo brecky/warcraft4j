@@ -16,13 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.dataparser.dbc.mapper;
+
+package nl.salp.warcraft4j.dataparser.dbc.annotmap;
 
 /**
- * TODO Document!
+ * Parsed client database entry.
  *
  * @author Barre Dijkstra
  */
-class DbcFieldMapper {
+public interface DbcEntry {
+    /**
+     * Get the entry type.
+     *
+     * @return The entry type.
+     */
+    DbcType getEntryType();
 
+    /**
+     * Get the id.
+     *
+     * @return The id.
+     */
+    int getId();
 }
