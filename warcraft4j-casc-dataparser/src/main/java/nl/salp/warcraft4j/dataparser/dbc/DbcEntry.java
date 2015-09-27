@@ -25,6 +25,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -102,15 +103,15 @@ public class DbcEntry {
         if (dataType == null) {
             throw new DbcParsingException("Unable to get a value for a null data type.");
         }
-        if (offset < 0 || offset >= (getEntrySize() - dataType.getLength())) {
+        if (offset < 0 || offset > (getEntrySize() - dataType.getLength())) {
             throw new DbcParsingException(format("Unable to get a %d byte value from a %d byte entry from offset %d", dataType.getLength(), getEntrySize(), offset));
         }
-        return dataType.readNext(ByteBuffer.wrap(entryData.get(), offset, dataType.getLength()));
+        return dataType.readNext(ByteBuffer.wrap(entryData.get(), offset, dataType.getLength()), ByteOrder.LITTLE_ENDIAN);
     }
 
     @Override
     public int hashCode() {
-        return (int) filenameHash;
+        return (int) (filenameHash * getId());
     }
 
     @Override

@@ -29,7 +29,7 @@ import java.util.Collections;
  *
  * @author Barre Dijkstra
  */
-class CdnIndexFile {
+public class CdnIndexFile {
     private final int index;
     private final FileKey fileKey;
     private final Collection<IndexEntry> indexEntries;

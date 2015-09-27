@@ -47,6 +47,6 @@ class UnsignedIntegerDataType extends DataType<Long> {
 
     @Override
     public Long readNext(ByteBuffer buffer, ByteOrder byteOrder) {
-        return buffer.getInt() & INT_MASK;
+        return buffer.order(byteOrder).getInt() & INT_MASK;
     }
 }

@@ -18,6 +18,8 @@
  */
 package nl.salp.warcraft4j.casc.local;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import nl.salp.warcraft4j.casc.CascConfig;
 import nl.salp.warcraft4j.casc.CascContext;
 import nl.salp.warcraft4j.casc.Index;
@@ -38,15 +40,17 @@ import static java.lang.String.format;
  *
  * @author Barre Dijkstra
  */
+@Singleton
 public class LocalCascContext extends CascContext {
     private CascConfig cascConfig;
 
+    @Inject
     public LocalCascContext(W4jConfig w4jConfig) {
         super(w4jConfig);
     }
 
     @Override
-    protected CascConfig getCascConfig() {
+    public CascConfig getCascConfig() {
         if (cascConfig == null) {
             cascConfig = new LocalCascConfig(getW4jConfig(), getDataReaderProvider());
         }

@@ -21,15 +21,27 @@ package nl.salp.warcraft4j;
 import java.util.function.Supplier;
 
 /**
- * TODO Add description.
+ * Lazy-loaded object wrapper.
+ *
+ * @param <T> The type of the wrapped object.
  *
  * @author Barre Dijkstra
  */
 public class LazyInstance<T> {
+    /** The resolved instance. */
     private T instance;
+    /** Flags indicating if the instance was resolved. */
     private boolean resolved;
+    /** The supplier for resolving the instance. */
     private Supplier<T> supplier;
 
+    /**
+     * Create a new lazy instance.
+     *
+     * @param supplier The supplier for resolving the instance.
+     *
+     * @throws IllegalArgumentException When the supplier is null.
+     */
     public LazyInstance(Supplier<T> supplier) throws IllegalArgumentException {
         if (supplier == null) {
             throw new IllegalArgumentException("Unable to create a lazy instance with a null supplier");
@@ -37,11 +49,23 @@ public class LazyInstance<T> {
         this.supplier = supplier;
     }
 
+    /**
+     * Create a new resolved instance.
+     *
+     * @param instance The instance.
+     *
+     * @throws IllegalArgumentException When the supplier is null.
+     */
     public LazyInstance(T instance) throws IllegalArgumentException {
         this.instance = instance;
         this.resolved = true;
     }
 
+    /**
+     * Get the instance, resolving it if needed.
+     *
+     * @return The instance.
+     */
     public T get() {
         if (!resolved) {
             instance = supplier.get();
@@ -51,6 +75,11 @@ public class LazyInstance<T> {
         return instance;
     }
 
+    /**
+     * Check if the instance is resolved.
+     *
+     * @return {@code true} if the instance is resolved.
+     */
     public boolean isResolved() {
         return resolved;
     }

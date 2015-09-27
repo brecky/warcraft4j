@@ -31,8 +31,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * Guice module for the Battle.NET API dependencies.
- * <p/>
- * All core service implementations are bound with a {@link Battlenet} annotation.
  *
  * @author Barre Dijkstra
  */

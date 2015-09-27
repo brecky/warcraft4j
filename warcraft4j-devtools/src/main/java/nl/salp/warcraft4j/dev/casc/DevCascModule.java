@@ -16,34 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.casc.guice;
+package nl.salp.warcraft4j.dev.casc;
 
 import com.google.inject.AbstractModule;
-import nl.salp.warcraft4j.casc.CascConfig;
-import nl.salp.warcraft4j.casc.CascContext;
-import nl.salp.warcraft4j.casc.DataReaderProvider;
-import nl.salp.warcraft4j.casc.local.FileDataReaderProvider;
-import nl.salp.warcraft4j.casc.local.LocalCascConfig;
-import nl.salp.warcraft4j.casc.local.LocalCascContext;
 import nl.salp.warcraft4j.config.W4jConfig;
+import nl.salp.warcraft4j.dev.DevToolsConfig;
 
 /**
- * TODO Add description.
+ * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-public class LocalCascModule extends AbstractModule {
-
-    private final W4jConfig config;
-
-    public LocalCascModule(W4jConfig config) {
-        this.config = config;
-    }
-
+public class DevCascModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(CascContext.class).to(LocalCascContext.class);
-        bind(CascConfig.class).to(LocalCascConfig.class);
-        bind(DataReaderProvider.class).to(FileDataReaderProvider.class);
+        bind(W4jConfig.class).toInstance(DevToolsConfig.fromFile("w4j_devtools.config"));
     }
 }

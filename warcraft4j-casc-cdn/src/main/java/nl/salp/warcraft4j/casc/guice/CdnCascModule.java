@@ -19,11 +19,11 @@
 package nl.salp.warcraft4j.casc.guice;
 
 import com.google.inject.AbstractModule;
-import nl.salp.warcraft4j.casc.CascConfig;
-import nl.salp.warcraft4j.casc.DataReaderProvider;
+import com.google.inject.Provider;
 import nl.salp.warcraft4j.casc.CascContext;
-import nl.salp.warcraft4j.casc.local.FileDataReaderProvider;
-import nl.salp.warcraft4j.casc.local.LocalCascConfig;
+import nl.salp.warcraft4j.casc.CascService;
+import nl.salp.warcraft4j.casc.CdnCascService;
+import nl.salp.warcraft4j.casc.cdn.CdnCascContext;
 import nl.salp.warcraft4j.casc.local.LocalCascContext;
 import nl.salp.warcraft4j.config.W4jConfig;
 
@@ -33,17 +33,21 @@ import nl.salp.warcraft4j.config.W4jConfig;
  * @author Barre Dijkstra
  */
 public class CdnCascModule extends AbstractModule {
-
-    private final W4jConfig config;
-
-    public CdnCascModule(W4jConfig config) {
-        this.config = config;
-    }
-
     @Override
     protected void configure() {
-        bind(CascContext.class).to(LocalCascContext.class);
-        bind(CascConfig.class).to(LocalCascConfig.class);
-        bind(DataReaderProvider.class).to(FileDataReaderProvider.class);
+        requireBinding(W4jConfig.class);
+        final Provider<W4jConfig> configProvider = getProvider(W4jConfig.class);
+        bind(CascContext.class).toProvider(new Provider<CascContext>() {
+            @Override
+            public CascContext get() {
+                W4jConfig config = configProvider.get();
+                if (config.isOnline()) {
+                    return new CdnCascContext(config);
+                } else {
+                    return new LocalCascContext(config);
+                }
+            }
+        });
+        bind(CascService.class).to(CdnCascService.class);
     }
 }

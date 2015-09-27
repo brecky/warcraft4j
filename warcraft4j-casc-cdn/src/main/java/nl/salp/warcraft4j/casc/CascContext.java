@@ -55,7 +55,7 @@ public abstract class CascContext {
     private EncodingFile encoding;
     private Root root;
 
-    public CascContext(W4jConfig w4jConfig) {
+    protected CascContext(W4jConfig w4jConfig) {
         LOGGER.debug("Created CASC context for branch {}, region {} and locale {} (wow directory: {}, online: {}, caching: {})",
                 w4jConfig.getBranch(), w4jConfig.getRegion(), w4jConfig.getLocale(), w4jConfig.getWowInstallationDirectory(),
                 w4jConfig.isOnline(), w4jConfig.isCaching());
@@ -64,11 +64,11 @@ public abstract class CascContext {
         this.filenames = new HashMap<>();
     }
 
-    protected final W4jConfig getW4jConfig() {
+    public final W4jConfig getW4jConfig() {
         return w4jConfig;
     }
 
-    protected abstract CascConfig getCascConfig();
+    public abstract CascConfig getCascConfig();
 
     protected abstract Supplier<DataReader> getEncodingReader();
 
@@ -224,9 +224,17 @@ public abstract class CascContext {
 
     public boolean isRegisteredData(long hash) {
         List<ContentChecksum> contentChecksum = getContentChecksums(hash);
-        List<FileKey> fileKeys = contentChecksum.stream().map(this::getFileKey).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
-        List<IndexEntry> indexEntries = fileKeys.stream().map(this::getIndexEntry).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
-        return !contentChecksum.isEmpty() && contentChecksum.size() == fileKeys.size() && fileKeys.size() == indexEntries.size();
+        List<FileKey> fileKeys = contentChecksum.stream()
+                .map(this::getFileKey)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+        List<IndexEntry> indexEntries = fileKeys.stream()
+                .map(this::getIndexEntry)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+        return !indexEntries.isEmpty();
     }
 
     public boolean isRegistered(long hash) {

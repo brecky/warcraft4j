@@ -122,7 +122,7 @@ public abstract class DataType<T> implements DataParser<T> {
      * @return The next value.
      */
     public T readNext(ByteBuffer buffer, ByteOrder byteOrder) {
-        return readNext(buffer);
+        return readNext(buffer.order(byteOrder));
     }
 
 

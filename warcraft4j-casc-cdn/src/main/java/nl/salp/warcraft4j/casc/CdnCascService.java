@@ -64,16 +64,25 @@ public class CdnCascService implements CascService {
         this.locale = cascContext.getLocale();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public WowVersion getVersion() {
         return version;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<Locale> getLocale() {
         return Optional.ofNullable(locale);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isCascFileAvailable(ContentChecksum contentChecksum) {
         return Optional.ofNullable(contentChecksum)
@@ -82,22 +91,34 @@ public class CdnCascService implements CascService {
                 .orElse(false);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isCascFileAvailable(long filenameHash) {
         return cascContext.isRegistered(filenameHash);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isCascFileAvailable(String filename) {
         return cascContext.isRegistered(filename);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<CascFile> getCascFile(ContentChecksum contentChecksum) {
         // TODO Implement me!
         return Optional.empty();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<CascFile> getCascFile(long filenameHash) {
         Optional<CascFile> file;
@@ -111,6 +132,9 @@ public class CdnCascService implements CascService {
         return file;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<CascFile> getCascFile(String filename) {
         return Optional.ofNullable(filename)
@@ -121,6 +145,9 @@ public class CdnCascService implements CascService {
                 .map(hash -> new CdnCascFile(hash, filename, cascContext));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<CascFile> getAllCascFiles() {
         return cascContext.getResolvedHashes().stream()
@@ -133,11 +160,17 @@ public class CdnCascService implements CascService {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isRootEntryAvailable(CascFile cascFile) {
         return getRootEntries(cascFile).size() > 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<RootEntry> getRootEntries(CascFile cascFile) {
         return Optional.ofNullable(cascFile)
@@ -146,37 +179,58 @@ public class CdnCascService implements CascService {
                 .orElse(emptyList());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<RootEntry> getAllRootEntries() {
         return new HashSet<>(cascContext.getRootEntries());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isEncodingEntryAvailable(RootEntry rootEntry) {
         return getEncodingEntry(rootEntry).isPresent();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<EncodingEntry> getEncodingEntry(RootEntry rootEntry) {
         return Optional.ofNullable(rootEntry)
                 .flatMap(cascContext::getEncodingEntry);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<EncodingEntry> getAllEncodingEntries() {
         return new HashSet<>(cascContext.getEncodingEntries());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isAtleastOneIndexEntryAvailable(EncodingEntry encodingEntry) {
         return getIndexEntries(encodingEntry).size() > 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isIndexEntryAvailable(EncodingEntry encodingEntry) {
         return getIndexEntries(encodingEntry).size() == encodingEntry.getBlockCount();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<IndexEntry> getIndexEntries(EncodingEntry encodingEntry) {
         return Optional.ofNullable(encodingEntry)
@@ -184,11 +238,17 @@ public class CdnCascService implements CascService {
                 .orElse(emptyList());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<IndexEntry> getAllIndexEntries() {
         return new HashSet<>(cascContext.getIndexEntries());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isDataAvailable(CascFile cascFile) {
         return Optional.ofNullable(cascFile)
@@ -197,6 +257,9 @@ public class CdnCascService implements CascService {
                 .orElse(false);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isDataAvailable(IndexEntry indexEntry) {
         return Optional.ofNullable(indexEntry)
@@ -206,6 +269,9 @@ public class CdnCascService implements CascService {
                 .orElse(false);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DataReader getDataReader(CascFile cascFile) throws CascEntryNotFoundException {
         return Optional.ofNullable(cascFile)
@@ -213,9 +279,12 @@ public class CdnCascService implements CascService {
                 .filter(cascContext::isRegisteredData)
                 .map(cascContext::getFileDataReader)
                 .orElseThrow(() -> new CascEntryNotFoundException(format("No data reader found for casc file with hash %d%s",
-                        cascFile.getFilenameHash(), cascFile.getFilename().map(n -> " and name" + n).orElse(""))));
+                        cascFile.getFilenameHash(), cascFile.getFilename().map(n -> " and name " + n).orElse(""))));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DataReader getDataReader(IndexEntry indexEntry) throws CascEntryNotFoundException {
         return Optional.ofNullable(indexEntry)

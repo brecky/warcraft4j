@@ -33,7 +33,7 @@ import java.util.Arrays;
  *
  * @author Barre Dijkstra
  */
-public class DataTypeUtil {
+public final class DataTypeUtil {
     /**
      * Private constructor to prevent instantiation.
      */
@@ -76,7 +76,7 @@ public class DataTypeUtil {
      * @return The byte[].
      */
     public static byte[] toByteArray(int value) {
-        return new byte[] {
+        return new byte[]{
                 (byte) (value >>> 24),
                 (byte) (value >>> 16),
                 (byte) (value >>> 8),
@@ -93,7 +93,7 @@ public class DataTypeUtil {
      * @return The byte[].
      */
     public static byte[] toByteArrayFixed(long value) {
-        return new byte[] {
+        return new byte[]{
                 (byte) (value >>> 56),
                 (byte) (value >>> 48),
                 (byte) (value >>> 40),
@@ -105,6 +105,13 @@ public class DataTypeUtil {
         };
     }
 
+    /**
+     * Generate a hash for a byte array using a 32-bit FNV-1a hash.
+     *
+     * @param data The array to hash.
+     *
+     * @return The hash for the data.
+     */
     public static int hash(byte[] data) {
         if (data == null || data.length == 0) {
             return 0;
@@ -128,8 +135,15 @@ public class DataTypeUtil {
         return BigInteger.valueOf(value).toByteArray();
     }
 
+    /**
+     * Convert the first 4 bytes of an array to a big endian int.
+     *
+     * @param value The byte array.
+     *
+     * @return The int represented by the array.
+     */
     public static int toInt(byte[] value) {
-        if (value == null || value.length < 4) {
+        if (value == null) {
             return 0;
         }
         int val = 0;
@@ -148,26 +162,13 @@ public class DataTypeUtil {
         return val;
     }
 
-    public static long toUint(byte[] value) {
-        if (value == null) {
-            return 0;
-        }
-        long val = 0;
-        if (value.length >= 1) {
-            val |= ((value[0] & 0xFF) << 24);
-        }
-        if (value.length >= 2) {
-            val |= ((value[1] & 0xFF) << 16);
-        }
-        if (value.length >= 3) {
-            val |= ((value[2] & 0xFF) << 8);
-        }
-        if (value.length >= 4) {
-            val |= ((value[3] & 0xFF));
-        }
-        return val;
-    }
-
+    /**
+     * Convert the first 8 bytes of an array to a big endian long.
+     *
+     * @param value The byte array.
+     *
+     * @return The long represented by the array.
+     */
     public static long toLong(byte[] value) {
         if (value == null) {
             return 0;
@@ -178,6 +179,14 @@ public class DataTypeUtil {
         return ((((long) b) << 32) | ((long) a & 0xFFFFFFFFL));
     }
 
+    /**
+     * Convert the first 4 bytes of an array to a int.
+     *
+     * @param value     The byte array.
+     * @param byteOrder The byte order of the int.
+     *
+     * @return The int represented by the array.
+     */
     public static int toInt(byte[] value, ByteOrder byteOrder) {
         return ByteBuffer.wrap(value).order(byteOrder).getInt();
     }

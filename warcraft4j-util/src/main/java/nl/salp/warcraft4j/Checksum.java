@@ -25,27 +25,53 @@ import static nl.salp.warcraft4j.DataTypeUtil.byteArrayToHexString;
 import static org.apache.commons.lang3.ArrayUtils.subarray;
 
 /**
- * TODO Add description.
+ * Generic checksum.
  *
  * @author Barre Dijkstra
  */
 public class Checksum {
+    /** The checksum value. */
     private final byte[] checksum;
+    /** The hash. */
     private final int hash;
 
-    public Checksum(byte[] checksum) {
+    /**
+     * Create a new instance.
+     *
+     * @param checksum The checksum.
+     *
+     * @throws IllegalArgumentException When the provided checksum is empty.
+     */
+    public Checksum(byte[] checksum) throws IllegalArgumentException {
         this.checksum = Optional.ofNullable(checksum).filter(c -> c.length > 0).orElseThrow(() -> new IllegalArgumentException("Can't create a checksum from an empty array"));
         this.hash = DataTypeUtil.hash(checksum);
     }
 
+    /**
+     * Get the checksum value.
+     *
+     * @return The checksum.
+     */
     public byte[] getChecksum() {
         return checksum;
     }
 
+    /**
+     * Get the length of the checksum in bytes.
+     *
+     * @return The length.
+     */
     public int length() {
         return checksum.length;
     }
 
+    /**
+     * Trim the checksum to a length.
+     *
+     * @param length The length in bytes.
+     *
+     * @return A new checksum instance with a maximum of the provided length.
+     */
     public Checksum trim(int length) {
         byte[] trimmed = checksum;
         if (length < checksum.length) {
@@ -54,15 +80,26 @@ public class Checksum {
         return new Checksum(trimmed);
     }
 
+    /**
+     * Get the hex string representation of the checksum.
+     *
+     * @return The hex string.
+     */
     public String toHexString() {
         return byteArrayToHexString(checksum);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return hash;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         boolean eq = false;
@@ -72,6 +109,9 @@ public class Checksum {
         return eq;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return byteArrayToHexString(checksum);

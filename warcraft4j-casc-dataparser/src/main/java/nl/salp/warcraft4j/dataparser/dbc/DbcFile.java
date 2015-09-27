@@ -144,12 +144,12 @@ public class DbcFile {
      *
      * @throws DbcParsingException When the entries could not be parsed.
      */
-    public Collection<DbcEntry> getEntries() throws DbcParsingException {
+    public List<DbcEntry> getEntries() throws DbcParsingException {
         DbcHeader header = getHeader();
         try (RandomAccessDataReader reader = getDataReader()) {
             return IntStream.range(0, header.getEntryCount())
                     .mapToObj(i -> getEntry(i, reader))
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             throw new DbcParsingException(format("Error parsing entries for DBC file %d (%s)", filenameHash, filename), e);
         }
@@ -361,6 +361,17 @@ public class DbcFile {
      */
     public int getNumberOfEntries() throws DbcParsingException {
         return getHeader().getEntryCount();
+    }
+
+    /**
+     * Get the size of a single entry in bytes.
+     *
+     * @return The size of an entry in bytes.
+     *
+     * @throws DbcParsingException When there was a problem parsing the DBC file header.
+     */
+    public int getEntrySize() throws DbcParsingException {
+        return getHeader().getEntrySize();
     }
 
     /**

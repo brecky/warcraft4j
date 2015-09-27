@@ -64,7 +64,7 @@ public class DbcStringTable {
      *
      * @param position The position.
      *
-     * @return The entry or {@code null} if no entry is available for the given position.
+     * @return Optional containing the entry if available.
      */
     public Optional<String> getEntry(int position) {
         return Optional.ofNullable(strings.get(position));

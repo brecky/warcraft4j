@@ -19,9 +19,10 @@
 package nl.salp.warcraft4j.casc.cdn;
 
 import nl.salp.warcraft4j.casc.BaseCascConfig;
+import nl.salp.warcraft4j.casc.CascParsingException;
 import nl.salp.warcraft4j.casc.Config;
+import nl.salp.warcraft4j.casc.DataReaderProvider;
 import nl.salp.warcraft4j.config.W4jConfig;
-import nl.salp.warcraft4j.casc.*;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,72 +35,137 @@ import java.util.function.Supplier;
 import static java.lang.String.format;
 
 /**
- * TODO Document class.
+ * {@link nl.salp.warcraft4j.casc.CascConfig} implementation for a CDN based CASC.
  *
  * @author Barre Dijkstra
  */
 public class CdnCascConfig extends BaseCascConfig {
+    /** The logger instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(CdnCascConfig.class);
+    /** The {@code versions} config key for the region. */
     private static final String KEY_VERSIONS_REGION = "Region";
+    /** The {@code versions} config key for the build id. */
     private static final String KEY_VERSIONS_BUILD_ID = "BuildId";
+    /** The {@code versions} config key for the version. */
     private static final String KEY_VERSIONS_VERSION = "VersionsName";
+    /** The {@code versions} config key for the build config. */
     private static final String KEY_VERSIONS_BUILD_CONFIG = "BuildConfig";
+    /** The {@code versions} config key for the CDN config. */
     private static final String KEY_VERSIONS_CDN_CONFIG = "CDNConfig";
+    /** The {@code CDNs} config key for the name. */
     private static final String KEY_CDNS_NAME = "Name";
+    /** The {@code CDNs} config key for the path. */
     private static final String KEY_CDNS_PATH = "Path";
+    /** The {@code CDNs} config key for the hosts. */
     private static final String KEY_CDNS_HOSTS = "Hosts";
+    /** The URL mask for a file. */
     private static final String URL_MASK = "http://us.patch.battle.net/%s/%s";
+    /** The file name of the {@code CDNs} config. */
     private static final String FILE_CDNS = "cdns";
+    /** The file name of the {@code versions} config. */
     private static final String FILE_VERSIONS = "versions";
-
+    /** The {@link CdnVersion} (or {@link nl.salp.warcraft4j.Branch} to use). */
     private final CdnVersion cdnVersion;
+    /** The parsed {@code CDNs} config. */
     private Config cdns;
+    /** The parsed {@code versions} config. */
     private Config versions;
 
-
+    /**
+     * Create a new instance.
+     *
+     * @param w4jConfig          The {@link W4jConfig} instance to configure the CDN CASC configuration with.
+     * @param dataReaderProvider The {@link DataReaderProvider} for reading the configuration files.
+     */
     public CdnCascConfig(W4jConfig w4jConfig, DataReaderProvider dataReaderProvider) {
         super(w4jConfig, dataReaderProvider);
         this.cdnVersion = CdnVersion.getFrom(w4jConfig.getBranch());
     }
 
+    /**
+     * Get a direct (non-hash based) URL for a file.
+     *
+     * @param file The name of the file.
+     *
+     * @return The URL for the file.
+     */
     private String getDirectUrl(String file) {
         return format(URL_MASK, cdnVersion.getProductCode(), file);
     }
 
+    /**
+     * Get the {@code CDNs} file config, reading it when not available.
+     *
+     * @return The {@code CDNs} config.
+     */
     private Config getCdns() {
         if (cdns == null) {
             String uri = getDirectUrl(FILE_CDNS);
-            LOGGER.debug("Initialising CDNs config from file {}", uri);
+            LOGGER.trace("Initialising CDNs config from URI {}", uri);
             cdns = Config.tableConfig(getDataReader(uri));
         }
         return cdns;
     }
 
+    /**
+     * Get the value value of a {@code CDNs} configuration field if available using the configured region.
+     *
+     * @param key The key of the value.
+     *
+     * @return Optional of the value if it's available for the configured region.
+     *
+     * @see #getCdns()
+     */
     private Optional<String> getCdnValue(String key) {
         return getIndexedValue(getCdns(), key, KEY_CDNS_NAME, getRegionCode());
     }
 
+    /**
+     * Get the {@code versions} file config, reading it when not available.
+     *
+     * @return The {@code versions} config.
+     */
     private Config getVersions() {
         if (versions == null) {
-            versions = Config.tableConfig(getDataReader(getDirectUrl(FILE_VERSIONS)));
+            String uri = getDirectUrl(FILE_VERSIONS);
+            LOGGER.trace("Initialising versions config from URI {}", uri);
+            versions = Config.tableConfig(getDataReader(uri));
         }
         return versions;
     }
 
+    /**
+     * Get the value value of a {@code versions} configuration field if available using the configured region.
+     *
+     * @param key The key of the value.
+     *
+     * @return Optional of the value if it's available for the configured region.
+     *
+     * @see #getVersions()
+     */
     private Optional<String> getVersionValue(String key) {
         return getIndexedValue(getVersions(), key, KEY_VERSIONS_REGION, getRegionCode());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<String> getBuildConfigKey() {
         return getVersionValue(KEY_VERSIONS_BUILD_CONFIG);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<String> getCdnConfigKey() {
         return getVersionValue(KEY_VERSIONS_CDN_CONFIG);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Supplier<DataReader> getConfigDataReader(String checksum) {
         String uri = format("%s/config/%s/%s/%s", getCdnUrl(), checksum.substring(0, 2), checksum.substring(2, 4), checksum);
@@ -107,6 +173,9 @@ public class CdnCascConfig extends BaseCascConfig {
         return getDataReader(uri);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<String> getAvailableRegions() {
         List<String> cdnNames = getCdns().getValues(KEY_CDNS_NAME)
@@ -120,6 +189,9 @@ public class CdnCascConfig extends BaseCascConfig {
         return regions;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCdnUrl() {
         String host = getCdnValue(KEY_CDNS_HOSTS)
@@ -130,6 +202,9 @@ public class CdnCascConfig extends BaseCascConfig {
         return url;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getVersion() {
         String version = getVersionValue(KEY_VERSIONS_VERSION)

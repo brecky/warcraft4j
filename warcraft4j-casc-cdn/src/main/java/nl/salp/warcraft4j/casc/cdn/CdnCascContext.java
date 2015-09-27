@@ -18,13 +18,12 @@
  */
 package nl.salp.warcraft4j.casc.cdn;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import nl.salp.warcraft4j.Checksum;
-import nl.salp.warcraft4j.casc.CascConfig;
-import nl.salp.warcraft4j.casc.CascContext;
-import nl.salp.warcraft4j.casc.Index;
-import nl.salp.warcraft4j.config.W4jConfig;
 import nl.salp.warcraft4j.casc.*;
 import nl.salp.warcraft4j.casc.blte.BlteDataReader;
+import nl.salp.warcraft4j.config.W4jConfig;
 import nl.salp.warcraft4j.io.reader.DataReader;
 
 import java.util.Optional;
@@ -33,26 +32,41 @@ import java.util.function.Supplier;
 import static java.lang.String.format;
 
 /**
- * TODO Document class.
+ * {@link CascContext} implementation for CDN.
  *
  * @author Barre Dijkstra
  */
+@Singleton
 public class CdnCascContext extends CascContext {
+    /** The URI mask for data files. */
     private static final String MASK_FILES_DATA = "%s/data/%s/%s/%s";
+    /** The {@link CascConfig}. */
     private CascConfig cascConfig;
 
+    /**
+     * Create a new context instance.
+     *
+     * @param w4jConfig The {@link W4jConfig}.
+     */
+    @Inject
     public CdnCascContext(W4jConfig w4jConfig) {
         super(w4jConfig);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected CascConfig getCascConfig() {
+    public CascConfig getCascConfig() {
         if (cascConfig == null) {
             cascConfig = new CdnCascConfig(getW4jConfig(), getDataReaderProvider());
         }
         return cascConfig;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Supplier<DataReader> getEncodingReader() {
         FileKey encodingFileChecksum = getCascConfig().getStorageEncodingFileChecksum();
@@ -62,11 +76,17 @@ public class CdnCascContext extends CascContext {
         return () -> new BlteDataReader(getDataReaderProvider().getDataReader(uri), getCascConfig().getStorageEncodingFileSize());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Index parseIndex() throws CascParsingException {
         return new CdnIndexParser(getCascConfig(), getDataReaderProvider()).parse();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected DataReaderProvider getDataReaderProvider() {
         if (getW4jConfig().isCaching() && cascConfig != null) {
@@ -76,6 +96,9 @@ public class CdnCascContext extends CascContext {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Optional<String> getDataFileUri(IndexEntry entry) {
         Optional<String> uri;
@@ -87,6 +110,13 @@ public class CdnCascContext extends CascContext {
         return uri;
     }
 
+    /**
+     * Get the URI of the data file containing the file for a checksum.
+     *
+     * @param checksum The checksum of the file to retrieve the data file URI for.
+     *
+     * @return Optional with the data file URI if present.
+     */
     protected Optional<String> getDataFileUri(Checksum checksum) {
         Optional<String> uri;
         if (checksum == null || checksum.length() != 16) {

@@ -35,20 +35,44 @@ import java.net.URI;
 import static java.lang.String.format;
 
 /**
- * TODO Document class.
+ * {@link nl.salp.warcraft4j.io.reader.DataReader} implementation that (pre-) reads all data from a HTTP-based online file before providing it as a data reader.
  *
  * @author Barre Dijkstra
  */
 public class CachedHttpDataReader extends ByteArrayDataReader {
-
+    /**
+     * Create a new instance.
+     *
+     * @param url The URL of the file to read.
+     *
+     * @throws DataParsingException When the file could not be read.
+     */
     public CachedHttpDataReader(String url) throws DataParsingException {
         super(getData(url));
     }
 
-    public CachedHttpDataReader(String url, long offset, long length) {
+    /**
+     * Create a new instance reading a segment of data.
+     *
+     * @param url    The URL of the file to read.
+     * @param offset The file offset to start reading from.
+     * @param length The length of the data segment to read.
+     *
+     * @throws DataParsingException When the file could not be read.
+     */
+    public CachedHttpDataReader(String url, long offset, long length) throws DataParsingException {
         super(getData(url, offset, length));
     }
 
+    /**
+     * Read the data from a file (direct blocking http read).
+     *
+     * @param url The URL of the file to read.
+     *
+     * @return The file contents.
+     *
+     * @throws DataParsingException When reading the file failed.
+     */
     private static byte[] getData(String url) throws DataParsingException {
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
              CloseableHttpResponse response = httpClient.execute(new HttpGet(URI.create(url)))) {
@@ -68,6 +92,20 @@ public class CachedHttpDataReader extends ByteArrayDataReader {
         }
     }
 
+    /**
+     * Read a segment of the data from a file (direct blocking http read).
+     * <p>
+     * FIXME Currently reads the whole file and passes it with the offset/length to the {@link ByteArrayDataReader}, change to to only read wanted data.
+     * </p>
+     *
+     * @param url    The URL of the file to read.
+     * @param offset The file offset to start reading from.
+     * @param length The length of the data segment to read.
+     *
+     * @return The data segment.
+     *
+     * @throws DataParsingException When reading the file failed or the data segment is out of bounds.
+     */
     private static byte[] getData(String url, long offset, long length) throws DataParsingException {
         if (offset < 0) {
             throw new DataParsingException(format("Can't create a http reader for %s with negative data block offset %d.", url, offset));

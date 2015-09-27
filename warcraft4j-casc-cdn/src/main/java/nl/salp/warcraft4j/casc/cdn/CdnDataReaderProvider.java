@@ -25,16 +25,22 @@ import nl.salp.warcraft4j.io.reader.http.CachedHttpDataReader;
 import java.util.function.Supplier;
 
 /**
- * TODO Document class.
+ * {@link DataReaderProvider} for reading online (HTTP) files.
  *
  * @author Barre Dijkstra
  */
 public class CdnDataReaderProvider implements DataReaderProvider {
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Supplier<DataReader> getDataReader(String url) {
         return () -> new CachedHttpDataReader(url);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Supplier<DataReader> getDataReader(String url, long offset, long length) {
         return () -> new CachedHttpDataReader(url, offset, length);

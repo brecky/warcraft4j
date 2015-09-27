@@ -41,19 +41,32 @@ import static java.nio.file.StandardOpenOption.*;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
- * TODO Add description.
+ * {@link DataReaderProvider} for reading online (HTTP) files, caching per version.
+ * <p>
+ * This implementation has no cache-expiration or cleanup functionality and can consume quite a bit of drive space over time.
+ * </p>
  *
  * @author Barre Dijkstra
  */
 public class CachingCdnDataReaderProvider implements DataReaderProvider {
     /** The logger. */
     protected static final Logger LOGGER = LoggerFactory.getLogger(CachingCdnDataReaderProvider.class);
-
+    /** The size of chunks to use reading (cached) files. */
     private static final int CACHE_CHUNK_SIZE = 4096;
+    /** The cache directory. */
     private final Path cacheDirectory;
+    /** The CDN url. */
     private final String cdnUrl;
 
-    public CachingCdnDataReaderProvider(CascConfig cascConfig, Path cacheRootDirectory) {
+    /**
+     * Create a new instance.
+     *
+     * @param cascConfig         The {@link CascConfig} to use.
+     * @param cacheRootDirectory The path of the directory to cache all files in.
+     *
+     * @throws IllegalArgumentException When the cache directory is not available and could not be created.
+     */
+    public CachingCdnDataReaderProvider(CascConfig cascConfig, Path cacheRootDirectory) throws IllegalArgumentException {
         String versionDir = "v" + cascConfig.getVersion().replace('.', '_');
         this.cacheDirectory = cacheRootDirectory.resolve(versionDir);
         this.cdnUrl = cascConfig.getCdnUrl();
@@ -70,52 +83,100 @@ public class CachingCdnDataReaderProvider implements DataReaderProvider {
         LOGGER.trace("Created cached CDN data reader for CDN URL {}, using cache directory {}", cdnUrl, cacheDirectory);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Supplier<DataReader> getDataReader(String uri) throws CascParsingException {
-        if (!isCached(uri)) {
-            try {
-                cache(uri);
-            } catch (IOException e) {
-                throw new CascParsingException(format("Error caching file %s", uri), e);
-            }
-        }
-        return () -> new FileDataReader(toCacheFile(uri));
+        return () -> new FileDataReader(getFile(uri));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Supplier<DataReader> getDataReader(String uri, long offset, long length) throws CascParsingException {
-        if (!isCached(uri)) {
-            try {
-                cache(uri);
-            } catch (IOException e) {
-                throw new CascParsingException(format("Error caching file %s", uri), e);
-            }
-        }
-        return () -> new FileDataReader(toCacheFile(uri), offset, length);
+        return () -> new FileDataReader(getFile(uri), offset, length);
     }
 
-    private void cache(String url) throws IOException {
+    /**
+     * Get the path of the cached version of a file, caching it when required.
+     *
+     * @param url The URL of the file.
+     *
+     * @return The path of the cached file.
+     *
+     * @throws CascParsingException When caching the file failed or the URL is invalid.
+     */
+    private Path getFile(String url) throws CascParsingException {
+        Path filePath;
+        if (isCached(url)) {
+            filePath = toCacheFile(url);
+        } else {
+            try {
+                filePath = cache(url);
+            } catch (IOException e) {
+                throw new CascParsingException(format("Error caching file %s", url), e);
+            }
+        }
+        return filePath;
+    }
+
+    /**
+     * Cache a file, overwriting the previous version if existing.
+     *
+     * @param url The URL of the file to cache.
+     *
+     * @return The path of the cached file.
+     *
+     * @throws IOException When reading the file or writing the cached version of the file fails.
+     */
+    private Path cache(String url) throws IOException {
         Path file = toCacheFile(url);
         LOGGER.trace("Caching CDN file {} to {}", url, file);
         if (!Files.exists(file.getParent())) {
-            LOGGER.trace("Creating path {} for caching file {}", file.getParent(), file);
+            LOGGER.trace("Creating directory structure {} to cache file {}", file.getParent(), file);
             Files.createDirectories(file.getParent());
         }
-        try (DataReader dataReader = new CachedHttpDataReader(url); ByteChannel channel = Files.newByteChannel(file, CREATE, WRITE, TRUNCATE_EXISTING)) {
-            while (dataReader.hasRemaining()) {
-                int chunkSize = (int) Math.min(CACHE_CHUNK_SIZE, dataReader.remaining());
-                byte[] data = dataReader.readNext(DataTypeFactory.getByteArray(chunkSize));
-                channel.write(ByteBuffer.wrap(data));
+        try (DataReader fileDataReader = new CachedHttpDataReader(url);
+             ByteChannel cachedFileChannel = Files.newByteChannel(file, CREATE, WRITE, TRUNCATE_EXISTING)) {
+            long fileSize = 0;
+            while (fileDataReader.hasRemaining()) {
+                int chunkSize = (int) Math.min(CACHE_CHUNK_SIZE, fileDataReader.remaining());
+                ByteBuffer dataBuffer = ByteBuffer.wrap(fileDataReader.readNext(DataTypeFactory.getByteArray(chunkSize)));
+                while (dataBuffer.hasRemaining()) {
+                    fileSize += cachedFileChannel.write(dataBuffer);
+                }
             }
+            LOGGER.trace("Cached {} byte CDN file {} to {}", fileSize, url, file);
         }
+        return file;
     }
 
-    private boolean isCached(String url) {
+    /**
+     * Check if a file is cached.
+     *
+     * @param url The URL of the file.
+     *
+     * @return {@code true} if the file is cached.
+     *
+     * @throws CascParsingException When the provided URL is invalid or does not point to a valid file.
+     */
+    private boolean isCached(String url) throws CascParsingException {
         Path file = toCacheFile(url);
         return Files.exists(file) && Files.isRegularFile(file) && Files.isReadable(file);
     }
 
-    private Path toCacheFile(String url) {
+    /**
+     * Convert the URL of a file to the path of the cached version (which might not exist).
+     *
+     * @param url The URL of the file.
+     *
+     * @return The path to the cached version of the file.
+     *
+     * @throws CascParsingException When the provided URL is invalid or does not point to a valid file.
+     */
+    private Path toCacheFile(String url) throws CascParsingException {
         if (isEmpty(url) || !url.startsWith(cdnUrl) || url.equals(cdnUrl)) {
             throw new CascParsingException(format("%s is not a cacheable url.", url));
         }
