@@ -1,0 +1,50 @@
+{
+  "fields" : [ {
+    "length" : 4,
+    "fieldSize" : 4,
+    "index" : 1,
+    "fieldName" : "id",
+    "padding" : false,
+    "javaDataType" : "int",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 1,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  }, {
+    "length" : 4,
+    "fieldSize" : 4,
+    "index" : 2,
+    "fieldName" : "spellId",
+    "padding" : false,
+    "javaDataType" : "int",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 1,
+    "referencedType" : "SPELL",
+    "byteOrder" : "BIG_ENDIAN"
+  }, {
+    "length" : 4,
+    "fieldSize" : 4,
+    "index" : 3,
+    "fieldName" : "raidBuffSpellId",
+    "padding" : false,
+    "javaDataType" : "int",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 1,
+    "referencedType" : "SPELL",
+    "byteOrder" : "BIG_ENDIAN"
+  } ],
+  "entrySize" : 12,
+  "filename" : "DBFilesClient\\CastableRaidBuffs.dbc",
+  "dbcType" : "CASTABLE_RAID_BUFF",
+  "fieldsPerEntry" : 3,
+  "filenameHash" : 3009078043894218047
+}

@@ -1,9 +1,0 @@
-## Interface: 60000
-## Title: Warcraft4J
-## Version: 0.0.1
-## Author: salp
-## X-Website: http://www.github.com/barredijkstra/warcraft4j
-## Notes: Character data gatherer for Warcraft4J.
-
-Warcraft4J.lua
-Warcraft4J.xml

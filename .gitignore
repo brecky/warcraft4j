@@ -53,5 +53,4 @@ nb-configuration.xml
 #####
 # Environment specific files
 #####
-data/
-analysis/
+

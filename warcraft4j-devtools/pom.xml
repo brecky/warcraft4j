@@ -28,30 +28,73 @@
     </parent>
 
     <artifactId>warcraft4j-devtools</artifactId>
-    <name>warcraft4j-devtools</name>
-    <description>Warcraft4J development tools</description>
+    <packaging>jar</packaging>
+
+    <name>Warcraft4J development tools and utilities</name>
+    <description>Collection of various development tools and utilities to support development of Warcraft4J and structural data analysis.</description>
 
     <dependencies>
         <!-- Module dependencies -->
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
+            <artifactId>warcraft4j-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.salp.warcraft4j</groupId>
+            <artifactId>warcraft4j-io</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.salp.warcraft4j</groupId>
+            <artifactId>warcraft4j-io-file</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.salp.warcraft4j</groupId>
+            <artifactId>warcraft4j-io-http</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.salp.warcraft4j</groupId>
             <artifactId>warcraft4j-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
             <artifactId>warcraft4j-battlenet</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
-            <artifactId>warcraft4j-combatlog</artifactId>
+            <artifactId>warcraft4j-casc</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
-            <artifactId>warcraft4j-wowhead</artifactId>
+            <artifactId>warcraft4j-casc-cdn</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
-            <artifactId>warcraft4j-clientdata</artifactId>
+            <artifactId>warcraft4j-casc-neo4j</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.salp.warcraft4j</groupId>
+            <artifactId>warcraft4j-casc-dataparser</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- Database dependencies -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.0.0-beta1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j</artifactId>
+            <version>2.2.4</version>
         </dependency>
         <!-- Utility dependencies -->
         <dependency>

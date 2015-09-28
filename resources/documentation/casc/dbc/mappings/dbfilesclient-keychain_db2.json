@@ -1,0 +1,36 @@
+{
+  "fields" : [ {
+    "length" : 4,
+    "fieldSize" : 4,
+    "index" : 1,
+    "fieldName" : "id",
+    "padding" : false,
+    "javaDataType" : "int",
+    "dbcDataType" : "UINT32",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : true,
+    "numberOfEntries" : 1,
+    "referencedType" : null,
+    "byteOrder" : "BIG_ENDIAN"
+  }, {
+    "length" : 1,
+    "fieldSize" : 32,
+    "index" : 2,
+    "fieldName" : "unknown2",
+    "padding" : false,
+    "javaDataType" : "[B",
+    "dbcDataType" : "BYTE",
+    "lengthDefault" : true,
+    "lengthVariable" : false,
+    "knownMeaning" : false,
+    "numberOfEntries" : 32,
+    "referencedType" : null,
+    "byteOrder" : "LITTLE_ENDIAN"
+  } ],
+  "entrySize" : 36,
+  "filename" : "DBFilesClient\\KeyChain.db2",
+  "dbcType" : "KEY_CHAIN",
+  "fieldsPerEntry" : 33,
+  "filenameHash" : -1077880301913088580
+}

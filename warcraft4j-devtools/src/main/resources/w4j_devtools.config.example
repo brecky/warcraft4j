@@ -2,7 +2,105 @@
 # Example configuration file for the Warcraft4J development tools. #
 ####################################################################
 
-# The local World of Warcraft installation directory
-w4j.directory.wow=/games/wow
-# Path to the local directory that contains extract DBC and DB2 files.
-w4j.directory.dbc=/home/user/data/dbc
+###
+# General settings.
+###
+
+# The base Warcarft4J working directory.
+# optional: false
+w4j.path=${user.home}/w4j
+
+###
+# World of Warcraft settings.
+###
+
+# The World of Warcraft installation directory.
+# optional: false
+w4j.wow.path=C:/Program Files (x86)/World of Warcraft
+
+# Preferred region.
+# optional: true
+# default: EUROPE
+w4j.wow.region=EUROPE
+
+# Preferred locale
+# optional: true
+# default : en_US
+w4j.wow.locale=en_US
+
+# Preferred WoW branch
+# optional: true
+# default : LIVE
+w4j.wow.branch=LIVE
+
+###
+# Data related settings.
+###
+
+# The path to the directory with extracted World of Warcraft data files.
+# optional: true
+# default : null
+w4j.data.extracted=${w4j.path}/data/extracted
+
+# The listfile to use containing resolved CASC file names.
+# optional: true
+# default : ${w4j.path}/data/listfile.txt
+w4j.data.listfile=${w4j.path}/data/listfile.txt
+
+# CASC configuration for switching between the online CDN (true) or the local World of Warcraft installation files (false)
+# optional: true
+# default : false
+w4j.data.cdn=false
+
+# CDN CASC configuration that causes the CASC to cache all downloaded files locally.
+# optional: true
+# default : false
+w4j.data.cdn.cache=true
+
+# The directory to cache the CDN read files to
+# optional: true
+# default : ${w4j.path}/data/cdncache
+w4j.data.cdn.cache.path=${w4j.path}/data/cdncache
+
+###
+# Neo4J settings
+###
+
+# The path of the Neo4J data directory for the embedded Neo4J server.
+# optional: true
+# default: null
+w4j.data.neo4j.data.path=${w4j.path}/data/neo4j
+
+# The external Neo4J server host/port.
+# optional: true
+# default: null
+w4j.data.neo4j.ext.server=localhost:7474
+
+# The external Neo4J server user.
+# optional: true
+# default: null
+w4j.data.neo4j.ext.user=username
+
+# The external Neo4J server user's password.
+# optional: true
+# default: null
+w4j.data.neo4j.ext.password=password
+
+###
+# MongoDB settings
+###
+
+# The external MongoDB host/port.
+# optional: true
+# default: null
+w4j.data.mongodb.uri=localhost:27017
+
+# The external MongoDB user.
+# optional: true
+# default: null
+w4j.data.mongodb.user=username
+
+# The external MongoDB user's password.
+# optional: true
+# default: null
+w4j.data.mongodb.password=password

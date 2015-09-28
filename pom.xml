@@ -17,7 +17,6 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -29,7 +28,7 @@
     <packaging>pom</packaging>
 
     <!-- Project information. -->
-    <name>Warcraft4J</name>
+    <name>Warcraft4J parent module</name>
     <description>General parent module for all Warcraft4J modules.</description>
 
     <scm>
@@ -54,13 +53,25 @@
 
     <!-- Project modules -->
     <modules>
+        <!-- Warcraft4J utility modules -->
+        <module>warcraft4j-util</module>
+        <module>warcraft4j-io</module>
+        <module>warcraft4j-io-file</module>
+        <module>warcraft4j-io-http</module>
+        <!-- Warcraft4J core modules -->
         <module>warcraft4j-core</module>
+        <module>warcraft4j-model</module>
+        <!-- Warcraft4J CASC modules -->
+        <module>warcraft4j-casc</module>
+        <module>warcraft4j-casc-dataparser</module>
+        <module>warcraft4j-casc-cdn</module>
+        <module>warcraft4j-casc-neo4j</module>
+        <module>warcraft4j-model-dbc</module>
+        <!-- Warcraft4J Battle.NET modules -->
         <module>warcraft4j-battlenet</module>
-        <module>warcraft4j-combatlog</module>
-        <module>warcraft4j-wowhead</module>
-        <module>warcraft4j-addon</module>
-        <module>warcraft4j-clientdata</module>
-        <module>warcraft4j-webapp</module>
+        <!-- Warcraft4J Neo4J modules -->
+        <module>warcraft4j-io-neo4j</module>
+        <!-- Warcraft4J application modules -->
         <module>warcraft4j-devtools</module>
     </modules>
 
@@ -68,6 +79,7 @@
     <properties>
         <plugin.maven.version>3.1</plugin.maven.version>
         <plugin.maven-resources.version>2.7</plugin.maven-resources.version>
+        <plugin.maven-surefire.version>2.18.1</plugin.maven-surefire.version>
         <source.encoding>UTF-8</source.encoding>
         <source.version>1.8</source.version>
         <dependency.guice.version>3.0</dependency.guice.version>
@@ -79,8 +91,10 @@
         <dependency.commons-lang.version>3.3.2</dependency.commons-lang.version>
         <dependency.commons-codec.version>1.10</dependency.commons-codec.version>
         <dependency.commons-collections.version>4.0</dependency.commons-collections.version>
+        <dependency.commons-configuration.version>1.10</dependency.commons-configuration.version>
         <dependency.httpclient.version>4.4</dependency.httpclient.version>
         <dependency.jackson.version>2.5.1</dependency.jackson.version>
+        <dependency.neo4j.version>2.2.4</dependency.neo4j.version>
     </properties>
 
     <!-- Managed build plugins -->
@@ -95,6 +109,8 @@
                         <source>${source.version}</source>
                         <target>${source.version}</target>
                         <encoding>${source.encoding}</encoding>
+                        <showDeprecation>true</showDeprecation>
+                        <showWarnings>true</showWarnings>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -105,6 +121,15 @@
                         <encoding>${source.encoding}</encoding>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${plugin.maven-surefire.version}</version>
+                    <configuration>
+                        <parallel>methods</parallel>
+                        <threadCount>10</threadCount>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -112,32 +137,6 @@
     <!-- Managed dependencies -->
     <dependencyManagement>
         <dependencies>
-            <!-- Project modules -->
-            <dependency>
-                <groupId>nl.salp.warcraft4j</groupId>
-                <artifactId>warcraft4j-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.salp.warcraft4j</groupId>
-                <artifactId>warcraft4j-battlenet</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.salp.warcraft4j</groupId>
-                <artifactId>warcraft4j-combatlog</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.salp.warcraft4j</groupId>
-                <artifactId>warcraft4j-wowhead</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>nl.salp.warcraft4j</groupId>
-                <artifactId>warcraft4j-clientdata</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <!-- Dependency injection dependencies -->
             <dependency>
                 <groupId>com.google.inject</groupId>
@@ -164,6 +163,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
                 <version>${dependency.commons-collections.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>${dependency.commons-configuration.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
