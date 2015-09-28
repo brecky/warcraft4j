@@ -66,6 +66,7 @@
         <module>warcraft4j-casc-dataparser</module>
         <module>warcraft4j-casc-cdn</module>
         <module>warcraft4j-casc-neo4j</module>
+        <module>warcraft4j-model-dbc</module>
         <!-- Warcraft4J Battle.NET modules -->
         <module>warcraft4j-battlenet</module>
         <!-- Warcraft4J Neo4J modules -->

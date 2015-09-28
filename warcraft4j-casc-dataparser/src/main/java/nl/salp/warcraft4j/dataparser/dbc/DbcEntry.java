@@ -22,6 +22,7 @@ import nl.salp.warcraft4j.LazyInstance;
 import nl.salp.warcraft4j.io.datatype.DataType;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.nio.ByteBuffer;
@@ -38,21 +39,22 @@ import static java.lang.String.format;
  */
 public class DbcEntry {
     private static final DataType<Integer> STRINGTABLE_REF_DATATYPE = DataTypeFactory.getInteger();
-    private static final DataType<Long> ID_DATATYPE = DataTypeFactory.getUnsignedInteger();
+    private static final DataType<Integer> ID_DATATYPE = DataTypeFactory.getInteger();
     private static final int ID_OFFSET = 0;
     private final long filenameHash;
     private final int fieldCount;
     private transient final LazyInstance<byte[]> entryData;
+    private int hash;
 
     public DbcEntry(long filenameHash, int fieldCount, byte[] entryData) throws IllegalArgumentException {
-        this(filenameHash, fieldCount, new LazyInstance(entryData));
+        this(filenameHash, fieldCount, new LazyInstance<>(entryData));
         if (entryData == null || entryData.length == 0) {
             throw new IllegalArgumentException("Can't create a DBC entry with no data.");
         }
     }
 
     public DbcEntry(long filenameHash, int fieldCount, Supplier<byte[]> entryDataSupplier) throws IllegalArgumentException {
-        this(filenameHash, fieldCount, new LazyInstance(entryDataSupplier));
+        this(filenameHash, fieldCount, new LazyInstance<>(entryDataSupplier));
         if (entryDataSupplier == null) {
             throw new IllegalArgumentException("Can't create a DBC entry without a data supplier.");
         }
@@ -65,6 +67,7 @@ public class DbcEntry {
         this.filenameHash = filenameHash;
         this.fieldCount = fieldCount;
         this.entryData = entryData;
+        this.hash = 0;
     }
 
     public long getFilenameHash() {
@@ -79,7 +82,7 @@ public class DbcEntry {
         return entryData.get().length;
     }
 
-    public long getId() throws DbcParsingException {
+    public int getId() throws DbcParsingException {
         return read(ID_OFFSET, ID_DATATYPE);
     }
 
@@ -111,7 +114,14 @@ public class DbcEntry {
 
     @Override
     public int hashCode() {
-        return (int) (filenameHash * getId());
+        if (hash == 0) {
+            hash = new HashCodeBuilder()
+                    .append(filenameHash)
+                    .append(getId())
+                    .append(fieldCount)
+                    .toHashCode();
+        }
+        return hash;
     }
 
     @Override

@@ -34,8 +34,8 @@ public class MultiMap<K, E> {
     private final Map<E, Set<K>> valueMapping;
 
     public MultiMap() {
-        keyMapping = new HashMap();
-        valueMapping = new HashMap();
+        keyMapping = new HashMap<>();
+        valueMapping = new HashMap<>();
     }
 
     public int size() {

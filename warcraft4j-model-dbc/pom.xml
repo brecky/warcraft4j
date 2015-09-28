@@ -27,16 +27,26 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>warcraft4j-model</artifactId>
+    <artifactId>warcraft4j-model-dbc</artifactId>
     <packaging>jar</packaging>
 
-    <name>Warcraft4J Model</name>
-    <description>Warcraft4J domain model</description>
+    <name>Warcraft4J model DBC mappings</name>
+    <description>Warcraft4J DBC data to domain model mapping</description>
 
     <dependencies>
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
-            <artifactId>warcraft4j-core</artifactId>
+            <artifactId>warcraft4j-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.salp.warcraft4j</groupId>
+            <artifactId>warcraft4j-casc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.salp.warcraft4j</groupId>
+            <artifactId>warcraft4j-casc-dataparser</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

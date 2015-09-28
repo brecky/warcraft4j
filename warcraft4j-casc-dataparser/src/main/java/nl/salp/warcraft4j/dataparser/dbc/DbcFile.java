@@ -243,6 +243,36 @@ public class DbcFile {
     }
 
     /**
+     * Get the entry with a specific id.
+     * <p>
+     * This method performs a linear file read of all entry ids until a match id has been encountered, please note that this can be quite expensive.
+     * </p>
+     *
+     * @param id The id of the entry.
+     *
+     * @return Optional of entry if it was available or empty when no entry was found with the given id.
+     *
+     * @throws DbcParsingException When parsing of the entries failed.
+     */
+    public Optional<DbcEntry> getEntryWithId(int id) throws DbcParsingException {
+        DbcEntry entry = null;
+        DbcHeader header = getHeader();
+        try (RandomAccessDataReader reader = getDataReader()) {
+            int index = 0;
+            while (entry == null && index < header.getEntryCount()) {
+                if (id == getEntryId(index, reader)) {
+                    entry = getEntry(index, reader);
+                } else {
+                    index++;
+                }
+            }
+        } catch (IOException e) {
+            throw new DbcParsingException(format("Error finding entry with id %d for DBC file %d (%s)", id, filenameHash, filename), e);
+        }
+        return Optional.ofNullable(entry);
+    }
+
+    /**
      * Read the id from an entry with an index from a reader.
      *
      * @param index  The index of the entry.

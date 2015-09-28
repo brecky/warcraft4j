@@ -16,46 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.data.battlenet.api.wow.dto;
+package nl.salp.warcraft4j.model;
 
 /**
- * TODO Document class.
+ * TODO Add description.
+ *
+ * @author Barre Dijkstra
  */
-public enum BattlenetQuality {
-    WOW_TOKEN(8),
-    HEIRLOOM(7),
-    ARTIFACT(6),
-    LEGENDARY(5),
-    EPIC(4),
-    RARE(3),
-    UNCOMMON(2),
-    COMMON(1),
-    POOR(0);
-
-    /** The id. */
-    private final int id;
-
-    /**
-     * Create a new BattlenetQuality.
-     *
-     * @param id      The id for the quality.
-     */
-    private BattlenetQuality(int id) {
-        this.id = id;
+public class DbcMappingException extends RuntimeException {
+    public DbcMappingException(Throwable cause) {
+        super(cause);
     }
 
-    public int getId() {
-        return id;
+    public DbcMappingException(String message) {
+        super(message);
     }
 
-    public static BattlenetQuality getQuality(int quality) {
-        BattlenetQuality bnetQ = null;
-        for (BattlenetQuality q : BattlenetQuality.values()) {
-            if (q.getId() == quality) {
-                bnetQ = q;
-                break;
-            }
-        }
-        return bnetQ;
+    public DbcMappingException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
