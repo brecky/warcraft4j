@@ -21,7 +21,7 @@ package nl.salp.warcraft4j.casc.local;
 import nl.salp.warcraft4j.casc.BaseCascConfig;
 import nl.salp.warcraft4j.casc.CascConfig;
 import nl.salp.warcraft4j.casc.Config;
-import nl.salp.warcraft4j.config.W4jConfig;
+import nl.salp.warcraft4j.config.Warcraft4jConfig;
 import nl.salp.warcraft4j.casc.*;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.reader.file.FileDataReader;
@@ -57,13 +57,13 @@ public class LocalCascConfig extends BaseCascConfig implements CascConfig {
 
     private Config buildInfo;
 
-    public LocalCascConfig(W4jConfig w4jConfig, DataReaderProvider dataReaderProvider) {
-        super(w4jConfig, dataReaderProvider);
+    public LocalCascConfig(Warcraft4jConfig warcraft4jConfig, DataReaderProvider dataReaderProvider) {
+        super(warcraft4jConfig, dataReaderProvider);
     }
 
     private Config getBuildInfo() {
         if (buildInfo == null) {
-            String path = getW4jConfig().getWowInstallationDirectory().resolve(FILENAME_BUILDINFO).toString();
+            String path = getWarcraft4jConfig().getWowInstallationDirectory().resolve(FILENAME_BUILDINFO).toString();
             LOGGER.debug("Initialising build info from file {}", path);
             buildInfo = Config.tableConfig(getDataReader(path));
         }
@@ -86,7 +86,7 @@ public class LocalCascConfig extends BaseCascConfig implements CascConfig {
 
     @Override
     protected Supplier<DataReader> getConfigDataReader(String checksum) {
-        Path path = getW4jConfig().getWowInstallationDirectory().resolve(Paths.get("Data", "config", checksum.substring(0, 2), checksum.substring(2, 4), checksum));
+        Path path = getWarcraft4jConfig().getWowInstallationDirectory().resolve(Paths.get("Data", "config", checksum.substring(0, 2), checksum.substring(2, 4), checksum));
         return () -> new FileDataReader(path);
     }
 

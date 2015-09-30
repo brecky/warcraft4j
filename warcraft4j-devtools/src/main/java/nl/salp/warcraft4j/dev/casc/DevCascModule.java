@@ -19,7 +19,7 @@
 package nl.salp.warcraft4j.dev.casc;
 
 import com.google.inject.AbstractModule;
-import nl.salp.warcraft4j.config.W4jConfig;
+import nl.salp.warcraft4j.config.Warcraft4jConfig;
 import nl.salp.warcraft4j.dev.DevToolsConfig;
 
 /**
@@ -30,6 +30,6 @@ import nl.salp.warcraft4j.dev.DevToolsConfig;
 public class DevCascModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(W4jConfig.class).toInstance(DevToolsConfig.fromFile("w4j_devtools.config"));
+        bind(Warcraft4jConfig.class).toInstance(DevToolsConfig.fromFile("w4j_devtools.config"));
     }
 }

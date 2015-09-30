@@ -23,8 +23,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>warcraft4j</artifactId>
         <groupId>nl.salp.warcraft4j</groupId>
+        <artifactId>warcraft4j</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>warcraft4j-casc-neo4j</artifactId>
@@ -51,7 +51,7 @@
         </dependency>
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
-            <artifactId>warcraft4j-io-neo4j</artifactId>
+            <artifactId>warcraft4j-util-neo4j</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

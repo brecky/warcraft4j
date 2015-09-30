@@ -22,7 +22,7 @@ import nl.salp.warcraft4j.Branch;
 import nl.salp.warcraft4j.Locale;
 import nl.salp.warcraft4j.Region;
 import nl.salp.warcraft4j.casc.blte.BlteDataReader;
-import nl.salp.warcraft4j.config.W4jConfig;
+import nl.salp.warcraft4j.config.Warcraft4jConfig;
 import nl.salp.warcraft4j.hash.JenkinsHash;
 import nl.salp.warcraft4j.io.reader.CompositeDataReader;
 import nl.salp.warcraft4j.io.reader.DataReader;
@@ -48,24 +48,24 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 public abstract class CascContext {
     /** The logger. */
     protected static final Logger LOGGER = LoggerFactory.getLogger(CascContext.class);
-    private final W4jConfig w4jConfig;
+    private final Warcraft4jConfig warcraft4jConfig;
     private final Map<String, Long> hashes;
     private final Map<Long, String> filenames;
     private Index index;
     private EncodingFile encoding;
     private Root root;
 
-    protected CascContext(W4jConfig w4jConfig) {
+    protected CascContext(Warcraft4jConfig warcraft4jConfig) {
         LOGGER.debug("Created CASC context for branch {}, region {} and locale {} (wow directory: {}, online: {}, caching: {})",
-                w4jConfig.getBranch(), w4jConfig.getRegion(), w4jConfig.getLocale(), w4jConfig.getWowInstallationDirectory(),
-                w4jConfig.isOnline(), w4jConfig.isCaching());
-        this.w4jConfig = w4jConfig;
+                warcraft4jConfig.getBranch(), warcraft4jConfig.getRegion(), warcraft4jConfig.getLocale(), warcraft4jConfig.getWowInstallationDirectory(),
+                warcraft4jConfig.isOnline(), warcraft4jConfig.isCaching());
+        this.warcraft4jConfig = warcraft4jConfig;
         this.hashes = new HashMap<>();
         this.filenames = new HashMap<>();
     }
 
-    public final W4jConfig getW4jConfig() {
-        return w4jConfig;
+    public final Warcraft4jConfig getWarcraft4jConfig() {
+        return warcraft4jConfig;
     }
 
     public abstract CascConfig getCascConfig();
@@ -186,7 +186,7 @@ public abstract class CascContext {
      * @return The {@link Branch}.
      */
     public Branch getBranch() {
-        return w4jConfig.getBranch();
+        return warcraft4jConfig.getBranch();
     }
 
     /**
@@ -195,7 +195,7 @@ public abstract class CascContext {
      * @return The {@link Region}.
      */
     public Region getRegion() {
-        return w4jConfig.getRegion();
+        return warcraft4jConfig.getRegion();
     }
 
     /**
@@ -204,7 +204,7 @@ public abstract class CascContext {
      * @return The {@link Locale}.
      */
     public Locale getLocale() {
-        return w4jConfig.getLocale();
+        return warcraft4jConfig.getLocale();
     }
 
     /**

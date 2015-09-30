@@ -18,16 +18,17 @@
  */
 package nl.salp.warcraft4j.dev.casc.model;
 
+import nl.salp.warcraft4j.Warcraft4jException;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.reader.DataReader;
-import nl.salp.warcraft4j.DataTypeUtil;
+import nl.salp.warcraft4j.util.DataTypeUtil;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
-import static nl.salp.warcraft4j.DataTypeUtil.byteArrayToHexString;
+import static nl.salp.warcraft4j.util.DataTypeUtil.byteArrayToHexString;
 
 /**
  * TODO Add description.
@@ -76,7 +77,7 @@ public class FileHeader {
             byte[] header = dataReader.readNext(DataTypeFactory.getByteArray(headerSize));
             return new FileHeader(header);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new Warcraft4jException(e);
         }
     }
 }

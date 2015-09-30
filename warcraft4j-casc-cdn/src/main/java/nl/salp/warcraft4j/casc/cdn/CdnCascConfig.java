@@ -22,7 +22,7 @@ import nl.salp.warcraft4j.casc.BaseCascConfig;
 import nl.salp.warcraft4j.casc.CascParsingException;
 import nl.salp.warcraft4j.casc.Config;
 import nl.salp.warcraft4j.casc.DataReaderProvider;
-import nl.salp.warcraft4j.config.W4jConfig;
+import nl.salp.warcraft4j.config.Warcraft4jConfig;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,12 +74,12 @@ public class CdnCascConfig extends BaseCascConfig {
     /**
      * Create a new instance.
      *
-     * @param w4jConfig          The {@link W4jConfig} instance to configure the CDN CASC configuration with.
+     * @param warcraft4jConfig          The {@link Warcraft4jConfig} instance to configure the CDN CASC configuration with.
      * @param dataReaderProvider The {@link DataReaderProvider} for reading the configuration files.
      */
-    public CdnCascConfig(W4jConfig w4jConfig, DataReaderProvider dataReaderProvider) {
-        super(w4jConfig, dataReaderProvider);
-        this.cdnVersion = CdnVersion.getFrom(w4jConfig.getBranch());
+    public CdnCascConfig(Warcraft4jConfig warcraft4jConfig, DataReaderProvider dataReaderProvider) {
+        super(warcraft4jConfig, dataReaderProvider);
+        this.cdnVersion = CdnVersion.getFrom(warcraft4jConfig.getBranch());
     }
 
     /**

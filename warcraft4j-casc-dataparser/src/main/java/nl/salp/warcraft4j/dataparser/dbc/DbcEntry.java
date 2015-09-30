@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.dataparser.dbc;
 
-import nl.salp.warcraft4j.LazyInstance;
+import nl.salp.warcraft4j.util.LazyInstance;
 import nl.salp.warcraft4j.io.datatype.DataType;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import org.apache.commons.lang3.builder.EqualsBuilder;

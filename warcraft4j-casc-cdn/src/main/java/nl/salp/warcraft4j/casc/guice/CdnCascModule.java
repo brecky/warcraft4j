@@ -25,7 +25,7 @@ import nl.salp.warcraft4j.casc.CascService;
 import nl.salp.warcraft4j.casc.CdnCascService;
 import nl.salp.warcraft4j.casc.cdn.CdnCascContext;
 import nl.salp.warcraft4j.casc.local.LocalCascContext;
-import nl.salp.warcraft4j.config.W4jConfig;
+import nl.salp.warcraft4j.config.Warcraft4jConfig;
 
 /**
  * TODO Add description.
@@ -35,12 +35,12 @@ import nl.salp.warcraft4j.config.W4jConfig;
 public class CdnCascModule extends AbstractModule {
     @Override
     protected void configure() {
-        requireBinding(W4jConfig.class);
-        final Provider<W4jConfig> configProvider = getProvider(W4jConfig.class);
+        requireBinding(Warcraft4jConfig.class);
+        final Provider<Warcraft4jConfig> configProvider = getProvider(Warcraft4jConfig.class);
         bind(CascContext.class).toProvider(new Provider<CascContext>() {
             @Override
             public CascContext get() {
-                W4jConfig config = configProvider.get();
+                Warcraft4jConfig config = configProvider.get();
                 if (config.isOnline()) {
                     return new CdnCascContext(config);
                 } else {

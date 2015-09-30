@@ -18,10 +18,7 @@
  */
 package nl.salp.warcraft4j.casc;
 
-import nl.salp.warcraft4j.Checksum;
-import nl.salp.warcraft4j.casc.ContentChecksum;
-import nl.salp.warcraft4j.casc.EncodingEntry;
-import nl.salp.warcraft4j.casc.FileKey;
+import nl.salp.warcraft4j.util.Checksum;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;

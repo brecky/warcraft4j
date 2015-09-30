@@ -19,7 +19,7 @@
 package nl.salp.warcraft4j.casc.blte;
 
 import nl.salp.warcraft4j.casc.CascParsingException;
-import nl.salp.warcraft4j.Checksum;
+import nl.salp.warcraft4j.util.Checksum;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.parser.DataParsingException;

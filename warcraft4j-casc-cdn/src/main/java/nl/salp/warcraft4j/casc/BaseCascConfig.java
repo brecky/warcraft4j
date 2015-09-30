@@ -18,9 +18,9 @@
  */
 package nl.salp.warcraft4j.casc;
 
-import nl.salp.warcraft4j.DataTypeUtil;
+import nl.salp.warcraft4j.util.DataTypeUtil;
 import nl.salp.warcraft4j.Region;
-import nl.salp.warcraft4j.config.W4jConfig;
+import nl.salp.warcraft4j.config.Warcraft4jConfig;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,15 +56,15 @@ public abstract class BaseCascConfig implements CascConfig {
     protected static final String KEY_CDN_PATCH_ARCHIVE_GROUP = "patch-archive-group";
 
     private final DataReaderProvider dataReaderProvider;
-    private final W4jConfig w4jConfig;
+    private final Warcraft4jConfig warcraft4jConfig;
     private Config buildConfig;
     private Config cdnConfig;
 
-    protected BaseCascConfig(W4jConfig w4jConfig, DataReaderProvider dataReaderProvider) {
+    protected BaseCascConfig(Warcraft4jConfig warcraft4jConfig, DataReaderProvider dataReaderProvider) {
         LOGGER.trace("Created {} config instance for installation {}, region {}, branch {} and locale {} with data reader provider {}",
-                getClass().getName(), w4jConfig.getWowInstallationDirectory(), w4jConfig.getRegion(),
-                w4jConfig.getBranch(), w4jConfig.getLocale(), dataReaderProvider.getClass().getName());
-        this.w4jConfig = w4jConfig;
+                getClass().getName(), warcraft4jConfig.getWowInstallationDirectory(), warcraft4jConfig.getRegion(),
+                warcraft4jConfig.getBranch(), warcraft4jConfig.getLocale(), dataReaderProvider.getClass().getName());
+        this.warcraft4jConfig = warcraft4jConfig;
         this.dataReaderProvider = dataReaderProvider;
     }
 
@@ -169,13 +169,13 @@ public abstract class BaseCascConfig implements CascConfig {
     @Override
     public abstract String getCdnUrl();
 
-    protected final W4jConfig getW4jConfig() {
-        return w4jConfig;
+    protected final Warcraft4jConfig getWarcraft4jConfig() {
+        return warcraft4jConfig;
     }
 
     @Override
     public final Region getRegion() {
-        return getW4jConfig().getRegion();
+        return getWarcraft4jConfig().getRegion();
     }
 
     @Override

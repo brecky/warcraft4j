@@ -18,13 +18,13 @@
  */
 package nl.salp.warcraft4j.casc;
 
-import nl.salp.warcraft4j.Checksum;
-import nl.salp.warcraft4j.DataTypeUtil;
+import nl.salp.warcraft4j.util.Checksum;
+import nl.salp.warcraft4j.util.DataTypeUtil;
 
 import java.util.Arrays;
 
 import static java.lang.String.format;
-import static nl.salp.warcraft4j.DataTypeUtil.byteArrayToHexString;
+import static nl.salp.warcraft4j.util.DataTypeUtil.byteArrayToHexString;
 
 /**
  * {@link Checksum} for file data segment keys.

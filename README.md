@@ -14,20 +14,42 @@ This API is in _very_ early stages of development and will (most certainly) unde
 
 Given the complexity of the project and the underlying model, the fact that there's a single developer who does this in his spare time, as well as the goals of the project, it will take a while before this API even reaches a semi-stable alpha state.
 
-#Modules
- * **warcraft4j-battlenet** - Blizzard Battle.NET API wrapper.
- * **warcraft4j-casc** - General API for reading a CASC ( _Content Addressable Storage Container_ ).
+#Project modules
+The project is set up as a multi-module project which allows for minimising the amount of classes included dependencies to the functionality required.
+
+Most modules, where applicable, will have a _nl.salp.warcraft4j.{module}.guice_ package containing a Google Guice module for binding the module. 
+
+##Core Warcraft4J modules
+The modules in this category are common modules that will be used by most other modules.
+
+ * **warcraft4j-core** - Core Warcraft4J classes and general purpose utilities used by other modules (such as hashing implementations, data utilities, etc.)
+ * **warcraft4j-model** - The domain model of Warcraft4J, providing a Java abstraction of the World of Warcraft entities.
+
+##Casc modules
+The modules in this category are CASC ( _Content Addressable Storage Container_ ) implementations for reading CASC based files from various sources. 
+
+ * **warcraft4j-casc** - API for reading a CASC ( _Content Addressable Storage Container_ ), plain API and does not contain CASC parsing/reading logic.
  * **warcraft4j-casc-cdn** - CASC implementation for reading data from a CDN or a local installation. 
  * **warcraft4j-casc-dataparser** - Dataparser for parsing various file formats contained in CASC. 
  * **warcraft4j-casc-neo4j** - CASC implementation for storing/reading CASC related (meta-) data from Neo4J.
- * **warcraft4j-core** - Core Warcraft4J classes.
- * **warcraft4j-devtools** - Collection of various tools to support developers (such as analysing raw data, calculate data graphs, etc.)
+
+##Battle.NET modules
+The modules in this category provide access to the Battle.NET API.
+
+ * **warcraft4j-battlenet** - Blizzard Battle.NET API wrapper.
+
+##Utility modules
+The modules in this category are utility modules for I/O, database access, data manipulation ,etc.
+
  * **warcraft4j-io** - General I/O library used by other modules for reading and parsing data (including unsigned values and data endianess switching).
  * **warcraft4j-io-file** - File implementation of _warcraft4j-io_.
  * **warcraft4j-io-http** - HTTP implementation of _warcraft4j-io_.
- * **warcraft4j-io-http** - Neo4J wrapper.
- * **warcraft4j-model** - The domain model of Warcraft4J, providing a Java abstraction of the World of Warcraft entities.
- * **warcraft4j-util** - General purpose utilities used by other modules (such as hashing implementations, data utilities, etc.)
+ * **warcraft4j-io-neo4j** - Neo4J wrapper.
+
+##Tooling and development support modules
+The modules in this category are a collection of utilities and applications to support development, data analysis and so forth.
+
+ * **warcraft4j-devtools** - Collection of various tools to support developers (such as analysing raw data, calculate data graphs, etc.)
 
 #Further reading
 Various (un)related documentation can be found under /resources/documentation

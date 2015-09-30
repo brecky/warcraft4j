@@ -18,6 +18,7 @@
  */
 package nl.salp.warcraft4j.hash;
 
+import nl.salp.warcraft4j.Warcraft4jException;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.junit.Test;
@@ -26,8 +27,8 @@ import static org.junit.Assert.assertArrayEquals;
 
 /**
  * Unit tests for {@link FowlerNollVoHash}.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * Hash values have been taken from <a href="http://find.fnvhash.com/">http://find.fnvhash.com/</a>.
  *
  * @author Barre Dijkstra
@@ -80,12 +81,14 @@ public class FowlerNollVoHashTest {
      * @param input The hex string.
      *
      * @return The byte[] from the hex string.
+     *
+     * @throws Warcraft4jException When decoding fails.
      */
-    private static byte[] getBytes(String input) {
+    private static byte[] getBytes(String input) throws Warcraft4jException {
         try {
             return (byte[]) new Hex().decode(input);
         } catch (DecoderException e) {
-            throw new RuntimeException(e);
+            throw new Warcraft4jException(e);
         }
     }
 

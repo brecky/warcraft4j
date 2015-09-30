@@ -20,10 +20,10 @@ package nl.salp.warcraft4j.casc.cdn;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import nl.salp.warcraft4j.Checksum;
+import nl.salp.warcraft4j.util.Checksum;
 import nl.salp.warcraft4j.casc.*;
 import nl.salp.warcraft4j.casc.blte.BlteDataReader;
-import nl.salp.warcraft4j.config.W4jConfig;
+import nl.salp.warcraft4j.config.Warcraft4jConfig;
 import nl.salp.warcraft4j.io.reader.DataReader;
 
 import java.util.Optional;
@@ -46,11 +46,11 @@ public class CdnCascContext extends CascContext {
     /**
      * Create a new context instance.
      *
-     * @param w4jConfig The {@link W4jConfig}.
+     * @param warcraft4jConfig The {@link Warcraft4jConfig}.
      */
     @Inject
-    public CdnCascContext(W4jConfig w4jConfig) {
-        super(w4jConfig);
+    public CdnCascContext(Warcraft4jConfig warcraft4jConfig) {
+        super(warcraft4jConfig);
     }
 
     /**
@@ -59,7 +59,7 @@ public class CdnCascContext extends CascContext {
     @Override
     public CascConfig getCascConfig() {
         if (cascConfig == null) {
-            cascConfig = new CdnCascConfig(getW4jConfig(), getDataReaderProvider());
+            cascConfig = new CdnCascConfig(getWarcraft4jConfig(), getDataReaderProvider());
         }
         return cascConfig;
     }
@@ -89,8 +89,8 @@ public class CdnCascContext extends CascContext {
      */
     @Override
     protected DataReaderProvider getDataReaderProvider() {
-        if (getW4jConfig().isCaching() && cascConfig != null) {
-            return new CachingCdnDataReaderProvider(cascConfig, getW4jConfig().getCacheDirectory());
+        if (getWarcraft4jConfig().isCaching() && cascConfig != null) {
+            return new CachingCdnDataReaderProvider(cascConfig, getWarcraft4jConfig().getCacheDirectory());
         } else {
             return new CdnDataReaderProvider();
         }

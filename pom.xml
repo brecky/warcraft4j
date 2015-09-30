@@ -53,13 +53,10 @@
 
     <!-- Project modules -->
     <modules>
-        <!-- Warcraft4J utility modules -->
-        <module>warcraft4j-util</module>
-        <module>warcraft4j-io</module>
-        <module>warcraft4j-io-file</module>
-        <module>warcraft4j-io-http</module>
-        <!-- Warcraft4J core modules -->
+        <!-- Warcraft4J core and utility modules -->
         <module>warcraft4j-core</module>
+        <module>warcraft4j-util</module>
+        <module>warcraft4j-util-neo4j</module>
         <module>warcraft4j-model</module>
         <!-- Warcraft4J CASC modules -->
         <module>warcraft4j-casc</module>
@@ -69,9 +66,7 @@
         <module>warcraft4j-model-dbc</module>
         <!-- Warcraft4J Battle.NET modules -->
         <module>warcraft4j-battlenet</module>
-        <!-- Warcraft4J Neo4J modules -->
-        <module>warcraft4j-io-neo4j</module>
-        <!-- Warcraft4J application modules -->
+        <!-- Warcraft4J development modules -->
         <module>warcraft4j-devtools</module>
     </modules>
 
