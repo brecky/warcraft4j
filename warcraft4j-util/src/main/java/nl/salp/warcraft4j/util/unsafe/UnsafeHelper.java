@@ -37,9 +37,16 @@ import java.util.Optional;
  * @author Barre Dijkstra
  */
 public final class UnsafeHelper {
+    /** The name of the field holding the unsafe instance in the {@code sun.misc.Unsafe} class. */
     private static final String UNSAFE_INSTANCE_FIELDNAME = "theUnsafe";
     /** The initialised {@code sun.misc.Unsafe} instance. */
-    private static Unsafe UNSAFE;
+    private static Unsafe unsafe;
+    /** The memory offset for byte arrays. */
+    private static final long byteArrayOffset = Unsafe.ARRAY_BOOLEAN_BASE_OFFSET;
+    /** The memory offset for int arrays. */
+    private static final long intArrayOffset = Unsafe.ARRAY_INT_BASE_OFFSET;
+    /** The memory offset for long arrays. */
+    private static final long longArrayOffset = Unsafe.ARRAY_LONG_BASE_OFFSET;
 
     /**
      * Create a new UnsafeHelper instance.
@@ -47,15 +54,15 @@ public final class UnsafeHelper {
      * @throws IllegalArgumentException When initialisation of the instance failed.
      */
     public UnsafeHelper() throws IllegalArgumentException {
-        // Only initialise UNSAFE when needed, not when the class is loaded.
-        if (UNSAFE == null) {
+        // Only initialise unsafe when needed, not when the class is loaded. No need to worry for race conditions here, double initialisation won't matter that much.
+        if (unsafe == null) {
             try {
                 final PrivilegedExceptionAction<Unsafe> action = () -> {
                     Field theUnsafe = Unsafe.class.getDeclaredField(UNSAFE_INSTANCE_FIELDNAME);
                     theUnsafe.setAccessible(true);
                     return (Unsafe) theUnsafe.get(null);
                 };
-                UNSAFE = AccessController.doPrivileged(action);
+                unsafe = AccessController.doPrivileged(action);
             } catch (Exception e) {
                 throw new IllegalArgumentException("Unable to load unsafe instance", e);
             }
@@ -108,7 +115,7 @@ public final class UnsafeHelper {
      */
     @SuppressWarnings("unchecked")
     public <T> T createInstanceDirect(Class<T> type) throws InstantiationException {
-        return (T) UNSAFE.allocateInstance(type);
+        return (T) unsafe.allocateInstance(type);
     }
 
     /**
@@ -121,7 +128,7 @@ public final class UnsafeHelper {
      */
     public long getFieldOffset(Object instance, String fieldName) {
         return getObjectField(instance, fieldName)
-                .map(UNSAFE::objectFieldOffset)
+                .map(unsafe::objectFieldOffset)
                 .orElse(INVALID_OFFSET);
     }
 
@@ -135,7 +142,7 @@ public final class UnsafeHelper {
      */
     public long getStaticFieldOffset(Class type, String fieldName) {
         return getStaticField(type, fieldName)
-                .map(UNSAFE::staticFieldOffset)
+                .map(unsafe::staticFieldOffset)
                 .orElse(INVALID_OFFSET);
     }
 
@@ -247,7 +254,7 @@ public final class UnsafeHelper {
      * @see #freeMemory(long)
      */
     public long allocateMemory(long bytes) throws IllegalArgumentException, OutOfMemoryError {
-        return UNSAFE.allocateMemory(bytes);
+        return unsafe.allocateMemory(bytes);
     }
 
     /**
@@ -264,7 +271,7 @@ public final class UnsafeHelper {
      * @see #freeMemory(long)
      */
     public long reallocateMemory(long address, long newSize) {
-        return UNSAFE.reallocateMemory(address, newSize);
+        return unsafe.reallocateMemory(address, newSize);
     }
 
     /**
@@ -275,6 +282,313 @@ public final class UnsafeHelper {
      * @see #allocateMemory(long)
      */
     public void freeMemory(long address) {
-        UNSAFE.freeMemory(address);
+        unsafe.freeMemory(address);
+    }
+
+    /**
+     * Get a byte from a memory address relative to the address of an object.
+     *
+     * @param object The object to use for memory address (or {@code null} for using the offset as an absolute address).
+     * @param offset The offset of the data from the start of the object memory address.
+     *
+     * @return The data.
+     */
+    public byte getByte(Object object, long offset) {
+        return unsafe.getByte(object, offset);
+    }
+
+    /**
+     * Get a byte from a memory address.
+     *
+     * @param address The absolute memory address.
+     *
+     * @return The data.
+     */
+    public byte getByte(long address) {
+        return unsafe.getByte(address);
+    }
+
+
+    /**
+     * Get a byte[] from a memory address relative to the address of an object.
+     *
+     * @param object The object to use for memory address (or {@code null} for using the offset as an absolute address).
+     * @param offset The offset of the data from the start of the object memory address.
+     * @param size   The number of entries to get.
+     *
+     * @return The data.
+     */
+    public byte[] getBytes(Object object, long offset, int size) {
+        byte[] data = new byte[size];
+        unsafe.copyMemory(object, offset, data, byteArrayOffset, size);
+        return data;
+    }
+
+    /**
+     * Get a byte[] from a memory address.
+     *
+     * @param address The absolute memory address.
+     * @param size    The number of entries to get.
+     *
+     * @return The data.
+     */
+    public byte[] getBytes(long address, int size) {
+        byte[] data = new byte[size];
+        unsafe.copyMemory(null, address, data, byteArrayOffset, size);
+        return data;
+    }
+
+    /**
+     * Store a byte[] at a memory address relative to the address of an object.
+     *
+     * @param object The object to use for memory address (or {@code null} for using the offset as an absolute address).
+     * @param offset The offset to store the data from the start of the object memory address.
+     * @param values The values to store.
+     */
+    public void putBytes(Object object, long offset, byte... values) {
+        if (values.length > 0) {
+            long bytes = values.length;
+            unsafe.copyMemory(values, byteArrayOffset, object, offset, bytes);
+        }
+    }
+
+    /**
+     * Store a byte[] at a memory address.
+     *
+     * @param address The absolute memory address.
+     * @param values  The values to store.
+     */
+    public void putBytes(long address, byte... values) {
+        if (values.length > 0) {
+            long bytes = values.length;
+            unsafe.copyMemory(values, byteArrayOffset, null, address, bytes);
+        }
+    }
+
+    /**
+     * Get an int from a memory address relative to the address of an object.
+     *
+     * @param object The object to use for memory address (or {@code null} for using the offset as an absolute address).
+     * @param offset The offset of the data from the start of the object memory address.
+     *
+     * @return The data.
+     */
+    public int getInt(Object object, long offset) {
+        return unsafe.getInt(object, offset);
+    }
+
+    /**
+     * Get an int from a memory address.
+     *
+     * @param address The absolute memory address.
+     *
+     * @return The data.
+     */
+    public int getInt(long address) {
+        return unsafe.getInt(address);
+    }
+
+    /**
+     * Get an int[] from a memory address relative to the address of an object.
+     *
+     * @param object The object to use for memory address (or {@code null} for using the offset as an absolute address).
+     * @param offset The offset of the data from the start of the object memory address.
+     * @param size   The number of entries to get.
+     *
+     * @return The data.
+     */
+    public int[] getInts(Object object, long offset, int size) {
+        int[] ints = new int[size];
+        long bytes = size << 2;
+        unsafe.copyMemory(object, offset, ints, intArrayOffset, bytes);
+        return ints;
+    }
+
+    /**
+     * Get an int[] from a memory address.
+     *
+     * @param address The absolute memory address.
+     * @param size    The number of entries to get.
+     *
+     * @return The data.
+     */
+    public int[] getInts(long address, int size) {
+        int[] ints = new int[size];
+        long bytes = size << 2;
+        unsafe.copyMemory(null, address, ints, intArrayOffset, bytes);
+        return ints;
+    }
+
+    /**
+     * Store an int[] at a memory address relative to the address of an object.
+     *
+     * @param object The object to use for memory address (or {@code null} for using the offset as an absolute address).
+     * @param offset The offset to store the data from the start of the object memory address.
+     * @param values The values to store.
+     */
+    public void putInts(Object object, long offset, int... values) {
+        if (values.length > 0) {
+            long bytes = values.length << 2;
+            unsafe.copyMemory(values, intArrayOffset, object, offset, bytes);
+        }
+    }
+
+    /**
+     * Store an int[] at a memory address.
+     *
+     * @param address The absolute memory address.
+     * @param values  The values to store.
+     */
+    public void putInts(long address, int... values) {
+        if (values.length > 0) {
+            long bytes = values.length << 2;
+            unsafe.copyMemory(values, longArrayOffset, null, address, bytes);
+        }
+    }
+
+    /**
+     * Get a long from a memory address relative to the address of an object.
+     *
+     * @param object The object to use for memory address (or {@code null} for using the offset as an absolute address).
+     * @param offset The offset of the data from the start of the object memory address.
+     *
+     * @return The data.
+     */
+    public long getLong(Object object, long offset) {
+        return unsafe.getLong(object, offset);
+    }
+
+    /**
+     * Get a long from a memory address.
+     *
+     * @param address The absolute memory address.
+     *
+     * @return The data.
+     */
+    public long getLong(long address) {
+        return unsafe.getLong(address);
+    }
+
+    /**
+     * Store a long at a memory address relative to the address of an object.
+     *
+     * @param object The object to use for memory address (or {@code null} for using the offset as an absolute address).
+     * @param offset The offset to store the data from the start of the object memory address.
+     * @param value  The value to store.
+     */
+    public void putLong(Object object, long offset, long value) {
+        unsafe.putLong(object, offset, value);
+    }
+
+    /**
+     * Store a long at a memory address.
+     *
+     * @param address The absolute memory address.
+     * @param value   The value to store.
+     */
+    public void putLong(long address, long value) {
+        unsafe.putLong(null, address, value);
+    }
+
+    /**
+     * Get an long[] from a memory address relative to the address of an object.
+     *
+     * @param object The object to use for memory address (or {@code null} for using the offset as an absolute address).
+     * @param offset The offset of the data from the start of the object memory address.
+     * @param size   The number of entries to get.
+     *
+     * @return The data.
+     */
+    public long[] getLongs(Object object, long offset, int size) {
+        long[] longs = new long[size];
+        long bytes = size << 3;
+        unsafe.copyMemory(object, offset, longs, longArrayOffset, bytes);
+        return longs;
+    }
+
+    /**
+     * Get a long[] from a memory address.
+     *
+     * @param address The absolute memory address.
+     * @param size    The number of entries to get.
+     *
+     * @return The data.
+     */
+    public long[] getLongs(long address, int size) {
+        long[] longs = new long[size];
+        long bytes = size << 3;
+        unsafe.copyMemory(null, address, longs, longArrayOffset, bytes);
+        return longs;
+    }
+
+    /**
+     * Store a long[] at a memory address relative to the address of an object.
+     *
+     * @param object The object to use for memory address (or {@code null} for using the offset as an absolute address).
+     * @param offset The offset to store the data from the start of the object memory address.
+     * @param values The values to store.
+     */
+    public void putLongs(Object object, long offset, long... values) {
+        if (values.length > 0) {
+            long bytes = values.length << 3;
+            unsafe.copyMemory(values, longArrayOffset, object, offset, bytes);
+        }
+    }
+
+    /**
+     * Store a long[] at a memory address.
+     *
+     * @param address The absolute memory address.
+     * @param values  The values to store.
+     */
+    public void putLongs(long address, long... values) {
+        if (values.length > 0) {
+            long bytes = values.length << 3;
+            unsafe.copyMemory(values, longArrayOffset, null, address, bytes);
+        }
+    }
+
+    /**
+     * Get a boolean from a memory address relative to the address of an object.
+     *
+     * @param object The object to use for memory address (or {@code null} for using the offset as an absolute address).
+     * @param offset The offset of the data from the start of the object memory address.
+     *
+     * @return The data.
+     */
+    public boolean getBoolean(Object object, long offset) {
+        return unsafe.getBoolean(object, offset);
+    }
+
+    /**
+     * Get a boolean from a memory address.
+     *
+     * @param address The absolute memory address.
+     *
+     * @return The data.
+     */
+    public boolean getBoolean(long address) {
+        return unsafe.getBoolean(null, address);
+    }
+
+    /**
+     * Store a boolean at a memory address relative to the address of an object.
+     *
+     * @param object The object to use for memory address (or {@code null} for using the offset as an absolute address).
+     * @param offset The offset to store the data from the start of the object memory address.
+     * @param value  The value to store.
+     */
+    public void putBoolean(Object object, long offset, boolean value) {
+        unsafe.putBoolean(object, offset, value);
+    }
+
+    /**
+     * Store a boolean at a memory address.
+     *
+     * @param address The absolute memory address.
+     * @param value   The value to store.
+     */
+    public void putBoolean(long address, boolean value) {
+        unsafe.putBoolean(null, address, value);
     }
 }

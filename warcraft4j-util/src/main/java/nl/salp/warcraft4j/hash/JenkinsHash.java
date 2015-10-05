@@ -99,12 +99,12 @@ public class JenkinsHash {
     }
 
     public static byte[] hashLittle2(byte[] data) {
-        return DataTypeUtil.toByteArrayFixed(hashLittle2(data, data.length));
+        return DataTypeUtil.toByteArray(hashLittle2(data, data.length));
     }
 
     public static byte[] hashLittle2File(String filename) {
         byte[] data = filename.replace('/', '\\').toUpperCase().getBytes(StandardCharsets.US_ASCII);
-        return DataTypeUtil.toByteArrayFixed(hashLittle2(data, data.length));
+        return DataTypeUtil.toByteArray(hashLittle2(data, data.length));
     }
 
     public static byte[] hashLittle2FileA(String filename) {

@@ -63,13 +63,15 @@ public class NativeMemorySegment implements AutoCloseable {
         this.size = newSize;
     }
 
-    public void getDataReader(long offset, long size) throws IllegalArgumentException {
+    public byte[] get(long offset, long size) throws IllegalArgumentException {
         if (offset < 0) {
             throw new IllegalArgumentException(format("Unable to read %d bytes from negative offset %d.", size, offset));
         }
         if (offset + size > this.size) {
             throw new IllegalArgumentException(format("Unable to read %d bytes from offset %d from a %d byte memory segment.", size, offset, this.size));
         }
+        // TODO Implement me!
+        return null;
     }
 
 

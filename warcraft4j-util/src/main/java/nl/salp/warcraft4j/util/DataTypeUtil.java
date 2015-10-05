@@ -22,11 +22,11 @@ package nl.salp.warcraft4j.util;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Utility methods for data types.
@@ -68,41 +68,95 @@ public final class DataTypeUtil {
         return Hex.encodeHexString(data);
     }
 
+
     /**
-     * Create a 4-element byte[] (32bit) from the given int value.
+     * Get the size of the values in a short[] in bytes.
+     *
+     * @param values The values to get the size for.
+     *
+     * @return The size in bytes.
+     */
+    public static int getSizeInBytes(short... values) {
+        return values.length << 1;
+    }
+
+    /**
+     * Get the size of the values in an int[] in bytes.
+     *
+     * @param values The values to get the size for.
+     *
+     * @return The size in bytes.
+     */
+    public static int getSizeInBytes(int... values) {
+        return values.length << 2;
+    }
+
+    /**
+     * Get the size of the values in a long[] in bytes.
+     *
+     * @param values The values to get the size for.
+     *
+     * @return The size in bytes.
+     */
+    public static int getSizeInBytes(long... values) {
+        return values.length << 3;
+    }
+
+    /**
+     * Create a fixed-size 32-bit (4 byte) byte[] from an int value using a big endian byte order.
      *
      * @param value The value.
      *
      * @return The byte[].
      */
     public static byte[] toByteArray(int value) {
-        return new byte[]{
-                (byte) (value >>> 24),
-                (byte) (value >>> 16),
-                (byte) (value >>> 8),
-                (byte) (value)
-        };
+        return toByteArray(value, ByteOrder.BIG_ENDIAN);
+    }
+
+    /**
+     * Create a fixed-size 32-bit (4 byte) byte[] from an int value using a byte order.
+     *
+     * @param value     The value.
+     * @param byteOrder The byte order, using {@code ByteOrder#BIG_ENDIAN} when the byte order is {@code null}.
+     *
+     * @return The byte[].
+     */
+    public static byte[] toByteArray(int value, ByteOrder byteOrder) {
+        byte[] intArray = new byte[Integer.BYTES];
+        ByteBuffer.wrap(intArray)
+                .order(Optional.ofNullable(byteOrder)
+                        .orElse(ByteOrder.BIG_ENDIAN))
+                .putInt(value);
+        return intArray;
     }
 
 
     /**
-     * Create a fixed size 64-bit (8 byte) byte[] from the given long value.
+     * Create a fixed size 64-bit (8 byte) byte[] from the given long value using a big endian byte order.
      *
      * @param value The value.
      *
      * @return The byte[].
      */
-    public static byte[] toByteArrayFixed(long value) {
-        return new byte[]{
-                (byte) (value >>> 56),
-                (byte) (value >>> 48),
-                (byte) (value >>> 40),
-                (byte) (value >>> 32),
-                (byte) (value >>> 24),
-                (byte) (value >>> 16),
-                (byte) (value >>> 8),
-                (byte) (value)
-        };
+    public static byte[] toByteArray(long value) {
+        return toByteArray(value, ByteOrder.BIG_ENDIAN);
+    }
+
+    /**
+     * Create a fixed-size 64-bit (8 byte) byte[] from an int value using a byte order.
+     *
+     * @param value     The value.
+     * @param byteOrder The byte order, using {@code ByteOrder#BIG_ENDIAN} when the byte order is {@code null}.
+     *
+     * @return The byte[].
+     */
+    public static byte[] toByteArray(long value, ByteOrder byteOrder) {
+        byte[] longArray = new byte[Long.BYTES];
+        ByteBuffer.wrap(longArray)
+                .order(Optional.ofNullable(byteOrder)
+                        .orElse(ByteOrder.BIG_ENDIAN))
+                .putLong(value);
+        return longArray;
     }
 
     /**
@@ -122,17 +176,6 @@ public final class DataTypeUtil {
             hash *= 16777619L;
         }
         return (int) hash;
-    }
-
-    /**
-     * Create a dynamic size byte[] from the given long value.
-     *
-     * @param value The value.
-     *
-     * @return The byte[].
-     */
-    public static byte[] toByteArray(long value) {
-        return BigInteger.valueOf(value).toByteArray();
     }
 
     /**
