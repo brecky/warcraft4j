@@ -18,9 +18,11 @@
  */
 package nl.salp.warcraft4j.util;
 
+import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static org.apache.commons.lang3.ArrayUtils.subarray;
 
 /**
@@ -42,7 +44,9 @@ public class Checksum {
      * @throws IllegalArgumentException When the provided checksum is empty.
      */
     public Checksum(byte[] checksum) throws IllegalArgumentException {
-        this.checksum = Optional.ofNullable(checksum).filter(c -> c.length > 0).orElseThrow(() -> new IllegalArgumentException("Can't create a checksum from an empty array"));
+        this.checksum = Optional.ofNullable(checksum)
+                .filter(c -> c.length > 0)
+                .orElseThrow(() -> new IllegalArgumentException("Can't create a checksum from an empty array"));
         this.hash = DataTypeUtil.hash(checksum);
     }
 
@@ -65,19 +69,44 @@ public class Checksum {
     }
 
     /**
-     * Trim the checksum to a length.
+     * Trim the checksum to a length, resizing it (cutting off the right bytes) if the checksum is bigger then the provided length.
      *
      * @param length The length in bytes.
      *
      * @return A new checksum instance with a maximum of the provided length.
+     *
+     * @throws IllegalArgumentException When the length is {@code 0} or negative.
      */
-    public Checksum trim(int length) {
-        byte[] trimmed = checksum;
-        if (length < checksum.length) {
-            trimmed = subarray(checksum, 0, length);
-        }
-        return new Checksum(trimmed);
+    public Checksum trim(int length) throws IllegalArgumentException {
+        return trim(length, ByteOrder.BIG_ENDIAN);
     }
+
+
+    /**
+     * Trim the checksum to a length, resizing it (using the byte order for cut-off) if the checksum is bigger then the provided length.
+     *
+     * @param length    The maximum length in bytes.
+     * @param byteOrder The byte order to determine which side to cut off the bytes.
+     *
+     * @return A new checksum instance with checksum data or the current checksum instance or the current checksum instance when the current data is equal or smaller in length.
+     *
+     * @throws IllegalArgumentException When the length is {@code 0} or negative.
+     */
+    public Checksum trim(int length, ByteOrder byteOrder) throws IllegalArgumentException {
+        Checksum instance;
+        if (length < 1) {
+            throw new IllegalArgumentException(format("Can't trim a %d byte checksum to %d bytes.", checksum.length, length));
+        }
+        if (length >= checksum.length) {
+            instance = this;
+        } else if (ByteOrder.LITTLE_ENDIAN.equals(byteOrder)) {
+            instance = new Checksum(subarray(checksum, checksum.length - length, checksum.length));
+        } else {
+            instance = new Checksum(subarray(checksum, 0, length));
+        }
+        return instance;
+    }
+
 
     /**
      * Get the hex string representation of the checksum.

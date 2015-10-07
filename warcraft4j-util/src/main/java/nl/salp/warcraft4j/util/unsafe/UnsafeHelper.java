@@ -308,6 +308,26 @@ public final class UnsafeHelper {
         return unsafe.getByte(address);
     }
 
+    /**
+     * Store a byte at a memory address relative to the address of an object.
+     *
+     * @param object The object to use for memory address (or {@code null} for using the offset as an absolute address).
+     * @param offset The offset to store the data from the start of the object memory address.
+     * @param value  The value to store.
+     */
+    public void putByte(Object object, long offset, byte value) {
+        unsafe.putByte(object, offset, value);
+    }
+
+    /**
+     * Store a byte at a memory address.
+     *
+     * @param address The absolute memory address.
+     * @param value   The value to store.
+     */
+    public void putByte(long address, byte value) {
+        unsafe.putByte(address, value);
+    }
 
     /**
      * Get a byte[] from a memory address relative to the address of an object.

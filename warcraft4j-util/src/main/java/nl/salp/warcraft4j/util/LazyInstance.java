@@ -18,6 +18,7 @@
  */
 package nl.salp.warcraft4j.util;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -43,10 +44,8 @@ public class LazyInstance<T> {
      * @throws IllegalArgumentException When the supplier is null.
      */
     public LazyInstance(Supplier<T> supplier) throws IllegalArgumentException {
-        if (supplier == null) {
-            throw new IllegalArgumentException("Unable to create a lazy instance with a null supplier");
-        }
-        this.supplier = supplier;
+        this.supplier = Optional.ofNullable(supplier)
+                .orElseThrow(() -> new IllegalArgumentException("Unable to create a lazy instance with a null supplier"));
     }
 
     /**

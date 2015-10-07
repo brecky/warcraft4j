@@ -48,7 +48,9 @@ public enum Branch {
                 .filter(StringUtils::isNotEmpty)
                 .map(String::trim)
                 .map(String::toUpperCase)
-                .flatMap(n -> Stream.of(Branch.values()).filter(l -> l.name().equals(n)).findFirst());
+                .flatMap(n -> Stream.of(Branch.values())
+                        .filter(l -> l.name().equals(n))
+                        .findFirst());
     }
 
 }

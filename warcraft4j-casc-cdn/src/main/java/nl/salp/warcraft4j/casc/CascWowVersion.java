@@ -26,46 +26,73 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * TODO Document class.
+ * {@link WowVersion} for a CDN based CASC.
  *
  * @author Barre Dijkstra
+ * @see nl.salp.warcraft4j.WowVersion
  */
 public class CascWowVersion implements WowVersion {
+    /** The version number. */
     private final String version;
+    /** The development branch. */
     private final Branch branch;
+    /** The region. */
     private final Region region;
 
+    /**
+     * @param version The version number.
+     * @param branch  The development branch.
+     * @param region  The region.
+     */
     public CascWowVersion(String version, Branch branch, Region region) {
         this.version = version;
         this.branch = branch;
         this.region = region;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getVersion() {
         return version;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Branch getBranch() {
         return branch;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Region getRegion() {
         return region;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);

@@ -18,23 +18,35 @@
  */
 package nl.salp.warcraft4j.casc;
 
-import nl.salp.warcraft4j.casc.FileKey;
-import nl.salp.warcraft4j.casc.IndexEntry;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * TODO Document class.
+ * {@link IndexEntry} implementation for a CDN based CASC, relating a file key to a actual file (segment).
  *
  * @author Barre Dijkstra
+ * @see nl.salp.warcraft4j.casc.IndexEntry
  */
 public class CascIndexEntry implements IndexEntry {
+    /** The file key of the entry. */
     private final FileKey fileKey;
+    /** The data file number containing the file. */
     private final int fileNumber;
+    /** The offset in the data file where the file data starts. */
     private final int dataFileOffset;
+    /** The size of the file data in the data file. */
     private final long fileSize;
+    /** The cached hashcode of the index entry instance. */
     private final int hash;
 
+    /**
+     * Create a new index entry instance.
+     *
+     * @param fileKey        The file key of the entry.
+     * @param fileNumber     The data file number containing the file.
+     * @param dataFileOffset The offset in the data file where the file data starts.
+     * @param fileSize       The size of the file data in the data file.
+     */
     public CascIndexEntry(FileKey fileKey, int fileNumber, int dataFileOffset, long fileSize) {
         this.fileKey = fileKey;
         this.fileSize = fileSize;
@@ -43,36 +55,57 @@ public class CascIndexEntry implements IndexEntry {
         this.hash = fileKey.hashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FileKey getFileKey() {
         return fileKey;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getFileSize() {
         return fileSize;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getFileNumber() {
         return fileNumber;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getDataFileOffset() {
         return dataFileOffset;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return hash;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);

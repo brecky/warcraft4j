@@ -21,7 +21,9 @@ package nl.salp.warcraft4j.util.unsafe;
 import static java.lang.String.format;
 
 /**
- * TODO Add description.
+ * Native memory segment that lives outside the heap and is unmanaged (no garbage collection, security, etc.).
+ * <p>
+ * The segment _must_ be closed for the memory to be freed up.
  *
  * @author Barre Dijkstra
  */
@@ -63,17 +65,56 @@ public class NativeMemorySegment implements AutoCloseable {
         this.size = newSize;
     }
 
-    public byte[] get(long offset, long size) throws IllegalArgumentException {
-        if (offset < 0) {
-            throw new IllegalArgumentException(format("Unable to read %d bytes from negative offset %d.", size, offset));
-        }
-        if (offset + size > this.size) {
-            throw new IllegalArgumentException(format("Unable to read %d bytes from offset %d from a %d byte memory segment.", size, offset, this.size));
-        }
-        // TODO Implement me!
-        return null;
+    /**
+     * Get a byte from the memory segment.
+     *
+     * @param offset The offset from the start of the segment.
+     *
+     * @return The data, which may be uninitialised (potentially resulting in garbage).
+     *
+     * @throws IllegalArgumentException When the offset and/or size are invalid.
+     * @throws IllegalStateException    When the memory segment has been closed.
+     */
+    public byte get(long offset) throws IllegalArgumentException, IllegalStateException {
+        return unsafeHelper.getByte(getAddress(offset, 1));
     }
 
+    /**
+     * Get a byte[] from the memory segment.
+     *
+     * @param offset The offset from the start of the segment.
+     * @param size   The size of the data to retrieve in bytes.
+     *
+     * @return The data, which may be uninitialised (potentially resulting in garbage).
+     *
+     * @throws IllegalArgumentException When the offset and/or size are invalid.
+     * @throws IllegalStateException    When the memory segment has been closed.
+     */
+    public byte[] get(long offset, int size) throws IllegalArgumentException, IllegalStateException {
+        return unsafeHelper.getBytes(getAddress(offset, size), size);
+    }
+
+    /**
+     * Store a byte[] in the memory segment.
+     *
+     * @param offset The offset from the start of the segment.
+     * @param data   The data to store.
+     *
+     * @return The absolute address of the stored data.
+     *
+     * @throws IllegalArgumentException When the offset and/or data are invalid.
+     * @throws IllegalStateException    When the memory segment has been closed.
+     */
+    public long put(long offset, byte... data) throws IllegalArgumentException, IllegalStateException {
+        long address;
+        if (data == null || data.length < 1) {
+            address = getAddress(offset, 0);
+        } else {
+            address = getAddress(offset, data.length);
+            unsafeHelper.putBytes(address, data);
+        }
+        return address;
+    }
 
     /**
      * Get the address of the memory segment.
@@ -100,6 +141,30 @@ public class NativeMemorySegment implements AutoCloseable {
      */
     public boolean isClosed() {
         return this.closed;
+    }
+
+    /**
+     * Get the memory address for a size starting at an offset.
+     *
+     * @param offset The memory offset.
+     * @param size   The size of the data to retrieve.
+     *
+     * @return The memory address.
+     *
+     * @throws IllegalArgumentException When the offset and/or size are invalid.
+     * @throws IllegalStateException    When the memory segment has been closed.
+     */
+    private long getAddress(long offset, long size) throws IllegalArgumentException, IllegalStateException {
+        if (closed) {
+            throw new IllegalStateException("Trying to get an address for a closed memory segment.");
+        }
+        if (offset < 0) {
+            throw new IllegalArgumentException(format("Unable to read %d bytes from negative offset %d.", size, offset));
+        }
+        if (offset + size > this.size) {
+            throw new IllegalArgumentException(format("Unable to read %d bytes from offset %d from a %d byte memory segment.", size, offset, this.size));
+        }
+        return address + offset;
     }
 
     /**

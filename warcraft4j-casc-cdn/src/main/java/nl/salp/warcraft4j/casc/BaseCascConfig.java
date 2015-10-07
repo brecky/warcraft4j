@@ -18,10 +18,10 @@
  */
 package nl.salp.warcraft4j.casc;
 
-import nl.salp.warcraft4j.util.DataTypeUtil;
 import nl.salp.warcraft4j.Region;
 import nl.salp.warcraft4j.config.Warcraft4jConfig;
 import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.util.DataTypeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,34 +30,55 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * TODO Document class.
+ * Base {@link CascConfig} implementation containing all generic configuration logic.
  *
  * @author Barre Dijkstra
+ * @see CascConfig
  */
 public abstract class BaseCascConfig implements CascConfig {
+    /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseCascConfig.class);
+    /** The {@code build} file key for the {@code download} field. */
     protected static final String KEY_BUILD_DOWNLOAD = "download";
+    /** The {@code build} file key for the {@code encoding} field. */
     protected static final String KEY_BUILD_ENCODING = "encoding";
+    /** The {@code build} file key for the {@code encoding size} field. */
     protected static final String KEY_BUILD_ENCODING_SIZE = "encoding-size";
+    /** The {@code build} file key for the {@code install} field. */
     protected static final String KEY_BUILD_INSTALL = "install";
+    /** The {@code build} file key for the {@code installer} field. */
     protected static final String KEY_BUILD_INSTALLER = "buildConfig-playbuild-installer";
+    /** The {@code build} file key for the {@code name} field. */
     protected static final String KEY_BUILD_NAME = "buildConfig-name";
+    /** The {@code build} file key for the {@code patch} field. */
     protected static final String KEY_BUILD_PATCH = "patch";
+    /** The {@code build} file key for the {@code patch config} field. */
     protected static final String KEY_BUILD_PATCH_CONFIG = "patch-config";
+    /** The {@code build} file key for the {@code patch size} field. */
     protected static final String KEY_BUILD_PATCH_SIZE = "patch-size";
+    /** The {@code build} file key for the {@code product} field. */
     protected static final String KEY_BUILD_PRODUCT = "buildConfig-product";
+    /** The {@code build} file key for the {@code root} field. */
     protected static final String KEY_BUILD_ROOT = "root";
+    /** The {@code build} file key for the {@code UID} field. */
     protected static final String KEY_BUILD_UID = "buildConfig-uid";
-
+    /** The {@code CDN} file key for the {@code builds} field. */
     protected static final String KEY_CDN_BUILDS = "builds";
+    /** The {@code CDN} file key for the {@code archives} field. */
     protected static final String KEY_CDN_ARCHIVES = "archives";
+    /** The {@code CDN} file key for the {@code archive group} field. */
     protected static final String KEY_CDN_ARCHIVE_GROUP = "archive-group";
+    /** The {@code CDN} file key for the {@code patch archives} field. */
     protected static final String KEY_CDN_PATCH_ARCHIVES = "patch-archives";
+    /** The {@code CDN} file key for the {@code patch archive group} field. */
     protected static final String KEY_CDN_PATCH_ARCHIVE_GROUP = "patch-archive-group";
-
+    /** The {@link DataReaderProvider} for reading the configuration files. */
     private final DataReaderProvider dataReaderProvider;
+    /** The {@link Warcraft4jConfig} instance. */
     private final Warcraft4jConfig warcraft4jConfig;
+    /** The parsed build configuration file. */
     private Config buildConfig;
+    /** The parsed CDN configuration file. */
     private Config cdnConfig;
 
     protected BaseCascConfig(Warcraft4jConfig warcraft4jConfig, DataReaderProvider dataReaderProvider) {
@@ -68,12 +89,31 @@ public abstract class BaseCascConfig implements CascConfig {
         this.dataReaderProvider = dataReaderProvider;
     }
 
+    /**
+     * Get a supplier for a data reader based on an URI.
+     *
+     * @param uri The URI to get the data reader for.
+     *
+     * @return The supplier for the data reader.
+     */
     protected final Supplier<DataReader> getDataReader(String uri) {
         return dataReaderProvider.getDataReader(uri);
     }
 
+    /**
+     * Get a supplier for a data reader based for a file based on a checksum.
+     *
+     * @param checksum The checksum of the file.
+     *
+     * @return The supplier for the data reader.
+     */
     protected abstract Supplier<DataReader> getConfigDataReader(String checksum);
 
+    /**
+     * Get the parsed build configuration.
+     *
+     * @return The build configuration.
+     */
     protected final Config getBuildConfig() {
         if (buildConfig == null) {
             String buildConfigKey = getBuildConfigKey()
@@ -84,6 +124,11 @@ public abstract class BaseCascConfig implements CascConfig {
         return buildConfig;
     }
 
+    /**
+     * Get the parsed CDN configuration.
+     *
+     * @return The CDN configuration.
+     */
     protected final Config getCdnConfig() {
         if (cdnConfig == null) {
             String cdnConfigKey = getCdnConfigKey()
@@ -94,6 +139,9 @@ public abstract class BaseCascConfig implements CascConfig {
         return cdnConfig;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ContentChecksum getRootContentChecksum() {
         ContentChecksum checksum = getBuildConfig().getLastValue(KEY_BUILD_ROOT, (s) -> new ContentChecksum(DataTypeUtil.hexStringToByteArray(s)))
@@ -102,6 +150,9 @@ public abstract class BaseCascConfig implements CascConfig {
         return checksum;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FileKey getStorageEncodingFileChecksum() {
         FileKey fileKey = getBuildConfig().getLastValue(KEY_BUILD_ENCODING, (s) -> new FileKey(DataTypeUtil.hexStringToByteArray(s)))
@@ -110,6 +161,9 @@ public abstract class BaseCascConfig implements CascConfig {
         return fileKey;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getStorageEncodingFileSize() {
         long size = getBuildConfig().getLastValue(KEY_BUILD_ENCODING_SIZE, Long::valueOf)
@@ -118,6 +172,9 @@ public abstract class BaseCascConfig implements CascConfig {
         return size;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getExtractedEncodingFileSize() {
         long size = getBuildConfig().getFirstValue(KEY_BUILD_ENCODING_SIZE, Long::valueOf)
@@ -126,6 +183,9 @@ public abstract class BaseCascConfig implements CascConfig {
         return size;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FileKey getExtractedEncodingFileChecksum() {
         FileKey fileKey = getBuildConfig().getFirstValue(KEY_BUILD_ENCODING, (s) -> new FileKey(DataTypeUtil.hexStringToByteArray(s)))
@@ -134,6 +194,9 @@ public abstract class BaseCascConfig implements CascConfig {
         return fileKey;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<FileKey> getArchiveChecksums() {
         List<FileKey> checksums = getCdnConfig().getValues(KEY_CDN_ARCHIVES, (s) -> new FileKey(DataTypeUtil.hexStringToByteArray(s)))
@@ -142,6 +205,9 @@ public abstract class BaseCascConfig implements CascConfig {
         return checksums;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FileKey getArchiveGroupChecksum() {
         FileKey checksum = getCdnConfig().getLastValue(KEY_CDN_ARCHIVE_GROUP, (s) -> new FileKey(DataTypeUtil.hexStringToByteArray(s)))
@@ -150,6 +216,9 @@ public abstract class BaseCascConfig implements CascConfig {
         return checksum;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<FileKey> getPatchArchiveChecksums() {
         List<FileKey> checksums = getCdnConfig().getValues(KEY_CDN_PATCH_ARCHIVES, (s) -> new FileKey(DataTypeUtil.hexStringToByteArray(s)))
@@ -158,6 +227,9 @@ public abstract class BaseCascConfig implements CascConfig {
         return checksums;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FileKey getPatchArchiveGroupChecksum() {
         FileKey checksum = getCdnConfig().getLastValue(KEY_CDN_PATCH_ARCHIVE_GROUP, (s) -> new FileKey(DataTypeUtil.hexStringToByteArray(s)))
@@ -166,18 +238,32 @@ public abstract class BaseCascConfig implements CascConfig {
         return checksum;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public abstract String getCdnUrl();
 
+    /**
+     * Get the {@link Warcraft4jConfig} the configuration is initialised with.
+     *
+     * @return The {@link Warcraft4jConfig} instance.
+     */
     protected final Warcraft4jConfig getWarcraft4jConfig() {
         return warcraft4jConfig;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final Region getRegion() {
         return getWarcraft4jConfig().getRegion();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final String getRegionCode() {
         String region;
@@ -207,10 +293,31 @@ public abstract class BaseCascConfig implements CascConfig {
         return region;
     }
 
+    /**
+     * Get a value from a config based on the value of another column in the config.
+     *
+     * @param config     The config to get the value from.
+     * @param key        The key of the column to get the value for.
+     * @param indexKey   The key of the column to use as filter.
+     * @param indexValue The value of the column to filter on.
+     *
+     * @return Optional containing the value if available.
+     */
     protected final Optional<String> getIndexedValue(Config config, String key, String indexKey, String indexValue) {
         return getIndexedValue(config, key, 0, indexKey, indexValue);
     }
 
+    /**
+     * Get a entry from a multi-entry value from a config based on the value of another column in the config.
+     *
+     * @param config     The config to get the value from.
+     * @param key        The key of the column to get the value for.
+     * @param idx        The index of the value from the multi-entry value to get.
+     * @param indexKey   The key of the column to use as filter.
+     * @param indexValue The value of the column to filter on.
+     *
+     * @return Optional containing the value if available.
+     */
     protected final Optional<String> getIndexedValue(Config config, String key, int idx, String indexKey, String indexValue) {
         return config.getValue(key, indexKey, indexValue)
                 .flatMap(s -> {

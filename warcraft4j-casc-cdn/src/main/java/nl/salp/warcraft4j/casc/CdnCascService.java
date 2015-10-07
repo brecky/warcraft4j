@@ -112,7 +112,7 @@ public class CdnCascService implements CascService {
      */
     @Override
     public Optional<CascFile> getCascFile(ContentChecksum contentChecksum) {
-        // TODO Implement me!
+        cascContext.getEncodingEntry(contentChecksum).get();
         return Optional.empty();
     }
 
@@ -123,11 +123,13 @@ public class CdnCascService implements CascService {
     public Optional<CascFile> getCascFile(long filenameHash) {
         Optional<CascFile> file;
         if (cascContext.isRegistered(filenameHash)) {
-            file = Optional.empty();
+            file = Optional.of(
+                    cascContext.getFilename(filenameHash)
+                            .map(name -> new CdnCascFile(filenameHash, name, cascContext))
+                            .orElse(new CdnCascFile(filenameHash, cascContext))
+            );
         } else {
-            file = Optional.of(cascContext.getFilename(filenameHash)
-                    .map(name -> new CdnCascFile(filenameHash, name, cascContext))
-                    .orElse(new CdnCascFile(filenameHash, cascContext)));
+            file = Optional.empty();
         }
         return file;
     }
