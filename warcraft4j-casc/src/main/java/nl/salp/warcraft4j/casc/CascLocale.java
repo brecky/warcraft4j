@@ -24,10 +24,12 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * TODO These locales are CASC specific and contain flags that are only used in the CDN files.
+ * FIXME These locales are CASC specific and contain flags that are only used in the CDN files.
  *
  * @author Barre Dijkstra
+ * @deprecated Refactor to use {@link nl.salp.warcraft4j.Locale} and move the mapping to the warcraft4j-casc-cdn module.
  */
+@Deprecated
 public enum CascLocale {
     ALL(-1),
     NONE(0),

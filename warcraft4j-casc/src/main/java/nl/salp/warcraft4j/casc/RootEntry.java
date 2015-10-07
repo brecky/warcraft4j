@@ -52,11 +52,14 @@ public interface RootEntry {
      * @return The flags.
      *
      * @see #getLocale()
+     * @deprecated CDN specific implementation, remove and use wrappers such as {@link #getLocale()}.
      */
+    @Deprecated
     long getFlags();
 
     /**
      * Get the {@link CascLocale} the entry is in.
+     * FIXME: Refactor to return {@link nl.salp.warcraft4j.Locale} instead.
      *
      * @return Optional containing the locale of the entry if it's available.
      */

@@ -35,12 +35,11 @@ import static nl.salp.warcraft4j.util.DataTypeUtil.byteArrayToHexString;
  */
 public class FileKey extends Checksum {
     /** The length of the checksum in bytes. */
-    private static final int FILEKEY_LENGTH = 9;
+    public static final int FILEKEY_LENGTH = 9;
     /** File key. */
     private final byte[] fileKey;
     /** The hash of the file key. */
     private final int hash;
-
 
     /**
      * Create a new file key instance.
@@ -56,7 +55,7 @@ public class FileKey extends Checksum {
         } else if (getChecksum().length == FILEKEY_LENGTH) {
             fileKey = checksum;
         } else {
-            throw new IllegalArgumentException(format("Unable to create a 9 byte filekey from a %d byte array.", checksum.length));
+            throw new IllegalArgumentException(format("Unable to create a 9 byte file key from a %d byte array.", checksum.length));
         }
         hash = DataTypeUtil.hash(fileKey);
     }
@@ -70,11 +69,17 @@ public class FileKey extends Checksum {
         return fileKey;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return hash;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         boolean eq = false;
@@ -84,6 +89,9 @@ public class FileKey extends Checksum {
         return eq;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return byteArrayToHexString(fileKey);

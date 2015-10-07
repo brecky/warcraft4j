@@ -225,7 +225,7 @@ public interface CascService {
     DataReader getDataReader(CascFile cascFile) throws CascEntryNotFoundException;
 
     /**
-     * Get a data reader for the file refered by an index entry.
+     * Get a data reader for the file referenced by an index entry.
      * <p>
      * Some files consist of multiple blocks with each their own index entry, so it is possible that the file is only a partial file.
      *
