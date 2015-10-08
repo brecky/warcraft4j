@@ -21,7 +21,7 @@ package nl.salp.warcraft4j.battlenet.guice;
 import com.google.inject.Provider;
 import com.google.inject.ProvisionException;
 import nl.salp.warcraft4j.battlenet.BattlenetApiConfig;
-import nl.salp.warcraft4j.config.ConfigurationException;
+import nl.salp.warcraft4j.config.Warcraft4jConfigException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +78,7 @@ public class BattlenetApiConfigFileProvider implements Provider<BattlenetApiConf
             String message = format("I/O Error loading Battle.NET API configuration from %s", configFile);
             LOGGER.error(message, e);
             throw new ProvisionException(message, e);
-        } catch (ConfigurationException e) {
+        } catch (Warcraft4jConfigException e) {
             String message = format("Invalid Battle.NET API configuration file %s", configFile);
             LOGGER.error(message, e);
             throw new ProvisionException(message, e);

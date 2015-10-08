@@ -1,11 +1,11 @@
 package nl.salp.warcraft4j.io.datatype;
 
+import nl.salp.warcraft4j.test.DataTypeTestUtil;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
 
-import static nl.salp.warcraft4j.io.datatype.DataTypeTestUtil.createRandomByteBuffer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

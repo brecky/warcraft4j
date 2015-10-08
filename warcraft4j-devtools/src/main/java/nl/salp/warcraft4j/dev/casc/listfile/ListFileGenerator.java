@@ -21,11 +21,12 @@ package nl.salp.warcraft4j.dev.casc.listfile;
 import nl.salp.warcraft4j.Branch;
 import nl.salp.warcraft4j.Locale;
 import nl.salp.warcraft4j.Region;
-import nl.salp.warcraft4j.config.DefaultWarcraft4jConfig;
+import nl.salp.warcraft4j.config.PropertyWarcraft4jConfig;
 import nl.salp.warcraft4j.config.Warcraft4jConfig;
 import nl.salp.warcraft4j.casc.CascContext;
 import nl.salp.warcraft4j.casc.cdn.CdnCascContext;
 import nl.salp.warcraft4j.casc.local.LocalCascContext;
+import nl.salp.warcraft4j.config.Warcraft4jConfigBuilder;
 import nl.salp.warcraft4j.dev.casc.EntryStore;
 import nl.salp.warcraft4j.dev.casc.model.ListFile;
 import org.slf4j.Logger;
@@ -94,7 +95,7 @@ public class ListFileGenerator {
         Region region = Region.EUROPE;
         Branch branch = Branch.LIVE;
         Locale locale = Locale.EN_US;
-        DefaultWarcraft4jConfig.Builder builder = DefaultWarcraft4jConfig.builder()
+        Warcraft4jConfigBuilder builder = new Warcraft4jConfigBuilder()
                 .online(online)
                 .caching(caching)
                 .withRegion(region)

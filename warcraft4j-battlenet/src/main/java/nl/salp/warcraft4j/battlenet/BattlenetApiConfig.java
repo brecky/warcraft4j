@@ -20,7 +20,7 @@
 package nl.salp.warcraft4j.battlenet;
 
 import com.google.inject.Singleton;
-import nl.salp.warcraft4j.config.ConfigurationException;
+import nl.salp.warcraft4j.config.Warcraft4jConfigException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -84,9 +84,9 @@ public class BattlenetApiConfig {
      * @param bnetApiKey       The Battle.NET API key.
      * @param bnetApiSecretKey The Battle.NET API secret key.
      *
-     * @throws ConfigurationException When invalid configuration data was provided.
+     * @throws Warcraft4jConfigException When invalid configuration data was provided.
      */
-    public BattlenetApiConfig(String applicationName, String bnetApiKey, String bnetApiSecretKey) throws ConfigurationException {
+    public BattlenetApiConfig(String applicationName, String bnetApiKey, String bnetApiSecretKey) throws Warcraft4jConfigException {
         this(applicationName, bnetApiKey, bnetApiSecretKey, MAX_REQUESTS_PER_SECOND_DEFAULT, MAX_REQUESTS_PER_HOUR_DEFAULT, REGION_DEFAULT, LOCALE_DEFAULT);
     }
 
@@ -101,49 +101,49 @@ public class BattlenetApiConfig {
      * @param defaultRegion     The default Battle.NET region to use.
      * @param defaultLocale     The default Battle.NET locale to use.
      *
-     * @throws ConfigurationException When invalid configuration data was provided.
+     * @throws Warcraft4jConfigException When invalid configuration data was provided.
      */
     public BattlenetApiConfig(String applicationName, String bnetApiKey, String bnetApiSecretKey, int maxRequestsSecond, int maxRequestsHour, String defaultRegion,
-            String defaultLocale) throws ConfigurationException {
+            String defaultLocale) throws Warcraft4jConfigException {
         if (isEmpty(applicationName)) {
-            throw new ConfigurationException("Null or empty application names are not allowed.");
+            throw new Warcraft4jConfigException("Null or empty application names are not allowed.");
         }
         this.applicationName = applicationName;
 
         if (isEmpty(bnetApiKey)) {
-            throw new ConfigurationException("Null or empty API keys are not allowed.");
+            throw new Warcraft4jConfigException("Null or empty API keys are not allowed.");
         }
         this.bnetApiKey = bnetApiKey;
 
         if (isEmpty(bnetApiSecretKey)) {
-            throw new ConfigurationException("Null or empty API secret keys are not allowed.");
+            throw new Warcraft4jConfigException("Null or empty API secret keys are not allowed.");
         }
         this.bnetApiSecretKey = bnetApiSecretKey;
 
         if (maxRequestsSecond <= 0) {
-            throw new ConfigurationException("The maximum allowed number of API requests per second must be greater then 0.");
+            throw new Warcraft4jConfigException("The maximum allowed number of API requests per second must be greater then 0.");
         }
         this.maxRequestsSecond = maxRequestsSecond;
 
         if (maxRequestsHour <= 0) {
-            throw new ConfigurationException("The maximum allowed number of API requests per hour must be greater then 0.");
+            throw new Warcraft4jConfigException("The maximum allowed number of API requests per hour must be greater then 0.");
         }
         this.maxRequestsHour = maxRequestsHour;
 
         if (isEmpty(defaultRegion)) {
-            throw new ConfigurationException("Null or empty default region setting is not allowed.");
+            throw new Warcraft4jConfigException("Null or empty default region setting is not allowed.");
         }
         this.defaultRegion = BattlenetRegion.getRegionForKey(defaultRegion);
         if (this.defaultRegion == null) {
-            throw new ConfigurationException(format("Can't find a region with the key '%s'", defaultRegion));
+            throw new Warcraft4jConfigException(format("Can't find a region with the key '%s'", defaultRegion));
         }
 
         if (isEmpty(defaultLocale)) {
-            throw new ConfigurationException("Null or empty default locale setting is not allowed.");
+            throw new Warcraft4jConfigException("Null or empty default locale setting is not allowed.");
         }
         this.defaultLocale = BattlenetLocale.getLocale(defaultLocale);
         if (this.defaultLocale == null) {
-            throw new ConfigurationException(format("Can't find a locale with the key '%s'", defaultLocale));
+            throw new Warcraft4jConfigException(format("Can't find a locale with the key '%s'", defaultLocale));
         }
     }
 
@@ -216,9 +216,9 @@ public class BattlenetApiConfig {
      * @return The created config.
      *
      * @throws IOException            When the file could not be read.
-     * @throws ConfigurationException When the configuration data is invalid.
+     * @throws Warcraft4jConfigException When the configuration data is invalid.
      */
-    public static BattlenetApiConfig fromConfigFile() throws IOException, ConfigurationException {
+    public static BattlenetApiConfig fromConfigFile() throws IOException, Warcraft4jConfigException {
         return fromConfigFile(CONFIG_FILENAME_DEFAULT);
     }
 
@@ -228,9 +228,9 @@ public class BattlenetApiConfig {
      * @return The created config.
      *
      * @throws IOException            When the file could not be read.
-     * @throws ConfigurationException When the configuration data is invalid.
+     * @throws Warcraft4jConfigException When the configuration data is invalid.
      */
-    public static BattlenetApiConfig fromConfigFile(String configFile) throws IOException, ConfigurationException {
+    public static BattlenetApiConfig fromConfigFile(String configFile) throws IOException, Warcraft4jConfigException {
         Properties properties = new Properties();
         try (InputStream is = new FileInputStream(configFile)) {
             properties.load(is);

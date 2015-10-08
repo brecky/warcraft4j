@@ -1,4 +1,4 @@
-package nl.salp.warcraft4j.io.datatype;
+package nl.salp.warcraft4j.test;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -7,11 +7,11 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
- * Utility methods
+ * Utility class for data type unit testing functionality.
  *
  * @author Barre Dijkstra
  */
-final class DataTypeTestUtil {
+public final class DataTypeTestUtil {
     /** The default byte order. */
     public static final ByteOrder DEFAULT_BYTE_ORDER = ByteOrder.LITTLE_ENDIAN;
 

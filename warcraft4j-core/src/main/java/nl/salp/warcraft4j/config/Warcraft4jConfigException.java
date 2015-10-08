@@ -25,13 +25,13 @@ import nl.salp.warcraft4j.Warcraft4jException;
  *
  * @author Barre Dijkstra
  */
-public class ConfigurationException extends Warcraft4jException {
+public class Warcraft4jConfigException extends Warcraft4jException {
     /**
      * Create a new instance with an exception message.
      *
      * @param message The exception message.
      */
-    public ConfigurationException(String message) {
+    public Warcraft4jConfigException(String message) {
         super(message);
     }
 
@@ -41,7 +41,7 @@ public class ConfigurationException extends Warcraft4jException {
      * @param message The exception message.
      * @param cause   The cause exception.
      */
-    public ConfigurationException(String message, Throwable cause) {
+    public Warcraft4jConfigException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -50,7 +50,7 @@ public class ConfigurationException extends Warcraft4jException {
      *
      * @param cause The cause exception.
      */
-    public ConfigurationException(Throwable cause) {
+    public Warcraft4jConfigException(Throwable cause) {
         super(cause);
     }
 }

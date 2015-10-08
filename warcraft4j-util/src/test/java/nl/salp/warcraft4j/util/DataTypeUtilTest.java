@@ -35,12 +35,12 @@ public class DataTypeUtilTest {
 
     @Test
     public void shouldDecodeHexStringToByteArray() {
-        assertArrayEquals(new byte[]{0, 4, 10, 16, 32, 64, 127}, DataTypeUtil.hexStringToByteArray("00040a1020407f"));
+        assertArrayEquals(new byte[] {0, 4, 10, 16, 32, 64, 127}, DataTypeUtil.hexStringToByteArray("00040a1020407f"));
     }
 
     @Test
     public void shouldEncodeByteArrayToHexString() {
-        assertEquals("00040a1020407f", DataTypeUtil.byteArrayToHexString(new byte[]{0, 4, 10, 16, 32, 64, 127}));
+        assertEquals("00040a1020407f", DataTypeUtil.byteArrayToHexString(new byte[] {0, 4, 10, 16, 32, 64, 127}));
     }
 
     @Test
@@ -72,7 +72,6 @@ public class DataTypeUtilTest {
 
         assertArrayEquals(intArray, DataTypeUtil.toByteArray(value));
     }
-
 
     @Test
     public void shouldCreateByteArrayFromLong() {

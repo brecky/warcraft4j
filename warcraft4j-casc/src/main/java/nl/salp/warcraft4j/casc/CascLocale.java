@@ -67,15 +67,21 @@ public enum CascLocale {
     }
 
     public static Optional<CascLocale> getLocale(long flag) {
-        return Stream.of(CascLocale.values())
-                .filter(l -> (l.flag & flag) == flag)
-                .findFirst();
+        Optional<CascLocale> locale;
+        if (flag == ALL.flag) {
+            locale = Optional.of(ALL);
+        } else {
+            locale = Stream.of(CascLocale.values())
+                    .filter(l -> l != ALL && (l.flag & flag) == flag)
+                    .findAny();
+        }
+        return locale;
     }
 
 
     public static Optional<CascLocale> getLocale(String name) {
         return Stream.of(CascLocale.values())
                 .filter(l -> l.name().equalsIgnoreCase(name))
-                .findFirst();
+                .findAny();
     }
 }

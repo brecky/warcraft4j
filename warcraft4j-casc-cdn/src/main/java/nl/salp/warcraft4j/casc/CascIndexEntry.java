@@ -21,6 +21,8 @@ package nl.salp.warcraft4j.casc;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.Optional;
+
 /**
  * {@link IndexEntry} implementation for a CDN based CASC, relating a file key to a actual file (segment).
  *
@@ -46,9 +48,12 @@ public class CascIndexEntry implements IndexEntry {
      * @param fileNumber     The data file number containing the file.
      * @param dataFileOffset The offset in the data file where the file data starts.
      * @param fileSize       The size of the file data in the data file.
+     *
+     * @throws IllegalArgumentException When invalid data was provided.
      */
     public CascIndexEntry(FileKey fileKey, int fileNumber, int dataFileOffset, long fileSize) {
-        this.fileKey = fileKey;
+        this.fileKey = Optional.ofNullable(fileKey)
+                .orElseThrow(() -> new IllegalArgumentException("Unable to create a CascIndexEntry for a null file key."));
         this.fileSize = fileSize;
         this.fileNumber = fileNumber;
         this.dataFileOffset = dataFileOffset;
