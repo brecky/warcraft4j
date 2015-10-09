@@ -23,7 +23,7 @@ import com.google.inject.Provider;
 import nl.salp.warcraft4j.casc.CascContext;
 import nl.salp.warcraft4j.casc.CascService;
 import nl.salp.warcraft4j.casc.CdnCascService;
-import nl.salp.warcraft4j.casc.cdn.CdnCascContext;
+import nl.salp.warcraft4j.casc.online.OnlineCascContext;
 import nl.salp.warcraft4j.casc.local.LocalCascContext;
 import nl.salp.warcraft4j.config.Warcraft4jConfig;
 
@@ -42,7 +42,7 @@ public class CdnCascModule extends AbstractModule {
             public CascContext get() {
                 Warcraft4jConfig config = configProvider.get();
                 if (config.isOnline()) {
-                    return new CdnCascContext(config);
+                    return new OnlineCascContext(config);
                 } else {
                     return new LocalCascContext(config);
                 }

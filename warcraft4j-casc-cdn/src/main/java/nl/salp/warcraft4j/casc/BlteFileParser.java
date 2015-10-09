@@ -16,10 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.casc.blte;
+package nl.salp.warcraft4j.casc;
 
-import nl.salp.warcraft4j.casc.CascParsingException;
-import nl.salp.warcraft4j.casc.IndexEntry;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.parser.DataParser;

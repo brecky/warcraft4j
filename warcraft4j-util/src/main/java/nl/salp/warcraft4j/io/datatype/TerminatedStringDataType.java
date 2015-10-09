@@ -53,23 +53,36 @@ class TerminatedStringDataType extends DataType<String> {
         this.bytesPerChar = DataTypeUtil.getAverageBytesPerCharacter(charset);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected String[] newArray(int entries) throws UnsupportedOperationException {
         return new String[entries];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getLength() {
         return LENGTH_BYTES;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ByteOrder getDefaultByteOrder() {
         return ByteOrder.LITTLE_ENDIAN;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String readNext(ByteBuffer buffer) {
+    public String readNext(ByteBuffer buffer, ByteOrder byteOrder) {
+        buffer.order(byteOrder);
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         byte c;
         while (buffer.hasRemaining() && (c = buffer.get()) != 0) {

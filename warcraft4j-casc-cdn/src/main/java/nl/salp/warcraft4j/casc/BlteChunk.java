@@ -16,9 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.casc.blte;
-
-import nl.salp.warcraft4j.casc.CascParsingException;
+package nl.salp.warcraft4j.casc;
 
 import static java.lang.String.format;
 

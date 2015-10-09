@@ -16,39 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.casc.cdn;
+package nl.salp.warcraft4j.casc.online;
 
-import nl.salp.warcraft4j.casc.FileKey;
-import nl.salp.warcraft4j.casc.IndexEntry;
+import nl.salp.warcraft4j.casc.DataReaderProvider;
+import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.io.reader.http.CachedHttpDataReader;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.function.Supplier;
 
 /**
- * TODO Add description.
+ * {@link DataReaderProvider} for reading online (HTTP) files.
  *
  * @author Barre Dijkstra
  */
-public class CdnIndexFile {
-    private final int index;
-    private final FileKey fileKey;
-    private final Collection<IndexEntry> indexEntries;
-
-    public CdnIndexFile(int index, FileKey fileKey, Collection<IndexEntry> indexEntries) {
-        this.index = index;
-        this.fileKey = fileKey;
-        this.indexEntries = indexEntries;
+public class OnlineDataReaderProvider implements DataReaderProvider {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Supplier<DataReader> getDataReader(String url) {
+        return () -> new CachedHttpDataReader(url);
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    public FileKey getFileKey() {
-        return fileKey;
-    }
-
-    public Collection<IndexEntry> getIndexEntries() {
-        return Collections.unmodifiableCollection(indexEntries);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Supplier<DataReader> getDataReader(String url, long offset, long length) {
+        return () -> new CachedHttpDataReader(url, offset, length);
     }
 }

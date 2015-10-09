@@ -25,25 +25,36 @@ import java.nio.ByteOrder;
  * {@link DataType} implementation for a boolean.
  */
 class BooleanDataType extends DataType<Boolean> {
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Boolean[] newArray(int entries) throws UnsupportedOperationException {
         return new Boolean[entries];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getLength() {
         return 1;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ByteOrder getDefaultByteOrder() {
         return ByteOrder.LITTLE_ENDIAN;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Boolean readNext(ByteBuffer buffer) {
-        return getValue(buffer.get());
+    public Boolean readNext(ByteBuffer buffer, ByteOrder byteOrder) {
+        return getValue(buffer.order(byteOrder).get());
     }
 
     /**

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.casc.cdn;
+package nl.salp.warcraft4j.casc.online;
 
 import nl.salp.warcraft4j.casc.*;
 import nl.salp.warcraft4j.casc.CascConfig;
@@ -39,38 +39,38 @@ import static java.lang.String.format;
  *
  * @author Barre Dijkstra
  */
-public class CdnIndexParser {
+public class OnlineIndexParser {
     /** The logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CdnIndexParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OnlineIndexParser.class);
     private static final String MASK_FILES_INDEX = "%s/data/%s/%s/%s.index";
     private final CascConfig cascConfig;
     private final DataReaderProvider dataReaderProvider;
 
-    public CdnIndexParser(CascConfig cascConfig, DataReaderProvider dataReaderProvider) {
+    public OnlineIndexParser(CascConfig cascConfig, DataReaderProvider dataReaderProvider) {
         this.cascConfig = cascConfig;
         this.dataReaderProvider = dataReaderProvider;
     }
 
     public Index parse() throws CascParsingException {
-        List<CdnIndexFile> indices = new ArrayList<>();
+        List<OnlineIndexFile> indices = new ArrayList<>();
         List<FileKey> indexFileKeys = cascConfig.getArchiveChecksums();
         LOGGER.trace("Parsing index entries from {} index files.", indexFileKeys.size());
         for (int i = 0; i < indexFileKeys.size(); i++) {
             indices.add(parseIndexFile(i, indexFileKeys.get(i)));
         }
         Set<IndexEntry> indexEntries = indices.stream()
-                .map(CdnIndexFile::getIndexEntries)
+                .map(OnlineIndexFile::getIndexEntries)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
         LOGGER.trace("Parsed {} index entries from {} index files.", indexEntries.size(), indices.size());
         return new Index(indexEntries);
     }
 
-    private CdnIndexFile parseIndexFile(int index, FileKey checksum) {
-        CdnIndexFile indexFile;
+    private OnlineIndexFile parseIndexFile(int index, FileKey checksum) {
+        OnlineIndexFile indexFile;
         String url = getUrl(checksum);
         try (DataReader dataReader = dataReaderProvider.getDataReader(url).get()) {
-            indexFile = dataReader.readNext(new CdnIndexFileParser(index, checksum));
+            indexFile = dataReader.readNext(new OnlineIndexFileParser(index, checksum));
         } catch (IOException e) {
             throw new CascParsingException(format("Error parsing CDN index file %d with key %s", index, checksum.toHexString()), e);
         }

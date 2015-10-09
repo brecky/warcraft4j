@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.casc.cdn;
+package nl.salp.warcraft4j.casc.online;
 
 import nl.salp.warcraft4j.casc.CascConfig;
 import nl.salp.warcraft4j.casc.CascParsingException;
@@ -48,9 +48,9 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  *
  * @author Barre Dijkstra
  */
-public class CachingCdnDataReaderProvider implements DataReaderProvider {
+public class CachingOnlineDataReaderProvider implements DataReaderProvider {
     /** The logger. */
-    protected static final Logger LOGGER = LoggerFactory.getLogger(CachingCdnDataReaderProvider.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(CachingOnlineDataReaderProvider.class);
     /** The size of chunks to use reading (cached) files. */
     private static final int CACHE_CHUNK_SIZE = 4096;
     /** The cache directory. */
@@ -66,7 +66,7 @@ public class CachingCdnDataReaderProvider implements DataReaderProvider {
      *
      * @throws IllegalArgumentException When the cache directory is not available and could not be created.
      */
-    public CachingCdnDataReaderProvider(CascConfig cascConfig, Path cacheRootDirectory) throws IllegalArgumentException {
+    public CachingOnlineDataReaderProvider(CascConfig cascConfig, Path cacheRootDirectory) throws IllegalArgumentException {
         String versionDir = "v" + cascConfig.getVersion().replace('.', '_');
         this.cacheDirectory = cacheRootDirectory.resolve(versionDir);
         this.cdnUrl = cascConfig.getCdnUrl();

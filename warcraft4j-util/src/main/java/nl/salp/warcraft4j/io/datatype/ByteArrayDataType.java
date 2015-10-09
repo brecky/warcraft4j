@@ -37,31 +37,45 @@ class ByteArrayDataType extends DataType<byte[]> {
         this.length = length;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected byte[][] newArray(int entries) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Creation of arrays from arrays is not supported.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DataType<byte[][]> asArrayType(int entries) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Creation of an array data types from array data types is not supported.");
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getLength() {
         return length;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ByteOrder getDefaultByteOrder() {
         return ByteOrder.LITTLE_ENDIAN;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public byte[] readNext(ByteBuffer buffer) {
+    public byte[] readNext(ByteBuffer buffer, ByteOrder byteOrder) {
         byte[] data = new byte[length];
-        buffer.get(data);
+        buffer.order(byteOrder).get(data);
         return data;
     }
 }

@@ -16,9 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.casc.blte;
+package nl.salp.warcraft4j.casc;
 
-import nl.salp.warcraft4j.casc.CascParsingException;
+import nl.salp.warcraft4j.util.Checksum;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.parser.DataParsingException;
@@ -27,23 +27,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 
 import static java.lang.String.format;
+import static nl.salp.warcraft4j.hash.Hashes.MD5;
 
 /**
  * TODO Document class.
  *
  * @author Barre Dijkstra
  */
-class BlteSingleChunkParser extends BlteChunkParser {
+class BlteMultiChunkParser extends BlteChunkParser {
     /** The logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(BlteSingleChunkParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BlteMultiChunkParser.class);
 
-    private final long fileSize;
-
-    public BlteSingleChunkParser(long fileSize) {
-        super(1);
-        this.fileSize = fileSize;
+    public BlteMultiChunkParser(int chunkCount) {
+        super(chunkCount);
     }
 
     @Override
@@ -52,23 +51,37 @@ class BlteSingleChunkParser extends BlteChunkParser {
     }
 
     @Override
-    protected BlteChunkHeader parseChunkHeader(DataReader reader) {
-        return new BlteChunkHeader(fileSize);
+    protected BlteChunkHeader parseChunkHeader(DataReader reader) throws DataParsingException {
+        try {
+            long compressedSize = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.BIG_ENDIAN);
+            long decompressedSize = reader.readNext(DataTypeFactory.getUnsignedInteger(), ByteOrder.BIG_ENDIAN);
+            byte[] hash = reader.readNext(DataTypeFactory.getByteArray(16));
+            return new BlteChunkHeader(compressedSize, decompressedSize, hash);
+        } catch (IOException e) {
+            throw new DataParsingException("Error parsing BLTE chunk header", e);
+        }
     }
 
     @Override
     protected BlteChunk parseChunk(DataReader reader, BlteChunkHeader header) throws DataParsingException {
         try {
             long compressedSize = header.getCompressedSize();
+            long decompressedSize = header.getDecompressedSize();
             byte[] chunkData = reader.readNext(DataTypeFactory.getByteArray((int) compressedSize));
             char compressionType = (char) chunkData[0];
             byte[] data = ArrayUtils.subarray(chunkData, 1, chunkData.length);
-            if (data.length != compressedSize - 1) {
-                throw new CascParsingException(format("Error parsing BLTE chunk, got %d bytes of compressed data instead of %d bytes", data.length, compressedSize));
+            Checksum checksum = header.getChecksum();
+            Checksum dataChecksum = new Checksum(MD5.hash(chunkData));
+            LOGGER.trace("Comparing data checksum MD5[{}] from {} ({}) bytes of data with expected checksum MD5[{}]",
+                    dataChecksum, chunkData.length, compressedSize, checksum);
+            if (!checksum.equals(dataChecksum)) {
+                throw new CascParsingException(format("Error parsing BLTE chunk with compression %s, mismatching checksum (got %s, expected %s)", compressionType, dataChecksum, checksum));
             }
-            return new BlteChunk(data.length, data, getDecompressor(compressionType));
+
+            return new BlteChunk(data.length, decompressedSize, data, getDecompressor(compressionType));
         } catch (IOException e) {
             throw new DataParsingException("Error parsing BLTE chunk", e);
         }
     }
+
 }

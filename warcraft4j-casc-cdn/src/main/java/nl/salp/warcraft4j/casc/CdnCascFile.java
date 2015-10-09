@@ -126,10 +126,7 @@ public class CdnCascFile implements CascFile {
     public void setFilename(String filename) {
         if (isNotEmpty(filename)) {
             this.filename = filename;
-            getCascContext().ifPresent(ctx -> {
-                        ctx.resolve(filename, hash);
-                    }
-            );
+            getCascContext().ifPresent(ctx -> ctx.resolve(filename, hash));
         }
     }
 

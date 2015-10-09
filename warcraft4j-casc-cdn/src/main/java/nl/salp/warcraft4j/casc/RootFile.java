@@ -18,8 +18,6 @@
  */
 package nl.salp.warcraft4j.casc;
 
-import nl.salp.warcraft4j.casc.ContentChecksum;
-import nl.salp.warcraft4j.casc.RootEntry;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -32,11 +30,13 @@ import java.util.stream.Collectors;
  *
  * @author Barre Dijkstra
  */
-public class Root {
+public class RootFile {
     private final Map<Long, List<RootEntry>> entries;
 
-    public Root(Map<Long, List<RootEntry>> entries) {
-        this.entries = Optional.ofNullable(entries).filter(m -> !m.isEmpty()).orElseThrow(() -> new IllegalArgumentException("Can't initialise the root with no entries."));
+    public RootFile(Map<Long, List<RootEntry>> entries) throws IllegalArgumentException {
+        this.entries = Optional.ofNullable(entries)
+                .filter(m -> !m.isEmpty())
+                .orElseThrow(() -> new IllegalArgumentException("Can't initialise the root with no entries."));
     }
 
     public long getHashCount() {
@@ -62,7 +62,9 @@ public class Root {
     }
 
     public Collection<RootEntry> getEntries() {
-        return entries.values().stream().flatMap(List::stream).collect(Collectors.toList());
+        return entries.values().stream()
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -16,13 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.casc.cdn;
+package nl.salp.warcraft4j.casc.online;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import nl.salp.warcraft4j.util.Checksum;
 import nl.salp.warcraft4j.casc.*;
-import nl.salp.warcraft4j.casc.blte.BlteDataReader;
+import nl.salp.warcraft4j.casc.BlteDataReader;
 import nl.salp.warcraft4j.config.Warcraft4jConfig;
 import nl.salp.warcraft4j.io.reader.DataReader;
 
@@ -37,7 +37,7 @@ import static java.lang.String.format;
  * @author Barre Dijkstra
  */
 @Singleton
-public class CdnCascContext extends CascContext {
+public class OnlineCascContext extends CascContext {
     /** The URI mask for data files. */
     private static final String MASK_FILES_DATA = "%s/data/%s/%s/%s";
     /** The {@link CascConfig}. */
@@ -49,7 +49,7 @@ public class CdnCascContext extends CascContext {
      * @param warcraft4jConfig The {@link Warcraft4jConfig}.
      */
     @Inject
-    public CdnCascContext(Warcraft4jConfig warcraft4jConfig) {
+    public OnlineCascContext(Warcraft4jConfig warcraft4jConfig) {
         super(warcraft4jConfig);
     }
 
@@ -59,7 +59,7 @@ public class CdnCascContext extends CascContext {
     @Override
     public CascConfig getCascConfig() {
         if (cascConfig == null) {
-            cascConfig = new CdnCascConfig(getWarcraft4jConfig(), getDataReaderProvider());
+            cascConfig = new OnlineCascConfig(getWarcraft4jConfig(), getDataReaderProvider());
         }
         return cascConfig;
     }
@@ -81,7 +81,7 @@ public class CdnCascContext extends CascContext {
      */
     @Override
     protected Index parseIndex() throws CascParsingException {
-        return new CdnIndexParser(getCascConfig(), getDataReaderProvider()).parse();
+        return new OnlineIndexParser(getCascConfig(), getDataReaderProvider()).parse();
     }
 
     /**
@@ -90,9 +90,9 @@ public class CdnCascContext extends CascContext {
     @Override
     protected DataReaderProvider getDataReaderProvider() {
         if (getWarcraft4jConfig().isCaching() && cascConfig != null) {
-            return new CachingCdnDataReaderProvider(cascConfig, getWarcraft4jConfig().getCacheDirectory());
+            return new CachingOnlineDataReaderProvider(cascConfig, getWarcraft4jConfig().getCacheDirectory());
         } else {
-            return new CdnDataReaderProvider();
+            return new OnlineDataReaderProvider();
         }
     }
 

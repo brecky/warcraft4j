@@ -111,7 +111,9 @@ public abstract class DataType<T> implements DataParser<T> {
      *
      * @return The next value.
      */
-    public abstract T readNext(ByteBuffer buffer);
+    public T readNext(ByteBuffer buffer) {
+        return readNext(buffer, getDefaultByteOrder());
+    }
 
     /**
      * Read the next value in the given data type from the given ByteBuffer that is in the given byte order.
@@ -121,9 +123,7 @@ public abstract class DataType<T> implements DataParser<T> {
      *
      * @return The next value.
      */
-    public T readNext(ByteBuffer buffer, ByteOrder byteOrder) {
-        return readNext(buffer.order(byteOrder));
-    }
+    public abstract T readNext(ByteBuffer buffer, ByteOrder byteOrder);
 
 
     @Override

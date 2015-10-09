@@ -20,7 +20,7 @@ package nl.salp.warcraft4j.casc.local;
 
 import nl.salp.warcraft4j.casc.BaseCascConfig;
 import nl.salp.warcraft4j.casc.CascConfig;
-import nl.salp.warcraft4j.casc.Config;
+import nl.salp.warcraft4j.casc.KeyBasedConfiguration;
 import nl.salp.warcraft4j.config.Warcraft4jConfig;
 import nl.salp.warcraft4j.casc.*;
 import nl.salp.warcraft4j.io.reader.DataReader;
@@ -55,17 +55,17 @@ public class LocalCascConfig extends BaseCascConfig implements CascConfig {
     private static final String KEY_BUILDINFO_TAGS = "Tags";
     private static final String KEY_BUILDINFO_VERSION = "Version";
 
-    private Config buildInfo;
+    private KeyBasedConfiguration buildInfo;
 
     public LocalCascConfig(Warcraft4jConfig warcraft4jConfig, DataReaderProvider dataReaderProvider) {
         super(warcraft4jConfig, dataReaderProvider);
     }
 
-    private Config getBuildInfo() {
+    private KeyBasedConfiguration getBuildInfo() {
         if (buildInfo == null) {
             String path = getWarcraft4jConfig().getWowInstallationDirectory().resolve(FILENAME_BUILDINFO).toString();
             LOGGER.debug("Initialising build info from file {}", path);
-            buildInfo = Config.tableConfig(getDataReader(path));
+            buildInfo = KeyBasedConfiguration.tableConfig(getDataReader(path));
         }
         return buildInfo;
     }

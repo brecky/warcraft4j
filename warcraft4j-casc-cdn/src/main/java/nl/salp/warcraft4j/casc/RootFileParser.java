@@ -39,7 +39,7 @@ import static java.nio.ByteOrder.LITTLE_ENDIAN;
  *
  * @author Barre Dijkstra
  */
-public class RootFileParser implements DataParser<Root> {
+public class RootFileParser implements DataParser<RootFile> {
     /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(RootFileParser.class);
 
@@ -47,11 +47,11 @@ public class RootFileParser implements DataParser<Root> {
     }
 
     @Override
-    public Root parse(DataReader reader) throws IOException, DataParsingException {
+    public RootFile parse(DataReader reader) throws IOException, DataParsingException {
         LOGGER.trace("Parsing root file");
         Map<Long, List<RootEntry>> entries = parseEntryBlocks(reader);
         LOGGER.trace("Parsed root with {} entries", entries.size());
-        return new Root(entries);
+        return new RootFile(entries);
     }
 
     private Map<Long, List<RootEntry>> parseEntryBlocks(DataReader reader) throws IOException, DataParsingException {
@@ -66,8 +66,12 @@ public class RootFileParser implements DataParser<Root> {
                 totalEntries += entryCount;
                 long blockUnknown = reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN);
                 long blockFlags = reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN);
-                CascLocale.getLocale(blockFlags).orElseThrow(() -> new CascParsingException(format("Unable to find a locale for flag %d", blockFlags)));
 
+                if (!CascLocale.getLocale(blockFlags).isPresent()) {
+                    LOGGER.warn("Unable to find a locale for root entry flag {} ({})", Long.toBinaryString(blockFlags), blockFlags);
+                } else {
+                    LOGGER.debug("Found locale {} for root entry flag {} ({})", CascLocale.getLocale(blockFlags).get(), Long.toBinaryString(blockFlags), blockFlags);
+                }
                 List<Long> entryUnknown = new ArrayList<>();
                 for (long i = 0; i < entryCount; i++) {
                     entryUnknown.add(reader.readNext(DataTypeFactory.getUnsignedInteger(), LITTLE_ENDIAN));

@@ -18,9 +18,9 @@
  */
 package nl.salp.warcraft4j.io.reader.http;
 
-import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.datatype.DataType;
 import nl.salp.warcraft4j.io.parser.DataParsingException;
+import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.reader.InputStreamDataReader;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -28,9 +28,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -81,26 +78,41 @@ public class HttpDataReader extends DataReader {
         return entity.getContent();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long position() {
         return position;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasRemaining() throws IOException {
         return length > position;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long remaining() throws IOException {
         return length - position;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long size() throws IOException {
         return length;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void skip(long bytes) throws IOException {
         if (bytes < 0) {
@@ -116,10 +128,12 @@ public class HttpDataReader extends DataReader {
         position += bytes;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException, DataParsingException {
         byte[] data;
-        ByteBuffer buffer;
         if (dataType.isVariableLength()) {
             data = getVarLenData(dataType);
         } else {
@@ -127,7 +141,7 @@ public class HttpDataReader extends DataReader {
             responseStream.read(data);
         }
         position += data.length;
-        return dataType.readNext(ByteBuffer.wrap(data).order(byteOrder), byteOrder);
+        return dataType.readNext(ByteBuffer.wrap(data), byteOrder);
     }
 
     /**
@@ -153,15 +167,14 @@ public class HttpDataReader extends DataReader {
     /**
      * Get a buffer for a variable length data type.
      *
-     * @param dataType  The data type.
-     * @param byteOrder The byte order for the returned buffer.
-     * @param <T>       The data type.
+     * @param dataType The data type.
+     * @param <T>      The data type.
      *
      * @return The byte buffer.
      *
      * @throws IOException When creating the buffer failed.
      */
-    private <T> ByteBuffer getVarLenBuffer(DataType<T> dataType, ByteOrder byteOrder) throws IOException {
+    private <T> ByteBuffer getVarLenBuffer(DataType<T> dataType) throws IOException {
         try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream()) {
             boolean done = false;
             byte b;
@@ -173,10 +186,13 @@ public class HttpDataReader extends DataReader {
                     done = true;
                 }
             }
-            return ByteBuffer.wrap(byteOut.toByteArray()).order(byteOrder);
+            return ByteBuffer.wrap(byteOut.toByteArray());
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws IOException {
         if (this.responseStream != null) {

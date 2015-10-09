@@ -19,9 +19,9 @@
 package nl.salp.warcraft4j.io.reader.file;
 
 import nl.salp.warcraft4j.Warcraft4jException;
+import nl.salp.warcraft4j.io.datatype.DataType;
 import nl.salp.warcraft4j.io.reader.DataReader;
 import nl.salp.warcraft4j.io.reader.RandomAccessDataReader;
-import nl.salp.warcraft4j.io.datatype.DataType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -110,6 +110,9 @@ public class FileDataReader extends RandomAccessDataReader {
         this.maxLength = maxLength;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final long position() {
         try {
@@ -119,28 +122,40 @@ public class FileDataReader extends RandomAccessDataReader {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasRemaining() throws IOException {
         return size() > position();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long remaining() throws IOException {
         return size() - position();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long size() throws IOException {
         return Math.min(channel.size(), (offset + maxLength));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException {
         ByteBuffer buffer;
         if (dataType.isVariableLength()) {
-            buffer = getVarLenBuffer(dataType, byteOrder);
+            buffer = getVarLenBuffer(dataType);
         } else {
-            buffer = ByteBuffer.allocate(dataType.getLength()).order(byteOrder);
+            buffer = ByteBuffer.allocate(dataType.getLength());
             channel.read(buffer);
         }
         buffer.rewind();
@@ -150,15 +165,14 @@ public class FileDataReader extends RandomAccessDataReader {
     /**
      * Get a buffer for a variable length data type.
      *
-     * @param dataType  The data type.
-     * @param byteOrder The byte order for the returned buffer.
-     * @param <T>       The data type.
+     * @param dataType The data type.
+     * @param <T>      The data type.
      *
      * @return The byte buffer.
      *
      * @throws IOException When creating the buffer failed.
      */
-    private <T> ByteBuffer getVarLenBuffer(DataType<T> dataType, ByteOrder byteOrder) throws IOException {
+    private <T> ByteBuffer getVarLenBuffer(DataType<T> dataType) throws IOException {
         try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream()) {
             boolean done = false;
             while (!done) {
@@ -171,15 +185,21 @@ public class FileDataReader extends RandomAccessDataReader {
                     done = true;
                 }
             }
-            return ByteBuffer.wrap(byteOut.toByteArray()).order(byteOrder);
+            return ByteBuffer.wrap(byteOut.toByteArray());
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void position(long position) throws IOException {
         channel.position(position);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void close() throws IOException {
         if (channel != null && channel.isOpen()) {

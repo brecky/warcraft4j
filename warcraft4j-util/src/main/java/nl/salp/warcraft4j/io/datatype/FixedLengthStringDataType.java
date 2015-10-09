@@ -56,25 +56,37 @@ class FixedLengthStringDataType extends DataType<String> {
         this.bytesPerCharacter = DataTypeUtil.getAverageBytesPerCharacter(charset);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected String[] newArray(int entries) throws UnsupportedOperationException {
         return new String[entries];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getLength() {
         return length * bytesPerCharacter;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ByteOrder getDefaultByteOrder() {
         return ByteOrder.LITTLE_ENDIAN;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String readNext(ByteBuffer buffer) {
+    public String readNext(ByteBuffer buffer, ByteOrder byteOrder) {
         byte[] data = new byte[getLength()];
-        buffer.get(data);
+        buffer.order(byteOrder).get(data);
         return new String(data, charset);
     }
 }

@@ -21,10 +21,9 @@ package nl.salp.warcraft4j.dev.casc.listfile;
 import nl.salp.warcraft4j.Branch;
 import nl.salp.warcraft4j.Locale;
 import nl.salp.warcraft4j.Region;
-import nl.salp.warcraft4j.config.PropertyWarcraft4jConfig;
 import nl.salp.warcraft4j.config.Warcraft4jConfig;
 import nl.salp.warcraft4j.casc.CascContext;
-import nl.salp.warcraft4j.casc.cdn.CdnCascContext;
+import nl.salp.warcraft4j.casc.online.OnlineCascContext;
 import nl.salp.warcraft4j.casc.local.LocalCascContext;
 import nl.salp.warcraft4j.config.Warcraft4jConfigBuilder;
 import nl.salp.warcraft4j.dev.casc.EntryStore;
@@ -116,7 +115,7 @@ public class ListFileGenerator {
                 && Files.isDirectory(warcraft4jConfig.getWowInstallationDirectory()) && Files.isReadable(warcraft4jConfig.getWowInstallationDirectory())) {
             CascContext cascContext;
             if (warcraft4jConfig.isOnline()) {
-                cascContext = new CdnCascContext(warcraft4jConfig);
+                cascContext = new OnlineCascContext(warcraft4jConfig);
             } else {
                 cascContext = new LocalCascContext(warcraft4jConfig);
             }

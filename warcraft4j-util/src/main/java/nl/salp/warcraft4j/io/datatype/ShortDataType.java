@@ -19,6 +19,7 @@
 package nl.salp.warcraft4j.io.datatype;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * {@link DataType} implementation for a short.
@@ -27,18 +28,27 @@ class ShortDataType extends DataType<Short> {
     /** Size of the data type in bytes (Short.SIZE is in bits). */
     private static final int BYTES = Short.SIZE / 8;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Short[] newArray(int entries) throws UnsupportedOperationException {
         return new Short[entries];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getLength() {
         return BYTES;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Short readNext(ByteBuffer buffer) {
-        return buffer.getShort();
+    public Short readNext(ByteBuffer buffer, ByteOrder byteOrder) {
+        return buffer.order(byteOrder).getShort();
     }
 }

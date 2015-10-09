@@ -18,9 +18,9 @@
  */
 package nl.salp.warcraft4j.io.reader.file;
 
-import nl.salp.warcraft4j.io.reader.RandomAccessDataReader;
 import nl.salp.warcraft4j.io.datatype.DataType;
 import nl.salp.warcraft4j.io.parser.DataParsingException;
+import nl.salp.warcraft4j.io.reader.RandomAccessDataReader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -39,12 +39,14 @@ import static java.lang.String.format;
 import static java.nio.file.StandardOpenOption.READ;
 
 /**
- * TODO Document class.
+ * {@link RandomAccessDataReader} that reads a file as a memory mapped file.
  *
  * @author Barre Dijkstra
  */
 public class MemMapFileDataReader extends RandomAccessDataReader {
+    /** The default maximum length. */
     private static final long DEFAULT_MAX_LENGTH = -1;
+    /** The default offset. */
     private static final long DEFAULT_OFFSET = 0;
     /** The file channel for the file. */
     private final FileChannel channel;
@@ -110,7 +112,14 @@ public class MemMapFileDataReader extends RandomAccessDataReader {
         this.loadLock = new ReentrantLock();
     }
 
-    private MappedByteBuffer getMappedBuffer() {
+    /**
+     * Get a memory mapped byte buffer.
+     *
+     * @return The mapped byte buffer.
+     *
+     * @throws DataParsingException When the mapped buffer could not be retrieved.
+     */
+    private MappedByteBuffer getMappedBuffer() throws DataParsingException {
         if (!channel.isOpen()) {
             throw new DataParsingException("Tried to get the memory mapped buffer for a closed file channel.");
         }
@@ -134,36 +143,51 @@ public class MemMapFileDataReader extends RandomAccessDataReader {
         return mappedBuffer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final long position() {
         // FIXME Determine whether MappedByteBuffer#position() counts from the channel start or from offset.
         return getMappedBuffer().position() + offset;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasRemaining() throws IOException {
         return getMappedBuffer().hasRemaining();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long remaining() throws IOException {
         return getMappedBuffer().remaining();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long size() throws IOException {
         return getMappedBuffer().position() + getMappedBuffer().remaining();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException {
         ByteBuffer buffer;
         if (dataType.isVariableLength()) {
-            buffer = getVarLenBuffer(dataType, byteOrder);
+            buffer = getVarLenBuffer(dataType);
         } else {
             byte[] data = new byte[dataType.getLength()];
             getMappedBuffer().get(data);
-            buffer = ByteBuffer.wrap(data).order(byteOrder);
+            buffer = ByteBuffer.wrap(data);
         }
         buffer.rewind();
         return dataType.readNext(buffer, byteOrder);
@@ -172,29 +196,34 @@ public class MemMapFileDataReader extends RandomAccessDataReader {
     /**
      * Get a buffer for a variable length data type.
      *
-     * @param dataType  The data type.
-     * @param byteOrder The byte order for the returned buffer.
-     * @param <T>       The data type.
+     * @param dataType The data type.
+     * @param <T>      The data type.
      *
      * @return The byte buffer.
      *
      * @throws IOException When creating the buffer failed.
      */
-    private <T> ByteBuffer getVarLenBuffer(DataType<T> dataType, ByteOrder byteOrder) throws IOException {
+    private <T> ByteBuffer getVarLenBuffer(DataType<T> dataType) throws IOException {
         try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream()) {
             byte b;
             while (getMappedBuffer().hasRemaining() && !dataType.isVariableLengthTerminator((b = getMappedBuffer().get()))) {
                 byteOut.write(b);
             }
-            return ByteBuffer.wrap(byteOut.toByteArray()).order(byteOrder);
+            return ByteBuffer.wrap(byteOut.toByteArray());
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void position(long position) throws IOException {
         channel.position(position);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void close() throws IOException {
         if (channel != null && channel.isOpen()) {

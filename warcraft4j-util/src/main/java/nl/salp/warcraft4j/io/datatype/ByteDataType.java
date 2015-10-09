@@ -25,24 +25,35 @@ import java.nio.ByteOrder;
  * {@link DataType} implementation for a byte.
  */
 class ByteDataType extends DataType<Byte> {
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Byte[] newArray(int entries) throws UnsupportedOperationException {
         return new Byte[entries];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getLength() {
         return 1;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ByteOrder getDefaultByteOrder() {
         return ByteOrder.LITTLE_ENDIAN;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Byte readNext(ByteBuffer buffer) {
-        return buffer.get();
+    public Byte readNext(ByteBuffer buffer, ByteOrder byteOrder) {
+        return buffer.order(byteOrder).get();
     }
 }

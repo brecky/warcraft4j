@@ -30,21 +30,25 @@ class UnsignedIntegerDataType extends DataType<Long> {
     /** 64-bit mask for 32-bit integers. */
     private static final long INT_MASK = Integer.MIN_VALUE | Integer.MAX_VALUE;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Long[] newArray(int entries) throws UnsupportedOperationException {
         return new Long[entries];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getLength() {
         return BYTES;
     }
 
-    @Override
-    public Long readNext(ByteBuffer buffer) {
-        return readNext(buffer, getDefaultByteOrder());
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long readNext(ByteBuffer buffer, ByteOrder byteOrder) {
         return buffer.order(byteOrder).getInt() & INT_MASK;

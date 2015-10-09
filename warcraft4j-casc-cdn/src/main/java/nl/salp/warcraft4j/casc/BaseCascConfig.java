@@ -77,9 +77,9 @@ public abstract class BaseCascConfig implements CascConfig {
     /** The {@link Warcraft4jConfig} instance. */
     private final Warcraft4jConfig warcraft4jConfig;
     /** The parsed build configuration file. */
-    private Config buildConfig;
+    private KeyBasedConfiguration buildConfig;
     /** The parsed CDN configuration file. */
-    private Config cdnConfig;
+    private KeyBasedConfiguration cdnConfig;
 
     protected BaseCascConfig(Warcraft4jConfig warcraft4jConfig, DataReaderProvider dataReaderProvider) {
         LOGGER.trace("Created {} config instance for installation {}, region {}, branch {} and locale {} with data reader provider {}",
@@ -114,12 +114,12 @@ public abstract class BaseCascConfig implements CascConfig {
      *
      * @return The build configuration.
      */
-    protected final Config getBuildConfig() {
+    protected final KeyBasedConfiguration getBuildConfig() {
         if (buildConfig == null) {
             String buildConfigKey = getBuildConfigKey()
                     .orElseThrow(() -> new CascParsingException("No build configuration file checksum available."));
             LOGGER.debug("Initialising build config with key {}", buildConfigKey);
-            buildConfig = Config.keyValueConfig(getConfigDataReader(buildConfigKey));
+            buildConfig = KeyBasedConfiguration.keyValueConfig(getConfigDataReader(buildConfigKey));
         }
         return buildConfig;
     }
@@ -129,12 +129,12 @@ public abstract class BaseCascConfig implements CascConfig {
      *
      * @return The CDN configuration.
      */
-    protected final Config getCdnConfig() {
+    protected final KeyBasedConfiguration getCdnConfig() {
         if (cdnConfig == null) {
             String cdnConfigKey = getCdnConfigKey()
                     .orElseThrow(() -> new CascParsingException("No CDN configuration file checksum available."));
             LOGGER.debug("Initialising CDN config with key {}", cdnConfigKey);
-            cdnConfig = Config.keyValueConfig(getConfigDataReader(cdnConfigKey));
+            cdnConfig = KeyBasedConfiguration.keyValueConfig(getConfigDataReader(cdnConfigKey));
         }
         return cdnConfig;
     }
@@ -303,7 +303,7 @@ public abstract class BaseCascConfig implements CascConfig {
      *
      * @return Optional containing the value if available.
      */
-    protected final Optional<String> getIndexedValue(Config config, String key, String indexKey, String indexValue) {
+    protected final Optional<String> getIndexedValue(KeyBasedConfiguration config, String key, String indexKey, String indexValue) {
         return getIndexedValue(config, key, 0, indexKey, indexValue);
     }
 
@@ -318,7 +318,7 @@ public abstract class BaseCascConfig implements CascConfig {
      *
      * @return Optional containing the value if available.
      */
-    protected final Optional<String> getIndexedValue(Config config, String key, int idx, String indexKey, String indexValue) {
+    protected final Optional<String> getIndexedValue(KeyBasedConfiguration config, String key, int idx, String indexKey, String indexValue) {
         return config.getValue(key, indexKey, indexValue)
                 .flatMap(s -> {
                     if (s.contains(" ")) {

@@ -30,23 +30,27 @@ class UnsignedShortDataType extends DataType<Integer> {
     /** 64-bit mask for 32-bit integers. */
     private static final int SHORT_MASK = 0x0000_ffff;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Integer[] newArray(int entries) throws UnsupportedOperationException {
         return new Integer[entries];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getLength() {
         return BYTES;
     }
 
-    @Override
-    public Integer readNext(ByteBuffer buffer) {
-        return readNext(buffer, getDefaultByteOrder());
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Integer readNext(ByteBuffer buffer, ByteOrder byteOrder) {
-        return buffer.getShort() & SHORT_MASK;
+        return buffer.order(byteOrder).getShort() & SHORT_MASK;
     }
 }

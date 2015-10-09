@@ -16,39 +16,39 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.io.datatype;
+package nl.salp.warcraft4j.casc.online;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import nl.salp.warcraft4j.casc.FileKey;
+import nl.salp.warcraft4j.casc.IndexEntry;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
- * {@link DataType} implementation for a double.
+ * TODO Add description.
+ *
+ * @author Barre Dijkstra
  */
-class DoubleDataType extends DataType<Double> {
-    /** Size of the data type in bytes (Short.SIZE is in bits). */
-    private static final int BYTES = Double.SIZE / 8;
+public class OnlineIndexFile {
+    private final int index;
+    private final FileKey fileKey;
+    private final Collection<IndexEntry> indexEntries;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Double[] newArray(int entries) throws UnsupportedOperationException {
-        return new Double[entries];
+    public OnlineIndexFile(int index, FileKey fileKey, Collection<IndexEntry> indexEntries) {
+        this.index = index;
+        this.fileKey = fileKey;
+        this.indexEntries = indexEntries;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getLength() {
-        return BYTES;
+    public int getIndex() {
+        return index;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Double readNext(ByteBuffer buffer, ByteOrder byteOrder) {
-        return buffer.order(byteOrder).getDouble();
+    public FileKey getFileKey() {
+        return fileKey;
+    }
+
+    public Collection<IndexEntry> getIndexEntries() {
+        return Collections.unmodifiableCollection(indexEntries);
     }
 }

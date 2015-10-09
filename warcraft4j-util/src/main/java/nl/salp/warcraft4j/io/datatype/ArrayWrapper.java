@@ -64,7 +64,8 @@ class ArrayWrapper<K> extends DataType<K[]> {
     }
 
     @Override
-    public K[] readNext(ByteBuffer buffer) {
+    public K[] readNext(ByteBuffer buffer, ByteOrder byteOrder) {
+        buffer.order(byteOrder);
         K[] entries = wrappedType.newArray(arrayLength);
         for (int i = 0; i < arrayLength; i++) {
             entries[i] = wrappedType.readNext(buffer);

@@ -36,7 +36,7 @@ import java.nio.ByteOrder;
  */
 public abstract class DataReader implements Closeable, AutoCloseable {
     /** The default ByteOrder for data files. */
-    public static final ByteOrder DEFAULT_BYTE_ORDER = ByteOrder.LITTLE_ENDIAN;
+    public static final ByteOrder DEFAULT_BYTE_ORDER = ByteOrder.BIG_ENDIAN;
 
     /**
      * Get the current position of the underlying data.

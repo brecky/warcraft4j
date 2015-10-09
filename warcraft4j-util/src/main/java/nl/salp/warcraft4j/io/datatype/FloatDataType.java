@@ -19,6 +19,7 @@
 package nl.salp.warcraft4j.io.datatype;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * {@link DataType} implementation for a 32-bit signed float.
@@ -27,18 +28,27 @@ class FloatDataType extends DataType<Float> {
     /** Size of the data type in bytes (Float.SIZE is in bits). */
     private static final int BYTES = Float.SIZE / 8;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Float[] newArray(int entries) throws UnsupportedOperationException {
         return new Float[entries];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getLength() {
         return BYTES;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Float readNext(ByteBuffer buffer) {
-        return buffer.getFloat();
+    public Float readNext(ByteBuffer buffer, ByteOrder byteOrder) {
+        return buffer.order(byteOrder).getFloat();
     }
 }

@@ -42,12 +42,17 @@ public abstract class RandomAccessDataReader extends DataReader {
      */
     @Override
     public abstract void position(long position) throws IOException;
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isRandomAccessSupported() {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void skip(long bytes) throws IOException {
         if (bytes < 0) {

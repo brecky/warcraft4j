@@ -56,31 +56,49 @@ public class ByteArrayDataReader extends RandomAccessDataReader {
         this.dataSize = data.length;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long position() {
         return buffer.position();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void position(long position) throws IOException, DataParsingException {
         buffer.position((int) position);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasRemaining() throws IOException, DataParsingException {
         return buffer.hasRemaining();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long size() throws IOException {
         return dataSize;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long remaining() throws IOException {
         return buffer.remaining();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException, DataParsingException {
         byte[] data;
@@ -90,7 +108,7 @@ public class ByteArrayDataReader extends RandomAccessDataReader {
             data = new byte[dataType.getLength()];
             this.buffer.get(data);
         }
-        return dataType.readNext(ByteBuffer.wrap(data).order(byteOrder), byteOrder);
+        return dataType.readNext(ByteBuffer.wrap(data), byteOrder);
     }
 
     /**

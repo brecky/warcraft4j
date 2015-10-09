@@ -19,6 +19,7 @@
 package nl.salp.warcraft4j.io.datatype;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * {@link DataType} implementation for a 32-bit signed integer.
@@ -27,18 +28,27 @@ class IntegerDataType extends DataType<Integer> {
     /** Size of the data type in bytes (Integer.SIZE is in bits). */
     private static final int BYTES = Integer.SIZE / 8;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Integer[] newArray(int entries) throws UnsupportedOperationException {
         return new Integer[entries];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getLength() {
         return BYTES;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Integer readNext(ByteBuffer buffer) {
-        return buffer.getInt();
+    public Integer readNext(ByteBuffer buffer, ByteOrder byteOrder) {
+        return buffer.order(byteOrder).getInt();
     }
 }

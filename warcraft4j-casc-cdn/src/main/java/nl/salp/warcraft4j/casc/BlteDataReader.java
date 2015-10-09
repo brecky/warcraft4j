@@ -16,10 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.casc.blte;
+package nl.salp.warcraft4j.casc;
 
-import nl.salp.warcraft4j.casc.CascParsingException;
-import nl.salp.warcraft4j.casc.ContentChecksum;
 import nl.salp.warcraft4j.hash.Hashes;
 import nl.salp.warcraft4j.io.datatype.DataType;
 import nl.salp.warcraft4j.io.parser.DataParsingException;
@@ -97,41 +95,65 @@ public class BlteDataReader extends RandomAccessDataReader {
         return blteFile;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long position() {
         return parsedDataReader.position();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void position(long position) throws IOException {
         parsedDataReader.position(position);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasRemaining() throws IOException {
         return parsedDataReader.hasRemaining();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long remaining() throws IOException {
         return parsedDataReader.remaining();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long size() throws IOException {
         return parsedDataReader.size();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void skip(long bytes) throws IOException {
         parsedDataReader.skip(bytes);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException, DataParsingException {
         return parsedDataReader.readNext(dataType, byteOrder);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws IOException {
         if (parsedDataReader != null) {

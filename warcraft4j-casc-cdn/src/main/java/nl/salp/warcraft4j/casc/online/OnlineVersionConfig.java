@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.casc.cdn;
+package nl.salp.warcraft4j.casc.online;
 
 import nl.salp.warcraft4j.Branch;
 
@@ -27,14 +27,14 @@ import static java.lang.String.format;
  *
  * @author Barre Dijkstra
  */
-public enum CdnVersion {
+public enum OnlineVersionConfig {
     WOW_LIVE("wow"),
     WOW_PTR("wowt"),
     WOW_BETA("wow_beta");
 
     private final String productCode;
 
-    CdnVersion(String productCode) {
+    OnlineVersionConfig(String productCode) {
         this.productCode = productCode;
     }
 
@@ -42,7 +42,7 @@ public enum CdnVersion {
         return productCode;
     }
 
-    public static CdnVersion getFrom(Branch branch) throws IllegalArgumentException {
+    public static OnlineVersionConfig getFrom(Branch branch) throws IllegalArgumentException {
         switch (branch) {
             case BETA:
                 return WOW_BETA;

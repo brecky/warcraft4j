@@ -48,6 +48,7 @@ public class DataTypeFactory {
     private static final DataType<Boolean> BOOLEAN = new BooleanDataType();
     /** Single terminated string instance. */
     private static final DataType<String> TERMINATED_STRING = new TerminatedStringDataType();
+    /** Single String instance terminated by an EOL, {@code 0x0} or EOF. */
     private static final DataType<String> STRING_LINE = new StringLineDataType();
 
     /**

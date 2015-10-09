@@ -71,7 +71,8 @@ class StringLineDataType extends DataType<String> {
     }
 
     @Override
-    public String readNext(ByteBuffer buffer) {
+    public String readNext(ByteBuffer buffer, ByteOrder byteOrder) {
+        buffer.order(byteOrder);
         try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream()) {
             byte c;
             boolean done = false;

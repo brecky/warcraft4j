@@ -19,6 +19,7 @@
 package nl.salp.warcraft4j.io.datatype;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * {@link DataType} implementation for a long.
@@ -27,18 +28,27 @@ class LongDataType extends DataType<Long> {
     /** Size of the data type in bytes (Short.SIZE is in bits). */
     private static final int BYTES = Long.SIZE / 8;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Long[] newArray(int entries) throws UnsupportedOperationException {
         return new Long[entries];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getLength() {
         return BYTES;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Long readNext(ByteBuffer buffer) {
-        return buffer.getLong();
+    public Long readNext(ByteBuffer buffer, ByteOrder byteOrder) {
+        return buffer.order(byteOrder).getLong();
     }
 }

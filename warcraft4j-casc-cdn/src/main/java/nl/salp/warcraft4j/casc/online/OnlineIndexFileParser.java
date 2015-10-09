@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.casc.cdn;
+package nl.salp.warcraft4j.casc.online;
 
 import nl.salp.warcraft4j.casc.CascIndexEntry;
 import nl.salp.warcraft4j.casc.CascParsingException;
@@ -42,20 +42,20 @@ import static java.lang.String.format;
  *
  * @author Barre Dijkstra
  */
-public class CdnIndexFileParser implements DataParser<CdnIndexFile> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CdnIndexFileParser.class);
+public class OnlineIndexFileParser implements DataParser<OnlineIndexFile> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OnlineIndexFileParser.class);
     private static final byte[] EMPTY_CHECKSUM = createEmptyChecksum();
 
     private final int fileNumber;
     private final FileKey fileKey;
 
-    public CdnIndexFileParser(int fileNumber, FileKey fileKey) {
+    public OnlineIndexFileParser(int fileNumber, FileKey fileKey) {
         this.fileNumber = fileNumber;
         this.fileKey = fileKey;
     }
 
     @Override
-    public CdnIndexFile parse(DataReader reader) throws IOException, DataParsingException {
+    public OnlineIndexFile parse(DataReader reader) throws IOException, DataParsingException {
         long start = reader.position();
         reader.position(reader.remaining() - 12);
         int count = reader.readNext(DataTypeFactory.getInteger(), ByteOrder.LITTLE_ENDIAN);
@@ -81,7 +81,7 @@ public class CdnIndexFileParser implements DataParser<CdnIndexFile> {
             IndexEntry entry = new CascIndexEntry(new FileKey(checksum), fileNumber, size, offset);
             entries.add(entry);
         }
-        return new CdnIndexFile(fileNumber, fileKey, entries);
+        return new OnlineIndexFile(fileNumber, fileKey, entries);
     }
 
     private static byte[] createEmptyChecksum() {

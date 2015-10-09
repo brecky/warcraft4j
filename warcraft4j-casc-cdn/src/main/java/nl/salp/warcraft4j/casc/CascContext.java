@@ -21,7 +21,6 @@ package nl.salp.warcraft4j.casc;
 import nl.salp.warcraft4j.Branch;
 import nl.salp.warcraft4j.Locale;
 import nl.salp.warcraft4j.Region;
-import nl.salp.warcraft4j.casc.blte.BlteDataReader;
 import nl.salp.warcraft4j.config.Warcraft4jConfig;
 import nl.salp.warcraft4j.hash.JenkinsHash;
 import nl.salp.warcraft4j.io.reader.CompositeDataReader;
@@ -59,7 +58,7 @@ public abstract class CascContext {
     /** The parsed encoding file. */
     private EncodingFile encoding;
     /** The parsed root file. */
-    private Root root;
+    private RootFile rootFile;
 
     /**
      * Create a new CascContext.
@@ -121,9 +120,9 @@ public abstract class CascContext {
      *
      * @return The parsed root file.
      *
-     * @throws CascParsingException When parsing of the root failed.
+     * @throws CascParsingException When parsing of the rootFile failed.
      */
-    protected Root parseRoot() throws CascParsingException {
+    protected RootFile parseRoot() throws CascParsingException {
         ContentChecksum contentChecksum = Optional.of(getCascConfig().getRootContentChecksum())
                 .orElseThrow(() -> new CascParsingException("No checksum found for root file"));
         FileKey fileKey = getFileKey(contentChecksum)
@@ -255,17 +254,17 @@ public abstract class CascContext {
     }
 
     /**
-     * Get the parsed root.
+     * Get the parsed rootFile.
      *
-     * @return The {@link Root}.
+     * @return The {@link RootFile}.
      */
-    protected final Root getRoot() {
-        if (root == null) {
-            LOGGER.debug("Parsing root");
-            root = parseRoot();
-            LOGGER.debug("Successfully initialised root file with {} entries", root.getHashCount());
+    protected final RootFile getRootFile() {
+        if (rootFile == null) {
+            LOGGER.debug("Parsing rootFile");
+            rootFile = parseRoot();
+            LOGGER.debug("Successfully initialised root file with {} entries", rootFile.getHashCount());
         }
-        return root;
+        return rootFile;
     }
 
     /**
@@ -274,7 +273,7 @@ public abstract class CascContext {
      * @return The root entries.
      */
     public final Collection<RootEntry> getRootEntries() {
-        return Collections.unmodifiableCollection(getRoot().getEntries());
+        return Collections.unmodifiableCollection(getRootFile().getEntries());
     }
 
     /**
@@ -285,7 +284,7 @@ public abstract class CascContext {
      * @return All root entries for the filename hash.
      */
     public final List<RootEntry> getRootEntries(long filenameHash) {
-        return getRoot().getEntries(filenameHash);
+        return getRootFile().getEntries(filenameHash);
     }
 
     /**
@@ -356,7 +355,7 @@ public abstract class CascContext {
     public boolean isRegistered(long hash) {
         return getFilename(hash)
                 .map(StringUtils::isNotEmpty)
-                .orElse(getRoot().isEntryAvailable(hash));
+                .orElse(getRootFile().isEntryAvailable(hash));
     }
 
     /**
@@ -403,7 +402,7 @@ public abstract class CascContext {
             hash = Optional.of(hashes.get(cleanedFilename));
         } else {
             long filenameHash = hashFilename(cleanedFilename);
-            if (getRoot().isEntryAvailable(filenameHash)) {
+            if (getRootFile().isEntryAvailable(filenameHash)) {
                 hashes.putIfAbsent(cleanedFilename, filenameHash);
                 filenames.putIfAbsent(filenameHash, cleanedFilename);
                 hash = Optional.of(filenameHash);
@@ -420,7 +419,7 @@ public abstract class CascContext {
      * @return The hashes.
      */
     public Set<Long> getHashes() {
-        return getRoot().getHashes();
+        return getRootFile().getHashes();
     }
 
     /**
@@ -463,7 +462,7 @@ public abstract class CascContext {
      * @return List containing all checksums for the hash or an empty list if no checksums were associated with the hash.
      */
     public List<ContentChecksum> getContentChecksums(long filenameHash) {
-        return getRoot().getContentChecksums(filenameHash);
+        return getRootFile().getContentChecksums(filenameHash);
     }
 
     /**

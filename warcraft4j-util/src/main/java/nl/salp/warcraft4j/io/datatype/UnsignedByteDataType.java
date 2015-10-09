@@ -28,23 +28,35 @@ class UnsignedByteDataType extends DataType<Short> {
     /** 64-bit mask for 32-bit integers. */
     private static final short BYTE_MASK = 0x00FF;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Short[] newArray(int entries) throws UnsupportedOperationException {
         return new Short[entries];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getLength() {
         return 1;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ByteOrder getDefaultByteOrder() {
         return ByteOrder.LITTLE_ENDIAN;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Short readNext(ByteBuffer buffer) {
-        return (short) (buffer.get() & BYTE_MASK);
+    public Short readNext(ByteBuffer buffer, ByteOrder byteOrder) {
+        return (short) (buffer.order(byteOrder).get() & BYTE_MASK);
     }
 }

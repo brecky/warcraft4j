@@ -50,21 +50,33 @@ public class InputStreamDataReader extends DataReader {
         position = 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final long position() {
         return position;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasRemaining() throws IOException {
         return stream.available() > 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long remaining() throws IOException {
         return stream.available();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long size() throws IOException {
         return remaining() + position();
@@ -85,15 +97,18 @@ public class InputStreamDataReader extends DataReader {
         position += bytes;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException, DataParsingException {
         ByteBuffer buffer;
         if (dataType.isVariableLength()) {
-            buffer = getVarLenBuffer(dataType, byteOrder);
+            buffer = getVarLenBuffer(dataType);
         } else {
             byte[] data = new byte[dataType.getLength()];
             stream.read(data);
-            buffer = ByteBuffer.wrap(data).order(byteOrder);
+            buffer = ByteBuffer.wrap(data);
         }
         position += buffer.limit();
         buffer.rewind();
@@ -103,15 +118,14 @@ public class InputStreamDataReader extends DataReader {
     /**
      * Get a buffer for a variable length data type.
      *
-     * @param dataType  The data type.
-     * @param byteOrder The byte order for the returned buffer.
-     * @param <T>       The data type.
+     * @param dataType The data type.
+     * @param <T>      The data type.
      *
      * @return The byte buffer.
      *
      * @throws IOException When creating the buffer failed.
      */
-    private <T> ByteBuffer getVarLenBuffer(DataType<T> dataType, ByteOrder byteOrder) throws IOException {
+    private <T> ByteBuffer getVarLenBuffer(DataType<T> dataType) throws IOException {
         try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream()) {
             boolean done = false;
             byte b;
@@ -123,10 +137,13 @@ public class InputStreamDataReader extends DataReader {
                     done = true;
                 }
             }
-            return ByteBuffer.wrap(byteOut.toByteArray()).order(byteOrder);
+            return ByteBuffer.wrap(byteOut.toByteArray());
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void close() throws IOException {
         if (stream != null) {

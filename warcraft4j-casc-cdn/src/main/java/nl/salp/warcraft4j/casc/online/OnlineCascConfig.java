@@ -16,11 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.casc.cdn;
+package nl.salp.warcraft4j.casc.online;
 
 import nl.salp.warcraft4j.casc.BaseCascConfig;
 import nl.salp.warcraft4j.casc.CascParsingException;
-import nl.salp.warcraft4j.casc.Config;
+import nl.salp.warcraft4j.casc.KeyBasedConfiguration;
 import nl.salp.warcraft4j.casc.DataReaderProvider;
 import nl.salp.warcraft4j.config.Warcraft4jConfig;
 import nl.salp.warcraft4j.io.reader.DataReader;
@@ -39,9 +39,9 @@ import static java.lang.String.format;
  *
  * @author Barre Dijkstra
  */
-public class CdnCascConfig extends BaseCascConfig {
+public class OnlineCascConfig extends BaseCascConfig {
     /** The logger instance. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CdnCascConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OnlineCascConfig.class);
     /** The {@code versions} config key for the region. */
     private static final String KEY_VERSIONS_REGION = "Region";
     /** The {@code versions} config key for the build id. */
@@ -64,12 +64,12 @@ public class CdnCascConfig extends BaseCascConfig {
     private static final String FILE_CDNS = "cdns";
     /** The file name of the {@code versions} config. */
     private static final String FILE_VERSIONS = "versions";
-    /** The {@link CdnVersion} (or {@link nl.salp.warcraft4j.Branch} to use). */
-    private final CdnVersion cdnVersion;
+    /** The {@link OnlineVersionConfig} (or {@link nl.salp.warcraft4j.Branch} to use). */
+    private final OnlineVersionConfig onlineVersionConfig;
     /** The parsed {@code CDNs} config. */
-    private Config cdns;
+    private KeyBasedConfiguration cdns;
     /** The parsed {@code versions} config. */
-    private Config versions;
+    private KeyBasedConfiguration versions;
 
     /**
      * Create a new instance.
@@ -77,9 +77,9 @@ public class CdnCascConfig extends BaseCascConfig {
      * @param warcraft4jConfig          The {@link Warcraft4jConfig} instance to configure the CDN CASC configuration with.
      * @param dataReaderProvider The {@link DataReaderProvider} for reading the configuration files.
      */
-    public CdnCascConfig(Warcraft4jConfig warcraft4jConfig, DataReaderProvider dataReaderProvider) {
+    public OnlineCascConfig(Warcraft4jConfig warcraft4jConfig, DataReaderProvider dataReaderProvider) {
         super(warcraft4jConfig, dataReaderProvider);
-        this.cdnVersion = CdnVersion.getFrom(warcraft4jConfig.getBranch());
+        this.onlineVersionConfig = OnlineVersionConfig.getFrom(warcraft4jConfig.getBranch());
     }
 
     /**
@@ -90,7 +90,7 @@ public class CdnCascConfig extends BaseCascConfig {
      * @return The URL for the file.
      */
     private String getDirectUrl(String file) {
-        return format(URL_MASK, cdnVersion.getProductCode(), file);
+        return format(URL_MASK, onlineVersionConfig.getProductCode(), file);
     }
 
     /**
@@ -98,11 +98,11 @@ public class CdnCascConfig extends BaseCascConfig {
      *
      * @return The {@code CDNs} config.
      */
-    private Config getCdns() {
+    private KeyBasedConfiguration getCdns() {
         if (cdns == null) {
             String uri = getDirectUrl(FILE_CDNS);
             LOGGER.trace("Initialising CDNs config from URI {}", uri);
-            cdns = Config.tableConfig(getDataReader(uri));
+            cdns = KeyBasedConfiguration.tableConfig(getDataReader(uri));
         }
         return cdns;
     }
@@ -125,11 +125,11 @@ public class CdnCascConfig extends BaseCascConfig {
      *
      * @return The {@code versions} config.
      */
-    private Config getVersions() {
+    private KeyBasedConfiguration getVersions() {
         if (versions == null) {
             String uri = getDirectUrl(FILE_VERSIONS);
             LOGGER.trace("Initialising versions config from URI {}", uri);
-            versions = Config.tableConfig(getDataReader(uri));
+            versions = KeyBasedConfiguration.tableConfig(getDataReader(uri));
         }
         return versions;
     }

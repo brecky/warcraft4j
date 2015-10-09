@@ -16,33 +16,41 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package nl.salp.warcraft4j.casc.cdn;
+package nl.salp.warcraft4j.casc;
 
-import nl.salp.warcraft4j.casc.DataReaderProvider;
-import nl.salp.warcraft4j.io.reader.DataReader;
-import nl.salp.warcraft4j.io.reader.http.CachedHttpDataReader;
+import org.junit.Test;
 
-import java.util.function.Supplier;
+import static org.junit.Assert.assertEquals;
 
 /**
- * {@link DataReaderProvider} for reading online (HTTP) files.
+ * Unit tests for {@link RootEntry}
  *
  * @author Barre Dijkstra
+ * @see nl.salp.warcraft4j.casc.RootEntry
  */
-public class CdnDataReaderProvider implements DataReaderProvider {
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Supplier<DataReader> getDataReader(String url) {
-        return () -> new CachedHttpDataReader(url);
-    }
+public class RootEntryTest {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Supplier<DataReader> getDataReader(String url, long offset, long length) {
-        return () -> new CachedHttpDataReader(url, offset, length);
+    @Test
+    public void shouldGetCascLocaleFromFlags() {
+        final CascLocale locale = CascLocale.EN_TW;
+
+        RootEntry entry = new RootEntry() {
+            @Override
+            public ContentChecksum getContentChecksum() {
+                return null;
+            }
+
+            @Override
+            public long getFilenameHash() {
+                return 0;
+            }
+
+            @Override
+            public long getFlags() {
+                return locale.getFlag();
+            }
+        };
+
+        assertEquals(locale, entry.getLocale().get());
     }
 }
