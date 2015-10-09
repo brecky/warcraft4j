@@ -18,12 +18,8 @@
  */
 package nl.salp.warcraft4j.io;
 
-import nl.salp.warcraft4j.io.datatype.DataType;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,7 +32,7 @@ import static java.nio.file.StandardOpenOption.READ;
  *
  * @author Barre Dijkstra
  */
-public class FileDataReader extends DataReader {
+public class FileDataReader extends BaseDataReader {
     private static final long DEFAULT_MAX_LENGTH = Long.MAX_VALUE;
     /** The file channel for the file. */
     private FileChannel channel;
@@ -118,22 +114,6 @@ public class FileDataReader extends DataReader {
      * {@inheritDoc}
      */
     @Override
-    public boolean hasRemaining() throws DataReadingException {
-        return size() > position();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long remaining() throws DataReadingException {
-        return size() - position();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public long size() throws DataReadingException {
         try {
             return Math.min(channel.size(), (offset + maxLength));
@@ -146,46 +126,9 @@ public class FileDataReader extends DataReader {
      * {@inheritDoc}
      */
     @Override
-    public final <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws DataReadingException, DataParsingException {
+    protected void setPosition(long position) throws DataReadingException {
         try {
-            ByteBuffer buffer;
-            if (dataType.isVariableLength()) {
-                buffer = getVarLenBuffer(dataType);
-            } else {
-                buffer = ByteBuffer.allocate(dataType.getLength());
-                channel.read(buffer);
-            }
-            buffer.rewind();
-            return dataType.readNext(buffer, byteOrder);
-        } catch (IOException e) {
-            throw new DataReadingException(e);
-        }
-    }
-
-    /**
-     * Get a buffer for a variable length data type.
-     *
-     * @param dataType The data type.
-     * @param <T>      The data type.
-     *
-     * @return The byte buffer.
-     *
-     * @throws IOException When creating the buffer failed.
-     */
-    private <T> ByteBuffer getVarLenBuffer(DataType<T> dataType) throws DataReadingException {
-        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream()) {
-            boolean done = false;
-            while (!done) {
-                ByteBuffer buffer = ByteBuffer.wrap(new byte[1]);
-                if (channel.read(buffer) > 0) {
-                    byte value = buffer.get(0);
-                    byteOut.write(value);
-                    done = dataType.isVariableLengthTerminator(value);
-                } else {
-                    done = true;
-                }
-            }
-            return ByteBuffer.wrap(byteOut.toByteArray());
+            channel.position(position);
         } catch (IOException e) {
             throw new DataReadingException(e);
         }
@@ -195,9 +138,9 @@ public class FileDataReader extends DataReader {
      * {@inheritDoc}
      */
     @Override
-    public void position(long position) throws DataReadingException {
+    protected int readData(ByteBuffer buffer) throws DataReadingException {
         try {
-            channel.position(position);
+            return channel.read(buffer);
         } catch (IOException e) {
             throw new DataReadingException(e);
         }

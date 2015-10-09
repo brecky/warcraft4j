@@ -19,17 +19,13 @@
 
 package nl.salp.warcraft4j.io;
 
-import nl.salp.warcraft4j.io.datatype.DataType;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 /**
  * {@link DataReader} implementation that uses a {@code byte[]} as underlying data.
  */
-public class ByteArrayDataReader extends DataReader {
+public class ByteArrayDataReader extends BaseDataReader {
     /** The ByteBuffer holding the data. */
     private ByteBuffer buffer;
     /** The size of the data. */
@@ -57,7 +53,7 @@ public class ByteArrayDataReader extends DataReader {
      * {@inheritDoc}
      */
     @Override
-    public void position(long position) {
+    protected void setPosition(long position) throws DataReadingException {
         buffer.position((int) position);
     }
 
@@ -97,37 +93,9 @@ public class ByteArrayDataReader extends DataReader {
      * {@inheritDoc}
      */
     @Override
-    public <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws DataReadingException, DataParsingException {
-        byte[] data;
-        if (dataType.isVariableLength()) {
-            data = getVarLenData(dataType);
-        } else {
-            data = new byte[dataType.getLength()];
-            this.buffer.get(data);
-        }
-        return dataType.readNext(ByteBuffer.wrap(data), byteOrder);
-    }
-
-    /**
-     * Get a buffer for a variable length data type.
-     *
-     * @param dataType The data type.
-     * @param <T>      The data type.
-     *
-     * @return The byte buffer.
-     *
-     * @throws IOException When creating the buffer failed.
-     */
-    private <T> byte[] getVarLenData(DataType<T> dataType) throws DataReadingException {
-        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream()) {
-            byte value;
-            while (buffer.hasRemaining() && !dataType.isVariableLengthTerminator((value = buffer.get()))) {
-                byteOut.write(value);
-            }
-            return byteOut.toByteArray();
-        } catch (IOException e) {
-            throw new DataReadingException(e);
-        }
+    protected int readData(ByteBuffer buffer) throws DataReadingException {
+        this.buffer.get(buffer.array());
+        return buffer.capacity();
     }
 
     @Override

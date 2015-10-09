@@ -19,15 +19,13 @@
 
 package nl.salp.warcraft4j.io.datatype;
 
-import nl.salp.warcraft4j.io.DataReader;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Data type for reading various types of data types (with different byte ordering) via a {@link DataReader}.
+ * Data type for reading various types of data types (with different byte ordering).
  *
  * @author Barre Dijkstra
  */

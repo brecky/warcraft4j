@@ -18,12 +18,8 @@
  */
 package nl.salp.warcraft4j.io;
 
-import nl.salp.warcraft4j.io.datatype.DataType;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -39,7 +35,7 @@ import static java.nio.file.StandardOpenOption.READ;
  *
  * @author Barre Dijkstra
  */
-public class MemMapFileDataReader extends DataReader {
+public class MemMapFileDataReader extends BaseDataReader {
     /** The default maximum length. */
     private static final long DEFAULT_MAX_LENGTH = -1;
     /** The default offset. */
@@ -177,46 +173,17 @@ public class MemMapFileDataReader extends DataReader {
      * {@inheritDoc}
      */
     @Override
-    public final <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws DataReadingException, DataParsingException {
-        ByteBuffer buffer;
-        if (dataType.isVariableLength()) {
-            buffer = getVarLenBuffer(dataType);
-        } else {
-            byte[] data = new byte[dataType.getLength()];
-            getMappedBuffer().get(data);
-            buffer = ByteBuffer.wrap(data);
-        }
-        buffer.rewind();
-        return dataType.readNext(buffer, byteOrder);
-    }
+    protected int readData(ByteBuffer buffer) throws DataReadingException {
+        getMappedBuffer().get(buffer.array());
+        return buffer.capacity();
 
-    /**
-     * Get a buffer for a variable length data type.
-     *
-     * @param dataType The data type.
-     * @param <T>      The data type.
-     *
-     * @return The byte buffer.
-     *
-     * @throws DataReadingException When creating the buffer failed.
-     */
-    private <T> ByteBuffer getVarLenBuffer(DataType<T> dataType) throws DataReadingException {
-        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream()) {
-            byte b;
-            while (getMappedBuffer().hasRemaining() && !dataType.isVariableLengthTerminator((b = getMappedBuffer().get()))) {
-                byteOut.write(b);
-            }
-            return ByteBuffer.wrap(byteOut.toByteArray());
-        } catch (IOException e) {
-            throw new DataReadingException(e);
-        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void position(long position) throws DataReadingException {
+    protected void setPosition(long position) throws DataReadingException {
         try {
             channel.position(position);
         } catch (IOException e) {

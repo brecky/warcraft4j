@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package nl.salp.warcraft4j.io;
 
 import nl.salp.warcraft4j.io.datatype.DataType;
@@ -24,16 +23,14 @@ import nl.salp.warcraft4j.io.datatype.DataType;
 import java.io.Closeable;
 import java.nio.ByteOrder;
 
-import static java.lang.String.format;
-
 /**
  * Reader for reading data files.
  * <p>
- * This reader should either be closed manually via {@link DataReader#close()} or by utilizing the {@link java.io.Closeable} implementation.
+ * This reader should either be closed manually via {@link BaseDataReader#close()} or by utilizing the {@link java.io.Closeable} implementation.
  *
  * @author Barre Dijkstra
  */
-public abstract class DataReader implements Closeable, AutoCloseable {
+public interface DataReader extends Closeable, AutoCloseable {
     /**
      * Get the current position of the underlying data.
      *
@@ -41,14 +38,14 @@ public abstract class DataReader implements Closeable, AutoCloseable {
      *
      * @throws DataReadingException When the position could not be set.
      */
-    public abstract long position() throws DataReadingException;
+    long position() throws DataReadingException;
 
     /**
      * Check if full random access (backward and forward repositioning) is supported.
      *
      * @return {@code true} if full repositioning is supported.
      */
-    public abstract boolean isRandomAccessSupported();
+    boolean isRandomAccessSupported();
 
     /**
      * Set the position of the reader cursor.
@@ -59,7 +56,7 @@ public abstract class DataReader implements Closeable, AutoCloseable {
      * @throws UnsupportedOperationException When the position is before the current reading position and random access is not supported.
      * @see #isRandomAccessSupported()
      */
-    public abstract void position(long position) throws DataReadingException, UnsupportedOperationException;
+    void position(long position) throws DataReadingException, UnsupportedOperationException;
 
     /**
      * Check if there is still data available to be read.
@@ -68,9 +65,7 @@ public abstract class DataReader implements Closeable, AutoCloseable {
      *
      * @throws DataReadingException When there was a problem reading remaining data information from the underlying data implementation.
      */
-    public boolean hasRemaining() throws DataReadingException {
-        return remaining() > 0;
-    }
+    boolean hasRemaining() throws DataReadingException;
 
     /**
      * Get the number of remaining bytes of data available from the current position in the data.
@@ -81,7 +76,7 @@ public abstract class DataReader implements Closeable, AutoCloseable {
      *
      * @throws DataReadingException When determining the remaining bytes failed.
      */
-    public abstract long remaining() throws DataReadingException;
+    long remaining() throws DataReadingException;
 
     /**
      * Get the size of the underlying data source if available.
@@ -90,7 +85,7 @@ public abstract class DataReader implements Closeable, AutoCloseable {
      *
      * @throws DataReadingException When determining the size failed.
      */
-    public abstract long size() throws DataReadingException;
+    long size() throws DataReadingException;
 
     /**
      * Skip a number of bytes.
@@ -101,18 +96,7 @@ public abstract class DataReader implements Closeable, AutoCloseable {
      * @throws UnsupportedOperationException When the position is before the current reading position and random access is not supported.
      * @see #isRandomAccessSupported()
      */
-    public void skip(long bytes) throws DataReadingException {
-        if (bytes < 0 && !isRandomAccessSupported()) {
-            throw new UnsupportedOperationException(format("Unable to skip %d bytes on data reader with no random access support.", bytes));
-        }
-        long newPosition = position() + bytes;
-        if (bytes > remaining()) {
-            throw new DataReadingException(format("Error skipping %d bytes, skipping past end of the data.", bytes));
-        } else if (newPosition < 0) {
-            throw new DataReadingException(format("Error skipping %d bytes, skipping before the start of the data.", bytes));
-        }
-        position(position() + bytes);
-    }
+    void skip(long bytes) throws DataReadingException, UnsupportedOperationException;
 
     /**
      * Read the next value for a data type from the underlying data using the default byte order of the data type without repositioning the stream.
@@ -128,9 +112,7 @@ public abstract class DataReader implements Closeable, AutoCloseable {
      * @see #isRandomAccessSupported()
      * @see #peek(DataType, ByteOrder)
      */
-    public <T> T peek(DataType<T> dataType) throws DataReadingException, DataParsingException, UnsupportedOperationException {
-        return peek(dataType, dataType.getDefaultByteOrder());
-    }
+    <T> T peek(DataType<T> dataType) throws DataReadingException, DataParsingException, UnsupportedOperationException;
 
     /**
      * Read the next value for a data type from the underlying data without repositioning the stream.
@@ -145,17 +127,7 @@ public abstract class DataReader implements Closeable, AutoCloseable {
      * @throws UnsupportedOperationException When the reader does not support random access positioning.
      * @see #isRandomAccessSupported()
      */
-    public <T> T peek(DataType<T> dataType, ByteOrder byteOrder) throws DataReadingException, DataParsingException, UnsupportedOperationException {
-        if (!isRandomAccessSupported()) {
-            throw new UnsupportedOperationException("Reader does not support random access positioning, can't peek a value.");
-        }
-        long marker = position();
-        try {
-            return readNext(dataType, byteOrder);
-        } finally {
-            position(marker);
-        }
-    }
+    <T> T peek(DataType<T> dataType, ByteOrder byteOrder) throws DataReadingException, DataParsingException, UnsupportedOperationException;
 
     /**
      * Read the next value for a data type from the underlying data using the default byte order of the data type.
@@ -168,9 +140,7 @@ public abstract class DataReader implements Closeable, AutoCloseable {
      * @throws DataReadingException When reading the data failed.
      * @throws DataParsingException When parsing the data failed.
      */
-    public <T> T readNext(DataType<T> dataType) throws DataReadingException, DataParsingException {
-        return readNext(dataType, dataType.getDefaultByteOrder());
-    }
+    <T> T readNext(DataType<T> dataType) throws DataReadingException, DataParsingException;
 
     /**
      * Read the next value for a data type from the underlying data using the provided byte order.
@@ -184,7 +154,7 @@ public abstract class DataReader implements Closeable, AutoCloseable {
      * @throws DataReadingException When reading the data failed.
      * @throws DataParsingException When parsing the data failed.
      */
-    public abstract <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws DataReadingException, DataParsingException;
+    <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws DataReadingException, DataParsingException;
 
     /**
      * Read the value for a data type in the default byte order from a position (moving the position to the 1st byte after the read data).
@@ -201,10 +171,7 @@ public abstract class DataReader implements Closeable, AutoCloseable {
      * @see #read(DataType, long, ByteOrder)
      * @see #isRandomAccessSupported()
      */
-    public <T> T read(DataType<T> dataType, long position) throws DataReadingException, DataParsingException, UnsupportedOperationException {
-        position(position);
-        return readNext(dataType);
-    }
+    <T> T read(DataType<T> dataType, long position) throws DataReadingException, DataParsingException, UnsupportedOperationException;
 
     /**
      * Read the value for a data type from (moving the position to the 1st byte after the read data).
@@ -221,8 +188,5 @@ public abstract class DataReader implements Closeable, AutoCloseable {
      * @throws UnsupportedOperationException When the reader does not support random access positioning.
      * @see #isRandomAccessSupported()
      */
-    public <T> T read(DataType<T> dataType, long position, ByteOrder byteOrder) throws DataReadingException, DataParsingException, UnsupportedOperationException {
-        position(position);
-        return readNext(dataType, byteOrder);
-    }
+    <T> T read(DataType<T> dataType, long position, ByteOrder byteOrder) throws DataReadingException, DataParsingException, UnsupportedOperationException;
 }

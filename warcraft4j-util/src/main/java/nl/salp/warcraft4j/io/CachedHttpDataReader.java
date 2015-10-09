@@ -18,9 +18,6 @@
  */
 package nl.salp.warcraft4j.io;
 
-import nl.salp.warcraft4j.io.DataParsingException;
-import nl.salp.warcraft4j.io.ByteArrayDataReader;
-import nl.salp.warcraft4j.io.DataReader;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -46,9 +43,9 @@ public class CachedHttpDataReader extends ByteArrayDataReader {
      *
      * @param url The URL of the file to read.
      *
-     * @throws DataParsingException When the file could not be read.
+     * @throws DataReadingException When the file could not be read.
      */
-    public CachedHttpDataReader(String url) throws DataParsingException {
+    public CachedHttpDataReader(String url) throws DataReadingException {
         super(getData(url));
     }
 
@@ -59,9 +56,9 @@ public class CachedHttpDataReader extends ByteArrayDataReader {
      * @param offset The file offset to start reading from.
      * @param length The length of the data segment to read.
      *
-     * @throws DataParsingException When the file could not be read.
+     * @throws DataReadingException When the file could not be read.
      */
-    public CachedHttpDataReader(String url, long offset, long length) throws DataParsingException {
+    public CachedHttpDataReader(String url, long offset, long length) throws DataReadingException {
         super(getData(url, offset, length));
     }
 
@@ -72,24 +69,24 @@ public class CachedHttpDataReader extends ByteArrayDataReader {
      *
      * @return The file contents.
      *
-     * @throws DataParsingException When reading the file failed.
+     * @throws DataReadingException When reading the file failed.
      */
-    private static byte[] getData(String url) throws DataParsingException {
+    private static byte[] getData(String url) throws DataReadingException {
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
              CloseableHttpResponse response = httpClient.execute(new HttpGet(URI.create(url)))) {
             StatusLine statusLine = response.getStatusLine();
             if (statusLine.getStatusCode() > 300) {
-                throw new DataParsingException(String.format("Error opening HTTP data reader for %s: error %d: %s", url, statusLine.getStatusCode(), statusLine.getReasonPhrase()));
+                throw new DataReadingException(String.format("Error opening HTTP data reader for %s: error %d: %s", url, statusLine.getStatusCode(), statusLine.getReasonPhrase()));
             }
             HttpEntity entity = response.getEntity();
             if (entity == null) {
-                throw new DataParsingException(format("HTTP data reader received no response from for %s", url));
+                throw new DataReadingException(format("HTTP data reader received no response from for %s", url));
             }
             byte[] data = EntityUtils.toByteArray(entity);
             EntityUtils.consume(entity);
             return data;
         } catch (IOException e) {
-            throw new DataParsingException(e);
+            throw new DataReadingException(e);
         }
     }
 
@@ -105,18 +102,18 @@ public class CachedHttpDataReader extends ByteArrayDataReader {
      *
      * @return The data segment.
      *
-     * @throws DataParsingException When reading the file failed or the data segment is out of bounds.
+     * @throws DataReadingException When reading the file failed or the data segment is out of bounds.
      */
-    private static byte[] getData(String url, long offset, long length) throws DataParsingException {
+    private static byte[] getData(String url, long offset, long length) throws DataReadingException {
         if (offset < 0) {
-            throw new DataParsingException(format("Can't create a http reader for %s with negative data block offset %d.", url, offset));
+            throw new DataReadingException(format("Can't create a http reader for %s with negative data block offset %d.", url, offset));
         }
         if (length < 0) {
-            throw new DataParsingException(format("Can't create a http reader for %s with negative data block length %d.", url, length));
+            throw new DataReadingException(format("Can't create a http reader for %s with negative data block length %d.", url, length));
         }
         byte[] data = getData(url);
         if (offset + length > data.length) {
-            throw new DataParsingException(format("Can't create a http reader for %s with %d bytes of data from offset %d with length %d.",
+            throw new DataReadingException(format("Can't create a http reader for %s with %d bytes of data from offset %d with length %d.",
                     url, data.length, offset, length));
         }
         return ArrayUtils.subarray(data, (int) offset, (int) length);

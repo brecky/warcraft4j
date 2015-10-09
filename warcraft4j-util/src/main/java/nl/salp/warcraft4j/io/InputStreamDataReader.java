@@ -18,13 +18,9 @@
  */
 package nl.salp.warcraft4j.io;
 
-import nl.salp.warcraft4j.io.datatype.DataType;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 import static java.lang.String.format;
 
@@ -33,7 +29,7 @@ import static java.lang.String.format;
  *
  * @author Barre Dijkstra
  */
-public class InputStreamDataReader extends DataReader {
+public class InputStreamDataReader extends BaseDataReader {
     /** The input stream. */
     private final InputStream stream;
     /** The position in the stream. */
@@ -57,19 +53,8 @@ public class InputStreamDataReader extends DataReader {
         return position;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @throws UnsupportedOperationException When the position is before the current reading position.
-     */
     @Override
-    public void position(long position) throws DataReadingException, UnsupportedOperationException {
-        if (position < this.position) {
-            throw new UnsupportedOperationException("Unable to move to a position before the current reading position.");
-        }
-        if (position > remaining()) {
-            throw new DataReadingException(format("Error to position to offset %d, positioning past end of the data.", position));
-        }
+    protected void setPosition(long position) throws DataReadingException {
         skip(position - this.position);
     }
 
@@ -81,18 +66,6 @@ public class InputStreamDataReader extends DataReader {
     @Override
     public boolean isRandomAccessSupported() {
         return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasRemaining() throws DataReadingException {
-        try {
-            return stream.available() > 0;
-        } catch (IOException e) {
-            throw new DataReadingException(e);
-        }
     }
 
     /**
@@ -112,13 +85,16 @@ public class InputStreamDataReader extends DataReader {
      */
     @Override
     public long size() throws DataReadingException {
-        return remaining() + position();
+        return position() + remaining();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void skip(long bytes) throws DataReadingException {
         if (bytes < 0) {
-            throw new IllegalArgumentException(format("Unable to skip %d bytes.", bytes));
+            throw new UnsupportedOperationException(format("Unable to skip %d bytes.", bytes));
         }
         if (bytes > remaining()) {
             throw new DataReadingException(format("Error skipping %d bytes from position %d with %d bytes available.", bytes, position, remaining()));
@@ -138,47 +114,18 @@ public class InputStreamDataReader extends DataReader {
      * {@inheritDoc}
      */
     @Override
-    public final <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws DataReadingException, DataParsingException {
+    protected int readData(ByteBuffer buffer) throws DataReadingException {
         try {
-            ByteBuffer buffer;
-            if (dataType.isVariableLength()) {
-                buffer = getVarLenBuffer(dataType);
+            int read = 0;
+            byte[] dataArray;
+            if (buffer.hasArray()) {
+                read = stream.read(buffer.array());
             } else {
-                byte[] data = new byte[dataType.getLength()];
-                stream.read(data);
-                buffer = ByteBuffer.wrap(data);
+                byte[] data = new byte[buffer.capacity()];
+                read = stream.read(data);
+                buffer.put(data);
             }
-            position += buffer.limit();
-            buffer.rewind();
-            return dataType.readNext(buffer, byteOrder);
-        } catch (IOException e) {
-            throw new DataReadingException(e);
-        }
-    }
-
-    /**
-     * Get a buffer for a variable length data type.
-     *
-     * @param dataType The data type.
-     * @param <T>      The data type.
-     *
-     * @return The byte buffer.
-     *
-     * @throws IOException When creating the buffer failed.
-     */
-    private <T> ByteBuffer getVarLenBuffer(DataType<T> dataType) throws DataReadingException {
-        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream()) {
-            boolean done = false;
-            byte b;
-            while (!done) {
-                if ((b = (byte) stream.read()) != -1) {
-                    byteOut.write(b);
-                    done = dataType.isVariableLengthTerminator(b);
-                } else {
-                    done = true;
-                }
-            }
-            return ByteBuffer.wrap(byteOut.toByteArray());
+            return read;
         } catch (IOException e) {
             throw new DataReadingException(e);
         }

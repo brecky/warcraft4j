@@ -40,7 +40,7 @@ import static java.lang.String.format;
  *
  * @author Barre Dijkstra
  */
-public class BlteDataReader extends DataReader {
+public class BlteDataReader implements DataReader {
     /** The logger. */
     protected static final Logger LOGGER = LoggerFactory.getLogger(BlteDataReader.class);
     private final ContentChecksum contentChecksum;
@@ -157,8 +157,48 @@ public class BlteDataReader extends DataReader {
      * {@inheritDoc}
      */
     @Override
+    public <T> T peek(DataType<T> dataType) throws DataReadingException, DataParsingException, UnsupportedOperationException {
+        return parsedDataReader.peek(dataType);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T peek(DataType<T> dataType, ByteOrder byteOrder) throws DataReadingException, DataParsingException, UnsupportedOperationException {
+        return parsedDataReader.peek(dataType, byteOrder);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T readNext(DataType<T> dataType) throws DataReadingException, DataParsingException {
+        return parsedDataReader.readNext(dataType);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws DataReadingException, DataParsingException {
         return parsedDataReader.readNext(dataType, byteOrder);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T read(DataType<T> dataType, long position) throws DataReadingException, DataParsingException, UnsupportedOperationException {
+        return parsedDataReader.read(dataType, position);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T read(DataType<T> dataType, long position, ByteOrder byteOrder) throws DataReadingException, DataParsingException, UnsupportedOperationException {
+        return parsedDataReader.read(dataType, position, byteOrder);
     }
 
     /**

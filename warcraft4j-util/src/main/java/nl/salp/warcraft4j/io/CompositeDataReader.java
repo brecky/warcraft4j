@@ -23,6 +23,7 @@ import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.List;
 import java.util.function.Supplier;
@@ -32,7 +33,7 @@ import java.util.function.Supplier;
  *
  * @author Barre Dijkstra
  */
-public class CompositeDataReader extends DataReader {
+public class CompositeDataReader extends BaseDataReader {
     private static final int CHUNK_SIZE = 1024;
     private final ByteArrayDataReader reader;
 
@@ -67,29 +68,45 @@ public class CompositeDataReader extends DataReader {
         return data.toByteArray();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long position() {
         return reader.position();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasRemaining() {
         return reader.hasRemaining();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long remaining() {
         return reader.remaining();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long size() {
         return reader.size();
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void position(long position) {
-        reader.position(position);
+    protected void setPosition(long position) throws DataReadingException {
+        reader.setPosition(position);
     }
 
     /**
@@ -100,16 +117,73 @@ public class CompositeDataReader extends DataReader {
         return reader.isRandomAccessSupported();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void skip(long bytes) {
         reader.skip(bytes);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T peek(DataType<T> dataType) throws DataReadingException, DataParsingException, UnsupportedOperationException {
+        return reader.peek(dataType);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T peek(DataType<T> dataType, ByteOrder byteOrder) throws DataReadingException, DataParsingException, UnsupportedOperationException {
+        return reader.peek(dataType, byteOrder);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T readNext(DataType<T> dataType) throws DataReadingException, DataParsingException {
+        return reader.readNext(dataType);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws DataReadingException, DataParsingException {
         return reader.readNext(dataType, byteOrder);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T read(DataType<T> dataType, long position) throws DataReadingException, DataParsingException, UnsupportedOperationException {
+        return reader.read(dataType, position);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T read(DataType<T> dataType, long position, ByteOrder byteOrder) throws DataReadingException, DataParsingException, UnsupportedOperationException {
+        return reader.read(dataType, position, byteOrder);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected int readData(ByteBuffer buffer) throws DataReadingException {
+        return reader.readData(buffer);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws IOException {
         reader.close();
