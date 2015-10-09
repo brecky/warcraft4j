@@ -18,24 +18,21 @@
  */
 package nl.salp.warcraft4j.dataparser.dbc;
 
+import nl.salp.warcraft4j.io.DataParsingException;
+import nl.salp.warcraft4j.io.DataReader;
+import nl.salp.warcraft4j.io.DataReadingException;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
-import nl.salp.warcraft4j.io.parser.DataParser;
-import nl.salp.warcraft4j.io.parser.DataParsingException;
-import nl.salp.warcraft4j.io.parser.RandomAccessDataParser;
-import nl.salp.warcraft4j.io.reader.DataReader;
 
-import java.io.IOException;
 import java.nio.ByteOrder;
 
-import static nl.salp.warcraft4j.io.datatype.DataTypeFactory.getFixedLengthString;
 import static org.apache.commons.lang3.ArrayUtils.toPrimitive;
 
 /**
- * {@link DataParser} implementation for reading and parsing an {@link DbcHeader} instance.
+ * Parser for reading and parsing an {@link DbcHeader} instance.
  *
  * @author Barre Dijkstra
  */
-class DbcHeaderParser extends RandomAccessDataParser<DbcHeader> {
+class DbcHeaderParser {
     /** The magic String for a DBC file. */
     public static final String DBC_MAGICSTRING = "WDBC";
     /** The header size of a DBC file. */
@@ -54,8 +51,7 @@ class DbcHeaderParser extends RandomAccessDataParser<DbcHeader> {
     private static final int MAGIC_STRING_LENGTH = 4;
 
 
-    @Override
-    public DbcHeader parse(DataReader reader) throws IOException, DataParsingException {
+    public DbcHeader parse(DataReader reader) throws DataReadingException, DataParsingException {
         DbcHeader.Builder builder = new DbcHeader.Builder();
         // DBC parsing
         String magicString = reader.readNext(DataTypeFactory.getFixedLengthString(MAGIC_STRING_LENGTH));
@@ -93,10 +89,5 @@ class DbcHeaderParser extends RandomAccessDataParser<DbcHeader> {
         }
         builder.withHeaderSize(headerSize);
         return builder.build();
-    }
-
-    @Override
-    public int getInstanceDataSize() {
-        return DBC_HEADER_SIZE;
     }
 }

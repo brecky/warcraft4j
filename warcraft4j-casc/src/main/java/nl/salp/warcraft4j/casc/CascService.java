@@ -20,9 +20,8 @@ package nl.salp.warcraft4j.casc;
 
 import nl.salp.warcraft4j.Locale;
 import nl.salp.warcraft4j.WowVersion;
-import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.io.DataReader;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

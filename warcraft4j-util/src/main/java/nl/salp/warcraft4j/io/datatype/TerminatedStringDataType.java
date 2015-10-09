@@ -73,14 +73,6 @@ class TerminatedStringDataType extends DataType<String> {
      * {@inheritDoc}
      */
     @Override
-    public ByteOrder getDefaultByteOrder() {
-        return ByteOrder.LITTLE_ENDIAN;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String readNext(ByteBuffer buffer, ByteOrder byteOrder) {
         buffer.order(byteOrder);
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();

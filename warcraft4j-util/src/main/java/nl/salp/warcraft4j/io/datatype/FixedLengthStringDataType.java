@@ -76,14 +76,6 @@ class FixedLengthStringDataType extends DataType<String> {
      * {@inheritDoc}
      */
     @Override
-    public ByteOrder getDefaultByteOrder() {
-        return ByteOrder.LITTLE_ENDIAN;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String readNext(ByteBuffer buffer, ByteOrder byteOrder) {
         byte[] data = new byte[getLength()];
         buffer.order(byteOrder).get(data);

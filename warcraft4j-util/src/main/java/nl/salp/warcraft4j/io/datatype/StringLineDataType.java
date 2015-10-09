@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.io.datatype;
 
-import nl.salp.warcraft4j.io.parser.DataParsingException;
+import nl.salp.warcraft4j.io.DataParsingException;
 import nl.salp.warcraft4j.util.DataTypeUtil;
 
 import java.io.ByteArrayOutputStream;
@@ -55,21 +55,25 @@ class StringLineDataType extends DataType<String> {
         this.bytesPerChar = DataTypeUtil.getAverageBytesPerCharacter(charset);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected String[] newArray(int entries) throws UnsupportedOperationException {
         return new String[entries];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getLength() {
         return LENGTH_BYTES;
     }
 
-    @Override
-    public ByteOrder getDefaultByteOrder() {
-        return ByteOrder.LITTLE_ENDIAN;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String readNext(ByteBuffer buffer, ByteOrder byteOrder) {
         buffer.order(byteOrder);
@@ -88,6 +92,9 @@ class StringLineDataType extends DataType<String> {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isVariableLengthTerminator(byte b) {
         return b == '\n' || b == '\r';

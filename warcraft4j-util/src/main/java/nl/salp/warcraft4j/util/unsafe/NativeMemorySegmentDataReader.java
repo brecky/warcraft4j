@@ -18,9 +18,10 @@
  */
 package nl.salp.warcraft4j.util.unsafe;
 
+import nl.salp.warcraft4j.io.DataParsingException;
+import nl.salp.warcraft4j.io.DataReader;
+import nl.salp.warcraft4j.io.DataReadingException;
 import nl.salp.warcraft4j.io.datatype.DataType;
-import nl.salp.warcraft4j.io.parser.DataParsingException;
-import nl.salp.warcraft4j.io.reader.DataReader;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -33,7 +34,7 @@ import static java.lang.String.format;
  * {@link DataReader} for reading from a {@link NativeMemorySegment}.
  *
  * @author Barre Dijkstra
- * @see nl.salp.warcraft4j.io.reader.DataReader
+ * @see DataReader
  * @see nl.salp.warcraft4j.util.unsafe.NativeMemorySegment
  */
 public class NativeMemorySegmentDataReader extends DataReader {
@@ -63,13 +64,28 @@ public class NativeMemorySegmentDataReader extends DataReader {
         return segment.isClosed() ? -1 : offset;
     }
 
+    @Override
+    public void position(long position) throws DataReadingException, UnsupportedOperationException {
+        if (position > size()) {
+            throw new DataReadingException(format("Error repositioning reader to offset %d, positioning past end of the data.", position));
+        } else if (position < 0) {
+            throw new DataReadingException(format("Error repositioning reader to offset %d, positioning before the start of the data.", position));
+        }
+        // TODO Implement me!
+    }
+
+    @Override
+    public boolean isRandomAccessSupported() {
+        return false;
+    }
+
     /**
      * {@inheritDoc}
      *
      * @throws IOException When the memory segment is closed.
      */
     @Override
-    public boolean hasRemaining() throws IOException {
+    public boolean hasRemaining() throws DataReadingException {
         return remaining() > 0;
     }
 
@@ -79,9 +95,9 @@ public class NativeMemorySegmentDataReader extends DataReader {
      * @throws IOException When the memory segment is closed.
      */
     @Override
-    public long remaining() throws IOException {
+    public long remaining() throws DataReadingException {
         if (segment.isClosed()) {
-            throw new IOException("Can't read the remaining bytes on a closed memory segment.");
+            throw new DataReadingException("Can't read the remaining bytes on a closed memory segment.");
         }
         return segment.getSize() - offset;
     }
@@ -92,9 +108,9 @@ public class NativeMemorySegmentDataReader extends DataReader {
      * @throws IOException When the memory segment is closed.
      */
     @Override
-    public long size() throws IOException {
+    public long size() throws DataReadingException {
         if (segment.isClosed()) {
-            throw new IOException("Can't get the size of a closed memory segment.");
+            throw new DataReadingException("Can't get the size of a closed memory segment.");
         }
         return segment.getSize();
     }
@@ -105,9 +121,9 @@ public class NativeMemorySegmentDataReader extends DataReader {
      * @throws IOException When the memory segment is closed.
      */
     @Override
-    public void skip(long bytes) throws IOException {
+    public void skip(long bytes) throws DataReadingException {
         if (segment.isClosed()) {
-            throw new IOException("Can't skip bytes on a closed memory segment.");
+            throw new DataReadingException("Can't skip bytes on a closed memory segment.");
         }
         if (offset + bytes > segment.getSize()) {
             offset = segment.getSize() - 1;
@@ -122,7 +138,7 @@ public class NativeMemorySegmentDataReader extends DataReader {
      * @throws IOException When reading failed or the memory segment is closed.
      */
     @Override
-    public <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws IOException, DataParsingException {
+    public <T> T readNext(DataType<T> dataType, ByteOrder byteOrder) throws DataReadingException, DataParsingException {
         if (dataType == null) {
             throw new DataParsingException("Can't read a null data type from a memory segment.");
         }
@@ -135,7 +151,7 @@ public class NativeMemorySegmentDataReader extends DataReader {
         } catch (IllegalArgumentException e) {
             throw new DataParsingException(format("Unable to read %d bytes at offset %d from a %d byte memory segment.", dataType.getLength(), offset, segment.getSize()), e);
         } catch (IllegalStateException e) {
-            throw new IOException("Unable to read from a closed memory segment.", e);
+            throw new DataReadingException("Unable to read from a closed memory segment.", e);
         }
     }
 

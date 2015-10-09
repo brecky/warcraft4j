@@ -20,7 +20,7 @@ package nl.salp.warcraft4j.dev.casc.model;
 
 import nl.salp.warcraft4j.Warcraft4jException;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
-import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.io.DataReader;
 import nl.salp.warcraft4j.util.DataTypeUtil;
 
 import java.io.IOException;

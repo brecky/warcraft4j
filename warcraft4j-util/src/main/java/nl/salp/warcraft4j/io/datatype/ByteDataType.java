@@ -45,14 +45,6 @@ class ByteDataType extends DataType<Byte> {
      * {@inheritDoc}
      */
     @Override
-    public ByteOrder getDefaultByteOrder() {
-        return ByteOrder.LITTLE_ENDIAN;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Byte readNext(ByteBuffer buffer, ByteOrder byteOrder) {
         return buffer.order(byteOrder).get();
     }

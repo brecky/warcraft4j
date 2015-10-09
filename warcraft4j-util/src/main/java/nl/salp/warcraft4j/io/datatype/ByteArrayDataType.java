@@ -65,14 +65,6 @@ class ByteArrayDataType extends DataType<byte[]> {
      * {@inheritDoc}
      */
     @Override
-    public ByteOrder getDefaultByteOrder() {
-        return ByteOrder.LITTLE_ENDIAN;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public byte[] readNext(ByteBuffer buffer, ByteOrder byteOrder) {
         byte[] data = new byte[length];
         buffer.order(byteOrder).get(data);

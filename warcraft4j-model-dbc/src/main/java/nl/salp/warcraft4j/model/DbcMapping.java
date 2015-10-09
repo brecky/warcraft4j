@@ -22,7 +22,6 @@ import nl.salp.warcraft4j.casc.CascService;
 import nl.salp.warcraft4j.dataparser.dbc.DbcEntry;
 import nl.salp.warcraft4j.dataparser.dbc.DbcFile;
 import nl.salp.warcraft4j.dataparser.dbc.DbcStringTable;
-import nl.salp.warcraft4j.io.reader.RandomAccessDataReader;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,8 +47,8 @@ public abstract class DbcMapping<T> {
     protected abstract T parse(DbcEntry entry) throws DbcMappingException;
 
     protected final Optional<DbcFile> getDbcFile(String filename) throws DbcMappingException {
-        return cascService.getCascFile(getFilename())
-                .map(f -> new DbcFile(f.getFilenameHash(), () -> (RandomAccessDataReader) cascService.getDataReader(f)));
+        return cascService.getCascFile(filename)
+                .map(f -> new DbcFile(f.getFilenameHash(), () -> cascService.getDataReader(f)));
     }
 
     protected final DbcFile getDbcFile() throws DbcMappingException {

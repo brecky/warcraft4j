@@ -21,10 +21,10 @@ package nl.salp.warcraft4j.dev.casc.listfile;
 import nl.salp.warcraft4j.Branch;
 import nl.salp.warcraft4j.Locale;
 import nl.salp.warcraft4j.Region;
+import nl.salp.warcraft4j.casc.cdn.CdnCascContext;
+import nl.salp.warcraft4j.casc.cdn.local.LocalCdnCascContext;
 import nl.salp.warcraft4j.config.Warcraft4jConfig;
-import nl.salp.warcraft4j.casc.CascContext;
-import nl.salp.warcraft4j.casc.online.OnlineCascContext;
-import nl.salp.warcraft4j.casc.local.LocalCascContext;
+import nl.salp.warcraft4j.casc.cdn.online.OnlineCdnCascContext;
 import nl.salp.warcraft4j.config.Warcraft4jConfigBuilder;
 import nl.salp.warcraft4j.dev.casc.EntryStore;
 import nl.salp.warcraft4j.dev.casc.model.ListFile;
@@ -63,7 +63,7 @@ public class ListFileGenerator {
     private final Path fileCascInvalidEntries;
     private final Path fileCascUnknownEntries;
     private final Path fileListfileInvalidEntries;
-    private final CascContext cascContext;
+    private final CdnCascContext cascContext;
     private final ListFile listFile;
     private final EntryStore entryStore;
 
@@ -110,14 +110,14 @@ public class ListFileGenerator {
 
     }
 
-    private CascContext initialiseCascContext(Warcraft4jConfig warcraft4jConfig) throws IOException, IllegalArgumentException {
+    private CdnCascContext initialiseCascContext(Warcraft4jConfig warcraft4jConfig) throws IOException, IllegalArgumentException {
         if (Files.exists(warcraft4jConfig.getWowInstallationDirectory())
                 && Files.isDirectory(warcraft4jConfig.getWowInstallationDirectory()) && Files.isReadable(warcraft4jConfig.getWowInstallationDirectory())) {
-            CascContext cascContext;
+            CdnCascContext cascContext;
             if (warcraft4jConfig.isOnline()) {
-                cascContext = new OnlineCascContext(warcraft4jConfig);
+                cascContext = new OnlineCdnCascContext(warcraft4jConfig);
             } else {
-                cascContext = new LocalCascContext(warcraft4jConfig);
+                cascContext = new LocalCdnCascContext(warcraft4jConfig);
             }
             return cascContext;
         } else {

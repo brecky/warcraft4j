@@ -45,14 +45,6 @@ class BooleanDataType extends DataType<Boolean> {
      * {@inheritDoc}
      */
     @Override
-    public ByteOrder getDefaultByteOrder() {
-        return ByteOrder.LITTLE_ENDIAN;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Boolean readNext(ByteBuffer buffer, ByteOrder byteOrder) {
         return getValue(buffer.order(byteOrder).get());
     }

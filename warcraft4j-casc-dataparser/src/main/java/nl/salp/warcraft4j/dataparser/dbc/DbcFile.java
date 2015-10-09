@@ -19,9 +19,10 @@
 
 package nl.salp.warcraft4j.dataparser.dbc;
 
+import nl.salp.warcraft4j.io.DataParsingException;
+import nl.salp.warcraft4j.io.DataReader;
+import nl.salp.warcraft4j.io.DataReadingException;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
-import nl.salp.warcraft4j.io.reader.DataReader;
-import nl.salp.warcraft4j.io.reader.RandomAccessDataReader;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -35,8 +36,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.lang.String.format;
-import static nl.salp.warcraft4j.util.DataTypeUtil.getAverageBytesPerCharacter;
 import static nl.salp.warcraft4j.io.datatype.DataTypeFactory.getByte;
+import static nl.salp.warcraft4j.util.DataTypeUtil.getAverageBytesPerCharacter;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
@@ -54,7 +55,7 @@ public class DbcFile {
     /** The lock for synchronize on when parsing the DBC file. */
     private final Lock parseLock;
     /** Supplier for the reader to be used for parsing the DBC file. */
-    private final Supplier<RandomAccessDataReader> dataReaderSupplier;
+    private final Supplier<DataReader> dataReaderSupplier;
     /** The name of the DBC file. */
     private DbcHeader header;
 
@@ -66,7 +67,7 @@ public class DbcFile {
      *
      * @throws IllegalArgumentException When the name is invalid.
      */
-    public DbcFile(long filenameHash, Supplier<RandomAccessDataReader> dataReaderSupplier) throws IllegalArgumentException {
+    public DbcFile(long filenameHash, Supplier<DataReader> dataReaderSupplier) throws IllegalArgumentException {
         this(filenameHash, null, dataReaderSupplier);
     }
 
@@ -79,7 +80,7 @@ public class DbcFile {
      *
      * @throws IllegalArgumentException When the name is invalid.
      */
-    public DbcFile(long filenameHash, String filename, Supplier<RandomAccessDataReader> dataReaderSupplier) throws IllegalArgumentException {
+    public DbcFile(long filenameHash, String filename, Supplier<DataReader> dataReaderSupplier) throws IllegalArgumentException {
         if (dataReaderSupplier == null) {
             throw new IllegalArgumentException(format("Can't create a DbcFile instance for file %d (%s) without a data reader supplier.", filenameHash, filename));
         }
@@ -90,11 +91,11 @@ public class DbcFile {
     }
 
     /**
-     * Get the {@link  RandomAccessDataReader} for the DBC file.
+     * Get the {@link  DataReader} for the DBC file.
      *
      * @return The data reader for the DBC file.
      */
-    private RandomAccessDataReader getDataReader() {
+    private DataReader getDataReader() {
         return dataReaderSupplier.get();
     }
 
@@ -121,9 +122,11 @@ public class DbcFile {
      *
      * @return The parsed header.
      *
-     * @throws DbcParsingException When the header could not be parsed.
+     * @throws DataReadingException When reading the data failed.
+     * @throws DataParsingException When parsing the data failed.
+     * @throws DbcParsingException  When the header could not be parsed.
      */
-    public DbcHeader getHeader() throws DbcParsingException {
+    public DbcHeader getHeader() throws DataReadingException, DataParsingException, DbcParsingException {
         if (header == null) {
             parseLock.lock();
             try (DataReader reader = getDataReader()) {
@@ -146,7 +149,7 @@ public class DbcFile {
      */
     public List<DbcEntry> getEntries() throws DbcParsingException {
         DbcHeader header = getHeader();
-        try (RandomAccessDataReader reader = getDataReader()) {
+        try (DataReader reader = getDataReader()) {
             return IntStream.range(0, header.getEntryCount())
                     .mapToObj(i -> getEntry(i, reader))
                     .collect(Collectors.toList());
@@ -170,7 +173,7 @@ public class DbcFile {
         if (index < 0 || index >= header.getEntryCount()) {
             entry = Optional.empty();
         } else {
-            try (RandomAccessDataReader reader = getDataReader()) {
+            try (DataReader reader = getDataReader()) {
                 entry = Optional.of(getEntry(index, reader));
             } catch (IOException e) {
                 throw new DbcParsingException(format("Error parsing entry %d for DBC file %d (%s)", index, filenameHash, filename), e);
@@ -189,15 +192,11 @@ public class DbcFile {
      *
      * @throws DbcParsingException When reading the entry failed.
      */
-    private DbcEntry getEntry(int index, RandomAccessDataReader reader) throws DbcParsingException {
-        try {
-            DbcHeader header = getHeader();
-            int entryOffset = header.getEntryBlockStartingOffset() + (index * header.getEntrySize());
-            byte[] entryData = reader.read(DataTypeFactory.getByteArray(header.getEntrySize()), entryOffset);
-            return new DbcEntry(filenameHash, header.getEntryFieldCount(), entryData);
-        } catch (IOException e) {
-            throw new DbcParsingException(format("Error parsing entry %d for DBC file %d (%s)", index, filenameHash, filename), e);
-        }
+    private DbcEntry getEntry(int index, DataReader reader) throws DbcParsingException {
+        DbcHeader header = getHeader();
+        int entryOffset = header.getEntryBlockStartingOffset() + (index * header.getEntrySize());
+        byte[] entryData = reader.read(DataTypeFactory.getByteArray(header.getEntrySize()), entryOffset);
+        return new DbcEntry(filenameHash, header.getEntryFieldCount(), entryData);
     }
 
     /**
@@ -209,7 +208,7 @@ public class DbcFile {
      */
     public int[] getEntryIds() throws DbcParsingException {
         DbcHeader header = getHeader();
-        try (RandomAccessDataReader reader = getDataReader()) {
+        try (DataReader reader = getDataReader()) {
             return IntStream.range(0, header.getEntryCount())
                     .map(i -> getEntryId(i, reader))
                     .toArray();
@@ -233,7 +232,7 @@ public class DbcFile {
         if (index < 0 || index >= header.getEntryCount()) {
             id = OptionalInt.empty();
         } else {
-            try (RandomAccessDataReader reader = getDataReader()) {
+            try (DataReader reader = getDataReader()) {
                 id = OptionalInt.of(getEntryId(index, reader));
             } catch (IOException e) {
                 throw new DbcParsingException(format("Error parsing entry id %d for DBC file %d (%s)", index, filenameHash, filename), e);
@@ -257,7 +256,7 @@ public class DbcFile {
     public Optional<DbcEntry> getEntryWithId(int id) throws DbcParsingException {
         DbcEntry entry = null;
         DbcHeader header = getHeader();
-        try (RandomAccessDataReader reader = getDataReader()) {
+        try (DataReader reader = getDataReader()) {
             int index = 0;
             while (entry == null && index < header.getEntryCount()) {
                 if (id == getEntryId(index, reader)) {
@@ -282,14 +281,10 @@ public class DbcFile {
      *
      * @throws DbcParsingException When reading the entry id failed.
      */
-    private int getEntryId(int index, RandomAccessDataReader reader) throws DbcParsingException {
-        try {
-            DbcHeader header = getHeader();
-            int entryOffset = header.getEntryBlockStartingOffset() + (index * header.getEntrySize());
-            return reader.read(DataTypeFactory.getInteger(), entryOffset, ByteOrder.LITTLE_ENDIAN);
-        } catch (IOException e) {
-            throw new DbcParsingException(format("Error parsing entry id %d for DBC file %d (%s)", index, filenameHash, filename), e);
-        }
+    private int getEntryId(int index, DataReader reader) throws DbcParsingException {
+        DbcHeader header = getHeader();
+        int entryOffset = header.getEntryBlockStartingOffset() + (index * header.getEntrySize());
+        return reader.read(DataTypeFactory.getInteger(), entryOffset, ByteOrder.LITTLE_ENDIAN);
     }
 
     /**
@@ -303,7 +298,7 @@ public class DbcFile {
         Map<Integer, String> stringTable;
         if (isStringTableEntriesPresent()) {
             stringTable = new HashMap<>();
-            try (RandomAccessDataReader reader = getDataReader()) {
+            try (DataReader reader = getDataReader()) {
                 final int tableSize = getHeader().getStringTableBlockSize();
                 final int tableStart = getHeader().getStringTableStartingOffset();
                 reader.position(tableStart);
@@ -346,7 +341,7 @@ public class DbcFile {
                     .getStringTableBlockSize()));
         }
         String value = null;
-        try (RandomAccessDataReader reader = getDataReader()) {
+        try (DataReader reader = getDataReader()) {
             long position = getHeader().getStringTableStartingOffset() + stringTableId;
             if (reader.read(getByte(), position - 1) == 0) {
                 value = reader.read(DataTypeFactory.getTerminatedString(STRINGTABLE_CHARSET), position);
@@ -372,7 +367,7 @@ public class DbcFile {
     public boolean isValidStringTableId(int stringTableId) throws DbcParsingException {
         boolean valid = false;
         if (stringTableId >= 0 && stringTableId < getHeader().getStringTableBlockSize()) {
-            try (RandomAccessDataReader reader = getDataReader()) {
+            try (DataReader reader = getDataReader()) {
                 long position = getHeader().getStringTableStartingOffset() + stringTableId - 1;
                 valid = reader.read(getByte(), position) == 0;
             } catch (IOException e) {

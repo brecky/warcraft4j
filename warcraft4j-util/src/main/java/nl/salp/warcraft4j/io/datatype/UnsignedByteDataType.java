@@ -48,14 +48,6 @@ class UnsignedByteDataType extends DataType<Short> {
      * {@inheritDoc}
      */
     @Override
-    public ByteOrder getDefaultByteOrder() {
-        return ByteOrder.LITTLE_ENDIAN;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Short readNext(ByteBuffer buffer, ByteOrder byteOrder) {
         return (short) (buffer.order(byteOrder).get() & BYTE_MASK);
     }

@@ -19,12 +19,8 @@
 
 package nl.salp.warcraft4j.io.datatype;
 
-import nl.salp.warcraft4j.io.reader.DataReader;
-import nl.salp.warcraft4j.io.parser.DataParser;
-import nl.salp.warcraft4j.io.parser.DataParsingException;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import nl.salp.warcraft4j.io.DataReader;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
@@ -35,7 +31,7 @@ import java.nio.charset.StandardCharsets;
  *
  * @author Barre Dijkstra
  */
-public abstract class DataType<T> implements DataParser<T> {
+public abstract class DataType<T> {
     /** The default character set. */
     public static final Charset DEFAULT_CHARACTERSET = StandardCharsets.US_ASCII;
     /** The default ByteOrder used by Java (network byte order). */
@@ -124,15 +120,4 @@ public abstract class DataType<T> implements DataParser<T> {
      * @return The next value.
      */
     public abstract T readNext(ByteBuffer buffer, ByteOrder byteOrder);
-
-
-    @Override
-    public T parse(DataReader reader) throws IOException, DataParsingException {
-        return reader.readNext(this);
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
 }

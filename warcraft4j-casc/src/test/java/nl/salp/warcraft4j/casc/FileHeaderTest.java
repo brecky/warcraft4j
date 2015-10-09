@@ -18,8 +18,8 @@
  */
 package nl.salp.warcraft4j.casc;
 
-import nl.salp.warcraft4j.io.reader.ByteArrayDataReader;
-import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.io.ByteArrayDataReader;
+import nl.salp.warcraft4j.io.DataReader;
 import nl.salp.warcraft4j.util.DataTypeUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.Test;
