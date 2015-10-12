@@ -45,16 +45,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>nl.salp.warcraft4j</groupId>
-            <artifactId>warcraft4j-io</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>nl.salp.warcraft4j</groupId>
-            <artifactId>warcraft4j-io-file</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${dependency.jackson.version}</version>

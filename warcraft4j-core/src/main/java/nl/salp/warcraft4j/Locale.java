@@ -189,6 +189,8 @@ public enum Locale {
                 .filter(StringUtils::isNotEmpty)
                 .map(String::trim)
                 .map(String::toUpperCase)
-                .flatMap(n -> Stream.of(Locale.values()).filter(l -> l.name().equals(n)).findFirst());
+                .flatMap(n -> Stream.of(Locale.values())
+                        .filter(l -> l.name().equals(n))
+                        .findFirst());
     }
 }

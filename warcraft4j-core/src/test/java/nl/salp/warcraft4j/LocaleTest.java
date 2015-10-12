@@ -100,4 +100,22 @@ public class LocaleTest {
     public void shouldFindNoLocalesForInvalidLanguage() {
         assertEquals("Locales found for non-existing language.", Collections.emptySet(), Locale.getLocalesForLanguage("zz"));
     }
+
+    @Test
+    public void shouldNotFindLocaleWithEmptyName() {
+        assertFalse("Found a locale with a null name.", Locale.getLocale(null).isPresent());
+        assertFalse("Found a locale with an empty name.", Locale.getLocale("").isPresent());
+    }
+
+    @Test
+    public void shouldFindLocaleWithUntrimmedName() {
+        assertEquals(Locale.EN_US, Locale.getLocale(" EN_US  ").get());
+    }
+
+    @Test
+    public void shouldFindLocaleWithAnyCaseName() {
+        assertEquals(Locale.EN_US, Locale.getLocale("en_us").get());
+        assertEquals(Locale.EN_US, Locale.getLocale("EN_US").get());
+        assertEquals(Locale.EN_US, Locale.getLocale("eN_Us").get());
+    }
 }

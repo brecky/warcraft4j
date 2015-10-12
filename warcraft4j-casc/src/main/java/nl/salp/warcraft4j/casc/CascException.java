@@ -18,12 +18,14 @@
  */
 package nl.salp.warcraft4j.casc;
 
+import nl.salp.warcraft4j.Warcraft4jException;
+
 /**
  * General exception for all CASC related errors.
  *
  * @author Barre Dijkstra
  */
-public class CascException extends RuntimeException {
+public class CascException extends Warcraft4jException {
     /**
      * Create  a new instance with an exception message.
      *

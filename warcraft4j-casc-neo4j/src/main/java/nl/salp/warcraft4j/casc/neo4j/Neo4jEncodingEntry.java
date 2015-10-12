@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.casc.neo4j;
 
-import nl.salp.warcraft4j.DataTypeUtil;
+import nl.salp.warcraft4j.util.DataTypeUtil;
 import nl.salp.warcraft4j.casc.ContentChecksum;
 import nl.salp.warcraft4j.casc.EncodingEntry;
 import nl.salp.warcraft4j.casc.FileKey;

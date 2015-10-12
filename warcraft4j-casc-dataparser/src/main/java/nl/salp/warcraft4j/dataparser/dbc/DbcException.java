@@ -18,12 +18,14 @@
  */
 package nl.salp.warcraft4j.dataparser.dbc;
 
+import nl.salp.warcraft4j.Warcraft4jException;
+
 /**
  * General exception for DBC related errors.
  *
  * @author Barre Dijkstra
  */
-public class DbcException extends RuntimeException {
+public class DbcException extends Warcraft4jException {
     /**
      * Create a new instance.
      *

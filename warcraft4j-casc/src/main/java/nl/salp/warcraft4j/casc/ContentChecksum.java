@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.casc;
 
-import nl.salp.warcraft4j.Checksum;
+import nl.salp.warcraft4j.util.Checksum;
 
 import static java.lang.String.format;
 
@@ -29,7 +29,7 @@ import static java.lang.String.format;
  */
 public class ContentChecksum extends Checksum {
     /** The length of the checksum in bytes. */
-    private static final int CONTENTCHECKSUM_LENGTH = 16;
+    public static final int CHECKSUM_LENGTH = 16;
 
     /**
      * Create a new checksum instance.
@@ -40,8 +40,8 @@ public class ContentChecksum extends Checksum {
      */
     public ContentChecksum(byte[] checksum) throws IllegalArgumentException {
         super(checksum);
-        if (checksum.length != CONTENTCHECKSUM_LENGTH) {
-            throw new IllegalArgumentException(format("Unable to create a %d-byte content checksum from a %d byte array.", CONTENTCHECKSUM_LENGTH, checksum.length));
+        if (checksum.length != CHECKSUM_LENGTH) {
+            throw new IllegalArgumentException(format("Unable to create a %d-byte content checksum from a %d byte array.", CHECKSUM_LENGTH, checksum.length));
         }
     }
 }

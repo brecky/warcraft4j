@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.dev.casc;
 
-import nl.salp.warcraft4j.casc.CascContext;
+import nl.salp.warcraft4j.casc.cdn.CdnCascContext;
 import nl.salp.warcraft4j.dev.casc.model.CascEntry;
 import nl.salp.warcraft4j.dev.casc.model.FileHeader;
 import nl.salp.warcraft4j.dev.casc.model.ListFile;
@@ -47,7 +47,7 @@ public class EntryStore {
         this(null, null);
     }
 
-    public EntryStore(ListFile listFile, CascContext cascContext) {
+    public EntryStore(ListFile listFile, CdnCascContext cascContext) {
         this.hashFilenames = new HashMap<>();
         this.filenameHashes = new HashMap<>();
         this.headerExtensions = new MultiMap<>();
@@ -58,7 +58,7 @@ public class EntryStore {
         }
     }
 
-    public void populate(ListFile listFile, CascContext cascContext) {
+    public void populate(ListFile listFile, CdnCascContext cascContext) {
         listFile.getFilenames().stream()
                 .map(EntryStore::cleanFilename)
                 .filter(Optional::isPresent)
@@ -66,12 +66,12 @@ public class EntryStore {
                 .forEach(filename -> populate(filename, cascContext));
     }
 
-    public void populate(long hashcode, CascContext cascContext) {
+    public void populate(long hashcode, CdnCascContext cascContext) {
         CascEntry entry = new CascEntry(hashcode, cascContext);
         populate(entry);
     }
 
-    public void populate(String filename, CascContext cascContext) {
+    public void populate(String filename, CdnCascContext cascContext) {
         CascEntry entry = new CascEntry(filename, cascContext);
         populate(entry);
     }

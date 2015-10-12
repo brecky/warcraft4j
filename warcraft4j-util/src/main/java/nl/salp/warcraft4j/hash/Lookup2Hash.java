@@ -19,7 +19,7 @@
 
 package nl.salp.warcraft4j.hash;
 
-import nl.salp.warcraft4j.DataTypeUtil;
+import nl.salp.warcraft4j.util.DataTypeUtil;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.binary.StringUtils;
 

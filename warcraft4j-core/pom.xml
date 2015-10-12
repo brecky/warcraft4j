@@ -32,7 +32,7 @@
     <packaging>jar</packaging>
 
     <name>Warcraft4J Core</name>
-    <description>Main Warcraft4J API module</description>
+    <description>Core Warcraft4J API module with general purpose Warcraft4J functionality</description>
 
     <dependencies>
         <dependency>

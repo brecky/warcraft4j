@@ -20,8 +20,8 @@ package nl.salp.warcraft4j.dev.casc.model;
 
 import nl.salp.warcraft4j.hash.JenkinsHash;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
-import nl.salp.warcraft4j.io.reader.DataReader;
-import nl.salp.warcraft4j.io.reader.file.FileDataReader;
+import nl.salp.warcraft4j.io.DataReader;
+import nl.salp.warcraft4j.io.FileDataReader;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;

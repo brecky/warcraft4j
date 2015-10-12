@@ -18,16 +18,16 @@
  */
 package nl.salp.warcraft4j.casc;
 
-import nl.salp.warcraft4j.DataTypeUtil;
+import nl.salp.warcraft4j.util.DataTypeUtil;
 import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
-import nl.salp.warcraft4j.io.reader.DataReader;
+import nl.salp.warcraft4j.io.DataReader;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
-import static nl.salp.warcraft4j.DataTypeUtil.byteArrayToHexString;
+import static nl.salp.warcraft4j.util.DataTypeUtil.byteArrayToHexString;
 
 /**
  * Header of a file (first X bytes, containing the magic string).

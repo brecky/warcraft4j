@@ -4,7 +4,7 @@
  * distributed with this work for additional information
  * regarding copyright ownership.  The Warcraft4J Project licenses
  * this file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License") throws CascParsingException; you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -18,198 +18,149 @@
  */
 package nl.salp.warcraft4j.casc.cdn;
 
-import nl.salp.warcraft4j.casc.BaseCascConfig;
+import nl.salp.warcraft4j.Region;
 import nl.salp.warcraft4j.casc.CascParsingException;
-import nl.salp.warcraft4j.casc.Config;
-import nl.salp.warcraft4j.casc.DataReaderProvider;
-import nl.salp.warcraft4j.config.W4jConfig;
-import nl.salp.warcraft4j.io.reader.DataReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import nl.salp.warcraft4j.casc.ContentChecksum;
+import nl.salp.warcraft4j.casc.FileKey;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
-
-import static java.lang.String.format;
 
 /**
- * {@link nl.salp.warcraft4j.casc.CascConfig} implementation for a CDN based CASC.
+ * CASC configuration.
  *
  * @author Barre Dijkstra
  */
-public class CdnCascConfig extends BaseCascConfig {
-    /** The logger instance. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CdnCascConfig.class);
-    /** The {@code versions} config key for the region. */
-    private static final String KEY_VERSIONS_REGION = "Region";
-    /** The {@code versions} config key for the build id. */
-    private static final String KEY_VERSIONS_BUILD_ID = "BuildId";
-    /** The {@code versions} config key for the version. */
-    private static final String KEY_VERSIONS_VERSION = "VersionsName";
-    /** The {@code versions} config key for the build config. */
-    private static final String KEY_VERSIONS_BUILD_CONFIG = "BuildConfig";
-    /** The {@code versions} config key for the CDN config. */
-    private static final String KEY_VERSIONS_CDN_CONFIG = "CDNConfig";
-    /** The {@code CDNs} config key for the name. */
-    private static final String KEY_CDNS_NAME = "Name";
-    /** The {@code CDNs} config key for the path. */
-    private static final String KEY_CDNS_PATH = "Path";
-    /** The {@code CDNs} config key for the hosts. */
-    private static final String KEY_CDNS_HOSTS = "Hosts";
-    /** The URL mask for a file. */
-    private static final String URL_MASK = "http://us.patch.battle.net/%s/%s";
-    /** The file name of the {@code CDNs} config. */
-    private static final String FILE_CDNS = "cdns";
-    /** The file name of the {@code versions} config. */
-    private static final String FILE_VERSIONS = "versions";
-    /** The {@link CdnVersion} (or {@link nl.salp.warcraft4j.Branch} to use). */
-    private final CdnVersion cdnVersion;
-    /** The parsed {@code CDNs} config. */
-    private Config cdns;
-    /** The parsed {@code versions} config. */
-    private Config versions;
-
+public interface CdnCascConfig {
     /**
-     * Create a new instance.
+     * Get the available regions.
      *
-     * @param w4jConfig          The {@link W4jConfig} instance to configure the CDN CASC configuration with.
-     * @param dataReaderProvider The {@link DataReaderProvider} for reading the configuration files.
-     */
-    public CdnCascConfig(W4jConfig w4jConfig, DataReaderProvider dataReaderProvider) {
-        super(w4jConfig, dataReaderProvider);
-        this.cdnVersion = CdnVersion.getFrom(w4jConfig.getBranch());
-    }
-
-    /**
-     * Get a direct (non-hash based) URL for a file.
+     * @return The regions.
      *
-     * @param file The name of the file.
+     * @throws CascParsingException When the available regions can't be retrieved.
+     */
+    List<String> getAvailableRegions() throws CascParsingException;
+
+    /**
+     * Get the build configuration key if present.
      *
-     * @return The URL for the file.
+     * @return Optional of the build configuration key.
      */
-    private String getDirectUrl(String file) {
-        return format(URL_MASK, cdnVersion.getProductCode(), file);
-    }
+    Optional<String> getBuildConfigKey();
 
     /**
-     * Get the {@code CDNs} file config, reading it when not available.
+     * Get the build configuration key if present.
      *
-     * @return The {@code CDNs} config.
+     * @return Optional of the CDN configuration key.
      */
-    private Config getCdns() {
-        if (cdns == null) {
-            String uri = getDirectUrl(FILE_CDNS);
-            LOGGER.trace("Initialising CDNs config from URI {}", uri);
-            cdns = Config.tableConfig(getDataReader(uri));
-        }
-        return cdns;
-    }
+    Optional<String> getCdnConfigKey();
 
     /**
-     * Get the value value of a {@code CDNs} configuration field if available using the configured region.
+     * Get the content checksum of the root file.
      *
-     * @param key The key of the value.
+     * @return The content checksum for the root file.
      *
-     * @return Optional of the value if it's available for the configured region.
+     * @throws CascParsingException When the root content checksum is not available.
+     */
+    ContentChecksum getRootContentChecksum() throws CascParsingException;
+
+    /**
+     * Get the file key of the encoding file.
      *
-     * @see #getCdns()
-     */
-    private Optional<String> getCdnValue(String key) {
-        return getIndexedValue(getCdns(), key, KEY_CDNS_NAME, getRegionCode());
-    }
-
-    /**
-     * Get the {@code versions} file config, reading it when not available.
+     * @return The file key for the encoding file.
      *
-     * @return The {@code versions} config.
+     * @throws CascParsingException When the encoding file key is not available.
      */
-    private Config getVersions() {
-        if (versions == null) {
-            String uri = getDirectUrl(FILE_VERSIONS);
-            LOGGER.trace("Initialising versions config from URI {}", uri);
-            versions = Config.tableConfig(getDataReader(uri));
-        }
-        return versions;
-    }
+    FileKey getExtractedEncodingFileChecksum() throws CascParsingException;
 
     /**
-     * Get the value value of a {@code versions} configuration field if available using the configured region.
+     * Get the file key of the encoding file for the active encoding file.
      *
-     * @param key The key of the value.
+     * @return The file key for the encoding file.
+     */
+    FileKey getStorageEncodingFileChecksum();
+
+    /**
+     * Get the size of the encoding file for the active encoding file.
      *
-     * @return Optional of the value if it's available for the configured region.
+     * @return The file size of the encoding file.
+     */
+    long getStorageEncodingFileSize();
+
+    /**
+     * Get the size of the encoding file.
      *
-     * @see #getVersions()
+     * @return The size in bytes.
+     *
+     * @throws CascParsingException When the encoding file size is not available.
      */
-    private Optional<String> getVersionValue(String key) {
-        return getIndexedValue(getVersions(), key, KEY_VERSIONS_REGION, getRegionCode());
-    }
+    long getExtractedEncodingFileSize() throws CascParsingException;
 
     /**
-     * {@inheritDoc}
+     * Get the file keys for the archive files.
+     *
+     * @return The file keys.
+     *
+     * @throws CascParsingException When the archive file keys are not available.
      */
-    @Override
-    public Optional<String> getBuildConfigKey() {
-        return getVersionValue(KEY_VERSIONS_BUILD_CONFIG);
-    }
+    List<FileKey> getArchiveChecksums() throws CascParsingException;
 
     /**
-     * {@inheritDoc}
+     * Get the file key for the archive group file.
+     *
+     * @return The file key.
+     *
+     * @throws CascParsingException When the archive group file key is not available.
      */
-    @Override
-    public Optional<String> getCdnConfigKey() {
-        return getVersionValue(KEY_VERSIONS_CDN_CONFIG);
-    }
+    FileKey getArchiveGroupChecksum() throws CascParsingException;
 
     /**
-     * {@inheritDoc}
+     * Get the file keys for the patch archive files.
+     *
+     * @return The file keys.
+     *
+     * @throws CascParsingException When the patch archive file keys are not available.
      */
-    @Override
-    protected Supplier<DataReader> getConfigDataReader(String checksum) {
-        String uri = format("%s/config/%s/%s/%s", getCdnUrl(), checksum.substring(0, 2), checksum.substring(2, 4), checksum);
-        LOGGER.trace("Mapped checksum {} to URL {}", checksum, uri);
-        return getDataReader(uri);
-    }
+    List<FileKey> getPatchArchiveChecksums() throws CascParsingException;
 
     /**
-     * {@inheritDoc}
+     * Get the file key for the patch archive group file.
+     *
+     * @return The file key.
+     *
+     * @throws CascParsingException When the patch archive group file key is not available.
      */
-    @Override
-    public List<String> getAvailableRegions() {
-        List<String> cdnNames = getCdns().getValues(KEY_CDNS_NAME)
-                .orElseThrow(() -> new CascParsingException("No CDN names found."));
-        List<String> versionRegions = getVersions().getValues(KEY_VERSIONS_REGION)
-                .orElseThrow(() -> new CascParsingException("No version regions found."));
-
-        List<String> regions = new ArrayList<>(cdnNames);
-        regions.retainAll(versionRegions);
-        LOGGER.trace("Retrieved available regions {}", regions);
-        return regions;
-    }
+    FileKey getPatchArchiveGroupChecksum() throws CascParsingException;
 
     /**
-     * {@inheritDoc}
+     * Get the CDN URL.
+     *
+     * @return The CDN URL.
+     *
+     * @throws CascParsingException When the CDN URL is not available.
      */
-    @Override
-    public String getCdnUrl() {
-        String host = getCdnValue(KEY_CDNS_HOSTS)
-                .orElseThrow(() -> new CascParsingException(format("No CDN url found for region %s.", getRegion())));
-        String path = getCdnValue(KEY_CDNS_PATH)
-                .orElseThrow(() -> new CascParsingException(format("No CDN path found for region %s.", getRegion())));
-        String url = format("http://%s/%s", host, path);
-        return url;
-    }
+    String getCdnUrl() throws CascParsingException;
 
     /**
-     * {@inheritDoc}
+     * Get the build version.
+     *
+     * @return The version.
+     *
+     * @throws CascParsingException When the version is not available.
      */
-    @Override
-    public String getVersion() {
-        String version = getVersionValue(KEY_VERSIONS_VERSION)
-                .orElseThrow(() -> new CascParsingException(format("No version information found for region %s.", getRegion())));
-        LOGGER.trace("Retrieved version {}", version);
-        return version;
-    }
+    String getVersion() throws CascParsingException;
+
+    /**
+     * Get the region for which the CASC config is configured.
+     *
+     * @return The region.
+     */
+    Region getRegion();
+
+    /**
+     * Get the region code for the configured region.
+     *
+     * @return The region code.
+     */
+    String getRegionCode();
 }

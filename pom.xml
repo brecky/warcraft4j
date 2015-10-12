@@ -53,13 +53,10 @@
 
     <!-- Project modules -->
     <modules>
-        <!-- Warcraft4J utility modules -->
-        <module>warcraft4j-util</module>
-        <module>warcraft4j-io</module>
-        <module>warcraft4j-io-file</module>
-        <module>warcraft4j-io-http</module>
-        <!-- Warcraft4J core modules -->
+        <!-- Warcraft4J core and utility modules -->
         <module>warcraft4j-core</module>
+        <module>warcraft4j-util</module>
+        <module>warcraft4j-util-neo4j</module>
         <module>warcraft4j-model</module>
         <!-- Warcraft4J CASC modules -->
         <module>warcraft4j-casc</module>
@@ -69,9 +66,7 @@
         <module>warcraft4j-model-dbc</module>
         <!-- Warcraft4J Battle.NET modules -->
         <module>warcraft4j-battlenet</module>
-        <!-- Warcraft4J Neo4J modules -->
-        <module>warcraft4j-io-neo4j</module>
-        <!-- Warcraft4J application modules -->
+        <!-- Warcraft4J development modules -->
         <module>warcraft4j-devtools</module>
     </modules>
 
@@ -79,6 +74,8 @@
     <properties>
         <plugin.maven.version>3.1</plugin.maven.version>
         <plugin.maven-resources.version>2.7</plugin.maven-resources.version>
+        <plugin.maven-source.version>2.4</plugin.maven-source.version>
+        <plugin.maven-jar.version>2.6</plugin.maven-jar.version>
         <plugin.maven-surefire.version>2.18.1</plugin.maven-surefire.version>
         <source.encoding>UTF-8</source.encoding>
         <source.version>1.8</source.version>
@@ -97,7 +94,7 @@
         <dependency.neo4j.version>2.2.4</dependency.neo4j.version>
     </properties>
 
-    <!-- Managed build plugins -->
+    <!-- Build and plugin configuration -->
     <build>
         <pluginManagement>
             <plugins>
@@ -109,8 +106,11 @@
                         <source>${source.version}</source>
                         <target>${source.version}</target>
                         <encoding>${source.encoding}</encoding>
+                        <debug>true</debug>
                         <showDeprecation>true</showDeprecation>
                         <showWarnings>true</showWarnings>
+                        <generatedSourcesDirectory>src/main/generated</generatedSourcesDirectory>
+                        <generatedTestSourcesDirectory>src/test/generated</generatedTestSourcesDirectory>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -119,6 +119,42 @@
                     <version>${plugin.maven-resources.version}</version>
                     <configuration>
                         <encoding>${source.encoding}</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${plugin.maven-jar.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${plugin.maven-source.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.10.3</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <show>private</show>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -132,6 +168,8 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+        </plugins>
     </build>
 
     <!-- Managed dependencies -->

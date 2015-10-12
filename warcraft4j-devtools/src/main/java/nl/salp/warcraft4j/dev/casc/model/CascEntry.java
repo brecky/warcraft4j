@@ -18,7 +18,7 @@
  */
 package nl.salp.warcraft4j.dev.casc.model;
 
-import nl.salp.warcraft4j.casc.CascContext;
+import nl.salp.warcraft4j.casc.cdn.CdnCascContext;
 import nl.salp.warcraft4j.casc.ContentChecksum;
 import nl.salp.warcraft4j.casc.FileKey;
 import nl.salp.warcraft4j.dev.casc.EntryStore;
@@ -41,7 +41,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * @author Barre Dijkstra
  */
 public class CascEntry {
-    private transient CascContext cascContext;
+    private transient CdnCascContext cascContext;
     private final long hashCode;
     private String filename;
     private boolean inCasc;
@@ -50,12 +50,12 @@ public class CascEntry {
     private List<ContentChecksum> contentChecksums;
     private List<FileKey> fileKeys;
 
-    public CascEntry(long hashCode, CascContext cascContext) throws IllegalArgumentException {
+    public CascEntry(long hashCode, CdnCascContext cascContext) throws IllegalArgumentException {
         if (hashCode == 0 || hashCode == JenkinsHash.HASH_EMPTY_VALUE_HASHLITTLE2) {
             throw new IllegalArgumentException("Unable to create a CascEntry for a hashcode for an empty value.");
         }
         if (cascContext == null) {
-            throw new IllegalArgumentException("Unable to create a CascEntry from a null CascContext.");
+            throw new IllegalArgumentException("Unable to create a CascEntry from a null CdnCascContext.");
         }
         this.hashCode = hashCode;
         this.cascContext = cascContext;
@@ -63,16 +63,16 @@ public class CascEntry {
         this.cascReferenceValid = cascContext.isRegisteredData(hashCode);
     }
 
-    public CascEntry(String filename, CascContext cascContext) throws IllegalArgumentException {
+    public CascEntry(String filename, CdnCascContext cascContext) throws IllegalArgumentException {
         this(Optional.ofNullable(filename)
                         .filter(StringUtils::isNotEmpty)
-                        .map(CascContext::hashFilename)
+                        .map(CdnCascContext::hashFilename)
                         .orElseThrow(() -> new IllegalArgumentException("Unable to create a CascEntry for an empty filename")),
                 cascContext);
         this.filename = EntryStore.cleanFilename(filename).orElse(null);
     }
 
-    protected CascContext getCascContext() throws IllegalStateException {
+    protected CdnCascContext getCascContext() throws IllegalStateException {
         return cascContext;
     }
 

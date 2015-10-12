@@ -18,12 +18,14 @@
  */
 package nl.salp.warcraft4j.model;
 
+import nl.salp.warcraft4j.dataparser.dbc.DbcException;
+
 /**
  * TODO Add description.
  *
  * @author Barre Dijkstra
  */
-public class DbcMappingException extends RuntimeException {
+public class DbcMappingException extends DbcException {
     public DbcMappingException(Throwable cause) {
         super(cause);
     }
