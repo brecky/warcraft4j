@@ -28,7 +28,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 /**
- * TODO Document class.
+ * Locale index file containing the parsed {@link LocalIndexEntry} entries.
  *
  * @author Barre Dijkstra
  */
@@ -42,8 +42,19 @@ public class LocalIndexFile {
     /** The parsed index entries. */
     private final Map<FileKey, IndexEntry> entries;
 
-    public LocalIndexFile(Path file, int fileNumber, int fileVersion, List<IndexEntry> entries) {
-        this.file = Optional.ofNullable(file).orElseThrow(() -> new IllegalArgumentException("Can't create an LocalIndexFile instance for an empty file path."));
+    /**
+     * Create a new instance.
+     *
+     * @param file        The path of the index file.
+     * @param fileNumber  The file number.
+     * @param fileVersion The file version.
+     * @param entries     The versions.
+     *
+     * @throws IllegalArgumentException When invalid data was provided.
+     */
+    public LocalIndexFile(Path file, int fileNumber, int fileVersion, List<IndexEntry> entries) throws IllegalArgumentException {
+        this.file = Optional.ofNullable(file)
+                .orElseThrow(() -> new IllegalArgumentException("Can't create an LocalIndexFile instance for an empty file path."));
         this.fileNumber = fileNumber;
         this.fileVersion = fileVersion;
         this.entries = new HashMap<>();
@@ -75,44 +86,96 @@ public class LocalIndexFile {
         return fileVersion;
     }
 
+    /**
+     * Get the path to the index file.
+     *
+     * @return The path.
+     */
     public Path getFile() {
         return file;
     }
 
+    /**
+     * Get the {@link IndexEntry} for a file key.
+     *
+     * @param fileKey The file key.
+     *
+     * @return Optional with the entry if one is available for the key.
+     */
     public Optional<IndexEntry> getEntry(FileKey fileKey) {
         return Optional.ofNullable(entries.get(fileKey));
     }
 
+    /**
+     * Get the number of the data file that contains the file referenced by a file key.
+     *
+     * @param fileKey The file key.
+     *
+     * @return Optional with the data file number if a file is referenced by the file key.
+     */
     public Optional<Integer> getDataFileNumber(FileKey fileKey) {
         return getEntry(fileKey).map(IndexEntry::getFileNumber);
     }
 
+    /**
+     * Get the offset in the data file for the file referenced by a file key.
+     *
+     * @param fileKey The file key.
+     *
+     * @return Optional with the data file offset if a file is referenced by the file key.
+     */
     public Optional<Integer> getDataOffset(FileKey fileKey) {
         return getEntry(fileKey).map(IndexEntry::getDataFileOffset);
     }
 
+    /**
+     * Get the size of the data in the data file that contains the file referenced by a file key.
+     *
+     * @param fileKey The file key.
+     *
+     * @return Optional with the size of the data in the data file number if a file is referenced by the file key.
+     */
     public Optional<Long> getDataSize(FileKey fileKey) {
         return getEntry(fileKey).map(IndexEntry::getFileSize);
     }
 
+    /**
+     * Get the parsed index entries from the index file.
+     *
+     * @return The entries.
+     */
     public Collection<IndexEntry> getEntries() {
         return Collections.unmodifiableCollection(entries.values());
     }
 
+    /**
+     * Get the number of parsed index entries the index file contains.
+     *
+     * @return The number of entries.
+     */
     public int getEntryCount() {
         return entries.size();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);

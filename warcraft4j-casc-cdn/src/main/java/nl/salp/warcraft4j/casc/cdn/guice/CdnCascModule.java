@@ -20,19 +20,24 @@ package nl.salp.warcraft4j.casc.cdn.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
-import nl.salp.warcraft4j.casc.cdn.CdnCascContext;
 import nl.salp.warcraft4j.casc.CascService;
+import nl.salp.warcraft4j.casc.cdn.CdnCascContext;
 import nl.salp.warcraft4j.casc.cdn.CdnCascService;
-import nl.salp.warcraft4j.casc.cdn.online.OnlineCdnCascContext;
 import nl.salp.warcraft4j.casc.cdn.local.LocalCdnCascContext;
+import nl.salp.warcraft4j.casc.cdn.online.OnlineCdnCascContext;
 import nl.salp.warcraft4j.config.Warcraft4jConfig;
 
 /**
- * TODO Add description.
+ * Guice module that binds the the CDN implementation to the CASC module, being either online or local depending on the Warcraft4J configuration.
+ * <p>
+ * Requires a bound {@link Warcraft4jConfig}.
  *
  * @author Barre Dijkstra
  */
 public class CdnCascModule extends AbstractModule {
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void configure() {
         requireBinding(Warcraft4jConfig.class);

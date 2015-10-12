@@ -39,20 +39,31 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 
 /**
- * TODO Document class.
+ * Parser for parsing all {@link LocalIndexFile} files in a World of Warcraft installation directory to a {@link Index}.
  *
  * @author Barre Dijkstra
+ * @see nl.salp.warcraft4j.casc.cdn.Index
  */
 public class LocalIndexParser {
     /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalIndexParser.class);
-
+    /** The World of Warcraft installation directory. */
     private final Path installationDirectory;
 
+    /**
+     * Create a new instance.
+     *
+     * @param installationDirectory The World of Warcraft installation directory.
+     */
     public LocalIndexParser(Path installationDirectory) {
         this.installationDirectory = installationDirectory;
     }
 
+    /**
+     * Read and parse all index files into a {@link Index}.
+     *
+     * @return The index.
+     */
     public Index parse() {
         LOGGER.trace("Parsing local index entries from {}.", installationDirectory);
         Collection<Path> latestIndexFilePaths = getLatestIndexFilePaths();
@@ -69,9 +80,9 @@ public class LocalIndexParser {
     }
 
     /**
-     * Get loaded the CASC {@link LocalIndexFile} instances.
+     * Parse a local index file to a {@link LocalIndexFile}.
      *
-     * @return The index files.
+     * @return The parsed index file.
      */
     private static LocalIndexFile parse(Path path) {
         try (DataReader reader = new FileDataReader(path)) {
@@ -82,7 +93,11 @@ public class LocalIndexParser {
         }
     }
 
-
+    /**
+     * Get the paths of the latest version of each index file.
+     *
+     * @return The paths of the latest index file version.
+     */
     private Collection<Path> getLatestIndexFilePaths() {
         try {
             IndexFileScanner scanner = new IndexFileScanner();
@@ -106,6 +121,15 @@ public class LocalIndexParser {
         }
     }
 
+    /**
+     * Parse the file number from the path of an index file.
+     *
+     * @param file The file path.
+     *
+     * @return The file number.
+     *
+     * @throws CascParsingException When the file number couldn't be read.
+     */
     private static int parseFileNumber(Path file) throws CascParsingException {
         try {
             String filename = String.valueOf(file.getFileName());
@@ -116,6 +140,15 @@ public class LocalIndexParser {
         }
     }
 
+    /**
+     * Parse the file version from the path of an index file.
+     *
+     * @param file The file path.
+     *
+     * @return The file version.
+     *
+     * @throws CascParsingException When the file version couldn't be read.
+     */
     private static int parseFileVersion(Path file) throws CascParsingException {
         try {
             String filename = String.valueOf(file.getFileName());
@@ -127,18 +160,31 @@ public class LocalIndexParser {
     }
 
 
+    /**
+     * {@code FileVisitor} for finding index files.
+     */
     private static class IndexFileScanner implements FileVisitor<Path> {
+        /** The discovered index files. */
         private final List<Path> indexFiles;
 
+        /**
+         * Create a new instance.
+         */
         public IndexFileScanner() {
             this.indexFiles = new ArrayList<>();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
             return FileVisitResult.CONTINUE;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
             if (isIndexFile(file)) {
@@ -147,20 +193,38 @@ public class LocalIndexParser {
             return FileVisitResult.CONTINUE;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
             return FileVisitResult.CONTINUE;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
             return FileVisitResult.CONTINUE;
         }
 
+        /**
+         * Get the discovered index files.
+         *
+         * @return The index files.
+         */
         public List<Path> getIndexFiles() {
             return indexFiles;
         }
 
+        /**
+         * Check if a path refers to a readable index file.
+         *
+         * @param file The path to a file.
+         *
+         * @return {@code true} if the path refers to an index file.
+         */
         private static boolean isIndexFile(Path file) {
             return file != null && Files.exists(file) && Files.isRegularFile(file) && Files.isReadable(file) && String.valueOf(file.getFileName()).endsWith(".idx");
         }

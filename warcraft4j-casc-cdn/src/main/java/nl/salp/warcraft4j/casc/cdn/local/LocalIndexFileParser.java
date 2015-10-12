@@ -42,25 +42,46 @@ import java.util.function.Function;
 import static java.lang.String.format;
 
 /**
- * TODO Add description.
+ * Parser for parsing a {@link LocalIndexFile}.
  *
  * @author Barre Dijkstra
  */
 public class LocalIndexFileParser {
     /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalIndexFileParser.class);
+    /** The size of an entry in bytes. */
     public static final int ENTRY_SIZE = 18;
-
+    /** The path of the index file. */
     private final Path file;
+    /** Function to get the the index file number from the file path. */
     private final Function<Path, Integer> fileNumberFunction;
+    /** Function get the the index file version from the file path. */
     private final Function<Path, Integer> fileVersionFunction;
 
+    /**
+     * Create a new instance.
+     *
+     * @param file                The path of the index file to parse.
+     * @param fileNumberFunction  The function to get the the index file number from the file path.
+     * @param fileVersionFunction The function to get the the index file version from the file path.
+     */
     public LocalIndexFileParser(Path file, Function<Path, Integer> fileNumberFunction, Function<Path, Integer> fileVersionFunction) {
         this.file = file;
         this.fileNumberFunction = fileNumberFunction;
         this.fileVersionFunction = fileVersionFunction;
     }
 
+    /**
+     * Read and parse a {@link LocalIndexFile}.
+     *
+     * @param reader The reader for the file.
+     *
+     * @return The parsed index file.
+     *
+     * @throws CascParsingException When the file is invalid.
+     * @throws DataReadingException When reading the entry data failed.
+     * @throws DataParsingException When parsing the entry data failed.
+     */
     public LocalIndexFile parse(DataReader reader) throws DataReadingException, DataParsingException {
         LOGGER.trace("Parsing index file {}", file);
         validateHeader(reader);
@@ -84,6 +105,15 @@ public class LocalIndexFileParser {
         return new LocalIndexFile(file, fileNumber, fileVersion, entries);
     }
 
+    /**
+     * Validate the index file header.
+     *
+     * @param reader The reader to read the header data from.
+     *
+     * @throws CascParsingException When the header is invalid.
+     * @throws DataReadingException When reading the entry data failed.
+     * @throws DataParsingException When parsing the entry data failed.
+     */
     private void validateHeader(DataReader reader) throws CascParsingException, DataReadingException, DataParsingException {
         long position = reader.position();
 
@@ -100,6 +130,17 @@ public class LocalIndexFileParser {
         reader.position(position);
     }
 
+    /**
+     * Read and parse the index file header.
+     *
+     * @param reader The reader to read the header data from.
+     *
+     * @return The parsed index file header.
+     *
+     * @throws CascParsingException When the header is invalid.
+     * @throws DataReadingException When reading the entry data failed.
+     * @throws DataParsingException When parsing the entry data failed.
+     */
     private IndexHeaderV2 parseHeader(DataReader reader) throws CascParsingException, DataReadingException, DataParsingException {
         int indexVersion = reader.readNext(DataTypeFactory.getUnsignedShort(), ByteOrder.LITTLE_ENDIAN);
         if (indexVersion != 0x07) {
@@ -118,6 +159,17 @@ public class LocalIndexFileParser {
         return new IndexHeaderV2(indexVersion, keyIndex, extraBytes, spanSizeBytes, spanOffsetBytes, keyBytes, segmentBits, maxFileOffset);
     }
 
+    /**
+     * Read an parse all available {@link IndexEntry} instances.
+     *
+     * @param reader     The reader to read the entry data from.
+     * @param entryCount The number of entries avialable.
+     *
+     * @return The parsed entries.
+     *
+     * @throws DataReadingException When reading the entry data failed.
+     * @throws DataParsingException When parsing the entry data failed.
+     */
     private List<IndexEntry> parseEntries(DataReader reader, int entryCount) throws DataReadingException, DataParsingException {
         Set<Checksum> keys = new HashSet<>();
         List<IndexEntry> entries = new ArrayList<>();
@@ -132,6 +184,16 @@ public class LocalIndexFileParser {
         return entries;
     }
 
+    /**
+     * Read and parse an {@link IndexEntry}.
+     *
+     * @param reader The reader to read the entry data from.
+     *
+     * @return The parsed entry.
+     *
+     * @throws DataReadingException When reading the entry data failed.
+     * @throws DataParsingException When parsing the entry data failed.
+     */
     private IndexEntry parseEntry(DataReader reader) throws DataReadingException, DataParsingException {
         byte[] fileKey = reader.readNext(DataTypeFactory.getByteArray(9));
         short indexInfoHigh = reader.readNext(DataTypeFactory.getUnsignedByte());
@@ -141,6 +203,9 @@ public class LocalIndexFileParser {
         return entry;
     }
 
+    /**
+     * Header of the index file (version 2).
+     */
     private static class IndexHeaderV2 {
         /** The index version, must be 0x07 for CASCv2. */
         private final int indexVersion;
@@ -152,12 +217,23 @@ public class LocalIndexFileParser {
         private final byte spanSizeBytes;
         /** The size of the field with the file offset in bytes. */
         private final byte spanOffsetBytes;
-        /** Size of the file key in bytes. */
+        /** The size of the file key in bytes. */
         private final byte keyBytes;
         /** Number of bits for the file offset (rest is archive index). */
         private final byte segmentBits;
+        /** The maximum file offset. */
         private final long maxFileOffset;
 
+        /**
+         * @param indexVersion    The index version.
+         * @param keyIndex        The file key index.
+         * @param unknown1        Unknown byte.
+         * @param spanSizeBytes   The size of the field with the file size in bytes.
+         * @param spanOffsetBytes The size of the field with the file offset in bytes.
+         * @param keyBytes        The size of the file key in bytes.
+         * @param segmentBits     The number of bits for the file offset (rest is archive index).
+         * @param maxFileOffset   The maximum file offset.
+         */
         public IndexHeaderV2(int indexVersion, byte keyIndex, byte unknown1, byte spanSizeBytes, byte spanOffsetBytes, byte keyBytes, byte segmentBits, long maxFileOffset) {
             this.indexVersion = indexVersion;
             this.keyIndex = keyIndex;
@@ -169,38 +245,81 @@ public class LocalIndexFileParser {
             this.maxFileOffset = maxFileOffset;
         }
 
+        /**
+         * Get the index version.
+         *
+         * @return The index version.
+         */
         public int getIndexVersion() {
             return indexVersion;
         }
 
+        /**
+         * Get the file key index.
+         *
+         * @return The file key index.
+         */
         public byte getKeyIndex() {
             return keyIndex;
         }
 
+        /**
+         * Get the first unknown data.
+         *
+         * @return The first unknown data.
+         */
         public byte getUnknown1() {
             return unknown1;
         }
 
+        /**
+         * Get the size of the field with the file size in bytes.
+         *
+         * @return The size of the field with the file size in bytes.
+         */
         public byte getSpanSizeBytes() {
             return spanSizeBytes;
         }
 
+        /**
+         * Get the size of the field with the file offset in bytes.
+         *
+         * @return The size of the field with the file offset in bytes.
+         */
         public byte getSpanOffsetBytes() {
             return spanOffsetBytes;
         }
 
+        /**
+         * Get the size of the file key in bytes.
+         *
+         * @return The size of the file key in bytes.
+         */
         public byte getKeyBytes() {
             return keyBytes;
         }
 
+        /**
+         * Get the number of bits for the file offset (rest is archive index).
+         *
+         * @return The number of bits.
+         */
         public byte getSegmentBits() {
             return segmentBits;
         }
 
+        /**
+         * Get the maximum file offset.
+         *
+         * @return The maximum file offset.
+         */
         public long getMaxFileOffset() {
             return maxFileOffset;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String toString() {
             return ToStringBuilder.reflectionToString(this);

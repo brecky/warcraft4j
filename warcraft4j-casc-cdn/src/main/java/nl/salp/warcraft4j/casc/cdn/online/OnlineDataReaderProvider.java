@@ -19,13 +19,13 @@
 package nl.salp.warcraft4j.casc.cdn.online;
 
 import nl.salp.warcraft4j.casc.cdn.DataReaderProvider;
-import nl.salp.warcraft4j.io.DataReader;
 import nl.salp.warcraft4j.io.CachedHttpDataReader;
+import nl.salp.warcraft4j.io.DataReader;
 
 import java.util.function.Supplier;
 
 /**
- * {@link DataReaderProvider} for reading online (HTTP) files.
+ * {@link DataReaderProvider} for reading files over HTTP.
  *
  * @author Barre Dijkstra
  */

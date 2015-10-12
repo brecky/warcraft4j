@@ -32,9 +32,10 @@ import java.util.function.Supplier;
 import static java.lang.String.format;
 
 /**
- * {@link CdnCascContext} implementation for CDN.
+ * {@link CdnCascContext} implementation for an online CDN.
  *
  * @author Barre Dijkstra
+ * @see nl.salp.warcraft4j.casc.cdn.CdnCascContext
  */
 @Singleton
 public class OnlineCdnCascContext extends CdnCascContext {

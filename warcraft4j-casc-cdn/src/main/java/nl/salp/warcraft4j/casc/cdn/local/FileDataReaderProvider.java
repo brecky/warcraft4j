@@ -32,22 +32,42 @@ import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
- * TODO Document class.
+ * {@link DataReaderProvider} for reading files from the file system.
  *
  * @author Barre Dijkstra
+ * @see nl.salp.warcraft4j.casc.cdn.DataReaderProvider
  */
 public class FileDataReaderProvider implements DataReaderProvider {
+    /**
+     * {@inheritDoc}
+     *
+     * @param uri The path of the file, either absolute or relative.
+     */
     @Override
     public Supplier<DataReader> getDataReader(String uri) throws CascParsingException {
         return () -> new FileDataReader(toPath(uri));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param uri The path of the file, either absolute or relative.
+     */
     @Override
-    public Supplier<DataReader> getDataReader(String uri, long offset, long length) throws CascParsingException{
+    public Supplier<DataReader> getDataReader(String uri, long offset, long length) throws CascParsingException {
         return () -> new FileDataReader(toPath(uri), offset, length);
     }
 
-    private Path toPath(String uri) {
+    /**
+     * Get the path to the file represented by the URI.
+     *
+     * @param uri The URI.
+     *
+     * @return The path to the file represented by the URI.
+     *
+     * @throws CascParsingException When the URI is invalid or does not point to a valid, readable file.
+     */
+    private Path toPath(String uri) throws CascParsingException {
         if (isEmpty(uri)) {
             throw new CascParsingException("Can't create a file reader for an empty path.");
         }

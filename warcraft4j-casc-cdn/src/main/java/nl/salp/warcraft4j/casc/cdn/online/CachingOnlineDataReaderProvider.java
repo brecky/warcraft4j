@@ -18,13 +18,13 @@
  */
 package nl.salp.warcraft4j.casc.cdn.online;
 
-import nl.salp.warcraft4j.casc.cdn.CdnCascConfig;
 import nl.salp.warcraft4j.casc.CascParsingException;
+import nl.salp.warcraft4j.casc.cdn.CdnCascConfig;
 import nl.salp.warcraft4j.casc.cdn.DataReaderProvider;
-import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
+import nl.salp.warcraft4j.io.CachedHttpDataReader;
 import nl.salp.warcraft4j.io.DataReader;
 import nl.salp.warcraft4j.io.FileDataReader;
-import nl.salp.warcraft4j.io.CachedHttpDataReader;
+import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ import static java.nio.file.StandardOpenOption.*;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
- * {@link DataReaderProvider} for reading online (HTTP) files, caching per version.
+ * {@link DataReaderProvider} for reading files over HTTP, caching the files prior per version of the CASC the file is in.
  * <p>
  * This implementation has no cache-expiration or cleanup functionality and can consume quite a bit of drive space over time.
  * </p>
@@ -61,7 +61,7 @@ public class CachingOnlineDataReaderProvider implements DataReaderProvider {
     /**
      * Create a new instance.
      *
-     * @param cdnCascConfig         The {@link CdnCascConfig} to use.
+     * @param cdnCascConfig      The {@link CdnCascConfig} to use.
      * @param cacheRootDirectory The path of the directory to cache all files in.
      *
      * @throws IllegalArgumentException When the cache directory is not available and could not be created.

@@ -20,12 +20,14 @@ package nl.salp.warcraft4j.casc.cdn.local;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import nl.salp.warcraft4j.casc.CascParsingException;
+import nl.salp.warcraft4j.casc.FileKey;
+import nl.salp.warcraft4j.casc.IndexEntry;
 import nl.salp.warcraft4j.casc.cdn.CdnCascConfig;
 import nl.salp.warcraft4j.casc.cdn.CdnCascContext;
 import nl.salp.warcraft4j.casc.cdn.DataReaderProvider;
 import nl.salp.warcraft4j.casc.cdn.Index;
 import nl.salp.warcraft4j.config.Warcraft4jConfig;
-import nl.salp.warcraft4j.casc.*;
 import nl.salp.warcraft4j.io.DataReader;
 
 import java.nio.file.Files;
@@ -37,19 +39,29 @@ import java.util.function.Supplier;
 import static java.lang.String.format;
 
 /**
- * TODO Add description.
+ * {@link CdnCascContext} implementation for an online CDN.
  *
  * @author Barre Dijkstra
+ * @see nl.salp.warcraft4j.casc.cdn.CdnCascContext
  */
 @Singleton
 public class LocalCdnCascContext extends CdnCascContext {
+    /** The CASC configuration. */
     private CdnCascConfig cdnCascConfig;
 
+    /**
+     * Create a new instance.
+     *
+     * @param warcraft4jConfig The configuration.
+     */
     @Inject
     public LocalCdnCascContext(Warcraft4jConfig warcraft4jConfig) {
         super(warcraft4jConfig);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CdnCascConfig getCdnCascConfig() {
         if (cdnCascConfig == null) {
@@ -58,6 +70,9 @@ public class LocalCdnCascContext extends CdnCascContext {
         return cdnCascConfig;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Supplier<DataReader> getEncodingReader() {
         FileKey encodingFileChecksum = getCdnCascConfig().getStorageEncodingFileChecksum();
@@ -73,22 +88,34 @@ public class LocalCdnCascContext extends CdnCascContext {
         return getFileDataReaderSupplier(indexEntry);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected DataReaderProvider getDataReaderProvider() {
         return new FileDataReaderProvider();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Supplier<DataReader> getDataReader(String dataFile, long dataFileOffset, long fileSize) throws CascParsingException {
         LOGGER.trace("Getting local file data reader for {} (offset: {}, size: {})", dataFile, dataFileOffset + 30, fileSize - 30);
         return getDataReaderProvider().getDataReader(dataFile, dataFileOffset + 30, fileSize - 30);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Index parseIndex() throws CascParsingException {
         return new LocalIndexParser(getWarcraft4jConfig().getWowInstallationDirectory()).parse();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Optional<String> getDataFileUri(IndexEntry entry) {
         Optional<String> uri;

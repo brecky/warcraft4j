@@ -18,11 +18,11 @@
  */
 package nl.salp.warcraft4j.casc.cdn.online;
 
-import nl.salp.warcraft4j.casc.cdn.BaseCdnCascConfig;
 import nl.salp.warcraft4j.casc.CascParsingException;
-import nl.salp.warcraft4j.casc.cdn.KeyBasedConfiguration;
-import nl.salp.warcraft4j.casc.cdn.DataReaderProvider;
+import nl.salp.warcraft4j.casc.cdn.BaseCdnCascConfig;
 import nl.salp.warcraft4j.casc.cdn.CdnCascConfig;
+import nl.salp.warcraft4j.casc.cdn.DataReaderProvider;
+import nl.salp.warcraft4j.casc.cdn.KeyBasedConfiguration;
 import nl.salp.warcraft4j.config.Warcraft4jConfig;
 import nl.salp.warcraft4j.io.DataReader;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ import java.util.function.Supplier;
 import static java.lang.String.format;
 
 /**
- * {@link CdnCascConfig} implementation for a CDN based CASC.
+ * {@link CdnCascConfig} implementation for an online CDN based CASC.
  *
  * @author Barre Dijkstra
  */
@@ -61,9 +61,9 @@ public class OnlineCdnCascConfig extends BaseCdnCascConfig {
     private static final String KEY_CDNS_HOSTS = "Hosts";
     /** The URL mask for a file. */
     private static final String URL_MASK = "http://us.patch.battle.net/%s/%s";
-    /** The file name of the {@code CDNs} config. */
+    /** The filename of the {@code CDNs} config. */
     private static final String FILE_CDNS = "cdns";
-    /** The file name of the {@code versions} config. */
+    /** The filename of the {@code versions} config. */
     private static final String FILE_VERSIONS = "versions";
     /** The {@link OnlineVersionConfig} (or {@link nl.salp.warcraft4j.Branch} to use). */
     private final OnlineVersionConfig onlineVersionConfig;
@@ -75,7 +75,7 @@ public class OnlineCdnCascConfig extends BaseCdnCascConfig {
     /**
      * Create a new instance.
      *
-     * @param warcraft4jConfig          The {@link Warcraft4jConfig} instance to configure the CDN CASC configuration with.
+     * @param warcraft4jConfig   The {@link Warcraft4jConfig} instance to configure the CDN CASC configuration with.
      * @param dataReaderProvider The {@link DataReaderProvider} for reading the configuration files.
      */
     public OnlineCdnCascConfig(Warcraft4jConfig warcraft4jConfig, DataReaderProvider dataReaderProvider) {
