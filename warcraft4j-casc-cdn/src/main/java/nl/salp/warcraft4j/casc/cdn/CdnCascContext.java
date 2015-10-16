@@ -107,7 +107,8 @@ public abstract class CdnCascContext {
      */
     protected EncodingFile parseEncoding() throws CascParsingException {
         Supplier<DataReader> readerSupplier = getEncodingReader();
-        LOGGER.debug("Initialising encoding file (fileKey: {}, fileSize: {}).", getCdnCascConfig().getStorageEncodingFileChecksum(), getCdnCascConfig().getStorageEncodingFileSize());
+        LOGGER.debug("Initialising encoding file (fileKey: {}, fileSize: {}).", getCdnCascConfig().getStorageEncodingFileChecksum(), getCdnCascConfig()
+                .getStorageEncodingFileSize());
         try (DataReader reader = readerSupplier.get()) {
             EncodingFile encodingFile = new EncodingFileParser().parse(reader, getCdnCascConfig().getExtractedEncodingFileSize());
             return encodingFile;
@@ -549,6 +550,7 @@ public abstract class CdnCascContext {
      * @throws CascParsingException       When there is a problem creating a data reader for the file.
      */
     public DataReader getFileDataReader(long hashCode) throws CascParsingException, CascEntryNotFoundException {
+        LOGGER.trace("Getting DataReader for extracted file with filename hashcode {}", hashCode);
         return Optional.of(hashCode)
                 .map(this::getIndexEntries)
                 .filter(indices -> !indices.isEmpty())
@@ -567,6 +569,7 @@ public abstract class CdnCascContext {
      * @throws CascParsingException       When there is a problem creating a data reader for the file.
      */
     public DataReader getFileDataReader(String filename) throws CascParsingException, CascEntryNotFoundException {
+        LOGGER.trace("Getting DataReader for extracted file with filename {}", filename);
         return getHash(filename)
                 .map(this::getFileDataReader)
                 .orElseThrow(() -> new CascEntryNotFoundException(format("No entry found for a file with filename %s", filename)));
@@ -583,6 +586,7 @@ public abstract class CdnCascContext {
      * @throws CascParsingException       When there is a problem creating a data reader for the file.
      */
     public DataReader getFileDataReader(ContentChecksum contentChecksum) throws CascParsingException, CascEntryNotFoundException {
+        LOGGER.trace("Getting DataReader for extracted file with content checksum {}", contentChecksum.toHexString());
         return Optional.ofNullable(contentChecksum)
                 .flatMap(this::getEncodingEntry)
                 .map(EncodingEntry::getFileKeys)
@@ -605,8 +609,13 @@ public abstract class CdnCascContext {
         if (indexEntries == null || indexEntries.isEmpty()) {
             throw new CascParsingException("Cannot create a data reader with no index entries provided.");
         } else if (indexEntries.size() == 1) {
+            LOGGER.trace("Getting DataReader for extracted file with file key {}", indexEntries.get(0).getFileKey().toHexString());
             dataReader = getFileDataReader(indexEntries.get(0));
         } else {
+            LOGGER.trace("Getting DataReader for extracted file with {} file keys: {}", indexEntries.size(), indexEntries.stream()
+                    .map(IndexEntry::getFileKey)
+                    .map(FileKey::toHexString)
+                    .collect(Collectors.joining(",")));
             List<Supplier<? extends DataReader>> dataReaders = indexEntries.stream()
                     .map(this::getFileDataReaderSupplier)
                     .collect(Collectors.toList());

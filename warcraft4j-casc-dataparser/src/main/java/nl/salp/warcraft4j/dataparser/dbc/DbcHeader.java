@@ -22,6 +22,9 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 /**
  * File header for {@code DBC}, {@code DB2} and {@code ADB} files.
  *
@@ -36,171 +39,187 @@ public class DbcHeader {
     public static final int[] UNKNOWN_INT_ARRAY = new int[0];
     /** Value for an unknown short[] value. */
     public static final short[] UNKNOWN_SHORT_ARRAY = new short[0];
+    /** The magic String for a DBC file. */
+    public static final String DBC_MAGICSTRING = "WDBC";
+    /** The magic string for a DB2 file. */
+    public static final String DB2_MAGICSTRING = "WDB2";
+    /** The magic string for an ADB file. */
+    public static final String ADB_MAGICSTRING = "WCH2";
+    /** The version of the last build before the extended DB2 header was introduced. */
+    public static final int DB2_LASTBUILD_BEFORE_EXTENSION = 12880;
+    /** The length of the magic string. */
+    public static final int MAGIC_STRING_LENGTH = 4;
+    /** The header size of a DBC file. */
+    public static final int DBC_HEADER_SIZE = 20;
+    /** The default header size of a DB2. */
+    public static final int DB2_HEADER_SIZE = 32;
+    /** The base size for an extended DB2 header. */
+    public static final int DB2_EXTENDED_HEADER_SIZE_BASE = 48;
 
     /**
      * The header type.
-     * <p/>
-     * <p/>
+     * <p>
      * Available for
      * <ul>
      * <li>{@code DBC}</li>
      * <li>{@code DB2}</li>
      * <li>{@code DB2_EXT}</li>
      * </ul>
+     * </p>
      */
     private final String magicString;
 
     /**
      * The size of the header data block in bytes.
-     * <p/>
-     * <p/>
+     * <p>
      * Available for
      * <ul>
      * <li>{@code DBC}</li>
      * <li>{@code DB2}</li>
      * <li>{@code DB2_EXT}</li>
      * </ul>
+     * </p>
      */
     private final int headerSize;
     /**
      * The number of entries in the DBC file.
-     * <p/>
-     * <p/>
+     * <p>
      * Available for
      * <ul>
      * <li>{@code DBC}</li>
      * <li>{@code DB2}</li>
      * <li>{@code DB2_EXT}</li>
      * </ul>
+     * </p>
      */
     private final int entryCount;
     /**
      * The number of fields in an entry.
-     * <p/>
-     * <p/>
+     * <p>
      * Available for
      * <ul>
      * <li>{@code DBC}</li>
      * <li>{@code DB2}</li>
      * <li>{@code DB2_EXT}</li>
      * </ul>
+     * </p>
      */
     private final int entryFieldCount;
     /**
      * The size of a single entry in bytes.
-     * <p/>
-     * <p/>
+     * <p>
      * Available for
      * <ul>
      * <li>{@code DBC}</li>
      * <li>{@code DB2}</li>
      * <li>{@code DB2_EXT}</li>
      * </ul>
+     * </p>
      */
     private final int entrySize;
     /**
      * The size of the StringTable data block.
-     * <p/>
-     * <p/>
+     * <p>
      * Available for
      * <ul>
      * <li>{@code DBC}</li>
      * <li>{@code DB2}</li>
      * <li>{@code DB2_EXT}</li>
      * </ul>
+     * </p>
      */
     private final int stringTableBlockSize;
     /**
      * The hash of the StringTable data block.
-     * <p/>
-     * <p/>
+     * <p>
      * Available for
      * <ul>
      * <li>{@code DB2}</li>
      * <li>{@code DB2_EXT}</li>
      * </ul>
+     * </p>
      */
     private final int stringTableBlockHash;
     /**
      * The World of Warcraft client build number.
-     * <p/>
-     * <p/>
+     * <p>
      * Available for
      * <ul>
      * <li>{@code DB2}</li>
      * <li>{@code DB2_EXT}</li>
+     * </p>
      * </ul>
      */
     private final int buildNumber;
     /**
      * The timestamp when the DBC file was last altered/written.
-     * <p/>
-     * <p/>
+     * <p>
      * Available for
      * <ul>
      * <li>{@code DB2}</li>
      * <li>{@code DB2_EXT}</li>
      * </ul>
+     * </p>
      */
     private final int timestampLastWritten;
     /**
      * The minimum id.
-     * <p/>
-     * <p/>
+     * <p>
      * Available for
      * <ul>
      * <li>{@code DB2_EXT}</li>
      * </ul>
+     * </p>
      */
     private final int minimumEntryId;
     /**
      * The maximum id.
-     * <p/>
-     * <p/>
+     * <p>
      * Available for
      * <ul>
      * <li>{@code DB2_EXT}</li>
      * </ul>
+     * </p>
      */
     private final int maximumEntryId;
     /**
      * The id of the locale the DBC file is in.
-     * <p/>
-     * <p/>
+     * <p>
      * Available for
      * <ul>
      * <li>{@code DB2_EXT}</li>
      * </ul>
+     * </p>
      */
     private final int locale;
     /**
      * Unknown 4-byte segment.
-     * <p/>
-     * <p/>
+     * <p>
      * Available for
      * <ul>
      * <li>{@code DB2_EXT}</li>
      * </ul>
+     * </p>
      */
     private final byte[] unknown;
     /**
      * The row indexes.
-     * <p/>
-     * <p/>
+     * <p>
      * Available for
      * <ul>
      * <li>{@code DB2_EXT}</li>
      * </ul>
+     * </p>
      */
     private final int[] rowIndexes;
     /**
      * The row String length in bytes.
-     * <p/>
-     * <p/>
+     * <p>
      * Available for
      * <ul>
      * <li>{@code DB2_EXT}</li>
      * </ul>
+     * </p>
      */
     private final short[] rowStringLength;
 
@@ -231,7 +250,8 @@ public class DbcHeader {
      * @param buildNumber          The World of Warcraft client build number.
      * @param timestampLastWritten The timestamp when the DBC file was last altered/written.
      */
-    public DbcHeader(String magicString, int headerSize, int entryCount, int entryFieldCount, int entrySize, int stringTableBlockSize, int stringTableBlockHash, int buildNumber, int timestampLastWritten) {
+    public DbcHeader(String magicString, int headerSize, int entryCount, int entryFieldCount, int entrySize, int stringTableBlockSize, int stringTableBlockHash, int buildNumber,
+            int timestampLastWritten) {
         this(magicString, headerSize, entryCount, entryFieldCount, entrySize, stringTableBlockSize, stringTableBlockHash, buildNumber, timestampLastWritten, UNKNOWN_INT, UNKNOWN_INT, UNKNOWN_INT, UNKNOWN_BYTE_ARRAY, UNKNOWN_INT_ARRAY, UNKNOWN_SHORT_ARRAY);
     }
 
@@ -253,8 +273,11 @@ public class DbcHeader {
      * @param unknown              Unknown 4-byte segment.
      * @param rowIndexes           The row indexes.
      * @param rowStringLength      The row String length in bytes.
+     *
+     * @throws DbcParsingException When invalid values were provided.
      */
-    public DbcHeader(String magicString, int headerSize, int entryCount, int entryFieldCount, int entrySize, int stringTableBlockSize, int stringTableBlockHash, int buildNumber, int timestampLastWritten, int minimumEntryId, int maximumEntryId, int locale, byte[] unknown, int[] rowIndexes, short[] rowStringLength) {
+    public DbcHeader(String magicString, int headerSize, int entryCount, int entryFieldCount, int entrySize, int stringTableBlockSize, int stringTableBlockHash, int buildNumber,
+            int timestampLastWritten, int minimumEntryId, int maximumEntryId, int locale, byte[] unknown, int[] rowIndexes, short[] rowStringLength) {
         this.magicString = magicString;
         this.headerSize = headerSize;
         this.entryCount = entryCount;
@@ -270,12 +293,143 @@ public class DbcHeader {
         this.unknown = unknown;
         this.rowIndexes = rowIndexes;
         this.rowStringLength = rowStringLength;
+        validateValues();
+    }
+
+    /**
+     * Validate the header values by checking for invalid values or combination of values.
+     *
+     * @throws DbcParsingException When the header contains invalid values or combination of values.
+     */
+    private void validateValues() throws DbcParsingException {
+        if (isEmpty(magicString) || !(isDbcVersion1() || isDbcVersion2() || isExtendedDbcVersion2() || ADB_MAGICSTRING.equals(magicString))) {
+            throw new DbcParsingException(format("Invalid DBC magic string %s, must be one of %s, %s or %s", magicString, DBC_MAGICSTRING, DB2_MAGICSTRING, ADB_MAGICSTRING));
+        }
+        if (isDbcVersion1() && headerSize != DBC_HEADER_SIZE) {
+            throw new DbcParsingException(format("Invalid header size for DBC version 1 file of %d bytes, expected %d bytes.", headerSize, DBC_HEADER_SIZE));
+        }
+        if (isDbcVersion1Supported()) {
+            if (entrySize < 4) {
+                throw new DbcParsingException(format("Invalid entry size of %d bytes, a minimum of 4 bytes is required (for the id).", entrySize));
+            }
+            if (entryCount < 1) {
+                throw new DbcParsingException(format("An entry count of %d is invalid.", entryCount));
+            }
+            if (entryFieldCount < 1) {
+                throw new DbcParsingException(format("An entry field count of %d is invalid.", entryFieldCount));
+            }
+            if (stringTableBlockSize < 0) {
+                throw new DbcParsingException(format("Can't have a negative StringTable block size of %d.", stringTableBlockSize));
+            }
+            if (entryFieldCount > (entrySize - 3)) {
+                throw new DbcParsingException(format("An entry with a size of %d bytes cannot have %d fields, a maximum of %d fields was expected.", entrySize, entryFieldCount,
+                        entrySize - 3));
+            }
+        }
+        if (isDbcVersion2() && headerSize != DB2_HEADER_SIZE) {
+            throw new DbcParsingException(format("Invalid header size for DBC version 2 file of %d bytes, expected %d bytes.", headerSize, DB2_HEADER_SIZE));
+        }
+        if (isDbcVersion2Supported()) {
+            if (buildNumber < 0 && buildNumber != UNKNOWN_INT) {
+                throw new DbcParsingException(format("Can't have negative build number %d.", buildNumber));
+            }
+            if (timestampLastWritten < 0 && buildNumber != UNKNOWN_INT) {
+                throw new DbcParsingException(format("Can't have negative timestamp %d for the last write timestamp of the DBC.", timestampLastWritten));
+            }
+        }
+        if (isExtendedDbcVersion2() && headerSize < DB2_EXTENDED_HEADER_SIZE_BASE) {
+            throw new DbcParsingException(format("Invalid header size for DBC version 2 extended file of %d bytes, expected minimum of %d bytes.", headerSize, DB2_EXTENDED_HEADER_SIZE_BASE));
+        }
+        if (isExtenededDbcVersion2Supported()) {
+            if (minimumEntryId < 0) {
+                throw new DbcParsingException(format("Can't have negative minimum entry id %d.", minimumEntryId));
+            }
+            if (maximumEntryId < 0) {
+                throw new DbcParsingException(format("Can't have negative maximum entry id %d.", maximumEntryId));
+            }
+            if (maximumEntryId < minimumEntryId) {
+                throw new DbcParsingException(format("Can't have maximum entry id %d which is smaller then the minimum entry id %d.", maximumEntryId, minimumEntryId));
+            }
+            // TODO Validate locale.
+            if (unknown != null && unknown.length > 0 && unknown.length != 4) {
+                throw new DbcParsingException(format("Unknown data block with data set must be 4 bytes instead of %d.", unknown.length));
+            }
+            // TODO Validate row indexes
+            // TODO Validate row string lengths.
+        }
+    }
+
+    /**
+     * Check if the header is for a DBC version 1 file.
+     *
+     * @return {@code true} if the header is a version 1 header.
+     */
+    public boolean isDbcVersion1() {
+        return DBC_MAGICSTRING.equals(magicString);
+    }
+
+    /**
+     * Check if the header structure supports the structure of a DBC version 1 file.
+     *
+     * @return {@code true} if the header supports the DBC version 1 structure.
+     */
+    public boolean isDbcVersion1Supported() {
+        return isDbcVersion1() || isDbcVersion2() || isExtendedDbcVersion2();
+    }
+
+    /**
+     * Check if the header is a version 2 header.
+     *
+     * @return {@code true} if the header is a version 2 header.
+     */
+    public boolean isDbcVersion2() {
+        return DB2_MAGICSTRING.equals(magicString) && buildNumber <= DB2_LASTBUILD_BEFORE_EXTENSION;
+    }
+
+
+    /**
+     * Check if the header structure supports the structure of a DBC version 2 file.
+     *
+     * @return {@code true} if the header supports the DBC version 2 structure.
+     */
+    public boolean isDbcVersion2Supported() {
+        return isDbcVersion2() || isExtendedDbcVersion2();
+    }
+
+    /**
+     * Check if the header is an extended version 2 header.
+     *
+     * @return {@code true} if the header is an extended version 2 header.
+     */
+    public boolean isExtendedDbcVersion2() {
+        return DB2_MAGICSTRING.equals(magicString) && buildNumber > DB2_LASTBUILD_BEFORE_EXTENSION;
+    }
+
+    /**
+     * Check if the header structure supports the structure of an extended DBC version 2 file.
+     *
+     * @return {@code true} if the header supports the extended DBC version 2 structure.
+     */
+    public boolean isExtenededDbcVersion2Supported() {
+        return isExtendedDbcVersion2();
     }
 
     /**
      * Get the file magic string.
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DBC}</li>
+     * <li>{@code DB2}</li>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The magic string.
+     *
+     * @see #isDbcVersion1Supported()
+     * @see #isDbcVersion2Supported()
+     * @see #isExtenededDbcVersion2Supported()
      */
     public String getMagicString() {
         return magicString;
@@ -283,8 +437,20 @@ public class DbcHeader {
 
     /**
      * Get the size of the header block for the header in bytes.
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DBC}</li>
+     * <li>{@code DB2}</li>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The size.
+     *
+     * @see #isDbcVersion1Supported()
+     * @see #isDbcVersion2Supported()
+     * @see #isExtenededDbcVersion2Supported()
      */
     public int getHeaderSize() {
         return headerSize;
@@ -292,8 +458,20 @@ public class DbcHeader {
 
     /**
      * Get the number of entries in the file.
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DBC}</li>
+     * <li>{@code DB2}</li>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The number of entries.
+     *
+     * @see #isDbcVersion1Supported()
+     * @see #isDbcVersion2Supported()
+     * @see #isExtenededDbcVersion2Supported()
      */
     public int getEntryCount() {
         return entryCount;
@@ -301,8 +479,20 @@ public class DbcHeader {
 
     /**
      * Get the number of fields in an entry in the file.
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DBC}</li>
+     * <li>{@code DB2}</li>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The number of fields.
+     *
+     * @see #isDbcVersion1Supported()
+     * @see #isDbcVersion2Supported()
+     * @see #isExtenededDbcVersion2Supported()
      */
     public int getEntryFieldCount() {
         return entryFieldCount;
@@ -310,8 +500,20 @@ public class DbcHeader {
 
     /**
      * Get the size in bytes of a single entry in the file.
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DBC}</li>
+     * <li>{@code DB2}</li>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The size in bytes.
+     *
+     * @see #isDbcVersion1Supported()
+     * @see #isDbcVersion2Supported()
+     * @see #isExtenededDbcVersion2Supported()
      */
     public int getEntrySize() {
         return entrySize;
@@ -319,8 +521,20 @@ public class DbcHeader {
 
     /**
      * Get the size in bytes of the entry data block in the file.
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DBC}</li>
+     * <li>{@code DB2}</li>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The size.
+     *
+     * @see #isDbcVersion1Supported()
+     * @see #isDbcVersion2Supported()
+     * @see #isExtenededDbcVersion2Supported()
      */
     public int getEntryBlockSize() {
         return entryCount * entrySize;
@@ -328,8 +542,20 @@ public class DbcHeader {
 
     /**
      * Get the starting offset of the entry data block in the file.
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DBC}</li>
+     * <li>{@code DB2}</li>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The starting offset.
+     *
+     * @see #isDbcVersion1Supported()
+     * @see #isDbcVersion2Supported()
+     * @see #isExtenededDbcVersion2Supported()
      */
     public int getEntryBlockStartingOffset() {
         return headerSize;
@@ -337,8 +563,20 @@ public class DbcHeader {
 
     /**
      * Get the size of the StringTable data block in bytes.
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DBC}</li>
+     * <li>{@code DB2}</li>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The size.
+     *
+     * @see #isDbcVersion1Supported()
+     * @see #isDbcVersion2Supported()
+     * @see #isExtenededDbcVersion2Supported()
      */
     public int getStringTableBlockSize() {
         return stringTableBlockSize;
@@ -346,8 +584,20 @@ public class DbcHeader {
 
     /**
      * Get the starting offset of the string table data block in the file.
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DBC}</li>
+     * <li>{@code DB2}</li>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The starting offset.
+     *
+     * @see #isDbcVersion1Supported()
+     * @see #isDbcVersion2Supported()
+     * @see #isExtenededDbcVersion2Supported()
      */
     public int getStringTableStartingOffset() {
         return headerSize + getEntryBlockSize();
@@ -355,8 +605,18 @@ public class DbcHeader {
 
     /**
      * Get the hash of the StringTable block.
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DB2}</li>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The hash or {@link #UNKNOWN_INT} if it was not available on the header.
+     *
+     * @see #isDbcVersion2Supported()
+     * @see #isExtenededDbcVersion2Supported()
      */
     public int getStringTableBlockHash() {
         return stringTableBlockHash;
@@ -364,8 +624,18 @@ public class DbcHeader {
 
     /**
      * Get the build number of the World of Warcraft client.
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DB2}</li>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The build number or {@link #UNKNOWN_INT} if it was not available on the header.
+     *
+     * @see #isDbcVersion2Supported()
+     * @see #isExtenededDbcVersion2Supported()
      */
     public int getBuildNumber() {
         return buildNumber;
@@ -373,8 +643,18 @@ public class DbcHeader {
 
     /**
      * Get the timestamp the file was last altered.
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DB2}</li>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The timestamp or {@link #UNKNOWN_INT} if it was not available on the header.
+     *
+     * @see #isDbcVersion2Supported()
+     * @see #isExtenededDbcVersion2Supported()
      */
     public int getTimestampLastWritten() {
         return timestampLastWritten;
@@ -382,8 +662,16 @@ public class DbcHeader {
 
     /**
      * Get the minimum id of the entries in the file.
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The minimum id or {@link #UNKNOWN_INT} if it was not available on the header.
+     *
+     * @see #isExtenededDbcVersion2Supported()
      */
     public int getMinimumEntryId() {
         return minimumEntryId;
@@ -391,8 +679,16 @@ public class DbcHeader {
 
     /**
      * Get the maximum id of the entries in the file.
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The maximum id or {@link #UNKNOWN_INT} if it was not available on the header.
+     *
+     * @see #isExtenededDbcVersion2Supported()
      */
     public int getMaximumEntryId() {
         return maximumEntryId;
@@ -400,8 +696,16 @@ public class DbcHeader {
 
     /**
      * Get the id of the locale the file is in.
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The locale id or {@link #UNKNOWN_INT} if it was not available on the header.
+     *
+     * @see #isExtenededDbcVersion2Supported()
      */
     public int getLocale() {
         return locale;
@@ -409,10 +713,19 @@ public class DbcHeader {
 
     /**
      * Get values of the unknown 4-byte data segment.
-     * <p/>
+     * <p>
      * TODO This is probably an uint32, figure out where it's used for.
+     * </p>
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The data segment or {@link #UNKNOWN_BYTE_ARRAY} if it was not available on the header.
+     *
+     * @see #isExtenededDbcVersion2Supported()
      */
     public byte[] getUnknown() {
         return unknown;
@@ -420,10 +733,19 @@ public class DbcHeader {
 
     /**
      * Get row indexes.
-     * <p/>
+     * <p>
      * TODO Determine the exact usage.
+     * </p>
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The indexes or {@link #UNKNOWN_INT_ARRAY} if it was not available on the header.
+     *
+     * @see #isExtenededDbcVersion2Supported()
      */
     public int[] getRowIndexes() {
         return rowIndexes;
@@ -431,139 +753,45 @@ public class DbcHeader {
 
     /**
      * Get row string lengths.
-     * <p/>
+     * <p>
      * TODO Determine the exact usage.
+     * </p>
+     * <p>
+     * Available for
+     * <ul>
+     * <li>{@code DB2_EXT}</li>
+     * </ul>
+     * </p>
      *
      * @return The string lengths or {@link #UNKNOWN_SHORT_ARRAY} if it was not available on the header.
+     *
+     * @see #isExtenededDbcVersion2Supported()
      */
     public short[] getRowStringLength() {
         return rowStringLength;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
-    }
-
-    /**
-     * Builder for creating a DbcHeader instance.
-     */
-    public static class Builder {
-        private String magicString;
-        private int headerSize;
-        private int entryCount;
-        private int entryFieldCount;
-        private int entrySize;
-        private int stringTableBlockSize;
-        private int stringTableBlockHash;
-        private int buildNumber;
-        private int timestampLastWritten;
-        private int minId;
-        private int maxId;
-        private int locale;
-        private byte[] unknown;
-        private int[] rowIndexes;
-        private short[] rowStringLength;
-
-        public Builder() {
-            stringTableBlockHash = UNKNOWN_INT;
-            buildNumber = UNKNOWN_INT;
-            timestampLastWritten = UNKNOWN_INT;
-            minId = UNKNOWN_INT;
-            maxId = UNKNOWN_INT;
-            locale = UNKNOWN_INT;
-            unknown = UNKNOWN_BYTE_ARRAY;
-            rowIndexes = UNKNOWN_INT_ARRAY;
-            rowStringLength = UNKNOWN_SHORT_ARRAY;
-        }
-
-        public Builder withMagicString(String magicString) {
-            this.magicString = magicString;
-            return this;
-        }
-
-        public Builder withHeaderSize(int headerSize) {
-            this.headerSize = headerSize;
-            return this;
-        }
-
-        public Builder withEntryCount(int entryCount) {
-            this.entryCount = entryCount;
-            return this;
-        }
-
-        public Builder withEntryFieldCount(int entryFieldCount) {
-            this.entryFieldCount = entryFieldCount;
-            return this;
-        }
-
-        public Builder withSingleEntrySize(int recordSize) {
-            this.entrySize = recordSize;
-            return this;
-        }
-
-        public Builder withStringTableBlockSize(int stringTableBlockSize) {
-            this.stringTableBlockSize = stringTableBlockSize;
-            return this;
-        }
-
-        public Builder withStringTableBlockHash(int stringTableBlockHash) {
-            this.stringTableBlockHash = stringTableBlockHash;
-            return this;
-        }
-
-        public Builder withBuildNumber(int buildNumber) {
-            this.buildNumber = buildNumber;
-            return this;
-        }
-
-        public Builder withTimestampLastWritten(int timestampLastWritten) {
-            this.timestampLastWritten = timestampLastWritten;
-            return this;
-        }
-
-        public Builder withMinEntryId(int minId) {
-            this.minId = minId;
-            return this;
-        }
-
-        public Builder withMaxEntryId(int maxId) {
-            this.maxId = maxId;
-            return this;
-        }
-
-        public Builder withLocaleId(int locale) {
-            this.locale = locale;
-            return this;
-        }
-
-        public Builder withUnknownDataBlock(byte[] unknown) {
-            this.unknown = unknown;
-            return this;
-        }
-
-        public Builder withRowIndexes(int[] rowIndexes) {
-            this.rowIndexes = rowIndexes;
-            return this;
-        }
-
-        public Builder withRowStringLength(short[] rowStringLength) {
-            this.rowStringLength = rowStringLength;
-            return this;
-        }
-
-        public DbcHeader build() {
-            return new DbcHeader(magicString, headerSize, entryCount, entryFieldCount, entrySize, stringTableBlockSize, stringTableBlockHash, buildNumber, timestampLastWritten, minId, maxId, locale, unknown, rowIndexes, rowStringLength);
-        }
     }
 }

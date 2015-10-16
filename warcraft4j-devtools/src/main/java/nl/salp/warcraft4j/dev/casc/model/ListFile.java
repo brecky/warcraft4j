@@ -19,9 +19,9 @@
 package nl.salp.warcraft4j.dev.casc.model;
 
 import nl.salp.warcraft4j.hash.JenkinsHash;
-import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import nl.salp.warcraft4j.io.DataReader;
 import nl.salp.warcraft4j.io.FileDataReader;
+import nl.salp.warcraft4j.io.datatype.DataTypeFactory;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -43,7 +43,7 @@ public class ListFile {
     private final Map<Long, String> hashes;
     private final Set<Long> calculated;
 
-    private ListFile(Map<String, Long> files) throws IOException {
+    private ListFile(Map<String, Long> files) {
         this.files = files;
         this.hashes = files.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
@@ -72,7 +72,11 @@ public class ListFile {
 
     public boolean isFileKnown(String filename) {
         long hash = getHash(filename);
-        return hash == 0 || calculated.contains(hash);
+        return hash != 0 || calculated.contains(hash);
+    }
+
+    public boolean isFileKnown(long hash) {
+        return hashes.containsKey(hash);
     }
 
     public Optional<String> getFilenames(long hash) {
@@ -95,7 +99,7 @@ public class ListFile {
         return hashes.size();
     }
 
-    public static ListFile empty() throws IOException {
+    public static ListFile empty() {
         return new ListFile(Collections.emptyMap());
     }
 

@@ -94,8 +94,12 @@ public class ByteArrayDataReader extends BaseDataReader {
      */
     @Override
     protected int readData(ByteBuffer buffer) throws DataReadingException {
-        this.buffer.get(buffer.array());
-        return buffer.capacity();
+        int read = -1;
+        if (this.buffer.hasRemaining()) {
+            read = Math.min(this.buffer.remaining(), buffer.capacity());
+            this.buffer.get(buffer.array(), 0, read);
+        }
+        return read;
     }
 
     @Override
