@@ -153,7 +153,7 @@ public class CdnCascService implements CascService {
      */
     @Override
     public Set<CascFile> getAllCascFiles() {
-        return cascContext.getResolvedHashes().stream()
+        return cascContext.getHashes().stream()
                 .distinct()
                 .map(hash -> cascContext.getFilename(hash)
                                 .filter(StringUtils::isNotEmpty)

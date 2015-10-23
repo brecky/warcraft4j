@@ -20,9 +20,11 @@ package nl.salp.warcraft4j.casc.cdn;
 
 import nl.salp.warcraft4j.casc.CascFile;
 import nl.salp.warcraft4j.casc.FileHeader;
+import nl.salp.warcraft4j.io.DataReader;
 
 import java.lang.ref.WeakReference;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -40,7 +42,7 @@ public class CdnCascFile implements CascFile {
     private final long hash;
     /** The filename, may be {@code null}. */
     private String filename;
-    /** The header of the file, may be {@code null}. */
+    /** The parsed header of the file, may be {@code null}. */
     private FileHeader header;
 
     /**
@@ -52,7 +54,7 @@ public class CdnCascFile implements CascFile {
      * @throws IllegalArgumentException When an invalid CASC context is provided.
      */
     public CdnCascFile(long hash, CdnCascContext cascContext) throws IllegalArgumentException {
-        this(hash, null, null, cascContext);
+        this(hash, null, cascContext);
     }
 
     /**
@@ -65,45 +67,17 @@ public class CdnCascFile implements CascFile {
      * @throws IllegalArgumentException When invalid data is provided.
      */
     public CdnCascFile(long hash, String filename, CdnCascContext cascContext) throws IllegalArgumentException {
-        this(hash, filename, null, cascContext);
-    }
-
-    /**
-     * Create a new instance.
-     *
-     * @param hash        The hash of the filename.
-     * @param header      The header of the file.
-     * @param cascContext The CASC the file is stored in.
-     *
-     * @throws IllegalArgumentException When invalid data is provided.
-     */
-    public CdnCascFile(long hash, FileHeader header, CdnCascContext cascContext) throws IllegalArgumentException {
-        this(hash, null, header, cascContext);
-    }
-
-    /**
-     * Create a new instance.
-     *
-     * @param filenameHash The hash of the filename.
-     * @param filename     The name of the file.
-     * @param header       The header of the file.
-     * @param cascContext  The CASC the file is stored in.
-     *
-     * @throws IllegalArgumentException When invalid data is provided.
-     */
-    public CdnCascFile(long filenameHash, String filename, FileHeader header, CdnCascContext cascContext) throws IllegalArgumentException {
         this.cascContext = Optional.ofNullable(cascContext)
                 .map(WeakReference<CdnCascContext>::new)
                 .orElseThrow(() -> new IllegalArgumentException("Unable to initialise a CASC file for a null CdnCascContext."));
-        this.hash = Optional.of(filenameHash)
+        this.hash = Optional.of(hash)
                 .filter(cascContext::isRegistered)
-                .orElseThrow(() -> new IllegalArgumentException(format("Unable to initialise a CASC file for filename hash %d, which is not registered in the CASC.", filenameHash)));
-        this.filename = filename;
-        if (isNotEmpty(filename) && CdnCascContext.hashFilename(filename) != filenameHash) {
+                .orElseThrow(() -> new IllegalArgumentException(format("Unable to initialise a CASC file for filename hash %d, which is not registered in the CASC.", hash)));
+        if (isNotEmpty(filename) && CdnCascContext.hashFilename(filename) != hash) {
             throw new IllegalArgumentException(format("Filename %s has hash %d while the hashcode %d has been provided.", filename, CdnCascContext.hashFilename(filename),
-                    filenameHash));
+                    hash));
         }
-        this.header = header;
+        setFilename(filename);
     }
 
     /**
@@ -138,7 +112,18 @@ public class CdnCascFile implements CascFile {
      */
     @Override
     public Optional<FileHeader> getHeader() {
+        if (header == null) {
+            header = readHeader();
+        }
         return Optional.ofNullable(header);
+    }
+
+    private FileHeader readHeader() {
+        return getCascContext()
+                .filter(ctx -> ctx.isRegisteredData(getFilenameHash()))
+                .map(ctx -> (Supplier<DataReader>) () -> ctx.getFileDataReader(getFilenameHash()))
+                .map(FileHeader::parse)
+                .orElse(null);
     }
 
     /**

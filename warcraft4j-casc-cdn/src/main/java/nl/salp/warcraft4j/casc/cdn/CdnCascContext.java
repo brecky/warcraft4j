@@ -274,7 +274,7 @@ public abstract class CdnCascContext {
      *
      * @return The root entries.
      */
-    public final Collection<RootEntry> getRootEntries() {
+    public Collection<RootEntry> getRootEntries() {
         return Collections.unmodifiableCollection(getRootFile().getEntries());
     }
 
@@ -285,7 +285,7 @@ public abstract class CdnCascContext {
      *
      * @return All root entries for the filename hash.
      */
-    public final List<RootEntry> getRootEntries(long filenameHash) {
+    public List<RootEntry> getRootEntries(long filenameHash) {
         return getRootFile().getEntries(filenameHash);
     }
 
@@ -384,6 +384,13 @@ public abstract class CdnCascContext {
         return getHash(filename).isPresent();
     }
 
+    /**
+     * Get a resolved filename for a filename hash.
+     *
+     * @param hash The filename hash.
+     *
+     * @return Optional containing the filename if it has been resolved.
+     */
     public Optional<String> getFilename(long hash) {
         return Optional.ofNullable(filenames.get(hash));
     }
@@ -442,8 +449,10 @@ public abstract class CdnCascContext {
     public void resolve(String filename, long hash) {
         if (isNotEmpty(filename)) {
             String name = cleanFilename(filename);
-            filenames.put(hash, name);
-            hashes.put(name, hash);
+            if (isRegistered(hash)) {
+                filenames.put(hash, name);
+                hashes.put(name, hash);
+            }
         }
     }
 
@@ -503,9 +512,10 @@ public abstract class CdnCascContext {
      *
      * @return The supplier for the reader.
      *
-     * @throws CascParsingException When the data reader could not be created.
+     * @throws CascParsingException       When the data reader could not be created.
+     * @throws CascEntryNotFoundException When there is no data for the index entry.
      */
-    protected Supplier<DataReader> getDataReader(IndexEntry entry) throws CascParsingException {
+    public Supplier<DataReader> getDataReader(IndexEntry entry) throws CascParsingException, CascEntryNotFoundException {
         LOGGER.trace("Getting data reader for file key {} (uri: {}, datafile: {}, offset: {}, size: {})",
                 entry.getFileKey().toHexString(), getDataFileUri(entry).orElse("#error#"), entry.getFileNumber(), entry.getDataFileOffset(), entry.getFileSize());
         return Optional.ofNullable(entry)
@@ -546,8 +556,8 @@ public abstract class CdnCascContext {
      *
      * @return The data reader.
      *
-     * @throws CascEntryNotFoundException When the files could not be resolved for the hash code.
      * @throws CascParsingException       When there is a problem creating a data reader for the file.
+     * @throws CascEntryNotFoundException When the files could not be resolved for the hash code.
      */
     public DataReader getFileDataReader(long hashCode) throws CascParsingException, CascEntryNotFoundException {
         LOGGER.trace("Getting DataReader for extracted file with filename hashcode {}", hashCode);
@@ -565,8 +575,8 @@ public abstract class CdnCascContext {
      *
      * @return The data reader.
      *
-     * @throws CascEntryNotFoundException When the files could not be resolved for the filename.
      * @throws CascParsingException       When there is a problem creating a data reader for the file.
+     * @throws CascEntryNotFoundException When the files could not be resolved for the filename.
      */
     public DataReader getFileDataReader(String filename) throws CascParsingException, CascEntryNotFoundException {
         LOGGER.trace("Getting DataReader for extracted file with filename {}", filename);
@@ -582,8 +592,8 @@ public abstract class CdnCascContext {
      *
      * @return The data reader.
      *
-     * @throws CascEntryNotFoundException When the files could not be resolved for the content checksum.
      * @throws CascParsingException       When there is a problem creating a data reader for the file.
+     * @throws CascEntryNotFoundException When the files could not be resolved for the content checksum.
      */
     public DataReader getFileDataReader(ContentChecksum contentChecksum) throws CascParsingException, CascEntryNotFoundException {
         LOGGER.trace("Getting DataReader for extracted file with content checksum {}", contentChecksum.toHexString());
@@ -602,9 +612,10 @@ public abstract class CdnCascContext {
      *
      * @return The data reader for the extract file.
      *
-     * @throws CascParsingException When the data reader cannot be created for the index entries.
+     * @throws CascParsingException       When the data reader cannot be created for the index entries.
+     * @throws CascEntryNotFoundException When there is no data for one or more index entries.
      */
-    protected DataReader getFileDataReader(List<IndexEntry> indexEntries) throws CascParsingException {
+    public DataReader getFileDataReader(List<IndexEntry> indexEntries) throws CascParsingException, CascEntryNotFoundException {
         DataReader dataReader;
         if (indexEntries == null || indexEntries.isEmpty()) {
             throw new CascParsingException("Cannot create a data reader with no index entries provided.");
@@ -625,15 +636,16 @@ public abstract class CdnCascContext {
     }
 
     /**
-     * Get a {@link DataReader} for a file, or file segment, extracted from the CASC, referenced by an index entries.
+     * Get a {@link DataReader} for a file, or file segment, extracted from the CASC, referenced by an index entry.
      *
      * @param indexEntry The index entry referencing the file (segment).
      *
      * @return The data reader.
      *
-     * @throws CascParsingException When the data reader cannot be created for the index entry.
+     * @throws CascParsingException       When the data reader cannot be created for the index entry.
+     * @throws CascEntryNotFoundException When there is no data for the index entry.
      */
-    protected DataReader getFileDataReader(IndexEntry indexEntry) throws CascParsingException {
+    public DataReader getFileDataReader(IndexEntry indexEntry) throws CascParsingException, CascEntryNotFoundException {
         if (indexEntry == null) {
             throw new CascParsingException("Cannot create a data reader with no index entries provided.");
         }
@@ -650,9 +662,10 @@ public abstract class CdnCascContext {
      *
      * @return The data reader.
      *
-     * @throws CascParsingException When the data reader cannot be created for the index entry.
+     * @throws CascParsingException       When the data reader cannot be created for the index entry.
+     * @throws CascEntryNotFoundException When there is no data for the index entry.
      */
-    protected DataReader getFileDataReader(IndexEntry indexEntry, ContentChecksum contentChecksum) throws CascParsingException {
+    public DataReader getFileDataReader(IndexEntry indexEntry, ContentChecksum contentChecksum) throws CascParsingException, CascEntryNotFoundException {
         if (indexEntry == null) {
             throw new CascParsingException("Cannot create a data reader with no index entries provided.");
         }
@@ -671,7 +684,7 @@ public abstract class CdnCascContext {
      *
      * @throws CascParsingException When the supplier could not be created.
      */
-    protected Supplier<DataReader> getFileDataReaderSupplier(IndexEntry indexEntry) throws CascParsingException {
+    public Supplier<DataReader> getFileDataReaderSupplier(IndexEntry indexEntry) throws CascParsingException {
         return () -> getFileDataReader(indexEntry);
     }
 
@@ -682,7 +695,7 @@ public abstract class CdnCascContext {
      *
      * @return The index entries for the file.
      */
-    protected List<IndexEntry> getIndexEntries(String filename) {
+    public List<IndexEntry> getIndexEntries(String filename) {
         return getHash(filename)
                 .map(this::getIndexEntries)
                 .orElse(Collections.emptyList());
@@ -695,7 +708,7 @@ public abstract class CdnCascContext {
      *
      * @return The index entries for the file.
      */
-    protected List<IndexEntry> getIndexEntries(long hashCode) {
+    public List<IndexEntry> getIndexEntries(long hashCode) {
         return Optional.ofNullable(getContentChecksums(hashCode))
                 .map(c -> c.stream().map(this::getFileKey).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()))
                 .map(c -> c.stream().map(this::getIndexEntry).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()))
