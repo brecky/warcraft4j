@@ -17,27 +17,21 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
-        <groupId>nl.salp.warcraft4j</groupId>
         <artifactId>warcraft4j</artifactId>
+        <groupId>nl.salp.warcraft4j</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>warcraft4j-casc</artifactId>
+
+    <artifactId>warcraft4j-fileformat</artifactId>
     <packaging>jar</packaging>
 
-    <name>Warcraft4J CASC data parser</name>
-    <description>Library for parsing CASC data</description>
-
-    <properties>
-        <dependency.mongojack.version>2.1.0</dependency.mongojack.version>
-        <dependency.mongodb.version>4.4</dependency.mongodb.version>
-    </properties>
+    <name>Warcraft4J file parsers</name>
+    <description>Warcraft4J file parsers for World of Warcraft related file formats.</description>
 
     <dependencies>
         <dependency>
@@ -49,6 +43,18 @@
             <groupId>nl.salp.warcraft4j</groupId>
             <artifactId>warcraft4j-util</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>fluent-hc</artifactId>
         </dependency>
     </dependencies>
 </project>

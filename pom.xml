@@ -60,10 +60,8 @@
         <module>warcraft4j-model</module>
         <!-- Warcraft4J CASC modules -->
         <module>warcraft4j-casc</module>
-        <module>warcraft4j-casc-dataparser</module>
-        <module>warcraft4j-casc-cdn</module>
         <module>warcraft4j-casc-neo4j</module>
-        <module>warcraft4j-model-dbc</module>
+        <module>warcraft4j-fileformat</module>
         <!-- Warcraft4J Battle.NET modules -->
         <module>warcraft4j-battlenet</module>
         <!-- Warcraft4J development modules -->
@@ -109,8 +107,6 @@
                         <debug>true</debug>
                         <showDeprecation>true</showDeprecation>
                         <showWarnings>true</showWarnings>
-                        <generatedSourcesDirectory>src/main/generated</generatedSourcesDirectory>
-                        <generatedTestSourcesDirectory>src/test/generated</generatedTestSourcesDirectory>
                     </configuration>
                 </plugin>
                 <plugin>

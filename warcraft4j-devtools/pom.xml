@@ -62,17 +62,12 @@
         </dependency>
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
-            <artifactId>warcraft4j-casc-cdn</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>nl.salp.warcraft4j</groupId>
             <artifactId>warcraft4j-casc-neo4j</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>nl.salp.warcraft4j</groupId>
-            <artifactId>warcraft4j-casc-dataparser</artifactId>
+            <artifactId>warcraft4j-fileformat</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!-- Database dependencies -->
@@ -81,16 +76,15 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>3.0.0-beta1</version>
         </dependency>
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j</artifactId>
-            <version>2.2.4</version>
-        </dependency>
         <!-- Utility dependencies -->
         <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
             <version>1.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
         </dependency>
     </dependencies>
 
